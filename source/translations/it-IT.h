@@ -100,7 +100,7 @@
 #define OUMSG_1W_RESET_NODEV 		"*Nessun dispositivo trovato "
 //AUXpin//
 #define OUMSG_AUX_PWM_OFF 		"PWM disabilitato"
-
+#define OUMSG_AUX_PWM_NOTE 		"1KHz-4,000KHz frequency generator/PWM (beta)"
 #define OUMSG_AUX_PWM_FREQ 		"Frequenza in KHz "
 #define OUMSG_AUX_PWM_PRESCALE 		"Prescale:"
 #define OUMSG_AUX_PWM_DUTY 		"Duty cycle in % "
