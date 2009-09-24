@@ -1,1 +1,3 @@
-I didn't compile translated files for all versions, just v1a for pastus and v2go for preorder participants. It only takes a second, so if you want translations on a version not here, just let me know your language and hardware and I'll compile it for you.  Cheers - Ian.
+2.2 has Italian and Spanish translations for all versions.
+I don't always compile translations for all versions. Right now I always make v1a, v2go, and v3.
+It only takes a second, so if you want translations on a version not here, just let me know your language and hardware and I'll compile it for you.  Cheers - Ian.
