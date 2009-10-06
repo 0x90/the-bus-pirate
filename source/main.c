@@ -19,6 +19,7 @@
 #include "procMenu.h"
 #include "procSyntax.h"
 #include "selftest.h"
+#include "rawIO.h"
 
 //HACKADAY: set custom configuration for PIC 24F
 _CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
@@ -72,21 +73,27 @@ int main(void){
 
 	Initialize();//setup bus pirate
 
-	while(1){ //this loop services user input and passes it to be processed on <enter>
+	while(1){ //this is the main bus pirate loop
 
-		if(bpGetUserInput(&currentByte, TERMINAL_BUFFER, terminalInput)==1){
-			switch(currentByte){
-				case 0:
-					bpWmessage(MSG_ERROR_SYNTAX);
-					break;
-				case 1:
-					if(checkMenuCommand(terminalInput[0]))break;
-				default:
-					processSyntaxString(currentByte, terminalInput);//process a syntax string
-			}
-			currentByte=0;
-			bpEchoCurrentBusMode(); //print the bus mode
-			UART1TX('>');//echo prompt
+		switch(bpGetUserInput(&currentByte, TERMINAL_BUFFER, terminalInput)){//service user prompt in baseIO.c
+			case 0x01://got enter, process user input
+				switch(currentByte){
+					case 0://no bytes, error
+						bpWmessage(MSG_ERROR_SYNTAX);
+						break;
+					case 1://1 byte, try to process as a menu option
+						if(checkMenuCommand(terminalInput[0]))break;
+					default://multiple bytes, process as syntax
+						processSyntaxString(currentByte, terminalInput);//process a syntax string
+				}
+				currentByte=0;
+				bpEchoCurrentBusMode(); //print the bus mode
+				UART1TX('>');//echo prompt
+				break;
+			case 0xff://got rawIO mode trigger
+				currentByte=0;
+				rawSPI();//hand control to raw SPI service loop. resume as normal on return
+				break;	
 		}
 
 		//send the periodic service command to the current protocol

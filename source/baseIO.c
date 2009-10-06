@@ -52,6 +52,8 @@ unsigned int bpGetUserInput(unsigned int *currentByte, unsigned int maxBytes, un
 	while(UART1RXRdy()){
 		inbuf=UART1RX();
 
+		if(inbuf==0) return 0xff;
+
 		switch(inbuf){
 			case 0x0A://enter
 			case 0x0D:	
