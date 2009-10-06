@@ -28,7 +28,7 @@
 
 //#define BUSPIRATE_POST //used to switch POST on and off
 
-#define BP_FIRMWARE_STRING "Firmware v2.2"
+#define BP_FIRMWARE_STRING "Firmware v2.3-nightly"
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
@@ -92,7 +92,7 @@
 //TO DO: add global scratch buffer to setting array for use in 
 //	1-Wire enumeration, JTAG input buffer, etc...
 struct _modeConfig {
-	unsigned char speed:1; 
+	unsigned char speed; 
 	unsigned char altAUX:1;
 	unsigned char periodicService:1;
 	unsigned char allowlsb:1;

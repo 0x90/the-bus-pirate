@@ -26,7 +26,7 @@ struct _UART{
 	unsigned char eu:1;//echo uart
 } uartSettings;
 
-static unsigned int UARTspeed[]={13332,3332,1666,832,416,207,103,68,34,};//BRG:300,1200,2400,4800,9600,19200,38400,57600,115200
+static unsigned int UART2speed[]={13332,3332,1666,832,416,207,103,68,34,};//BRG:300,1200,2400,4800,9600,19200,38400,57600,115200
 
 void uartProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
 	static unsigned char c;
@@ -109,7 +109,7 @@ void uartProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal)
 			#endif
 			break;
 		case CMD_SETUP:
-			UART2Setup(UARTspeed[modeConfig.speed],modeConfig.HiZ, uartSettings.rxp, uartSettings.dbp, uartSettings.sb );
+			UART2Setup(UART2speed[modeConfig.speed],modeConfig.HiZ, uartSettings.rxp, uartSettings.dbp, uartSettings.sb );
 			bpWmessage(MSG_READY);
 			UART2Enable();
 			break;
