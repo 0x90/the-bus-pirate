@@ -17,13 +17,17 @@ static unsigned char display,errors;
 //echos all characters + number of errors
 void bpPOST(void){
 	unsigned char i;
-	BP_POST_DIR=1;Nop(); Nop();
-	BP_POST=0;//ground it, but not until it's an input!
-	for(i=0; i<20; i++){ 
-		if(BP_POST==0) return;
+
+	//setup POST trigger pin (PGC)
+	BP_POST_DIR=1;Nop(); Nop(); //input
+	BP_POST=0;					//ground, but not until it's an input!
+	CNPU1|=0b10000; 			//enable internal pullup
+	for(i=0; i<20; i++){ 		//verifty not high 20 times to avoid false entry
+		if(BP_POST==1){CNPU1&=(~0b10000); return;}
 	}
-	selfTest(0);
-	if(errors==0) BP_LEDMODE=1;//light MODE LED
+	selfTest(0);				//silent self-test
+	BP_VREG_ON(); //VREG on for testing, LED
+	if(errors==0) BP_LEDMODE=1;	//light MODE LED if success
 	while(1){
 		//echo incoming bytes + errors
 		//tests FTDI chip, UART, retrieves results of test

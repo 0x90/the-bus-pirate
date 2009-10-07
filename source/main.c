@@ -92,7 +92,7 @@ int main(void){
 				break;
 			case 0xff://got rawIO mode trigger
 				currentByte=0;
-				rawSPI();//hand control to raw SPI service loop. resume as normal on return
+				rawBB();//hand control to raw SPI service loop. resume as normal on return
 				break;	
 		}
 

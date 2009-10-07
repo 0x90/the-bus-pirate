@@ -77,6 +77,7 @@ file_049=hardware profiles
 file_050=translations
 file_051=translations
 file_052=.
+file_053=.
 [GENERATED_FILES]
 file_000=no
 file_001=no
@@ -131,6 +132,7 @@ file_049=no
 file_050=no
 file_051=no
 file_052=no
+file_053=no
 [OTHER_FILES]
 file_000=no
 file_001=no
@@ -185,6 +187,7 @@ file_049=no
 file_050=no
 file_051=no
 file_052=no
+file_053=no
 [FILE_INFO]
 file_000=main.c
 file_001=raw2wire.c
@@ -238,7 +241,8 @@ file_048=bitbang.h
 file_049=hardwarev3.h
 file_050=translations\it-IT.h
 file_051=translations\es-ES.h
-file_052=APP 24FJ64GA002.gld
+file_052=rawIO.h
+file_053=APP 24FJ64GA002.gld
 [SUITE_INFO]
 suite_guid={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 suite_state=
