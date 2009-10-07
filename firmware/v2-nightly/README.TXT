@@ -37,6 +37,11 @@ If you're starting with a blank chip, follow these steps to load the firmware.
 
 III. History
 See the project tracker on our google SVN page for a complete list of updates
+v2.3 preview
+*Major bug fix to all speed settings, esp. UART
+*Raw bigbang mode
+*Raw SPI mode
+
 v2.2
 *Firmware v2.2 IS compatible with bootloader v0f and v0g, and v2. Upgrade to bootloader V2 if possible.
 *V3 hardware compiles in all languages.
