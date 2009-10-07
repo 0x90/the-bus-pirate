@@ -39,7 +39,7 @@ bits again for a two-fold increase in speed.
 #define SPICLK_ODC 			BP_CLK_ODC	
 #define SPICS_ODC 			BP_CS_ODC	
 
-void rawBBpindirectionset(unsigned char inByte);
+unsigned char rawBBpindirectionset(unsigned char inByte);
 unsigned char rawBBpinset(unsigned char inByte);
 void rawBBversion(void);
 void rawspiSetup(void);
@@ -251,14 +251,14 @@ Data:
 Commands:
 00000000 //Reset
 00000001 //enter rawSPI mode
-010xxxxx //set input(1)/output(0) pin state
+010xxxxx //set input(1)/output(0) pin state (returns pin read)
 */
 
 
 void rawBB(void){
 	static unsigned char inByte;
 	
-	rawBBpindirectionset(0);//pins to input on start
+	rawBBpindirectionset(0xff);//pins to input on start
 	rawBBpinset(0);//startup everything off, pins at ground
 	
 	rawBBversion();//send mode name and version
@@ -273,12 +273,11 @@ void rawBB(void){
 				rawBBversion();
 			}else if(inByte==1){//goto SPI mode
 				rawSPI();//go into rawSPI loop
-				rawBBpindirectionset(0);//pins to input on start
+				rawBBpindirectionset(0xff);//pins to input on start
 				rawBBpinset(0);//startup everything off, pins at ground
 				rawBBversion(); //say name on return
-			}else if((inByte>>5)&0b010){//set pin direction
-				rawBBpindirectionset(inByte);
-				UART1TX(1);
+			}else if((inByte>>5)&0b010){//set pin direction, return read
+				UART1TX(rawBBpindirectionset(inByte));
 			}else{//unknown command, error
 				UART1TX(0);
 			}
@@ -290,7 +289,7 @@ void rawBB(void){
 
 void rawBBversion(void){bpWstring("BBIO1");}
 
-void rawBBpindirectionset(unsigned char inByte){
+unsigned char rawBBpindirectionset(unsigned char inByte){
 	unsigned char i;
 	//setup pin TRIS
 	//using this method is long and nasty, 
@@ -315,6 +314,19 @@ void rawBBpindirectionset(unsigned char inByte){
 	i=0;
 	if(inByte&0b1)i=1;
 	BP_CS_DIR=i;
+
+	//delay for a brief period
+	bpDelayUS(5);
+
+	//return PORT read
+	inByte&=(~0b00011111);
+	if(BP_AUX!=0)inByte|=0b10000;  
+	if(BP_MOSI!=0)inByte|=0b1000; 
+	if(BP_CLK!=0)inByte|=0b100;  	
+	if(BP_MISO!=0)inByte|=0b10;  
+	if(BP_CS!=0)inByte|=0b1;  
+
+	return inByte;//return the read
 }
 
 unsigned char rawBBpinset(unsigned char inByte){
