@@ -10,6 +10,7 @@ void bpPOSTWline(char *s);
 void bpPOSTWstring(char *s);
 
 static unsigned char display,errors;
+static volatile unsigned int tick=0;
 
 //silent POST for manufacturing
 //when complete, 
@@ -17,6 +18,7 @@ static unsigned char display,errors;
 //echos all characters + number of errors
 void bpPOST(void){
 	unsigned char i;
+
 
 	//setup POST trigger pin (PGC)
 	BP_POST_DIR=1;Nop(); Nop(); //input
@@ -26,12 +28,21 @@ void bpPOST(void){
 		if(BP_POST==1){CNPU1&=(~0b10000); return;}
 	}
 	selfTest(0);				//silent self-test
-	BP_VREG_ON(); //VREG on for testing, LED
-	if(errors==0) BP_LEDMODE=1;	//light MODE LED if success
+	//BP_VREG_ON(); //VREG on for testing, LED
+	if(errors) BP_LEDMODE=1;	//light MODE LED if errors
 	while(1){
 		//echo incoming bytes + errors
 		//tests FTDI chip, UART, retrieves results of test
 		if(UART1RXRdy()) UART1TX(UART1RX()+errors);
+		
+		if(!errors){	
+			if(tick==0){
+				tick=0xFFFF;
+				BP_LEDMODE^=1;//toggle LED
+			}
+			tick--;
+		}
+
 	}
 }
 

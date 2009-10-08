@@ -15,7 +15,7 @@
  *
  */
 //this profile is for the Bus Pirate v3 hardware from dangerousprototypes.com
-#define BP_VERSION_STRING "Bus Pirate v3"
+#define BP_VERSION_STRING "Bus Pirate v3"// (Seeed Studio)"
 #define BP_VERSION "v3"
 
 //set the pin to use for POST detection
