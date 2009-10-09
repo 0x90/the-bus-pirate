@@ -37,6 +37,9 @@ If you're starting with a blank chip, follow these steps to load the firmware.
 
 III. History
 See the project tracker on our google SVN page for a complete list of updates
+v2.4
+*Bug with some hardware and terminals: require 0x00 20 times to enter BBIO mode to prevent 'dead terminal' syndrome.
+
 v2.3 preview
 *Major bug fix to all speed settings, esp. UART
 *Raw bigbang mode
