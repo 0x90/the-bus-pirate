@@ -48,11 +48,8 @@ unsigned int bpUserNumberPrompt(unsigned int maxBytes, unsigned int maxValue, un
 unsigned int bpGetUserInput(unsigned int *currentByte, unsigned int maxBytes, unsigned char *terminalInput ){
 	unsigned char inbuf;
 
-	//if(UART1RXRdy()){
 	while(UART1RXRdy()){
 		inbuf=UART1RX();
-
-		if(inbuf==0) return 0xff;
 
 		switch(inbuf){
 			case 0x0A://enter
@@ -66,6 +63,8 @@ unsigned int bpGetUserInput(unsigned int *currentByte, unsigned int maxBytes, un
 					UART1TX(inbuf);//echo back
 				}
 				break;
+			case 0x00://binary mode trigger
+				return 0xff;
 			default:
 				//don't overrun the buffer
 				//only get characters space (ASCII32) to ~ (ASCII126) 

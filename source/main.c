@@ -64,7 +64,7 @@ void Initialize(void);
 //this buffer holds the characters entered into the terminal 
 //		untill enter is pressed
 #define TERMINAL_BUFFER 4000
-unsigned char terminalInput[TERMINAL_BUFFER];
+unsigned char binmodecnt=0, terminalInput[TERMINAL_BUFFER];
 unsigned int currentByte;
 
 #pragma code
@@ -87,12 +87,16 @@ int main(void){
 						processSyntaxString(currentByte, terminalInput);//process a syntax string
 				}
 				currentByte=0;
+				binmodecnt=0; //reset any null characters
 				bpEchoCurrentBusMode(); //print the bus mode
 				UART1TX('>');//echo prompt
 				break;
 			case 0xff://got rawIO mode trigger
-				currentByte=0;
-				rawBB();//hand control to raw SPI service loop. resume as normal on return
+				binmodecnt++;
+				if(binmodecnt>19){
+					rawBB();//hand control to raw SPI service loop. resume as normal on return
+					//binmodecnt=0; //this line is unreachable, exit with hardware reset
+				}
 				break;	
 		}
 
@@ -130,7 +134,7 @@ void Initialize(void){
 
 	bpInit();//put startup values in config (do first)clean up, exit in HI-Z
 		
-	InitializeUART1(); //init the PC side serial port (needs bpInit() first for speed setting)
+	InitializeUART1(); //init the PC side serial port
 
 	#ifdef BUSPIRATE_POST
 	bpPOST();//check for power-on self-test jumper, if true, do test mode 
