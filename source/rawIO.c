@@ -112,10 +112,12 @@ void rawSPI(void){
 					case 2:
 						SPICS=0; //cs enable/low
 						rdper&=(~0b1);
+						UART1TX(1);
 						break;
 					case 3:
 						SPICS=1; //cs disable/high
 						rdper|=1;
+						UART1TX(1);
 						break;
 				}	
 				break;
@@ -173,9 +175,9 @@ void rawSPI(void){
 				}
 
 				if(inByte&0b1)
-					SPICS=0;//CS high
+					SPICS=1;//CS high
 				else
-					SPICS=1;
+					SPICS=0;
 		
 				UART1TX(1);//send 1/OK		
 				break;
@@ -278,6 +280,7 @@ Commands:
 void rawBB(void){
 	static unsigned char inByte;
 	
+	BP_LEDMODE=1;//light MODE LED
 	rawBBpindirectionset(0xff);//pins to input on start
 	rawBBpinset(0);//startup everything off, pins at ground
 	
@@ -297,6 +300,7 @@ void rawBB(void){
 				rawBBpinset(0);//startup everything off, pins at ground
 				rawBBversion(); //say name on return
 			}else if(inByte==0b1111){//return to terminal
+				BP_LEDMODE=0;//light MODE LED
 				asm("RESET");
 			}else if((inByte>>5)&0b010){//set pin direction, return read
 				UART1TX(rawBBpindirectionset(inByte));
