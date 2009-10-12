@@ -6,8 +6,13 @@
 #NOTE:
 # This demo tests the interface between the PC and the Bus Pirate
 #  It will enable the power supplies, pullups, and various pins, remove any attached devices
+# Developed with ActivePerl: http://www.activestate.com/activeperl/
+#
 # For windows: configure your COM port below
+# you'll also need Win32::Serialport http://search.cpan.org/~bbirth/Win32-SerialPort-0.19/lib/Win32/SerialPort.pm
+#
 # For others: use the Device::SerialPort version and modify the serial port name
+# you'll need Device::SerialPort  http://search.cpan.org/~cook/Device-SerialPort-1.002/SerialPort.pm
 
 #ANOTHER NOTE:
 # This is my first time using Perl,
