@@ -61,7 +61,6 @@ if($opt_s ne ""){
 }
 if($opt_b ne ""){
 	$eebytes=$opt_b;
-	print "shit:".$opt_b;
 }
 if($opt_l ne ""){
 	$eebuflen=$opt_l;
@@ -92,7 +91,7 @@ $port->write_settings		|| undef $port; #set
 unless ($port)			{ die "couldn't write_settings"; }
 
 print "Bus Pirate SPI EEPROM PROGRAMMER v0.1\n";
-print "Use Bus Pirate firmware v2.4+.\n";
+print "Use Bus Pirate firmware v2.5+.\n";
 
 #
 #
