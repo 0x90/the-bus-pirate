@@ -37,6 +37,10 @@ If you're starting with a blank chip, follow these steps to load the firmware.
 
 III. History
 See the project tracker on our google SVN page for a complete list of updates
+v2.5
+*Raw spi fixes: CS command didn't return 1,CS bit of peripheral set command was inverted.
+*Smartcard macro in raw2wire uses configured LSB setting (doesn't force LSB bit order).
+
 v2.4
 *Bug with some hardware and terminals: require 0x00 20 times to enter BBIO mode to prevent 'dead terminal' syndrome.
 
