@@ -168,7 +168,7 @@ void r2wProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
 // now uses CS pin instead of AUX pin because 1,2,3 have build in pullups on CS but not AUX
 void r2wMacro_78133Write(void){
 
-	bpWline("ISO 7813-3 ATR (RESET on CS)");
+	bpWline("ISO 7816-3 ATR (RESET on CS)");
 	bpWline("RESET HIGH, CLOCK TICK, RESET LOW");
 	
 	//Reset needs to start low
@@ -190,11 +190,11 @@ void r2wMacro_78133Read(void){
 	unsigned char c;
 	unsigned int i;
 
-	bpWstring("ISO 7813-3 reply (LSB first): ");
+	bpWstring("ISO 7816-3 reply (uses current LSB setting): ");
 
 	//force LSB fist setting for ISO compliance
-	c=modeConfig.lsbEN;//store origional setting
-	modeConfig.lsbEN=1;
+	//c=modeConfig.lsbEN;//store origional setting
+	//modeConfig.lsbEN=1;
 
 	//read and display ISO 7813-3 bytes
 	for(i=0; i<4; i++){
@@ -204,7 +204,7 @@ void r2wMacro_78133Read(void){
 	}
 	bpWBR;
 
-	modeConfig.lsbEN=c;//return to previous LSB setting
+	//modeConfig.lsbEN=c;//return to previous LSB setting
 
 	//parse the first two bytes for 7813-3 atr header info
 	//bits8:5 8=serial, 9=3wire, 10=2wire 0xf=RFU

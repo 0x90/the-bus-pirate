@@ -160,7 +160,7 @@
 #define OUMSG_PS_ADC_VOLT_PROBE    "MEDIDOR DE TENSIÓN: "
 #define OUMSG_PS_ADC_VOLTS        "V"
 //RAW2WIRE//
-#define OUMSG_R2W_MACRO_MENU    " 0.Menú de macros\x0D\x0A 1.ISO7813-3 ATR\x0D\x0A 2.ISO7813-3 solo análisis\x0D\x0A"
+#define OUMSG_R2W_MACRO_MENU    " 0.Menú de macros\x0D\x0A 1.ISO7816-3 ATR\x0D\x0A 2.ISO7816-3 solo análisis\x0D\x0A"
 //RAW3WIRE//
 //selftest// //just leave in english for now...
 //selftest//

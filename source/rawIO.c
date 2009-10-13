@@ -42,9 +42,9 @@ bits again for a two-fold increase in speed.
 unsigned char rawBBpindirectionset(unsigned char inByte);
 unsigned char rawBBpinset(unsigned char inByte);
 void rawBBversion(void);
-void rawspiSetup(void);
-void rawspiDisable(void);
-unsigned char spiW(unsigned char c);
+void rawSPI(void);
+void rawI2C(void);
+void rawUART(void);
 
 static unsigned char bufOutByte;
 static unsigned char rawSPIspeed[]={0b00000,0b11000,0b11100,0b11101,0b00011,0b01000,0b10000,0b11000};//00=30,01=125,10=250,11=1000khz, 100=2mhz,101=2.667mhz,  110=4mhz, 111=8mhz; datasheet pg 142
@@ -240,6 +240,62 @@ void rawSPI(void){
 	}//while loop
 }//function
 
+/*
+Very simple mode
+Settings, and then enter a never ending UART bridge.
+options:
+Baud
+A) standard settings
+B) send 2 bytes for custom BRG
+
+databits and parity (2bits)
+1. 8, NONE *default \x0D\x0A 2. 8, EVEN \x0D\x0A 3. 8, ODD \x0D\x0A 4. 9, NONE
+Stop bits:\x0D\x0A 1. 1 *default\x0D\x0A 2. 2 \x0D\x0A
+Receive polarity:\x0D\x0A 1. Idle 1 *default\x0D\x0A 2. Idle 0\x0D\x0A
+output type (hiz or regular
+peripheral settings
+
+# 00000000//reset to BBIO
+# 00000001 – mode version string (ART1)
+# 00000010 - mode/version string (ART1)
+# 00000011 - UART speed manual config, 2 bytes (BRGH, BRGL)
+# 00000100 - live UART input begin
+# 00000110 - live UART input end
+# 00001111 - bridge mode (reset to exit)
+# 0001xxxx – Bulk transfer, send 1-16 bytes (0=1byte!)
+# 0100xxxx - Set speed,0000=300,0001=1200,10=2400,4800,9600,19200,33250, 38400,57600,1010=115200,
+# 0101xxxx - Read speed, 
+# 0110wxyz – Set peripheral w=power, x=pullups, y=AUX, z=CS
+# 0111wxyz – read peripherals 
+# 110wxxyz – config, w=output type, xx=databits and parity, y=stop bits, z=rx polarity (default :00000)
+# 110wxxyz – read config
+*/
+void rawUART(void){
+
+
+
+}
+
+/*
+rawI2C mode:
+# 00000000//reset to BBIO
+# 00000001 – mode version string (SPI1)
+# 00000010 – I2C start bit
+# 00000011 – I2C stop bit
+# 00000100 - SPI read byte
+# 00000110 - ACK bit
+# 00000111 - NACK bit
+# 0001xxxx – Bulk transfer, send 1-16 bytes (0=1byte!)
+# 0100000x - Set I2C speed, 1=high
+# 0101000x - Read speed, 
+# 0110wxyz – Configure peripherals w=power, x=pullups, y=AUX, z=CS
+# 0111wxyz – read peripherals w=power, x=pullups, y=AUX, z=CS
+*/
+
+void rawI2C(void){
+
+
+}
 
 /*
 Bitbang is like a player piano or bitmap. The 1 and 0 represent the pins. 
