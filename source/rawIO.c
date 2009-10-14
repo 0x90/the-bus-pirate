@@ -1,27 +1,34 @@
+/* Binary access modes for Bus Pirate scripting 
+	This code is very ugly
+	We plan to develop the protocols, 
+	and then look at the needs after working with it.
+
+*/
+
+#include "base.h"
+#include "bitbang.h"
+extern struct _modeConfig modeConfig;
+
 /*
 rawSPI mode:
-# 00000000//reset to BBIO
-# 00000001 – SPI mode/rawSPI version string (SPI1)
-# 00000010 – CS low (0)
-# 00000011 – CS high (1)
-# 0001xxxx – Bulk SPI transfer, send 1-16 bytes (0=1byte!)
-# 0010xxxx – Low 4 bits of byte + single byte write/read
-# 0011xxxx – High 4 bits of byte
-# 01000xxx - Set SPI speed,  
-# 01010xxx - Read SPI speed, 
-# 0110wxyz – Configure peripherals w=power, x=pullups, y=AUX, z=CS
-# 0111wxyz – read peripherals w=power, x=pullups, y=AUX, z=CS
-# 1000wxyz – SPI config, w=output type, x=idle, y=clock edge, z=sample
-# 1001wxyz – read SPI config, w=output type, x=idle, y=clock edge, z=sample
-
+    * 00000000 – Enter raw bitbang mode, reset to raw bitbang mode
+    * 00000001 – SPI mode/rawSPI version string (SPI1)
+    * 00000010 – CS low (0)
+    * 00000011 – CS high (1)
+    * 0001xxxx – Bulk SPI transfer, send 1-16 bytes (0=1byte!)
+    * 0010xxxx – Low 4 bits of byte + single byte write/read
+    * 0011xxxx – High 4 bits of byte
+    * 0100wxyz – Configure peripherals, w=power, x=pullups, y=AUX, z=CS
+    * 01010000 – Read peripherals
+    * 01100xxx – Set SPI speed, 30, 125, 250khz; 1, 2, 2.6, 4, 8MHz
+    * 01110000 – Read SPI speed
+    * 1000wxyz – SPI config, w=output type, x=idle, y=clock edge, z=sample
+    * 10010000 – Read SPI config
 Tips:
 A byte is sent/read on SPI each time the low bits are sent (0001xxxx). 
 If the upper 4 bits are the same as the last byte, just send the lower 
 bits again for a two-fold increase in speed.
 */
-
-#include "base.h"
-
 //direction registers
 #define SPIMOSI_TRIS 	BP_MOSI_DIR	
 #define SPICLK_TRIS 	BP_CLK_DIR	
@@ -40,6 +47,7 @@ bits again for a two-fold increase in speed.
 #define SPICS_ODC 			BP_CS_ODC	
 
 unsigned char rawBBpindirectionset(unsigned char inByte);
+void rawBBperipheralset(unsigned char inByte);
 unsigned char rawBBpinset(unsigned char inByte);
 void rawBBversion(void);
 void rawSPI(void);
@@ -119,6 +127,9 @@ void rawSPI(void){
 						rdper|=1;
 						UART1TX(1);
 						break;
+					default:
+						UART1TX(0);
+						break;
 				}	
 				break;
 			case 0b0001://get x+1 bytes
@@ -149,6 +160,7 @@ void rawSPI(void){
 				UART1TX(1);//send 1/OK
 				break;
 			case 0b0100: //configure peripherals w=power, x=pullups, y=AUX, z=CS
+				//rawBBperipheralset(inByte);
 				rdper=inByte;
 				#ifndef BUSPIRATEV0A
 				if(inByte&0b1000){
@@ -241,6 +253,141 @@ void rawSPI(void){
 }//function
 
 /*
+rawI2C mode:
+# 00000000//reset to BBIO
+# 00000001 – mode version string (SPI1)
+# 00000010 – I2C start bit
+# 00000011 – I2C stop bit
+# 00000100 - I2C read byte
+# 00000110 - ACK bit
+# 00000111 - NACK bit
+# 0001xxxx – Bulk transfer, send 1-16 bytes (0=1byte!)
+# 0100000x - Set I2C speed, 1=high (50kHz) 0=low (5kHz)
+# 0101000x - Read speed, (planned)
+# 0110wxyz – Configure peripherals w=power, x=pullups, y=AUX, z=CS
+# 0111wxyz – read peripherals (planned, not implemented)
+*/
+#define SCL 		BP_CLK
+#define SCL_TRIS 	BP_CLK_DIR     //-- The SCL Direction Register Bit
+#define SDA 		BP_MOSI        //-- The SDA output pin
+#define SDA_TRIS 	BP_MOSI_DIR    //-- The SDA Direction Register Bit
+
+void rawI2C(void){
+	static unsigned char inByte, rawCommand, i;
+	
+	//I2C setup
+	SDA_TRIS=1;
+	SCL_TRIS=1;
+	SCL=0;			//B8 scl 
+	SDA=0;			//B9 sda
+	modeConfig.HiZ=1;//yes, always hiz (bbio uses this setting, should be changed to a setup variable because stringing the modeconfig struct everyhwere is getting ugly!)
+	modeConfig.lsbEN=0;//just in case!
+	bbSetup(2, 1);//configure the bitbang library for 2-wire, set the speed to high speed (50khz)
+	bpWstring("I2C1");//1 - SPI setup and reply string
+
+	while(1){
+
+		while(U1STAbits.URXDA == 0);//wait for a byte
+		inByte=U1RXREG; //grab it
+		rawCommand=(inByte>>4);//get command bits in seperate variable
+		
+		switch(rawCommand){
+			case 0://reset/setup/config commands
+				switch(inByte){
+					case 0://0, reset exit
+						//cleanup!!!!!!!!!!
+						return; //exit
+						break;
+					case 1://1 - id reply string
+						bpWstring("I2C1");
+						break;
+					case 2://I2C start bit
+						bbI2Cstart();
+						UART1TX(1);
+						break;
+					case 3://I2C stop bit
+						bbI2Cstop();
+						UART1TX(1);
+						break;
+					case 4://I2C read byte
+						UART1TX(bbReadByte());
+						break;
+					case 6://I2C send ACK
+						bbI2Cack();
+						UART1TX(1);
+						break;
+					case 7://I2C send NACK
+						bbI2Cnack();
+						UART1TX(1);
+						break;
+					default:
+						UART1TX(0);
+						break;
+				}	
+				break;
+
+			case 0b0001://get x+1 bytes
+				inByte&=(~0b11110000); //clear command portion
+				inByte++; //increment by 1, 0=1byte
+				UART1TX(1);//send 1/OK		
+
+				for(i=0;i<inByte;i++){
+					while(U1STAbits.URXDA == 0);//wait for a byte
+					bbWriteByte(U1RXREG); //send byte
+					UART1TX(bbReadBit());//return ACK0 or NACK1
+				}
+
+				break;
+
+			case 0b0100://set speed 
+				inByte&=(~0b11111110);//clear command portion
+				bbSetup(2, inByte);//set I2C speed
+				UART1TX(1);
+				break;
+
+			case 0b0110: //configure peripherals w=power, x=pullups, y=AUX, z=CS
+				//rawBBperipheralset(inByte);
+				#ifndef BUSPIRATEV0A
+				if(inByte&0b1000){
+					BP_VREG_ON();//power on
+				}else{
+					BP_VREG_OFF();//power off
+				}
+				#endif
+				
+				#if defined(BUSPIRATEV0A) || defined( BUSPIRATEV2)
+				if(inByte&0b100){
+					BP_PULLUP_ON();//pullups on
+				}else{
+					BP_PULLUP_OFF();
+				}
+				#endif
+		
+				if(inByte&0b10){
+					BP_AUX_DIR=0;//aux output
+					BP_AUX=1;//aux high
+				}else{
+					BP_AUX_DIR=0;//aux output
+					BP_AUX=0;//aux low
+				}
+
+				if(inByte&0b1)
+					SPICS=1;//CS high
+				else
+					SPICS=0;
+		
+				UART1TX(1);//send 1/OK		
+				break;
+
+			default:
+				UART1TX(0x00);//send 0/Error
+				break;
+		}//command switch
+	}//while loop
+
+}
+
+/*
 Very simple mode
 Settings, and then enter a never ending UART bridge.
 options:
@@ -270,32 +417,8 @@ peripheral settings
 # 110wxxyz – config, w=output type, xx=databits and parity, y=stop bits, z=rx polarity (default :00000)
 # 110wxxyz – read config
 */
-void rawUART(void){
+void rawUART(void){}
 
-
-
-}
-
-/*
-rawI2C mode:
-# 00000000//reset to BBIO
-# 00000001 – mode version string (SPI1)
-# 00000010 – I2C start bit
-# 00000011 – I2C stop bit
-# 00000100 - SPI read byte
-# 00000110 - ACK bit
-# 00000111 - NACK bit
-# 0001xxxx – Bulk transfer, send 1-16 bytes (0=1byte!)
-# 0100000x - Set I2C speed, 1=high
-# 0101000x - Read speed, 
-# 0110wxyz – Configure peripherals w=power, x=pullups, y=AUX, z=CS
-# 0111wxyz – read peripherals w=power, x=pullups, y=AUX, z=CS
-*/
-
-void rawI2C(void){
-
-
-}
 
 /*
 Bitbang is like a player piano or bitmap. The 1 and 0 represent the pins. 
@@ -352,6 +475,11 @@ void rawBB(void){
 				rawBBversion();
 			}else if(inByte==1){//goto SPI mode
 				rawSPI();//go into rawSPI loop
+				rawBBpindirectionset(0xff);//pins to input on start
+				rawBBpinset(0);//startup everything off, pins at ground
+				rawBBversion(); //say name on return
+			}else if(inByte==2){//goto I2C mode
+				rawI2C();
 				rawBBpindirectionset(0xff);//pins to input on start
 				rawBBpinset(0);//startup everything off, pins at ground
 				rawBBversion(); //say name on return
@@ -466,4 +594,37 @@ unsigned char rawBBpinset(unsigned char inByte){
 	if(BP_CS!=0)inByte|=0b1;  
 
 	return inByte;//return the read
+}
+
+void rawBBperipheralset(unsigned char inByte){
+	#ifndef BUSPIRATEV0A
+	if(inByte&0b1000){
+		BP_VREG_ON();//power on
+	}else{
+		BP_VREG_OFF();//power off
+	}
+	#endif
+	
+	#if defined(BUSPIRATEV0A) || defined( BUSPIRATEV2)
+	if(inByte&0b100){
+		BP_PULLUP_ON();//pullups on
+	}else{
+		BP_PULLUP_OFF();
+	}
+	#endif
+
+	if(inByte&0b10){
+		BP_AUX_DIR=0;//aux output
+		BP_AUX=1;//aux high
+	}else{
+		BP_AUX_DIR=0;//aux output
+		BP_AUX=0;//aux low
+	}
+
+	if(inByte&0b1)
+		SPICS=1;//CS high
+	else
+		SPICS=0;
+
+	UART1TX(1);//send 1/OK		
 }
