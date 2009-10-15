@@ -7,6 +7,7 @@
 
 #include "base.h"
 #include "bitbang.h"
+#include "selftest.h"
 extern struct _modeConfig modeConfig;
 
 /*
@@ -53,6 +54,7 @@ void rawBBversion(void);
 void rawSPI(void);
 void rawI2C(void);
 void rawUART(void);
+
 
 static unsigned char bufOutByte;
 static unsigned char rawSPIspeed[]={0b00000,0b11000,0b11100,0b11101,0b00011,0b01000,0b10000,0b11000};//00=30,01=125,10=250,11=1000khz, 100=2mhz,101=2.667mhz,  110=4mhz, 111=8mhz; datasheet pg 142
@@ -451,7 +453,13 @@ Data:
 Commands:
 00000000 //Reset to raw BB mode, get raw BB version string
 00000001 //enter rawSPI mode
+00000010 //enter raw I2C mode
+00000011 //enter raw UART mode
+00001101
+00001110
 00001111 //reset, return to user terminal
+00010000 //short self test
+00010001 //full self test with jumpers
 010xxxxx //set input(1)/output(0) pin state (returns pin read)
 */
 
@@ -486,6 +494,10 @@ void rawBB(void){
 			}else if(inByte==0b1111){//return to terminal
 				BP_LEDMODE=0;//light MODE LED
 				asm("RESET");
+			}else if(inByte == 0b10000){//short self test
+				rawSelfTest(0);
+			}else if(inByte == 0b10001){//full self test with jumpers
+				rawSelfTest(1);
 			}else if((inByte>>5)&0b010){//set pin direction, return read
 				UART1TX(rawBBpindirectionset(inByte));
 			}else{//unknown command, error
@@ -628,3 +640,6 @@ void rawBBperipheralset(unsigned char inByte){
 
 	UART1TX(1);//send 1/OK		
 }
+
+
+

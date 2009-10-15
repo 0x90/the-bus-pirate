@@ -109,7 +109,7 @@ unsigned char checkMenuCommand(unsigned char c){
 #if defined(BUSPIRATEV25) || defined (BUSPIRATEV3)
 		case '~':
 			if(bpConfig.busMode==HIZ){			
-				selfTest(1);//self test, showprogress in terminal
+				selfTest(1,1);//self test, showprogress in terminal
 			}else{
 				bpWline(OUMSG_PM_SELFTEST_HIZ);
 			}

@@ -10,51 +10,47 @@ void bpPOSTWline(char *s);
 void bpPOSTWstring(char *s);
 
 static unsigned char display,errors;
-static volatile unsigned int tick=0;
 
-//silent POST for manufacturing
-//when complete, 
-//lights mode led on success
-//echos all characters + number of errors
-void bpPOST(void){
-	unsigned char i;
+void rawSelfTest(unsigned char jumperTest){
+	static volatile unsigned int tick=0;
 
-
-	//setup POST trigger pin (PGC)
-	BP_POST_DIR=1;Nop(); Nop(); //input
-	BP_POST=0;					//ground, but not until it's an input!
-	CNPU1|=0b10000; 			//enable internal pullup
-	for(i=0; i<20; i++){ 		//verifty not high 20 times to avoid false entry
-		if(BP_POST==1){CNPU1&=(~0b10000); return;}
-	}
-	selfTest(0);				//silent self-test
-	//BP_VREG_ON(); //VREG on for testing, LED
+	selfTest(0,jumperTest);		//silent self-test
 	if(errors) BP_LEDMODE=1;	//light MODE LED if errors
+	UART1TX(errors);			//reply with number of errors
+
 	while(1){
 		//echo incoming bytes + errors
 		//tests FTDI chip, UART, retrieves results of test
-		if(UART1RXRdy()) UART1TX(UART1RX()+errors);
+		if(UART1RXRdy()){
+			display=UART1RX(); //reuse display variable
+			if(display!=0xff){
+				UART1TX(display+errors);
+			}else{
+				return; //exit if we get oxff, else send back byte+errors
+			}
+		}
 		
 		if(!errors){	
 			if(tick==0){
 				tick=0xFFFF;
-				BP_LEDMODE^=1;//toggle LED
+				BP_LEDMODE^=1;	//toggle LED
 			}
 			tick--;
 		}
 
 	}
+
 }
 
 //self test, showProgress=1 displays the test results in the terminal, set to 0 for silent mode
 //errors are counted in the global errors variable
-void selfTest(unsigned char showProgress){
+void selfTest(unsigned char showProgress, unsigned char jumperTest){
 //toggle display of test results with show Progress variable
 	errors=0;
 	display=showProgress;
 
 //instructions (skip pause if no display output)
-	if(display){
+	if(display && jumperTest){
 		bpPOSTWline("Disconnect any devices");
 		bpPOSTWline("Connect (Vpu to +5V) and (ADC to +3.3V)");
 		bpPOSTWline("Press a key to start");
@@ -62,7 +58,7 @@ void selfTest(unsigned char showProgress){
 		UART1RX();
 	}
 
-	bpPOSTWline("Control");
+	bpPOSTWline("Ctrl");
 	BP_AUX=1;
 	BP_AUX_DIR=0; 
 	bpPOSTWstring("AUX");
@@ -90,24 +86,28 @@ void selfTest(unsigned char showProgress){
 	bpTest(BP_VREGEN,1);
 
 	//ADC check
-	bpPOSTWline("Analog pin and pwr supply");
+	bpPOSTWline("ADC and supply");
 	AD1CON1bits.ADON = 1; // turn ADC ON
 
 	//0x030F is 5volts
 	bpPOSTWstring("5V");
 	bpADCPinTest(9,0x250);
-
-	//Vpullup is connected to 5volts
-	bpPOSTWstring("VPU");
-	bpADCPinTest(11,0x250);
+	
+	if(jumperTest){
+		//Vpullup is connected to 5volts
+		bpPOSTWstring("VPU");
+		bpADCPinTest(11,0x250);
+	}
 
 	//0x0208 is 3.3volts
 	bpPOSTWstring("3.3V");
 	bpADCPinTest(10,0x150);
 
-	//ADC is connected to 3.3volts
-	bpPOSTWstring("ADC");
-	bpADCPinTest(12,0x150);
+	if(jumperTest){
+		//ADC is connected to 3.3volts
+		bpPOSTWstring("ADC");
+		bpADCPinTest(12,0x150);
+	}
 
 	AD1CON1bits.ADON = 0; // turn ADC OFF 
 
@@ -118,25 +118,29 @@ void selfTest(unsigned char showProgress){
 //
 //***************
 
-//pullup off, pins=output & high, read input, high?
-	bpPOSTWline("Bus normal, high");
+	//pullup off, pins=output & high, read input, high?
+	bpPOSTWline("Bus high");
 	TRISB&= ~(0b1111000000);//output
 	LATB|=0b1111000000; //high	
 	bpDelayMS(100);
 	bpBusPinsTest(1);
 
-//pullup on, pins=output & low, read input, low?
-	bpPOSTWline("Bus Hi-Z, low");
+	//pullup on, pins=output & low, read input, low?
+	bpPOSTWline("Bus Hi-Z 0");
 	LATB&= ~(0b1111000000); //low
-	BP_PULLUP_ON();
+	if(jumperTest){
+		BP_PULLUP_ON();
+	}
 	bpDelayMS(100);
 	bpBusPinsTest(0);
 
-//pullup on, pins=input & low, read input, high?
-	bpPOSTWline("Bus Hi-Z, high");
-	TRISB|= 0b1111000000;//output
-	bpDelayMS(100);
-	bpBusPinsTest(1);
+	if(jumperTest){
+	//pullup on, pins=input & low, read input, high?
+		bpPOSTWline("Bus Hi-Z 1");
+		TRISB|= 0b1111000000;//output
+		bpDelayMS(100);
+		bpBusPinsTest(1);
+	}
 
 	bpInit();//clean up
 
