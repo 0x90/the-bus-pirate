@@ -40,9 +40,12 @@ void uartProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal)
 					bpWmessage(MSG_READ); //bpWstring(OUMSG_UART_READ);	
 					if(U2STAbits.PERR) bpWstring("-p "); //show any errors
 					if(U2STAbits.FERR) bpWstring("-f ");
-					if(U2STAbits.OERR) bpWstring("-o ");			
 					c=UART2RX();
 					bpWbyte(c);
+					if(U2STAbits.OERR){
+						bpWstring("*Bytes dropped*");
+    					U2STA &= (~0b10); //clear overrun error if exists
+					}	
 					bpWBR;
 				}else{
 					UART2RX();//clear the buffer....
@@ -54,9 +57,12 @@ void uartProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal)
 			if(UART2RXRdy()){
 				if(U2STAbits.PERR) bpWstring("-p "); //show any errors
 				if(U2STAbits.FERR) bpWstring("-f ");
-				if(U2STAbits.OERR) bpWstring("-o ");
 				c=UART2RX();
 				bpWbyte(c);
+				if(U2STAbits.OERR){
+					bpWstring("*Bytes dropped*");
+   					U2STA &= (~0b10); //clear overrun error if exists
+				}	
 				bpWBR;
 			}else{
 				bpWline(OUMSG_UART_READ_FAIL);	
@@ -137,6 +143,7 @@ void uartProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal)
 					//buffers for baud rate differences
 					//it's best to adjust the terminal to the same speed you want to use to avoid buffer overuns
 					//it will fail silently
+					U2STA &= (~0b10); //clear overrun error if exists
 					while(1){//never ending loop, reset Bus Pirate to get out
 						if((U2STAbits.URXDA==1)&& (U1STAbits.UTXBF == 0)){
 								U1TXREG = U2RXREG; //URXDA doesn't get cleared untill this happens
@@ -144,6 +151,20 @@ void uartProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal)
 						if((U1STAbits.URXDA==1)&& (U2STAbits.UTXBF == 0)){
 								U2TXREG = U1RXREG; //URXDA doesn't get cleared untill this happens
 						}
+					}
+					break;
+				case 2: //Watch raw UART
+					bpWline("Raw UART input. Space to exit.");
+					// could use a lot of improvement
+					//buffers for baud rate differences
+					//it's best to adjust the terminal to the same speed you want to use to avoid buffer overuns
+					//it will fail silently
+					U2STA &= (~0b10); //clear overrun error if exists
+					while(1){//never ending loop, reset Bus Pirate to get out
+						if((U2STAbits.URXDA==1)&& (U1STAbits.UTXBF == 0)){
+								U1TXREG = U2RXREG; //URXDA doesn't get cleared untill this happens
+						}
+						if(UART1RX()==' ')break; //escape
 					}
 					break;
 				//case 2://auto UART baud rate
