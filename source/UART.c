@@ -37,7 +37,10 @@ void uartProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal)
 		 	if(UART2RXRdy()){//data ready
 				if(uartSettings.eu==1){
 					bpWBR;
-					bpWmessage(MSG_READ); //bpWstring(OUMSG_UART_READ);				
+					bpWmessage(MSG_READ); //bpWstring(OUMSG_UART_READ);	
+					if(U2STAbits.PERR) bpWstring("-p "); //show any errors
+					if(U2STAbits.FERR) bpWstring("-f ");
+					if(U2STAbits.OERR) bpWstring("-o ");			
 					c=UART2RX();
 					bpWbyte(c);
 					bpWBR;
@@ -47,8 +50,11 @@ void uartProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal)
 			}
 			break;
 		case CMD_READ:
-				bpWmessage(MSG_READ);			
+			bpWmessage(MSG_READ);			
 			if(UART2RXRdy()){
+				if(U2STAbits.PERR) bpWstring("-p "); //show any errors
+				if(U2STAbits.FERR) bpWstring("-f ");
+				if(U2STAbits.OERR) bpWstring("-o ");
 				c=UART2RX();
 				bpWbyte(c);
 				bpWBR;
@@ -74,6 +80,7 @@ void uartProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal)
 			//open, start bridge
 			//start
 			//UART2Enable();
+    		U2STA &= (~0b10); //clear overrun error if exists
 			uartSettings.eu=1;//open uart
 			modeConfig.periodicService=1;//start periodic service calls
 			bpWline(OUMSG_UART_LIVE_DISPLAY_ON);
@@ -131,15 +138,12 @@ void uartProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal)
 					//it's best to adjust the terminal to the same speed you want to use to avoid buffer overuns
 					//it will fail silently
 					while(1){//never ending loop, reset Bus Pirate to get out
-						if(U2STAbits.URXDA==1){
-							if(U1STAbits.UTXBF == 0)
+						if((U2STAbits.URXDA==1)&& (U1STAbits.UTXBF == 0)){
 								U1TXREG = U2RXREG; //URXDA doesn't get cleared untill this happens
 						}
-						if(U1STAbits.URXDA==1){
-							if(U2STAbits.UTXBF == 0)
+						if((U1STAbits.URXDA==1)&& (U2STAbits.UTXBF == 0)){
 								U2TXREG = U1RXREG; //URXDA doesn't get cleared untill this happens
 						}
-
 					}
 					break;
 				//case 2://auto UART baud rate
