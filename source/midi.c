@@ -1,9 +1,9 @@
 /*
- * This file is part of the Bus Pirate project (buspirate.com).
+ * This file is part of the Bus Pirate project (http://code.google.com/p/the-bus-pirate/).
  *
- * Originally written by hackaday.com <legal@hackaday.com>
+ * Written and maintained by the Bus Pirate project.
  *
- * To the extent possible under law, hackaday.com <legal@hackaday.com> has
+ * To the extent possible under law, the project has
  * waived all copyright and related or neighboring rights to Bus Pirate. This
  * work is published from United States.
  *
@@ -12,23 +12,22 @@
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
  */
-
 #include "base.h"
 #include "uart2io.h"
 
 extern struct _modeConfig modeConfig;
+extern struct _command bpCommand;
 
 struct _UART{
 	unsigned char eu:1;//echo uart
 } midiSettings;
 
-void midiProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
+void midiProcess(void){
 	static unsigned char c;
 	static unsigned int i;
 
-	switch(cmd){
+	switch(bpCommand.cmd){
 		case CMD_PERIODIC_SERVICE:
 		 	if(UART2RXRdy()){//data ready
 				if(midiSettings.eu==1){
@@ -54,18 +53,18 @@ void midiProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal)
 			break;
 		case CMD_WRITE:
 			//bpWmessage(MSG_WRITE);
-			//bpWbyte(numVal);
+			//bpWbyte(bpCommand.num);
 			//bpWBR;
-			//UART2TX(numVal);//send byte
+			//UART2TX(bpCommand.num);//send byte
 			bpWmessage(MSG_WRITE);
-			bpWbyte(numVal);
-			if(repeatVal==1){
-				UART2TX(numVal);//send byte
+			bpWbyte(bpCommand.num);
+			if(bpCommand.repeat==1){
+				UART2TX(bpCommand.num);//send byte
 			}else{
 				bpWstring(" , ");
-				bpWbyte(repeatVal);
+				bpWbyte(bpCommand.repeat);
 				bpWmessage(MSG_WRITEBULK);
-				for(i=0;i<repeatVal;i++) UART2TX(numVal);//send byte
+				for(i=0;i<bpCommand.repeat;i++) UART2TX(bpCommand.num);//send byte
 			}
 			bpWBR;
 			break;
@@ -105,7 +104,7 @@ void midiProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal)
 			UART2Disable();
 			break;
 		case CMD_MACRO:
-			switch(numVal){
+			switch(bpCommand.num){
 				default:
 					bpWmessage(MSG_ERROR_MACRO);
 			}

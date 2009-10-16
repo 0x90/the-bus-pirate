@@ -1,9 +1,9 @@
 /*
- * This file is part of the Bus Pirate project (buspirate.com).
+ * This file is part of the Bus Pirate project (http://code.google.com/p/the-bus-pirate/).
  *
- * Originally written by hackaday.com <legal@hackaday.com>
+ * Written and maintained by the Bus Pirate project.
  *
- * To the extent possible under law, hackaday.com <legal@hackaday.com> has
+ * To the extent possible under law, the project has
  * waived all copyright and related or neighboring rights to Bus Pirate. This
  * work is published from United States.
  *
@@ -12,7 +12,6 @@
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
  */
 
 #include "SPI.h"
@@ -40,6 +39,7 @@
 #define SPICS_RPIN		BP_CS_RPIN
 
 extern struct _modeConfig modeConfig;
+extern struct _command bpCommand;
 
 void spiSetup(void);
 void spiDisable(void);
@@ -57,14 +57,14 @@ struct _SPI{
 
 static unsigned char SPIspeed[]={0b00000,0b11000,0b11100,0b11101};//30,125,250,1000khz; datasheet pg 142
 
-void spiProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
+void spiProcess(void){
 	static unsigned char c;
 	static unsigned int i;
 
-	switch(cmd){
+	switch(bpCommand.cmd){
 		case CMD_STARTR:
 		case CMD_START:
-			if(cmd==CMD_STARTR){spiSettings.wwr=1;}else{spiSettings.wwr=0;}
+			if(bpCommand.cmd==CMD_STARTR){spiSettings.wwr=1;}else{spiSettings.wwr=0;}
 			//cs enable
 			SPICS=0; 
 			bpWmessage(MSG_CS_ENABLED);
@@ -75,15 +75,15 @@ void spiProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
 			bpWmessage(MSG_CS_DISABLED);
 			break;
 		case CMD_READ:
-			if(repeatVal==1){
+			if(bpCommand.repeat==1){
 				bpWmessage(MSG_READ);
 				c=spiWriteByte(0xff);
 				bpWbyte(c);
 			}else{
 				bpWmessage(MSG_READBULK);	
-				bpWbyte(repeatVal);
+				bpWbyte(bpCommand.repeat);
 				bpWmessage(MSG_READBULK_BYTES);
-				for(i=0;i<repeatVal;i++){	
+				for(i=0;i<bpCommand.repeat;i++){	
 					bpWbyte(spiWriteByte(0xff));
 					bpSP;//space
 				}
@@ -92,9 +92,9 @@ void spiProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
 			break;
 		case CMD_WRITE:
 			bpWmessage(MSG_WRITE);
-			bpWbyte(numVal);
-			if(repeatVal==1){
-				c=spiWriteByte(numVal);
+			bpWbyte(bpCommand.num);
+			if(bpCommand.repeat==1){
+				c=spiWriteByte(bpCommand.num);
 				if(spiSettings.wwr==1){
 					bpSP;
 					bpWmessage(MSG_READ);
@@ -102,9 +102,9 @@ void spiProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
 				}
 			}else{
 				bpWstring(" , ");
-				bpWbyte(repeatVal);
+				bpWbyte(bpCommand.repeat);
 				bpWmessage(MSG_WRITEBULK);
-				for(i=0;i<repeatVal;i++)c=spiWriteByte(numVal);
+				for(i=0;i<bpCommand.repeat;i++)c=spiWriteByte(bpCommand.num);
 			}
 			bpWBR;
 			break;
@@ -145,7 +145,7 @@ void spiProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
 			spiDisable();
 			break;
 		case CMD_MACRO:
-			switch(numVal){
+			switch(bpCommand.num){
 				case 0:
 					bpWline(OUMSG_SPI_MACRO_MENU);
 					break;

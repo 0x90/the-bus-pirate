@@ -1,9 +1,9 @@
 /*
- * This file is part of the Bus Pirate project (buspirate.com).
+ * This file is part of the Bus Pirate project (http://code.google.com/p/the-bus-pirate/).
  *
- * Originally written by hackaday.com <legal@hackaday.com>
+ * Written and maintained by the Bus Pirate project.
  *
- * To the extent possible under law, hackaday.com <legal@hackaday.com> has
+ * To the extent possible under law, the project has
  * waived all copyright and related or neighboring rights to Bus Pirate. This
  * work is published from United States.
  *
@@ -12,8 +12,7 @@
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
  */
-void midiProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal);
+void midiProcess(void);
 
 

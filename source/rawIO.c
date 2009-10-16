@@ -1,3 +1,19 @@
+/*
+ * This file is part of the Bus Pirate project (http://code.google.com/p/the-bus-pirate/).
+ *
+ * Written and maintained by the Bus Pirate project.
+ *
+ * To the extent possible under law, the project has
+ * waived all copyright and related or neighboring rights to Bus Pirate. This
+ * work is published from United States.
+ *
+ * For details see: http://creativecommons.org/publicdomain/zero/1.0/.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
 /* Binary access modes for Bus Pirate scripting 
 	This code is very ugly
 	We plan to develop the protocols, 
@@ -494,10 +510,13 @@ void rawBB(void){
 			}else if(inByte==0b1111){//return to terminal
 				BP_LEDMODE=0;//light MODE LED
 				asm("RESET");
-			}else if(inByte == 0b10000){//short self test
-				rawSelfTest(0);
-			}else if(inByte == 0b10001){//full self test with jumpers
-				rawSelfTest(1);
+			//self test is only for v2go and v3
+			#if defined(BUSPIRATEV25) || defined (BUSPIRATEV3)
+				}else if(inByte == 0b10000){//short self test
+					rawSelfTest(0);
+				}else if(inByte == 0b10001){//full self test with jumpers
+					rawSelfTest(1);
+			#endif
 			}else if((inByte>>5)&0b010){//set pin direction, return read
 				UART1TX(rawBBpindirectionset(inByte));
 			}else{//unknown command, error

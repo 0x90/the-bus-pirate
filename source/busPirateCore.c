@@ -1,9 +1,9 @@
 /*
- * This file is part of the Bus Pirate project (buspirate.com).
+ * This file is part of the Bus Pirate project (http://code.google.com/p/the-bus-pirate/).
  *
- * Originally written by hackaday.com <legal@hackaday.com>
+ * Written and maintained by the Bus Pirate project.
  *
- * To the extent possible under law, hackaday.com <legal@hackaday.com> has
+ * To the extent possible under law, the project has
  * waived all copyright and related or neighboring rights to Bus Pirate. This
  * work is published from United States.
  *
@@ -12,7 +12,6 @@
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
  */
 
 //These functions abstract the various buses into a generic interface.
@@ -108,66 +107,66 @@ extern struct _modeConfig modeConfig;
 
 //send command to correct protocol library for processing
 //switch based on bpConfig.busMode variable
-void bpProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
+void bpProcess(void){
 	switch(bpConfig.busMode){
 	#ifdef BP_USE_1WIRE
 		case DS1WIRE:
-			DS1wireProcess(cmd, numVal, repeatVal);
+			DS1wireProcess();
 			break;
 	#endif
 	#ifdef BP_USE_HWUART
 		case HWUART:
-			uartProcess(cmd, numVal, repeatVal);
+			uartProcess();
 			break;
 	#endif
 	#ifdef BP_USE_I2C
 		case I2C:
-			i2cProcess(cmd, numVal, repeatVal);
+			i2cProcess();
 			break;
 	#endif
 	#ifdef BP_USE_HWSPI
 		case HWSPI:
-			spiProcess(cmd, numVal, repeatVal);
+			spiProcess();
 			break;
 	#endif
 	#ifdef BP_USE_JTAG
 		case JTAG:
-			jtagProcess(cmd, numVal, repeatVal);
+			jtagProcess();
 			break;
 	#endif
 	#ifdef BP_USE_RAW2WIRE
 		case RAW2WIRE:
-			r2wProcess(cmd, numVal, repeatVal);
+			r2wProcess();
 			break;
 	#endif
 	#ifdef BP_USE_RAW3WIRE
 		case RAW3WIRE:
-			r3wProcess(cmd, numVal, repeatVal);
+			r3wProcess();
 			break;
 	#endif
 	#ifdef BP_USE_PCATKB
 		case PCATKB:
-			kbProcess(cmd, numVal, repeatVal);	
+			kbProcess();	
 			break;
 	#endif
 	#ifdef BP_USE_MIDI
 		case MIDI:
-			midiProcess(cmd, numVal, repeatVal);	
+			midiProcess();	
 			break;
 	#endif
 	#ifdef BP_USE_LIN
 		case LIN:
-			linProcess(cmd, numVal, repeatVal);		
+			linProcess();		
 			break;
 	#endif
 	#ifdef BP_USE_CAN
 		case CAN:
-			canProcess(cmd, numVal, repeatVal);	
+			canProcess();	
 			break;
 	#endif
 	#ifdef BP_USE_LCD
 		case LCD:
-			HD44780Process(cmd, numVal, repeatVal);	
+			HD44780Process();	
 			break;
 	#endif
 		default: //error

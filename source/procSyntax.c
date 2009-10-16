@@ -1,9 +1,9 @@
 /*
- * This file is part of the Bus Pirate project (buspirate.com).
+ * This file is part of the Bus Pirate project (http://code.google.com/p/the-bus-pirate/).
  *
- * Originally written by hackaday.com <legal@hackaday.com>
+ * Written and maintained by the Bus Pirate project.
  *
- * To the extent possible under law, hackaday.com <legal@hackaday.com> has
+ * To the extent possible under law, the project has
  * waived all copyright and related or neighboring rights to Bus Pirate. This
  * work is published from United States.
  *
@@ -12,7 +12,6 @@
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
  */
 //convert commands to actual character in a #DEFINE CMD_READ 'R' and get rid of the silly switch statement
 //convert menu commands to defines, use caps only (lowercase adjusted automatically)
@@ -24,6 +23,7 @@
 
 extern struct _bpConfig bpConfig;
 extern struct _modeConfig modeConfig;
+extern struct _command bpCommand; //holds the current active command so we don't ahve to put so many variables on the stack
 
 //reads forward to grab repeat values following read, delay, and clock
 unsigned int bpGetRepeatVal(unsigned int totalBytes, unsigned int *currentByte, unsigned char *commandArr); 
@@ -120,11 +120,15 @@ void processSyntaxString(unsigned int totalBytes, unsigned char *commandArr){
 					break;
 			#endif
 			default: //send command to library
-				bpProcess(command,numVal,repeatVal);
+				bpCommand.cmd=command; //move to global command struct
+				bpCommand.num=numVal;
+				bpCommand.repeat=repeatVal;
+				bpProcess();//process the command using the values in the global command struct
 		}//switch
 	}//for
-
-	bpProcess(CMD_ENDOFSYNTAX,0,0); //tell library it's the end of syntax, do any cleanup
+	
+	bpCommand.cmd=CMD_ENDOFSYNTAX;
+	bpProcess(); //tell library it's the end of syntax, do any cleanup
 
 }//function
 

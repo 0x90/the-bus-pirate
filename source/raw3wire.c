@@ -1,9 +1,9 @@
 /*
- * This file is part of the Bus Pirate project (buspirate.com).
+ * This file is part of the Bus Pirate project (http://code.google.com/p/the-bus-pirate/).
  *
- * Originally written by hackaday.com <legal@hackaday.com>
+ * Written and maintained by the Bus Pirate project.
  *
- * To the extent possible under law, hackaday.com <legal@hackaday.com> has
+ * To the extent possible under law, the project has
  * waived all copyright and related or neighboring rights to Bus Pirate. This
  * work is published from United States.
  *
@@ -12,9 +12,7 @@
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
  */
-
 #include "base.h"
 //#include "raw3wire.h"
 #include "bitbang.h"
@@ -31,25 +29,26 @@
 #define R3WCS 			BP_CS 
 
 extern struct _modeConfig modeConfig;
+extern struct _command bpCommand;
 
 struct _R3W{
 	unsigned char wwr:1;
 } r3wSettings;
 
-void r3wProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
+void r3wProcess(void){
 	static unsigned char c;
 	static unsigned int i;
 
-	switch(cmd){
+	switch(bpCommand.cmd){
 		case CMD_READ:
-			if(repeatVal==1){
+			if(bpCommand.repeat==1){
 				bpWmessage(MSG_READ);
 				bpWbyte(bbReadWriteByte(0xff));
 			}else{
 				bpWmessage(MSG_READBULK);
-				bpWbyte(repeatVal);
+				bpWbyte(bpCommand.repeat);
 				bpWmessage(MSG_READBULK_BYTES);
-				for(i=0;i<repeatVal;i++){	
+				for(i=0;i<bpCommand.repeat;i++){	
 					bpWbyte(bbReadWriteByte(0xff));
 					bpSP;
 				}
@@ -58,9 +57,9 @@ void r3wProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
 			break;
 		case CMD_WRITE:
 			bpWmessage(MSG_WRITE);
-			bpWbyte(numVal);
-			if(repeatVal==1){
-				c=bbReadWriteByte(numVal);
+			bpWbyte(bpCommand.num);
+			if(bpCommand.repeat==1){
+				c=bbReadWriteByte(bpCommand.num);
 				if(r3wSettings.wwr==1){
 					bpSP;
 					bpWmessage(MSG_READ);
@@ -68,15 +67,15 @@ void r3wProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
 				}
 			}else{
 				bpWstring(" , ");
-				bpWbyte(repeatVal);
+				bpWbyte(bpCommand.repeat);
 				bpWmessage(MSG_WRITEBULK);
-				for(i=0;i<repeatVal;i++)c=bbReadWriteByte(numVal);
+				for(i=0;i<bpCommand.repeat;i++)c=bbReadWriteByte(bpCommand.num);
 			}
 			bpWBR;
 			break;
 		case CMD_STARTR:
 		case CMD_START:
-			if(cmd==CMD_STARTR){r3wSettings.wwr=1;}else{r3wSettings.wwr=0;}
+			if(bpCommand.cmd==CMD_STARTR){r3wSettings.wwr=1;}else{r3wSettings.wwr=0;}
 			bbCS(0);
 			bpWmessage(MSG_CS_ENABLED);
 			break;
@@ -96,9 +95,9 @@ void r3wProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
 			bpWBR;
 			break;
 		case CMD_BIT_CLK:
-			bpWbyte(repeatVal);
+			bpWbyte(bpCommand.repeat);
 			bpWmessage(MSG_BIT_CLK);
-			bbClockTicks(repeatVal);
+			bbClockTicks(bpCommand.repeat);
 			break;
 		case CMD_BIT_CLKH:
 			bpWmessage(MSG_BIT_CLKH);
@@ -146,7 +145,7 @@ void r3wProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
 		case CMD_CLEANUP://no cleanup needed
 			break;
 		case CMD_MACRO:
-			//switch(numVal){
+			//switch(bpCommand.num){
 			//	default:
 					bpWmessage(MSG_ERROR_MACRO);
 			//}

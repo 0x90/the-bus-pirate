@@ -1,9 +1,9 @@
 /*
- * This file is part of the Bus Pirate project (buspirate.com).
+ * This file is part of the Bus Pirate project (http://code.google.com/p/the-bus-pirate/).
  *
- * Originally written by hackaday.com <legal@hackaday.com>
+ * Written and maintained by the Bus Pirate project.
  *
- * To the extent possible under law, hackaday.com <legal@hackaday.com> has
+ * To the extent possible under law, the project has
  * waived all copyright and related or neighboring rights to Bus Pirate. This
  * work is published from United States.
  *
@@ -12,7 +12,6 @@
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
  */
 #include "base.h"
 #include "AUXpin.h"
@@ -24,6 +23,7 @@
 
 extern struct _bpConfig bpConfig;
 extern struct _modeConfig modeConfig;
+extern struct _command bpCommand;
 
 void setMode(void); //change protocol/bus mode
 void setDisplayMode(void); //user terminal number display mode dialog (eg HEX, DEC, BIN, RAW)
@@ -217,8 +217,9 @@ void statusInfo(void){
 //cleans from previous mode and initializes new mode
 void setMode(void){
 	unsigned char i,j;
-
-	bpProcess(CMD_CLEANUP, 0,0);//deactivate anything from the last module			
+	
+	bpCommand.cmd=CMD_CLEANUP;
+	bpProcess();//deactivate anything from the last module			
 	bpInit();//clean up
 	j=bpNumBusModes();
 	for(i=0; i<j; i++){	
@@ -232,11 +233,13 @@ void setMode(void){
 
 	bpWmessage(MSG_OPT_MODESET);
 
-	bpProcess(CMD_PRESETUP, 0,0);
+	bpCommand.cmd=CMD_PRESETUP;
+	bpProcess();
 
 	BP_LEDMODE=1;//light MODE LED
 
-	bpProcess(CMD_SETUP, 0,0); 	//use settings....
+	bpCommand.cmd=CMD_SETUP;
+	bpProcess(); 	//use settings....
 }
 
 //user terminal number display mode dialog (eg HEX, DEC, BIN, RAW)

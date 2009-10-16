@@ -1,9 +1,9 @@
 /*
- * This file is part of the Bus Pirate project (buspirate.com).
+ * This file is part of the Bus Pirate project (http://code.google.com/p/the-bus-pirate/).
  *
- * Originally written by hackaday.com <legal@hackaday.com>
+ * Written and maintained by the Bus Pirate project.
  *
- * To the extent possible under law, hackaday.com <legal@hackaday.com> has
+ * To the extent possible under law, the project has
  * waived all copyright and related or neighboring rights to Bus Pirate. This
  * work is published from United States.
  *
@@ -12,7 +12,6 @@
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
  */
 
 #include "base.h"
@@ -21,6 +20,7 @@
 //#include "jtag/ports.h"
 
 extern struct _modeConfig modeConfig;
+extern struct _command bpCommand;
 
 #define JTAGDATASETTLE 20
 #define JTAGCLOCK 100
@@ -69,11 +69,11 @@ struct _JTAGSM {
 
 //struct _jtag jtagSM;
 
-void jtagProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
+void jtagProcess(void){
 	static unsigned char c;
 	static unsigned int i;
 
-	switch(cmd){
+	switch(bpCommand.cmd){
 		case CMD_PRESETUP:
 			bpWmessage(MSG_OPT_OUTPUT_TYPE);
 			jtagSettings.HiZ=(bpUserNumberPrompt(1, 2, 1)-1);
@@ -108,15 +108,15 @@ void jtagProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal)
 			bpWline("JTAGSM: IDLE");
 			break;
 		case CMD_READ:
-			if(repeatVal==1){
+			if(bpCommand.repeat==1){
 				c=jtagReadByte();
 				bpWmessage(MSG_READ);
 				bpWbyte(c);
 			}else{
 				bpWmessage(MSG_READBULK);
-				bpWbyte(repeatVal);
+				bpWbyte(bpCommand.repeat);
 				bpWmessage(MSG_READBULK_BYTES);
-				for(i=0;i<repeatVal;i++){	
+				for(i=0;i<bpCommand.repeat;i++){	
 					bpWbyte(jtagReadByte());
 					bpSP;
 				}
@@ -124,20 +124,20 @@ void jtagProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal)
 			bpWBR;
 			break;
 		case CMD_WRITE:
-			//c=jtagWriteByte(numVal);
+			//c=jtagWriteByte(bpCommand.num);
 			//bpWmessage(MSG_WRITE);	
-			//bpWbyte(numVal);
+			//bpWbyte(bpCommand.num);
 			//bpWBR;
 
 			bpWmessage(MSG_WRITE);
-			bpWbyte(numVal);
-			if(repeatVal==1){
-				c=jtagWriteByte(numVal);
+			bpWbyte(bpCommand.num);
+			if(bpCommand.repeat==1){
+				c=jtagWriteByte(bpCommand.num);
 			}else{
 				bpWstring(" , ");
-				bpWbyte(repeatVal);
+				bpWbyte(bpCommand.repeat);
 				bpWmessage(MSG_WRITEBULK);
-				for(i=0;i<repeatVal;i++)c=jtagWriteByte(numVal);
+				for(i=0;i<bpCommand.repeat;i++)c=jtagWriteByte(bpCommand.num);
 			}
 			bpWBR;
 			break;
@@ -154,9 +154,9 @@ void jtagProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal)
 			bpWBR;
 			break;
 		case CMD_BIT_CLK:
-			bpWbyte(repeatVal);
+			bpWbyte(bpCommand.repeat);
 			bpWmessage(MSG_BIT_CLK);
-			jtagClockTicks(repeatVal);
+			jtagClockTicks(bpCommand.repeat);
 			break;
 		case CMD_BIT_CLKH:
 			bpWmessage(MSG_BIT_CLKH);
@@ -175,7 +175,7 @@ void jtagProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal)
 			jtagDataLow();
 			break;
 		case CMD_MACRO:
-			switch(numVal){
+			switch(bpCommand.num){
 				case 0://jtag reset
 					bpWstring(" 0.Macro menu\x0D\x0A 1.Reset chain\x0D\x0A 2.Probe chain\x0D\x0A 3.XSFV player (deprecated)\x0D\x0A");
 					break;

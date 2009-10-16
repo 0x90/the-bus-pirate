@@ -1,9 +1,9 @@
 /*
- * This file is part of the Bus Pirate project (buspirate.com).
+ * This file is part of the Bus Pirate project (http://code.google.com/p/the-bus-pirate/).
  *
- * Originally written by hackaday.com <legal@hackaday.com>
+ * Written and maintained by the Bus Pirate project.
  *
- * To the extent possible under law, hackaday.com <legal@hackaday.com> has
+ * To the extent possible under law, the project has
  * waived all copyright and related or neighboring rights to Bus Pirate. This
  * work is published from United States.
  *
@@ -12,7 +12,6 @@
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
  */
 #include "base.h"
 #include "bitbang.h"
@@ -29,6 +28,7 @@
 
 extern struct _bpConfig bpConfig; //holds persistant bus pirate settings (see base.h) need hardware version info
 extern struct _modeConfig modeConfig;
+extern struct _command bpCommand;
 
 //hardware functions
 void hwi2cSetup(void);
@@ -47,16 +47,16 @@ void I2C_Sniffer(void);
 
 //this function links the underlying i2c functions to generic commands that the bus pirate issues
 //put most used functions first for best performance
-void i2cProcess(unsigned char cmd, unsigned int val, unsigned int repeatVal){
+void i2cProcess(void){
 	static unsigned int i;
 	static unsigned char c,b, i2cmode, ackPending=0;	
 
 	if(ackPending==1){//we don't ACK or NACK reads until we know what the next byte is
 		bpSP; //a space between the last character
-		if(cmd==CMD_STARTR || cmd==CMD_START || cmd==CMD_STOP){
+		if(bpCommand.cmd==CMD_STARTR || bpCommand.cmd==CMD_START || bpCommand.cmd==CMD_STOP){
 			bpWmessage(MSG_NACK); bpBR;//bpWline(OUMSG_I2C_READ_PEND_NACK);
 			if(i2cmode==SOFT) bbI2Cnack(); else hwi2csendack(1); //the last read before a stop/start condition gets an NACK
-		}else if(cmd==CMD_ENDOFSYNTAX){
+		}else if(bpCommand.cmd==CMD_ENDOFSYNTAX){
 			bpWline(OUMSG_I2C_READ_PEND);
 			return;
 		}else{
@@ -67,18 +67,18 @@ void i2cProcess(unsigned char cmd, unsigned int val, unsigned int repeatVal){
 		ackPending=0;
 	}
 
-	switch(cmd){
+	switch(bpCommand.cmd){
 		case CMD_READ:
-			if(repeatVal==1){
+			if(bpCommand.repeat==1){
 				bpWmessage(MSG_READ);
 				if(i2cmode==SOFT)c=bbReadByte(); else c=hwi2cread();
 				bpWbyte(c);
 			}else{
 				bpWmessage(MSG_READBULK);
-				bpWbyte(repeatVal);
+				bpWbyte(bpCommand.repeat);
 				bpWmessage(MSG_READBULK_BYTES);
 				
-				for(i=0;i<repeatVal;i++){	
+				for(i=0;i<bpCommand.repeat;i++){	
 					if(i>0){//ack at the top, skip beginning, don't ack last byte (may be NACKed above)
 						bpSP; bpWmessage(MSG_ACK); bpSP;
 						if(i2cmode==SOFT) bbI2Cack(); else hwi2csendack(0); 
@@ -91,19 +91,19 @@ void i2cProcess(unsigned char cmd, unsigned int val, unsigned int repeatVal){
 			break;
 		case CMD_WRITE:
 			bpWmessage(MSG_WRITE);
-			bpWbyte(val);
-			if(repeatVal>1){
+			bpWbyte(bpCommand.num);
+			if(bpCommand.repeat>1){
 				bpWstring(" , ");
-				bpWbyte(repeatVal);
+				bpWbyte(bpCommand.repeat);
 				bpWmessage(MSG_WRITEBULK);
 			}
 
-			for(i=0;i<repeatVal;i++){
+			for(i=0;i<bpCommand.repeat;i++){
 	 			if(i2cmode==SOFT){
-					bbWriteByte(val); 
+					bbWriteByte(bpCommand.num); 
 					c=bbReadBit();
 				}else{
-					hwi2cwrite(val);
+					hwi2cwrite(bpCommand.num);
 					c=hwi2cgetack();
 				}
 			}
@@ -161,7 +161,7 @@ void i2cProcess(unsigned char cmd, unsigned int val, unsigned int repeatVal){
 			if(i2cmode==HARD) I2C1CONbits.I2CEN = 0;//disable I2C module
 			break;
 		case CMD_MACRO:
-			switch(val){
+			switch(bpCommand.num){
 				case 0://menu
 					bpWline(OUMSG_I2C_MACRO_MENU);// 2. I2C bus sniffer\x0D\x0A");
 					break;

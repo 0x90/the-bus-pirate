@@ -1,14 +1,19 @@
 /*
- * This file is part of the Bus Pirate project (buspirate.com).
+ * This file is part of the Bus Pirate project (http://code.google.com/p/the-bus-pirate/).
  *
  * One wire search code taken from here: http://www.maxim-ic.com/appnotes.cfm/appnote_number/187
  *
  * We claim no copyright on our code, but there may be different licenses for some of the code in this file.
+  *
+  * To the extent possible under law, the Bus Pirate project has
+ * waived all copyright and related or neighboring rights to Bus Pirate. This
+ * work is published from United States.
+ *
+ * For details see: http://creativecommons.org/publicdomain/zero/1.0/.
  *
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
  */
 
 //abstraction for m_i2c_1.c
@@ -17,6 +22,7 @@
 #include "base.h"
 
 extern struct _modeConfig modeConfig;
+extern struct _command bpCommand;
 
 //the roster stores the first OW_DEV_ROSTER_SLOTS 1-wire addresses found during a ROM SEARCH command
 //these addresses are available as MACROs for quick address entry
@@ -60,21 +66,21 @@ void DS1wireReset(void);
 
 //this function links the underlying library functions to generic commands that the bus pirate issues
 //put most used functions first for best performance
-void DS1wireProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
+void DS1wireProcess(void){
 	static unsigned char c,j;
 	static unsigned int i;
 	static unsigned char devID[8];
-	switch(cmd){
+	switch(bpCommand.cmd){
 		case CMD_READ:
-			if(repeatVal==1){
+			if(bpCommand.repeat==1){
 				bpWmessage(MSG_READ);
 				c=OWReadByte();
 				bpWbyte(c);
 			}else{
 				bpWmessage(MSG_READBULK);
-				bpWbyte(repeatVal);
+				bpWbyte(bpCommand.repeat);
 				bpWmessage(MSG_READBULK_BYTES);
-				for(i=0;i<repeatVal;i++){	
+				for(i=0;i<bpCommand.repeat;i++){	
 					c=OWReadByte();
 					bpWbyte(c);
 					bpSP;
@@ -84,18 +90,18 @@ void DS1wireProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatV
 			break;
 		case CMD_WRITE:
 			//bpWmessage(MSG_WRITE);
-			//bpWbyte(numVal);
-			//OWWriteByte(numVal);
+			//bpWbyte(bpCommand.num);
+			//OWWriteByte(bpCommand.num);
 			//bpWBR;
 			bpWmessage(MSG_WRITE);
-			bpWbyte(numVal);
-			if(repeatVal==1){
-				OWWriteByte(numVal);//send byte
+			bpWbyte(bpCommand.num);
+			if(bpCommand.repeat==1){
+				OWWriteByte(bpCommand.num);//send byte
 			}else{
 				bpWstring(" , ");
-				bpWbyte(repeatVal);
+				bpWbyte(bpCommand.repeat);
 				bpWmessage(MSG_WRITEBULK);
-				for(i=0;i<repeatVal;i++)OWWriteByte(numVal);//send byte
+				for(i=0;i<bpCommand.repeat;i++)OWWriteByte(bpCommand.num);//send byte
 			}
 			bpWBR;
 			break;
@@ -111,16 +117,16 @@ void DS1wireProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatV
 			bpWmessage(MSG_BIT_NOWINPUT);
 			break;
 		case CMD_BIT_CLK: //we use clock as the 1wire write slot, use _- to set data state
-			bpWbyte(repeatVal);
+			bpWbyte(bpCommand.repeat);
 			bpWstring(OUMSG_1W_BIT_BULKWRITE);
-			for(i=0;i<repeatVal;i++) OWWriteBit(DS1wireDataState);
+			for(i=0;i<bpCommand.repeat;i++) OWWriteBit(DS1wireDataState);
 			bpEchoState(DS1wireDataState);
 			bpWline(")");
 			break;
 		case CMD_BIT_DATH://this also sets a bit direction variable that sets the bits that are clocked with ^
 		case CMD_BIT_DATL:
 			bpWstring(OUMSG_1W_BIT_WRITE);
-			if(cmd==CMD_BIT_DATL){
+			if(bpCommand.cmd==CMD_BIT_DATL){
 				DS1wireDataState=0;
 				bpEchoState(0);
 			}else{
@@ -148,25 +154,25 @@ void DS1wireProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatV
 		case CMD_CLEANUP: //no cleanup needed...
 			break;
 		case CMD_MACRO:
-			if(numVal>0 && numVal<51){
-				numVal--;//adjust down one for roster array index
-				if(numVal>=OWroster.num){//no device #X on the bus, try ROM SEARCH (0xF0)
+			if(bpCommand.num>0 && bpCommand.num<51){
+				bpCommand.num--;//adjust down one for roster array index
+				if(bpCommand.num>=OWroster.num){//no device #X on the bus, try ROM SEARCH (0xF0)
 					bpWline(OUMSG_1W_MACRO_ADDRESS_NODEVICE);
 					return;
 				}
 				//write out the address of the device in the macro
 				bpWstring(OUMSG_1W_MACRO_ADDRESS);//xxx WRITE BUS #X ID:
-				bpWdec(numVal+1);
+				bpWdec(bpCommand.num+1);
 				bpWstring(": ");
 				for(j=0;j<8;j++){
-					bpWbyte(OWroster.dev[numVal].id[j]); 
+					bpWbyte(OWroster.dev[bpCommand.num].id[j]); 
 					bpSP; 
-					OWWriteByte(OWroster.dev[numVal].id[j]);
+					OWWriteByte(OWroster.dev[bpCommand.num].id[j]);
 				} //write address
 				bpWline(" ");
 				return;
 			}
-			switch(numVal){
+			switch(bpCommand.num){
 				case 0://menu
 					bpWline(OUMSG_1W_MACRO_MENU);
 					bpWline(OUMSG_1W_MACRO_SEARCH_ROM_HEADER);
@@ -188,8 +194,8 @@ void DS1wireProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatV
 				//1WIRE ROM COMMANDS
 				case 0xec://ALARM SEARCH
 				case 0xf0: //SEARCH ROM
-					SearchChar=numVal;
-					if(numVal==0xec){
+					SearchChar=bpCommand.num;
+					if(bpCommand.num==0xec){
 						bpWline(OUMSG_1W_MACRO_ALARMSEARCH_ROM);						
 					}else{//SEARCH ROM command...
 						bpWline(OUMSG_1W_MACRO_SEARCH_ROM);

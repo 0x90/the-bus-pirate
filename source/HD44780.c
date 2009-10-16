@@ -1,9 +1,9 @@
 /*
- * This file is part of the Bus Pirate project (buspirate.com).
+ * This file is part of the Bus Pirate project (http://code.google.com/p/the-bus-pirate/).
  *
- * Originally written by hackaday.com <legal@hackaday.com>
+ * Written and maintained by the Bus Pirate project.
  *
- * To the extent possible under law, hackaday.com <legal@hackaday.com> has
+ * To the extent possible under law, the project has
  * waived all copyright and related or neighboring rights to Bus Pirate. This
  * work is published from United States.
  *
@@ -12,7 +12,6 @@
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
  */
 
 #include "bitbang.h"
@@ -79,6 +78,7 @@
 
 //configuration structure
 extern struct _modeConfig modeConfig;
+extern struct _command bpCommand;
 
 /*
 struct _HD44780_4bit_interface {
@@ -113,10 +113,10 @@ void HD44780_I2Cerror(void);
 
 //this function links the underlying LCD functions to generic commands that the bus pirate issues
 //put most used functions first for best performance
-void HD44780Process(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
+void HD44780Process(void){
 	static unsigned char c;
 	static unsigned int i;
-	switch(cmd){
+	switch(bpCommand.cmd){
 		case CMD_READ:
 			bpWmessage(MSG_READ);
 			c=HD44780_ReadByte(HD44780.RS);
@@ -130,16 +130,15 @@ void HD44780Process(unsigned char cmd, unsigned int numVal, unsigned int repeatV
 				bpWstring(OUMSG_LCD_WRITE_DATA);
 			}
 			bpWmessage(MSG_WRITE);
-			bpWbyte(numVal);
+			bpWbyte(bpCommand.num);
 
-			if(repeatVal==1){
-				HD44780_WriteByte(HD44780.RS, numVal);
+			if(bpCommand.repeat==1){
+				HD44780_WriteByte(HD44780.RS, bpCommand.num);
 			}else{
-				bpWbyte(numVal);
 				bpWstring(" , ");
-				bpWbyte(repeatVal);
+				bpWbyte(bpCommand.repeat);
 				bpWmessage(MSG_WRITEBULK);
-				for(i=0;i<repeatVal;i++)HD44780_WriteByte(HD44780.RS, numVal);
+				for(i=0;i<bpCommand.repeat;i++)HD44780_WriteByte(HD44780.RS, bpCommand.num);
 			}
 			bpWBR;
 			break;
@@ -190,7 +189,7 @@ void HD44780Process(unsigned char cmd, unsigned int numVal, unsigned int repeatV
 		case CMD_CLEANUP: //no cleanup needed...
 			break;
 		case CMD_MACRO:
-			switch(numVal){
+			switch(bpCommand.num){
 				case 0://menu
 					bpWline(OUMSG_LCD_MACRO_MENU);
 					break;
@@ -198,7 +197,7 @@ void HD44780Process(unsigned char cmd, unsigned int numVal, unsigned int repeatV
 				case 2:
 					bpWline(OUMSG_LCD_MACRO_RESET);
 					HD44780_Reset();
-					if(numVal==1) break;
+					if(bpCommand.num==1) break;
 
 					bpWline(OUMSG_LCD_MACRO_INIT_DISPLAYLINES);
 					c=bpUserNumberPrompt(1, 2, 2);
@@ -210,15 +209,15 @@ void HD44780Process(unsigned char cmd, unsigned int numVal, unsigned int repeatV
 					bpDelayMS(15);//delay 15ms
 					bpWline(OUMSG_LCD_MACRO_CLEAR);
 					break;	
-				case 4: //set cursor position to repeatVal
-					HD44780_WriteByte(HD44780_COMMAND, CMD_SETDDRAMADDR | (unsigned char)repeatVal);
+				case 4: //set cursor position to bpCommand.repeat
+					HD44780_WriteByte(HD44780_COMMAND, CMD_SETDDRAMADDR | (unsigned char)bpCommand.repeat);
 					bpWline(OUMSG_LCD_MACRO_CURSOR);
 					break;
 				case 6: //write numbers	
 					HD44780_WriteByte(HD44780_COMMAND, CMD_CLEARDISPLAY);//Clear LCD and return home
 					bpDelayMS(15);//delay 15ms
 					c=0x30;
-					for(i=0; i<repeatVal; i++){
+					for(i=0; i<bpCommand.repeat; i++){
 						if(c>0x39) c=0x30;
 						HD44780_WriteByte(HD44780_DATA, c);
 						c++;
@@ -228,8 +227,8 @@ void HD44780Process(unsigned char cmd, unsigned int numVal, unsigned int repeatV
 					HD44780_WriteByte(HD44780_COMMAND, CMD_CLEARDISPLAY); //Clear LCD and return home
 					bpDelayMS(15);//delay 15ms
 					c=0x21; //start character (!)
-					if(repeatVal==0) repeatVal=80;
-					for(i=0; i<repeatVal; i++){
+					if(bpCommand.repeat==0) bpCommand.repeat=80;
+					for(i=0; i<bpCommand.repeat; i++){
 						if(c>127)c=0x21;
 						HD44780_WriteByte(HD44780_DATA, c);
 						c++;

@@ -1,9 +1,9 @@
 /*
- * This file is part of the Bus Pirate project (buspirate.com).
+ * This file is part of the Bus Pirate project (http://code.google.com/p/the-bus-pirate/).
  *
- * Originally written by hackaday.com <legal@hackaday.com>
+ * Written and maintained by the Bus Pirate project.
  *
- * To the extent possible under law, hackaday.com <legal@hackaday.com> has
+ * To the extent possible under law, the project has
  * waived all copyright and related or neighboring rights to Bus Pirate. This
  * work is published from United States.
  *
@@ -12,11 +12,7 @@
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
  */
-
-//THE MACROS ARE READDY BAD, CLEAN THEM UP!
-
 #include "base.h"
 //#include "raw2wire.h"
 #include "bitbang.h"
@@ -33,25 +29,26 @@
 #define ISO78133ATR_PARSE 2
 
 extern struct _modeConfig modeConfig;
+extern struct _command bpCommand;
 
 void r2wMacro_78133Read(void);
 void r2wMacro_78133Write(void);
 
-void r2wProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
+void r2wProcess(void){
 	static unsigned char c;
 	static unsigned int i;
 
-	switch(cmd){
+	switch(bpCommand.cmd){
 		case CMD_READ:
-			if(repeatVal==1){
+			if(bpCommand.repeat==1){
 				bpWmessage(MSG_READ);
 				c=bbReadByte();
 				bpWbyte(c);
 			}else{
 				bpWmessage(MSG_READBULK);
-				bpWbyte(repeatVal);
+				bpWbyte(bpCommand.repeat);
 				bpWmessage(MSG_READBULK_BYTES);
-				for(i=0;i<repeatVal;i++){	
+				for(i=0;i<bpCommand.repeat;i++){	
 					bpWbyte(bbReadByte());
 					bpSP;
 				}
@@ -60,18 +57,18 @@ void r2wProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
 			break;
 		case CMD_WRITE:
 			//bpWmessage(MSG_WRITE);	
-			//bbWriteByte(numVal);
-			//bpWbyte(numVal);
+			//bbWriteByte(bpCommand.num);
+			//bpWbyte(bpCommand.num);
 			//bpWBR;
 			bpWmessage(MSG_WRITE);
-			bpWbyte(numVal);
-			if(repeatVal==1){
-				bbWriteByte(numVal);//send byte
+			bpWbyte(bpCommand.num);
+			if(bpCommand.repeat==1){
+				bbWriteByte(bpCommand.num);//send byte
 			}else{
 				bpWstring(" , ");
-				bpWbyte(repeatVal);
+				bpWbyte(bpCommand.repeat);
 				bpWmessage(MSG_WRITEBULK);
-				for(i=0;i<repeatVal;i++) bbWriteByte(numVal);//send byte
+				for(i=0;i<bpCommand.repeat;i++) bbWriteByte(bpCommand.num);//send byte
 			}
 			bpWBR;
 			break;
@@ -97,9 +94,9 @@ void r2wProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
 			bpWmessage(MSG_BIT_NOWINPUT);
 			break;
 		case CMD_BIT_CLK:
-			bpWbyte(repeatVal);
+			bpWbyte(bpCommand.repeat);
 			bpWmessage(MSG_BIT_CLK);
-			bbClockTicks(repeatVal);
+			bbClockTicks(bpCommand.repeat);
 			break;
 		case CMD_BIT_CLKH:
 			bpWmessage(MSG_BIT_CLKH);
@@ -138,7 +135,7 @@ void r2wProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
 		case CMD_CLEANUP://no cleanup needed
 			break;
 		case CMD_MACRO:
-			switch(numVal){
+			switch(bpCommand.num){
 				case MENU:
 					bpWstring(OUMSG_R2W_MACRO_MENU);
 					break;

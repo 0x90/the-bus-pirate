@@ -1,9 +1,9 @@
 /*
- * This file is part of the Bus Pirate project (buspirate.com).
+ * This file is part of the Bus Pirate project (http://code.google.com/p/the-bus-pirate/).
  *
- * Originally written by hackaday.com <legal@hackaday.com>
+ * Written and maintained by the Bus Pirate project.
  *
- * To the extent possible under law, hackaday.com <legal@hackaday.com> has
+ * To the extent possible under law, the project has
  * waived all copyright and related or neighboring rights to Bus Pirate. This
  * work is published from United States.
  *
@@ -12,7 +12,6 @@
  *    This program is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
  */
 
 #include "base.h"
@@ -25,6 +24,7 @@
 #define KBDIO 			BP_MOSI
 
 extern struct _modeConfig modeConfig;
+extern struct _command bpCommand;
 
 void kbSetup(void);
 unsigned char kbReadBit(void);
@@ -43,11 +43,11 @@ struct _kbframe{
 	unsigned char parityerror:1;
 } kbScancode;
 
-void kbProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
+void kbProcess(void){
 	static unsigned char c;
 	static unsigned int i;
 
-	switch(cmd){
+	switch(bpCommand.cmd){
 		case CMD_PRESETUP:
 			//modeConfig.allowpullup=0; //keyboard provides own pullups
 			modeConfig.HiZ=1;//yes, always HiZ
@@ -59,14 +59,14 @@ void kbProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
 		case CMD_CLEANUP:		
 			break;
 		case CMD_READ:
-			if(repeatVal==1){
+			if(bpCommand.repeat==1){
 				bpWmessage(MSG_READ);
 				kbScancodeResults(kbReadByte());
 			}else{
 				bpWmessage(MSG_READBULK);	
-				bpWbyte(repeatVal);
+				bpWbyte(bpCommand.repeat);
 				bpWmessage(MSG_READBULK_BYTES);
-				for(i=0;i<repeatVal;i++){	
+				for(i=0;i<bpCommand.repeat;i++){	
 					kbScancodeResults(kbReadByte());
 					bpSP;
 				}
@@ -75,8 +75,8 @@ void kbProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
 			break;
 		case CMD_WRITE:
 			bpWmessage(MSG_WRITE);	
-			bpWbyte(numVal);//write value to term
-			c=kbWriteByte(numVal);//send to bus
+			bpWbyte(bpCommand.num);//write value to term
+			c=kbWriteByte(bpCommand.num);//send to bus
 			if(c==0){//ack bit
 				bpWmessage(MSG_ACK);
 			}else if (c==1){
@@ -87,7 +87,7 @@ void kbProcess(unsigned char cmd, unsigned int numVal, unsigned int repeatVal){
 			bpWBR;
 			break;
 		case CMD_MACRO:
-			switch(numVal){
+			switch(bpCommand.num){
 				case 0:
 					bpWline(OUMSG_KB_MACRO_MENU);
 					break;
