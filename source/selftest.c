@@ -26,6 +26,7 @@ void rawSelfTest(unsigned char jumperTest){
 			if(display!=0xff){
 				UART1TX(display+errors);
 			}else{
+				UART1TX(0x01);
 				return; //exit if we get oxff, else send back byte+errors
 			}
 		}
