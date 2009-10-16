@@ -26,18 +26,20 @@ use constant SELFTEST_EXIT => "\xFF";
 use Getopt::Std;
 getopt ('pt');
 
-print "Starting $test self test.\n";
+print "Starting self test.\n";
 print "Disconnect any devices.\n";
 
 $mysport="COM2";
 
 if($opt_t ne ""){
 	if($opt_t eq "f"){
-		print "Full test: connect (Vpu to +5V) and (ADC to +3.3V)\n";
+		print "Full test: connect (Vpu to +5V) and (ADC to +3.3V).\n";
 		$bpcommand= (SELFTEST_FULL);
 	}else{
+		print "Short test: pull-up, ADC, Vpu not tested!\n";
 		$bpcommand= (SELFTEST_SHORT);
 	}
+	print "\n";
 }else{
 	print "# Bus Pirate v2go, v3 self-test.\n"; 
 	print "# Use with firmware v2.6+\n";
@@ -70,27 +72,46 @@ $port->write_settings		|| undef $port; #set
 unless ($port)			{ die "couldn't write_settings"; }
 
 print "Entering binmode: ";
-if(&enterBinMode==1){
+if(&enterBinModefast==1){
 	print "OK.\n";
 }else{
 	print "failed.\n";
 	die "Couldn't complete test.\n";
 }
 
+print "Running self-test: ";
 $port->write($bpcommand); #send command
-select(undef,undef,undef, .02); #sleep for fraction of second for data to arrive #sleep(1);
-$bpreply= $port->read(1); #read one byte,
+#self test takes some time, wait for byte
+$count=20;
+while($count){
+	select(undef,undef,undef, .2); #sleep for fraction of second for data to arrive #sleep(1);
+	$bpreply= $port->read(1); #read one byte,
+	if($bpreply ne ""){ #got a byte from Bus Pirate, test over
+		$count=0;#break the loop
+	}else{
+		$count--;
+		if($count==0){
+			die "Self-test timeout!\n";
+		}
+	}	
+}
 
-if($bpreply == "\x00"){
-	print "OK: Self test passed :)\n";
+if($bpreply eq "\x00"){
+	print "OK :)\n";
 }else{
-	print "WARNING: $bpreply errors!\n";
-	print "SELF TEST FAIL!\n";
+	print "WARNING: ERRORS! FAILED!\n";
 }
 
 #exit self test mode
-$port->write("\xFF"); #send command
+print "Exiting self-test mode:";
+$port->write(SELFTEST_EXIT); #send command
 select(undef,undef,undef, .02); #sleep for fraction of second for data to arrive #sleep(1);
+if($port->read(1) == "\x01"){#read one byte,
+	print "OK\n";
+}else{
+	print "failed.\n";
+	die "Couldn't complete test.\n";
+}
 
 #exit bin mode
 print "Exiting binmode: ";
@@ -99,6 +120,12 @@ if(&exitBinMode==1){
 }else{
 	print "failed.\n";
 	die "Couldn't complete test.\n";
+}
+
+if($bpreply eq "\x00"){
+	print "\nSelf-test OK :)\n";
+}else{
+	print "\nWARNING: ERRORS! SELF-TEST FAILED!\n";
 }
 
 ###############################
@@ -136,7 +163,7 @@ sub enterBinMode {
 	my $char="";
 	while($count){
 		$port->write("\x00"); #send 0x00
-		select(undef,undef,undef, .01); #sleep for fraction of second for data to arrive #sleep(1);
+		select(undef,undef,undef, .02); #sleep for fraction of second for data to arrive #sleep(1);
 		$char= $port->read(5); #look for BBIOx
 		if($char){
 			#print "(" . $char . ") "; #debug
@@ -146,6 +173,35 @@ sub enterBinMode {
 		}
 		$count--; #if timeout, then try again
 	}
+	return 0; #for fail, version number for success
+}
+
+sub enterBinModefast {
+#it could take 1 or 20 0x00 to enter Bus Pirate binary mode
+#this just blasts 20 0x00, then reads five and discards the rest. 
+#BP replies BBIOx where x is the protocol version
+	
+	my $count=20;
+	my $char="";
+	
+	while($count){
+		$port->write("\x00"); #send 0x00
+		$count--;
+	}
+	
+	select(undef,undef,undef, .02); #sleep for fraction of second for data to arrive #sleep(1);
+	
+	$char= $port->read(5); #look for BBIOx
+	
+	if($char){
+		#print "(" . $char . ") "; #debug
+		if($char eq "BBIO1"){#if we got text, is it BBIOx?
+			return 1; #return version number
+		}
+	}
+
+	$char= $port->read(); #flush buffer, could have 20 x 0x00
+		
 	return 0; #for fail, version number for success
 }
 
