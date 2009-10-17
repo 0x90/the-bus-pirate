@@ -41,6 +41,7 @@ rawSPI mode:
     * 01110000 – Read SPI speed
     * 1000wxyz – SPI config, w=output type, x=idle, y=clock edge, z=sample
     * 10010000 – Read SPI config
+	
 Tips:
 A byte is sent/read on SPI each time the low bits are sent (0001xxxx). 
 If the upper 4 bits are the same as the last byte, just send the lower 
@@ -273,17 +274,17 @@ void rawSPI(void){
 /*
 rawI2C mode:
 # 00000000//reset to BBIO
-# 00000001 – mode version string (SPI1)
+# 00000001 – mode version string (I2C1)
 # 00000010 – I2C start bit
 # 00000011 – I2C stop bit
 # 00000100 - I2C read byte
 # 00000110 - ACK bit
 # 00000111 - NACK bit
 # 0001xxxx – Bulk transfer, send 1-16 bytes (0=1byte!)
-# 0100000x - Set I2C speed, 1=high (50kHz) 0=low (5kHz)
-# 0101000x - Read speed, (planned)
-# 0110wxyz – Configure peripherals w=power, x=pullups, y=AUX, z=CS
-# 0111wxyz – read peripherals (planned, not implemented)
+# (0110)000x - Set I2C speed, 1=high (50kHz) 0=low (5kHz) (was 0100)
+# (0111)000x - Read speed, (planned)
+# (0100)wxyz – Configure peripherals w=power, x=pullups, y=AUX, z=CS (was 0110)
+# (0101)wxyz – read peripherals (planned, not implemented)
 */
 #define SCL 		BP_CLK
 #define SCL_TRIS 	BP_CLK_DIR     //-- The SCL Direction Register Bit
@@ -357,13 +358,13 @@ void rawI2C(void){
 
 				break;
 
-			case 0b0100://set speed 
+			case 0b0110://set speed 
 				inByte&=(~0b11111110);//clear command portion
 				bbSetup(2, inByte);//set I2C speed
 				UART1TX(1);
 				break;
 
-			case 0b0110: //configure peripherals w=power, x=pullups, y=AUX, z=CS
+			case 0b0100: //configure peripherals w=power, x=pullups, y=AUX, z=CS
 				//rawBBperipheralset(inByte);
 				#ifndef BUSPIRATEV0A
 				if(inByte&0b1000){
@@ -406,9 +407,6 @@ void rawI2C(void){
 }
 
 /*
-Very simple mode
-Settings, and then enter a never ending UART bridge.
-options:
 Baud
 A) standard settings
 B) send 2 bytes for custom BRG
@@ -422,18 +420,17 @@ peripheral settings
 
 # 00000000//reset to BBIO
 # 00000001 – mode version string (ART1)
-# 00000010 - mode/version string (ART1)
-# 00000011 - UART speed manual config, 2 bytes (BRGH, BRGL)
-# 00000100 - live UART input begin
-# 00000110 - live UART input end
+ # 00000010 – UART open
+ # 00000011 – UART close
+# 00000111 - UART speed manual config, 2 bytes (BRGH, BRGL)
 # 00001111 - bridge mode (reset to exit)
 # 0001xxxx – Bulk transfer, send 1-16 bytes (0=1byte!)
-# 0100xxxx - Set speed,0000=300,0001=1200,10=2400,4800,9600,19200,33250, 38400,57600,1010=115200,
-# 0101xxxx - Read speed, 
-# 0110wxyz – Set peripheral w=power, x=pullups, y=AUX, z=CS
-# 0111wxyz – read peripherals 
-# 110wxxyz – config, w=output type, xx=databits and parity, y=stop bits, z=rx polarity (default :00000)
-# 110wxxyz – read config
+# 0100wxyz – Set peripheral w=power, x=pullups, y=AUX, z=CS
+# 0101wxyz – read peripherals 
+# 0110xxxx - Set speed,0000=300,0001=1200,10=2400,4800,9600,19200,33250, 38400,57600,1010=115200,
+# 0111xxxx - Read speed, 
+# 100wxxyz – config, w=output type, xx=databits and parity, y=stop bits, z=rx polarity (default :00000)
+# 101wxxyz – read config
 */
 void rawUART(void){}
 

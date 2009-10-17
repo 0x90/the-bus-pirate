@@ -51,6 +51,11 @@ unsigned int bpGetUserInput(unsigned int *currentByte, unsigned int maxBytes, un
 		inbuf=UART1RX();
 
 		switch(inbuf){
+			case 0x00://binary mode trigger
+				return 0xff;
+			//case 0x1b://escape, get 2 or 3 more bytes
+				//get 2 bytes, ABCD are arrow keys, A is up
+				//break;
 			case 0x0A://enter
 			case 0x0D:	
 				bpWBR;
@@ -62,8 +67,6 @@ unsigned int bpGetUserInput(unsigned int *currentByte, unsigned int maxBytes, un
 					UART1TX(inbuf);//echo back
 				}
 				break;
-			case 0x00://binary mode trigger
-				return 0xff;
 			default:
 				//don't overrun the buffer
 				//only get characters space (ASCII32) to ~ (ASCII126) 
