@@ -34,14 +34,14 @@
 
 //include/exclude modules here
 #define BP_USE_1WIRE
-#define BP_USE_HWUART //hardware uart
+#define BP_USE_HWUART //hardware uart (now also MIDI)
 #define BP_USE_I2C
 #define BP_USE_HWSPI //hardware spi
 #define BP_USE_JTAG
 #define BP_USE_RAW2WIRE
 #define BP_USE_RAW3WIRE
 #define BP_USE_PCATKB
-#define BP_USE_MIDI
+//#define BP_USE_MIDI //merged with UART
 //#define BP_USE_LIN
 //#define BP_USE_CAN
 #define BP_USE_LCD // include HD44780 LCD library

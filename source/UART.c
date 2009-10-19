@@ -27,7 +27,7 @@ struct _UART{
 	unsigned char eu:1;//echo uart
 } uartSettings;
 
-static unsigned int UART2speed[]={13332,3332,1666,832,416,207,103,68,34,};//BRG:300,1200,2400,4800,9600,19200,38400,57600,115200
+static unsigned int UART2speed[]={13332,3332,1666,832,416,207,103,68,34,127};//BRG:300,1200,2400,4800,9600,19200,38400,57600,115200, 31250,
 
 void uartProcess(void){
 	static unsigned char c;
@@ -101,7 +101,8 @@ void uartProcess(void){
 			break;
 		case CMD_PRESETUP:
 			bpWmessage(MSG_OPT_UART_BAUD); //write text (baud rate)
-			modeConfig.speed=(bpUserNumberPrompt(1, 9, 1)-1); //get user reply
+			bpWline(" 10. 31250 (MIDI)"); //add midi to the standard list
+			modeConfig.speed=(bpUserNumberPrompt(2, 10, 1)-1); //get user reply
 	
 			//bpWstring("Data bits and parity:\x0D\x0A 1. 8, NONE *default \x0D\x0A 2. 8, EVEN \x0D\x0A 3. 8, ODD \x0D\x0A 4. 9, NONE \x0D\x0A");
 			bpWline(OUMSG_UART_DATABITS_PARITY); //write text (data bit and parity)
