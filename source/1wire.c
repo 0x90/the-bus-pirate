@@ -20,6 +20,7 @@
 #include "m_1wire_213.h"
 #include "1wire.h"
 #include "base.h"
+#include "binIOhelpers.h"
 
 extern struct _modeConfig modeConfig;
 extern struct _command bpCommand;
@@ -238,7 +239,7 @@ void DS1wireProcess(void){
 					DS1wireReset();
 					bpWstring(OUMSG_1W_MACRO_READ_ROM);
 					OWWriteByte(0x33);
-						for(i=0; i<8; i++){
+					for(i=0; i<8; i++){
 						devID[i]=OWReadByte();
 						bpWbyte(devID[i]);
 						bpSP;	
@@ -550,3 +551,105 @@ unsigned char docrc8(unsigned char value)
    crc8 = dscrc_table[crc8 ^ value];
    return crc8;
 }
+
+
+/*
+binary1WIRE mode:
+# 00000000 - reset to BBIO
+# 00000001 – mode version string (1W01)
+# 00000010 – 1wire reset
+# 00000100 - read byte
+# 00001000 - ROM search macro (0xf0)
+# 00001001 - ALARM search macro (0xec)
+# 0001xxxx – Bulk transfer, send 1-16 bytes (0=1byte!)
+# 0100wxyz – Configure peripherals w=power, x=pullups, y=AUX, z=CS (
+# 0101wxyz – read peripherals (planned, not implemented)
+*/
+void bin1WIREversionString(void);
+
+void bin1WIREversionString(void){bpWstring("1W01");}
+
+void bin1WIRE(void){
+	static unsigned char inByte, rawCommand, i,c;
+	
+	SDA_TRIS=1; //pin to input
+	SDA=0;	//pin to ground
+
+	BP_CS_DIR=0;			//set CS pin direction to output on setup
+
+	bin1WIREversionString();//reply string
+
+	while(1){
+
+		while(U1STAbits.URXDA == 0);//wait for a byte
+		inByte=U1RXREG; //grab it
+		rawCommand=(inByte>>4);//get command bits in seperate variable
+		
+		switch(rawCommand){
+			case 0://reset/setup/config commands
+				switch(inByte){
+					case 0://0, reset exit
+						//cleanup!!!!!!!!!!
+						return; //exit
+						break;
+					case 1://id reply string
+						bin1WIREversionString();//reply string
+						break;
+					case 2://reset
+						DS1wireReset();
+						UART1TX(1);
+						break;
+					case 4://read byte
+						UART1TX(OWReadByte());
+						break;
+					case 8://1wire search macro results
+					case 9://alarm search
+						UART1TX(1);
+						
+						if(inByte==9)SearchChar=0xec; //search alarm
+						else SearchChar=0xf0; //search ROM
+
+						// find ALL devices
+						c = OWFirst();
+						while (c){
+							// print address
+							for (i = 0; i <8; i++) UART1TX(ROM_NO[i]);
+							c = OWNext();
+						}
+
+						//send 8x 0xff	
+						for(i=0; i<8; i++) UART1TX(0xff);
+
+						break;
+					default:
+						UART1TX(0);
+						break;
+				}	
+				break;
+
+			case 0b0001://get x+1 bytes
+				inByte&=(~0b11110000); //clear command portion
+				inByte++; //increment by 1, 0=1byte
+				UART1TX(1);//send 1/OK		
+
+				for(i=0;i<inByte;i++){
+					while(U1STAbits.URXDA == 0);//wait for a byte
+					OWWriteByte(U1RXREG); //send byte
+					UART1TX(1);//0x01 for success
+				}
+
+				break;
+
+			case 0b0100: //configure peripherals w=power, x=pullups, y=AUX, z=CS
+				binIOperipheralset(inByte);
+				UART1TX(1);//send 1/OK		
+				break;
+
+			default:
+				UART1TX(0x00);//send 0/Error
+				break;
+		}//command switch
+	}//while loop
+
+}
+

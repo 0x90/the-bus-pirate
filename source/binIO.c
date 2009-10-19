@@ -22,6 +22,7 @@
 #include "SPI.h"
 #include "I2C.h"
 #include "UART.h"
+#include "1wire.h"
 
 extern struct _modeConfig modeConfig;
 
@@ -89,6 +90,11 @@ void binBB(void){
 				binUART();
 				binReset();
 				binBBversion(); //say name on return
+			}else if(inByte==4){//goto 1WIRE mode
+				binReset();
+				bin1WIRE();
+				binReset();
+				binBBversion(); //say name on return
 			}else if(inByte==0b1111){//return to terminal
 				BP_LEDMODE=0;//light MODE LED
 				asm("RESET");
@@ -104,6 +110,7 @@ void binBB(void){
 			}else{//unknown command, error
 				UART1TX(0);
 			}
+			
 		}else{//data for pins
 			UART1TX(binBBpinset(inByte));
 		}//if

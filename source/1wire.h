@@ -16,6 +16,7 @@
 
 void DS1wireProcess(void);
 unsigned char PROBE_CHECKSUM (unsigned char *BYTE, int size_of_BYTE);
+void bin1WIRE(void);
 
 
 
