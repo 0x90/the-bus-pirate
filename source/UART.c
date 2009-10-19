@@ -15,6 +15,7 @@
  */
 #include "base.h"
 #include "uart2io.h"
+#include "binIOhelpers.h"
 
 extern struct _modeConfig modeConfig;
 extern struct _command bpCommand;
@@ -180,4 +181,159 @@ void uartProcess(void){
 
 }
 
+/*
+databits and parity (2bits)
+1. 8, NONE *default \x0D\x0A 2. 8, EVEN \x0D\x0A 3. 8, ODD \x0D\x0A 4. 9, NONE
+Stop bits:\x0D\x0A 1. 1 *default\x0D\x0A 2. 2 \x0D\x0A
+Receive polarity:\x0D\x0A 1. Idle 1 *default\x0D\x0A 2. Idle 0\x0D\x0A
+output type (hiz or regular
+peripheral settings
 
+# 00000000//reset to BBIO
+# 00000001 – mode version string (ART1)
+# 00000010 – UART start echo uart RX
+# 00000011 – UART stop echo uart RX
+# 00000111 - UART speed manual config, 2 bytes (BRGH, BRGL)
+# 00001111 - bridge mode (reset to exit)
+# 0001xxxx – Bulk transfer, send 1-16 bytes (0=1byte!)
+# 0100wxyz – Set peripheral w=power, x=pullups, y=AUX, z=CS
+# 0101wxyz – read peripherals 
+# 0110xxxx - Set speed,0000=300,0001=1200,10=2400,4800,9600,19200,31250, 38400,57600,1010=115200,
+# 0111xxxx - Read speed, 
+# 100wxxyz – config, w=output type, xx=databits and parity, y=stop bits, z=rx polarity (default :00000)
+# 101wxxyz – read config
+*/
+static unsigned int binUARTspeed[]={13332,3332,1666,832,416,207,127,103,68,34,};//BRG:300,1200,2400,4800,9600,19200,31250,38400,57600,115200
+
+void binUARTversionString(void){bpWstring("ART1");}
+
+void binUART(void){
+	static unsigned char inByte, rawCommand,i;
+	static unsigned int BRGval;
+
+	uartSettings.dbp=0; //startup defaults
+	uartSettings.sb=0;
+	uartSettings.rxp=0;
+	modeConfig.HiZ=1;
+	BRGval=binUARTspeed[0]; //start at 300bps
+	uartSettings.eu=0;
+	UART2Setup(BRGval,modeConfig.HiZ, uartSettings.rxp, uartSettings.dbp, uartSettings.sb );
+	UART2Enable();
+	binUARTversionString();
+
+	while(1){
+
+		//check for incomming bytes on UART2
+		//if echo enabled, send to USB
+		//else, just clear the buffer
+		if( UART2RXRdy()){
+			if(uartSettings.eu==1){ 
+				UART1TX(UART2RX());
+			}else{
+				UART2RX();//clear the buffer....
+			}
+		}
+		if(U2STAbits.OERR) U2STA &= (~0b10); //clear overrun error if exists
+
+		//process commands
+		if(U1STAbits.URXDA == 1){//wait for a byte
+			inByte=U1RXREG; //grab it
+			rawCommand=(inByte>>4);//get command bits in seperate variable
+			
+			switch(rawCommand){
+				case 0://reset/setup/config commands
+					switch(inByte){
+						case 0://0, reset exit
+							UART2Disable();
+							return; //exit
+							break;
+						case 1://reply string
+							binUARTversionString();
+							break;
+						case 2://00000010 – Show UART input
+							UART1TX(1);
+							if(U2STAbits.OERR) U2STA &= (~0b10); //clear overrun error if exists
+							uartSettings.eu=1;
+							break;
+						case 3://00000011 – Don't output UART input
+							uartSettings.eu=0;
+							UART1TX(1);
+							break;
+						case 7://00000111 - UART speed manual config, 2 bytes (BRGH, BRGL)
+							UART1TX(1);
+							UART2Disable();
+							while(U1STAbits.URXDA == 0);//wait for a byte
+							BRGval=(unsigned int)(U1RXREG<<8);
+							UART1TX(1);
+							while(U1STAbits.URXDA == 0);//wait for a byte
+							BRGval|=U1RXREG;
+							UART2Setup(BRGval,modeConfig.HiZ, uartSettings.rxp, uartSettings.dbp, uartSettings.sb );
+							UART2Enable();
+							UART1TX(1);
+							break;
+						case 15://00001111 - bridge mode (reset to exit)
+							UART1TX(1);
+							U2STA &= (~0b10); //clear overrun error if exists
+							while(1){//never ending loop, reset Bus Pirate to get out
+								if((U2STAbits.URXDA==1)&& (U1STAbits.UTXBF == 0)){
+										U1TXREG = U2RXREG; //URXDA doesn't get cleared untill this happens
+								}
+								if((U1STAbits.URXDA==1)&& (U2STAbits.UTXBF == 0)){
+										U2TXREG = U1RXREG; //URXDA doesn't get cleared untill this happens
+								}
+							}
+						default:
+							UART1TX(0);
+							break;
+					}	
+					break;
+				case 0b0001://get x+1 bytes
+					inByte&=(~0b11110000); //clear command portion
+					inByte++; //increment by 1, 0=1byte
+					UART1TX(1);//send 1/OK		
+	
+					for(i=0;i<inByte;i++){
+						while(U1STAbits.URXDA == 0);//wait for a byte
+						UART2TX(U1RXREG);
+						UART1TX(1);
+					}
+	
+					break;
+				case 0b0100: //configure peripherals w=power, x=pullups, y=AUX, z=CS
+					binIOperipheralset(inByte);	
+					UART1TX(1);//send 1/OK		
+					break;
+				case 0b0110://set speed 
+					//0110xxxx - Set speed,0000=300,0001=1200,10=2400,4800,9600,19200,31250, 38400,57600,1010=115200,
+					inByte&=(~0b11110000);//clear command portion
+					if(inByte>0b1010) inByte=0b1010; //safe default if out of range
+					BRGval=binUARTspeed[inByte];
+					UART2Disable();
+					UART2Setup(BRGval,modeConfig.HiZ, uartSettings.rxp, uartSettings.dbp, uartSettings.sb );
+					UART2Enable();
+					UART1TX(1);//send 1/OK	
+					break;
+				case 0b1000: //set config
+				case 0b1001: //set config
+					//100wxxyz – config, w=output type, xx=databits and parity, y=stop bits, z=rx polarity (default :00000)
+					uartSettings.dbp=0;
+					uartSettings.sb=0;
+					uartSettings.rxp=0;
+					modeConfig.HiZ=0;
+					if(inByte&0b1000) uartSettings.dbp|=0b10;//set 
+					if(inByte&0b100) uartSettings.dbp|=0b1;//set 
+					if(inByte&0b10) uartSettings.sb=1;//set 	
+					if(inByte&0b1) uartSettings.rxp=1;//set 
+					if((inByte&0b10000)==0) modeConfig.HiZ=1;//hiz output if this bit is 1
+					UART2Disable();
+					UART2Setup(BRGval,modeConfig.HiZ, uartSettings.rxp, uartSettings.dbp, uartSettings.sb );
+					UART2Enable();
+					UART1TX(1);//send 1/OK	
+					break;
+				default:
+					UART1TX(0x00);//send 0/Error
+					break;
+			}//command switch
+		}//if inbyte
+	}//while loop
+}//function

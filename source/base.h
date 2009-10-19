@@ -26,7 +26,7 @@
 
 //#define BUSPIRATE_POST //used to switch POST on and off
 
-#define BP_FIRMWARE_STRING "Firmware v2.6-nightly"//-Seeed"
+#define BP_FIRMWARE_STRING "Firmware v2.7-nightly"//-Seeed"
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT

@@ -27,41 +27,10 @@ void bpPOSTWstring(char *s);
 
 static unsigned char display,errors;
 
-void rawSelfTest(unsigned char jumperTest){
-	static volatile unsigned int tick=0;
-
-	selfTest(0,jumperTest);		//silent self-test
-	if(errors) BP_LEDMODE=1;	//light MODE LED if errors
-	UART1TX(errors);			//reply with number of errors
-
-	while(1){
-		//echo incoming bytes + errors
-		//tests FTDI chip, UART, retrieves results of test
-		if(UART1RXRdy()){
-			display=UART1RX(); //reuse display variable
-			if(display!=0xff){
-				UART1TX(display+errors);
-			}else{
-				UART1TX(0x01);
-				return; //exit if we get oxff, else send back byte+errors
-			}
-		}
-		
-		if(!errors){	
-			if(tick==0){
-				tick=0xFFFF;
-				BP_LEDMODE^=1;	//toggle LED
-			}
-			tick--;
-		}
-
-	}
-
-}
-
 //self test, showProgress=1 displays the test results in the terminal, set to 0 for silent mode
 //errors are counted in the global errors variable
-void selfTest(unsigned char showProgress, unsigned char jumperTest){
+//returns number of errors
+unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 //toggle display of test results with show Progress variable
 	errors=0;
 	display=showProgress;
@@ -160,6 +129,8 @@ void selfTest(unsigned char showProgress, unsigned char jumperTest){
 	}
 
 	bpInit();//clean up
+
+	return errors;
 
 }
 

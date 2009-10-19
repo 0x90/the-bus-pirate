@@ -15,4 +15,4 @@
  */
 
 void i2cProcess(void);
-
+void binI2C(void);

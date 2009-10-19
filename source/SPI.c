@@ -16,6 +16,7 @@
 
 #include "SPI.h"
 #include "base.h"
+#include "binIOhelpers.h"
 
 //#define USE_SPICS //the CS hardware pin on silicone REV 3 doesn't work, optionally enable it here
 
@@ -41,7 +42,8 @@
 extern struct _modeConfig modeConfig;
 extern struct _command bpCommand;
 
-void spiSetup(void);
+void binSPIversionString(void);
+void spiSetup(unsigned char spiSpeed);
 void spiDisable(void);
 unsigned char spiWriteByte(unsigned char c);
 void spiSlaveDisable(void);
@@ -137,7 +139,7 @@ void spiProcess(void){
 			//cleanup variables
 			spiSettings.wwr=0;
 			//do SPI peripheral setup
-			spiSetup();
+			spiSetup(SPIspeed[modeConfig.speed]);
 			bpWmessage(MSG_READY);
 			break;
 		case CMD_CLEANUP:
@@ -165,7 +167,7 @@ void spiProcess(void){
 
 }
 
-void spiSetup(void){
+void spiSetup(unsigned char spiSpeed){
     SPI1STATbits.SPIEN = 0;//disable, just in case...
 	
 	//use open drain control register to 
@@ -175,6 +177,10 @@ void spiSetup(void){
 		SPIMOSI_ODC=1;
 		SPICLK_ODC=1; 
 		SPICS_ODC=1;
+	}else{
+		SPIMOSI_ODC=0;
+		SPICLK_ODC=0; 
+		SPICS_ODC=0;
 	}
 
 	// Inputs 
@@ -192,7 +198,7 @@ void spiSetup(void){
 	SPIMOSI_TRIS=0; 		//B9 SDO output
 
 	/* CKE=1, CKP=0, SMP=0 */
-	SPI1CON1 = (SPIspeed[modeConfig.speed]); // CKE (output edge) active to idle, CKP idle low, SMP data sampled middle of output time.
+	SPI1CON1 = spiSpeed;//(SPIspeed[modeConfig.speed]); // CKE (output edge) active to idle, CKP idle low, SMP data sampled middle of output time.
 	SPI1CON1bits.MSTEN=1;
 	SPI1CON1bits.CKP=spiSettings.ckp;
 	SPI1CON1bits.CKE=spiSettings.cke;		
@@ -268,7 +274,7 @@ void spiSniffer(unsigned char csState){
 		}
 	}
 	spiSlaveDisable();
-	spiSetup();
+	spiSetup(SPIspeed[modeConfig.speed]);
 }
 
 void spiSlaveSetup(void){
@@ -347,4 +353,123 @@ void spiSlaveDisable(void){
 	RPINR22bits.SCK2R=0b11111;	//assign CLK input to none
 	//SPI1CON1bits.SMP=spiSettings.smp;	//restore SMP setting (done in spiSetup()
 }
+
+/*
+rawSPI mode:
+    * 00000000 – Enter raw bitbang mode, reset to raw bitbang mode
+    * 00000001 – SPI mode/rawSPI version string (SPI1)
+    * 00000010 – CS low (0)
+    * 00000011 – CS high (1)
+    * 0001xxxx – Bulk SPI transfer, send 1-16 bytes (0=1byte!)
+    * 0010xxxx – Low 4 bits of byte + single byte write/read
+    * 0011xxxx – High 4 bits of byte
+    * 0100wxyz – Configure peripherals, w=power, x=pullups, y=AUX, z=CS
+    * 01010000 – Read peripherals
+    * 01100xxx – Set SPI speed, 30, 125, 250khz; 1, 2, 2.6, 4, 8MHz
+    * 01110000 – Read SPI speed
+    * 1000wxyz – SPI config, w=output type, x=idle, y=clock edge, z=sample
+    * 10010000 – Read SPI config
+	
+Tips:
+A byte is sent/read on SPI each time the low bits are sent (0001xxxx). 
+If the upper 4 bits are the same as the last byte, just send the lower 
+bits again for a two-fold increase in speed.
+*/
+static unsigned char bufOutByte;
+static unsigned char binSPIspeed[]={0b00000,0b11000,0b11100,0b11101,0b00011,0b01000,0b10000,0b11000};//00=30,01=125,10=250,11=1000khz, 100=2mhz,101=2.667mhz,  110=4mhz, 111=8mhz; datasheet pg 142
+
+void binSPIversionString(void){bpWstring("SPI1");}
+
+void binSPI(void){
+	static unsigned char inByte, rawCommand, i;
+
+	//useful default values
+	/* CKE=1, CKP=0, SMP=0 */
+	modeConfig.speed=1;
+	spiSettings.ckp=0;
+	spiSettings.cke=1;
+	spiSettings.smp=0;
+	modeConfig.HiZ=1;
+	spiSetup(binSPIspeed[modeConfig.speed]);//start with 250khz (30,125,250,1000khz)
+	binSPIversionString();//1 - SPI setup and reply string
+
+	while(1){
+
+		while(U1STAbits.URXDA == 0);//wait for a byte
+		inByte=U1RXREG; //grab it
+		rawCommand=(inByte>>4);//get command bits in seperate variable
+		
+		switch(rawCommand){
+			case 0://reset/setup/config commands
+				switch(inByte){
+					case 0://0, reset exit
+						spiDisable();
+						return; //exit
+						break;
+					case 1://1 - SPI setup and reply string
+						binSPIversionString();
+						break;
+					case 2:
+						IOLAT&=(~CS); //SPICS=0; //cs enable/low
+						UART1TX(1);
+						break;
+					case 3:
+						IOLAT|=CS; //SPICS=1; //cs disable/high
+						UART1TX(1);
+						break;
+					default:
+						UART1TX(0);
+						break;
+				}	
+				break;
+			case 0b0001://get x+1 bytes
+				inByte&=(~0b11110000); //clear command portion
+				inByte++; //increment by 1, 0=1byte
+				UART1TX(1);//send 1/OK		
+
+				for(i=0;i<inByte;i++){
+					while(U1STAbits.URXDA == 0);//wait for a byte
+					UART1TX(spiWriteByte(U1RXREG));
+				}
+
+				break;
+			case 0b0010://add lower four bits to buffered byte, TX/RX
+				inByte&=(~0b11110000); //clear command portion
+				bufOutByte|=inByte; //set lower four bits
+				UART1TX(spiWriteByte(bufOutByte));
+				break;
+			case 0b0011://add upper four bits to buffered byte
+				bufOutByte&=(~0b11110000);//clear current upper bits
+				bufOutByte|=(inByte<<4); //set upper four bits;
+				UART1TX(1);//send 1/OK
+				break;
+			case 0b0100: //configure peripherals w=power, x=pullups, y=AUX, z=CS
+				binIOperipheralset(inByte);	
+				UART1TX(1);//send 1/OK		
+				break;
+			case 0b0110://set speed 
+				inByte&=(~0b11111000);//clear command portion
+				modeConfig.speed=inByte;
+				spiSetup(binSPIspeed[modeConfig.speed]);//resetup SPI
+				UART1TX(1);//send 1/OK	
+				break;
+			case 0b1000: //set SPI config
+				//wxyz //w=HiZ(0)/3.3v(1), x=CKP idle (low=0), y=CKE clock edge (active to idle=1), z=SMP sample (middle=0)
+				spiSettings.ckp=0;
+				spiSettings.cke=0;
+				spiSettings.smp=0;
+				modeConfig.HiZ=0;
+				if(inByte&0b100) spiSettings.ckp=1;//set idle
+				if(inByte&0b10) spiSettings.cke=1;//set edge	
+				if(inByte&0b1) spiSettings.smp=1;//set sample time
+				if((inByte&0b1000)==0) modeConfig.HiZ=1;//hiz output if this bit is 1
+				spiSetup(binSPIspeed[modeConfig.speed]);//resetup SPI
+				UART1TX(1);//send 1/OK	
+				break;
+			default:
+				UART1TX(0x00);//send 0/Error
+				break;
+		}//command switch
+	}//while loop
+}//function
 

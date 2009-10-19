@@ -14,5 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 void uartProcess(void);
+void binUART(void);
 
 

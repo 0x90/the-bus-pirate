@@ -13,5 +13,4 @@
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
-void selfTest(unsigned char showProgress, unsigned char jumperTest);
-void rawSelfTest(unsigned char jumperTest);
+unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest);

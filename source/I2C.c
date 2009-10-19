@@ -16,6 +16,7 @@
 #include "base.h"
 #include "bitbang.h"
 #include "busPirateCore.h"//need access to bpConfig
+#include "binIOhelpers.h"
 
 #define SCL 		BP_CLK
 #define SCL_TRIS 	BP_CLK_DIR     //-- The SCL Direction Register Bit
@@ -38,6 +39,8 @@ void hwi2csendack(unsigned char ack);
 unsigned char hwi2cgetack(void);
 void hwi2cwrite(unsigned char c);
 unsigned char hwi2cread(void);
+void binI2CversionString(void);
+
 static unsigned char I2Cspeed[]={157,37,13};//100,400,1000khz; datasheet pg 145
 
 //software functions
@@ -49,7 +52,7 @@ void I2C_Sniffer(void);
 //put most used functions first for best performance
 void i2cProcess(void){
 	static unsigned int i;
-	static unsigned char c,b, i2cmode, ackPending=0;	
+	static unsigned char c, i2cmode, ackPending=0;	
 
 	if(ackPending==1){//we don't ACK or NACK reads until we know what the next byte is
 		bpSP; //a space between the last character
@@ -202,40 +205,7 @@ void i2cProcess(void){
 					}
 					bpWBR;	
 					break;
-				case 2: //dump I2C EEPROM
-						bpWstring("7bit I2C address");//get address
-						c=bpUserNumberPrompt(10, 0b1111111, 0x50);
-						c=c<<1;//make write address
-						bpWstring("Bytes");//size
-						b=bpUserNumberPrompt(10, 0xff, 0xff);
-						//if<=0xff ask address length (1 or 2 bytes)
-						//start address
-						//end address
-						bpWstring("Press a key to begin");//ready, press space to begin
-						bbI2Cstart();
-						bbWriteByte(c);
-						bbReadBit();//look for ack
-						bbWriteByte(0);
-						bbReadBit();//look for ack
-						bbWriteByte(0);
-						bbReadBit();//look for ack
-						
-						bbI2Cstart();//read to end
-						c++;
-						bbWriteByte(c);//read address
-						bbReadBit();//look for ack
-						b--;
-						for(i=0;i<b; i++){
-							bpWbyte(bbReadByte());
-							bbI2Cack();
-							if(bpConfig.displayMode<3)bpSP; //if not raw mode, enter a space
-						}
-						//read last byte, NACK
-						bpWbyte(bbReadByte());
-						bbI2Cnack();
-						bpWBR;	
-						break;
-				case 3:
+				case 2: 
 					if(i2cmode==SOFT){ //if not soft, fall through and say error...
 						bpWline(OUMSG_I2C_MACRO_SNIFFER);	
 						I2C_SnifferSetup();
@@ -461,3 +431,113 @@ void hwi2cSetup(void){
 */
 
 }
+
+
+/*
+rawI2C mode:
+# 00000000//reset to BBIO
+# 00000001 – mode version string (I2C1)
+# 00000010 – I2C start bit
+# 00000011 – I2C stop bit
+# 00000100 - I2C read byte
+# 00000110 - ACK bit
+# 00000111 - NACK bit
+# 0001xxxx – Bulk transfer, send 1-16 bytes (0=1byte!)
+# (0110)000x - Set I2C speed, 1=high (50kHz) 0=low (5kHz) (was 0100)
+# (0111)000x - Read speed, (planned)
+# (0100)wxyz – Configure peripherals w=power, x=pullups, y=AUX, z=CS (was 0110)
+# (0101)wxyz – read peripherals (planned, not implemented)
+*/
+void binI2CversionString(void){bpWstring("I2C1");}
+
+void binI2C(void){
+	static unsigned char inByte, rawCommand, i;
+	
+	//I2C setup
+	SDA_TRIS=1;
+	SCL_TRIS=1;
+	SCL=0;			//B8 scl 
+	SDA=0;			//B9 sda
+
+	//set CS pin direction to output on setup
+	BP_CS_DIR=0;			//B6 cs output
+
+	modeConfig.HiZ=1;//yes, always hiz (bbio uses this setting, should be changed to a setup variable because stringing the modeconfig struct everyhwere is getting ugly!)
+	modeConfig.lsbEN=0;//just in case!
+	bbSetup(2, 1);//configure the bitbang library for 2-wire, set the speed to high speed (50khz)
+	binI2CversionString();//reply string
+
+	while(1){
+
+		while(U1STAbits.URXDA == 0);//wait for a byte
+		inByte=U1RXREG; //grab it
+		rawCommand=(inByte>>4);//get command bits in seperate variable
+		
+		switch(rawCommand){
+			case 0://reset/setup/config commands
+				switch(inByte){
+					case 0://0, reset exit
+						//cleanup!!!!!!!!!!
+						return; //exit
+						break;
+					case 1://1 - id reply string
+						binI2CversionString();//reply string
+						break;
+					case 2://I2C start bit
+						bbI2Cstart();
+						UART1TX(1);
+						break;
+					case 3://I2C stop bit
+						bbI2Cstop();
+						UART1TX(1);
+						break;
+					case 4://I2C read byte
+						UART1TX(bbReadByte());
+						break;
+					case 6://I2C send ACK
+						bbI2Cack();
+						UART1TX(1);
+						break;
+					case 7://I2C send NACK
+						bbI2Cnack();
+						UART1TX(1);
+						break;
+					default:
+						UART1TX(0);
+						break;
+				}	
+				break;
+
+			case 0b0001://get x+1 bytes
+				inByte&=(~0b11110000); //clear command portion
+				inByte++; //increment by 1, 0=1byte
+				UART1TX(1);//send 1/OK		
+
+				for(i=0;i<inByte;i++){
+					while(U1STAbits.URXDA == 0);//wait for a byte
+					bbWriteByte(U1RXREG); //send byte
+					UART1TX(bbReadBit());//return ACK0 or NACK1
+				}
+
+				break;
+
+			case 0b0110://set speed 
+				inByte&=(~0b11111110);//clear command portion
+				bbSetup(2, inByte);//set I2C speed
+				UART1TX(1);
+				break;
+
+			case 0b0100: //configure peripherals w=power, x=pullups, y=AUX, z=CS
+				binIOperipheralset(inByte);
+				UART1TX(1);//send 1/OK		
+				break;
+
+			default:
+				UART1TX(0x00);//send 0/Error
+				break;
+		}//command switch
+	}//while loop
+
+}
+
+

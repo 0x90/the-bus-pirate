@@ -18,7 +18,7 @@
 #include "procMenu.h"
 #include "procSyntax.h"
 #include "selftest.h"
-#include "rawIO.h"
+#include "binIO.h"
 
 //HACKADAY: set custom configuration for PIC 24F
 _CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
@@ -94,7 +94,7 @@ int main(void){
 			case 0xff://got rawIO mode trigger
 				binmodecnt++;
 				if(binmodecnt>19){
-					rawBB();//hand control to raw SPI service loop. resume as normal on return
+					binBB();//hand control to binary mode service loop. resume as normal on return
 					//binmodecnt=0; //this line is unreachable, exit with hardware reset
 				}
 				break;	
