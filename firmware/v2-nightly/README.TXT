@@ -37,6 +37,13 @@ If you're starting with a blank chip, follow these steps to load the firmware.
 
 III. History
 See the project tracker on our google SVN page for a complete list of updates
+v2.7
+*New central command struct for easier changes and lighter stack
+*Revamped UART library, added error checks, overrun notice.
+*Merged MIDI into UART library.
+*1-Wire, UART, I2C, SPI, bitbang binary modes.
+*Binary self-test for v2go/v3 for manufacturing.
+
 v2.5
 *Raw spi fixes: CS command didn't return 1,CS bit of peripheral set command was inverted.
 *Smartcard macro in raw2wire uses configured LSB setting (doesn't force LSB bit order).
