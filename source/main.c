@@ -74,6 +74,7 @@ int main(void){
 	Initialize();//setup bus pirate
 
 	while(1){ //this is the main bus pirate loop
+		if(U1STAbits.OERR) U1STA &= (~0b10); //clear overrun error if exists
 
 		switch(bpGetUserInput(&currentByte, TERMINAL_BUFFER, terminalInput)){//service user prompt in baseIO.c
 			case 0x01://got enter, process user input
