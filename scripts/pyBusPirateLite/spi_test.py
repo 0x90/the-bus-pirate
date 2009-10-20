@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-Created by Sean Nelson on 2009-09-20.
+Created by Sean Nelson on 2009-10-14.
 Copyright 2009 Sean Nelson <audiohacked@gmail.com>
 
 This file is part of pyBusPirate.
@@ -19,12 +19,66 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with pyBusPirate.  If not, see <http://www.gnu.org/licenses/>.
 """
-import sys
-from pyBusPirateLite.SPI import SPI
+import sys, optparse
+from pyBusPirateLite.SPI import *
+
+def read_list_data(size):
+	data = []
+	for i in range(size+1):
+		data.append(0)
+	return data
+
+def parse_prog_args():
+	parser = optparse.OptionParser(usage="%prog [options] filename",
+									version="%prog 1.0")
+
+	parser.set_defaults(command="read")
+
+	parser.add_option("-v", "--verbose",
+						action="store_true", dest="verbose", default=True,
+						help="make lots of noise [default]")
+	parser.add_option("-q", "--quiet",
+						action="store_false", dest="verbose",
+						help="be mute")
+	parser.add_option("-r", "--read",
+						action="store_const", dest="command", const="read",
+						help="read from SPI to file [default]")
+	parser.add_option("-w", "--write",
+						action="store_const", dest="command", const="write",
+						help="write from file to SPI")
+	parser.add_option("-e", "--erase",
+						action="store_const", dest="command", const="erase",
+						help="erase SPI")
+	parser.add_option("-i", "--id",
+						action="store_const", dest="command", const="id",
+						help="print Chip ID")
+	parser.add_option("-s", "--size",
+	 					dest="flash_size", default=128,
+						help="Size of Flashchip in bytes", type="int")
+
+	(options, args) = parser.parse_args()
+
+	if options.command == "id":
+		return (options, args)
+	elif len(args) != 1:
+		parser.print_help()
+		print options
+		sys.exit(1)
+	else:
+		return (options, args)
+	
 """ enter binary mode """
-if __name__ is '__main__':
-	f=open('/tmp/workfile', 'wb')
+if __name__ == '__main__':
+	data = ""
+	(opt, args)  = parse_prog_args()
+
+	if opt.command == "read":
+		f=open(args[0], 'wb')
+	elif opt.command == "write":
+		f=open(args[0], 'rb')
+
 	spi = SPI("/dev/tty.usbserial-A7004qlY", 115200)
+
 	print "Entering binmode: ",
 	if spi.BBmode():
 		print "OK."
@@ -40,25 +94,47 @@ if __name__ is '__main__':
 		sys.exit()
 		
 	print "Configuring SPI."
-	if not spi.cfg_pins(SPIPins.POWER | SPIPins.CS):
+	if spi.cfg_pins(PinCfg.POWER | PinCfg.CS | PinCfg.AUX):
 		print "Failed to set SPI peripherals."
 		sys.exit()
-	if not spi.set_speed(SPISpeed._2_6MHZ):
+	if spi.set_speed(SPISpeed._2_6MHZ):
 		print "Failed to set SPI Speed."
 		sys.exit()
-	if not spi.cfg_spi(SPICfg.CLK_EDGE | SPICfg.OUT_TYPE):
+	if spi.cfg_spi(SPICfg.CLK_EDGE | SPICfg.OUT_TYPE):
 		print "Failed to set SPI configuration.";
 		sys.exit()
 	spi.timeout(0.2)
-	
-	print "Reading EEPROM."
-	spi.CS_Low()
-	spi.bulk_trans(4, [0x3, 0, 0, 0])
-	d = spi.bulk_trans(4)
-	f.write(d)
-	spi.CS_High()
-	
-	print "Reset Bus Pirate to user terminal: "
+
+	if opt.command == "read":
+		print "Reading EEPROM."
+		spi.CS_Low()
+		spi.bulk_trans(5, [0xB, 0, 0, 0, 0])
+		for i in range((int(opt.flash_size)/16)):
+			data = spi.bulk_trans(16, read_list_data(16))
+			f.write(data)
+		spi.CS_High()
+
+	elif opt.command == "write":
+		print "Writing EEPROM."
+		spi.CS_Low()
+		spi.bulk_trans(4, [0xA, 0, 0, 0])
+		for i in range((int(opt.flash_size)/16)):
+			spi.bulk_trans(16, None)
+		spi.CS_High()
+
+	elif opt.command == "id":
+		print "Reading Chip ID: ",
+		spi.CS_Low()
+		d = spi.bulk_trans(4, [0x9F, 0, 0, 0])
+		spi.CS_High()
+		for each in d[1:]:
+			print "%02X " % ord(each),
+		print
+
+	elif opt.command == "erase":
+		pass
+
+	print "Reset Bus Pirate to user terminal: ",
 	if spi.resetBP():
 		print "OK."
 	else:

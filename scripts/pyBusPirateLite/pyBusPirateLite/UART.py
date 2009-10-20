@@ -20,60 +20,56 @@ You should have received a copy of the GNU General Public License
 along with pyBusPirate.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from .BitBang import *
+from .BitBang import BBIO
 
-class SPISpeed:
-	_30KHZ = 0b000
-	_125KHZ = 0b001
-	_250KHZ = 0b010
-	_1MHZ = 0b011
-	_2MHZ = 0b100
-	_2_6MHZ = 0b101
-	_4MHZ = 0b110
-	_8MHZ = 0b111
+class UARTCfg:
+	OUTPUT_TYPE = 0x10
+	DATABITS = 0x0C
+	STOPBITS = 0x02
+	POLARITY = 0x01
 
-class SPICfg:
-	OUT_TYPE = 0x8
-	IDLE = 0x4
-	CLK_EDGE = 0x2
-	SAMPLE = 0x1
+class UARTSpeed:
+	_300    = 0b0000
+	_1200   = 0b0001
+	_2400   = 0b0010
+	_4800   = 0b0011
+	_9600   = 0b0100
+	_19200  = 0b0101
+	_33250  = 0b0110
+	_38400  = 0b0111
+	_57600  = 0b1000
+	_115200 = 0b1001
 
-class SPI_OUT_TYPE:
-	HIZ = 0
-	_3V3 = 1
+class UART(BBIO):
+	def __init__(self):
+		BBIO.__init__(self)
 
-class SPI(BBIO):
-	bulk_read = None
-	def __init__(self, port, speed):
-		BBIO.__init__(self, port, speed)
-
-	def CS_Low(self):
+	def manual_speed_cfg(self, BRGH, BRGL):
 		self.port.write("\x02")
-		self.timeout(0.1)
-		return self.response(1, True)
-
-	def CS_High(self):
-		self.port.write("\x03")
-		self.timeout(0.1)
-		return self.response(1, True)
-
-	def low_nibble(self, nibble):
-		self.port.write(chr(0x20 | nibble))
-		self.timeout(0.1)
-		return self.response(1, True)
-
-	def high_nibble(self, nibble):
-		self.port.write(chr(0x30 | nibble))
-		self.timeout(0.1)
-		return self.response(1, True)
-
-	def cfg_spi(self, spi_cfg):
-		self.port.write(chr(0x80 | spi_cfg))
+		self.port.write(BRGH)
+		self.port.write(BRGL)
 		self.timeout(0.1)
 		return self.response()
 
-	def read_spi_cfg(self):
-		self.port.write("\x90")
+	def begin_input(self):
+		self.port.write("\x04")
+
+	def end_input(self):
+		self.port.write("\x05")
+		
+	def enter_bridge_mode(self):
+		self.port.write("\x0F")
 		self.timeout(0.1)
 		return self.response(1, True)
-
+		
+	def set_cfg(self, cfg):
+		self.port.write(0xC0 | cfg)
+		self.timeout(0.1)
+		return self.response(1, True)
+		
+	def read_cfg(self):
+		self.port.write("\xD0")
+		self.timeout(0.1)
+		return self.response(1, True)
+		
+	

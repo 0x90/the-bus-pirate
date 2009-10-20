@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-Created by Sean Nelson on 2009-09-20.
+Created by Sean Nelson on 2009-10-14.
 Copyright 2009 Sean Nelson <audiohacked@gmail.com>
 
 This file is part of pyBusPirate.
@@ -20,8 +20,7 @@ You should have received a copy of the GNU General Public License
 along with pyBusPirate.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import select
-from .BBIO import BBIO
+from .BitBang import BBIO
 
 class I2CSpeed:
 	_50KHZ = 0b000
@@ -44,7 +43,7 @@ class I2C(BBIO):
 		return self.response()
 	
 	def send_stop_bit(self):
-		self.port.write("\x02")
+		self.port.write("\x03")
 		self.timeout(0.1)
 		return self.response()
 		
@@ -62,32 +61,4 @@ class I2C(BBIO):
 		self.port.write("\x07")
 		self.timeout(0.1)
 		return self.response()
-		
-	def bulk_trans(self, byte_count=16):
-		self.port.write(0x10 | (byte_count-1))
-		self.timeout(0.1)
-		for i in range(byte_count):
-			self.port.write(byte_string[i])
-			self.timeout(0.1)
-		return self.response(byte_count, True)
-		
-	def set_speed(self, speed=I2CSpeed._50KHZ):
-		self.port.write(0x40 | speed)
-		self.timeout(0.1)
-		return self.response()
-		
-	def read_speed(self):
-		self.port.write("\x50")
-		self.timeout(0.1)
-		return self.response(1, True)
-		
-	def cfg_pins(self, pins=):
-		self.port.write(0x60 | pins)
-		self.timeout(0.1)
-		return self.response()
-		
-	def read_pins(self):
-		self.port.write(0x70)
-		self.timeout(0.1)
-		return self.response(1, True)
 
