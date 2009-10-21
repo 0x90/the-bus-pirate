@@ -140,16 +140,9 @@ void Initialize(void){
 		
 	InitializeUART1(); //init the PC side serial port
 
-	/*#ifdef BUSPIRATE_POST
-	bpPOST();//check for power-on self-test jumper, if true, do test mode 
-	#endif
-	*/
-
 	// Get the chip type and revision
 	bpConfig.dev_type = bpReadFlash(DEV_ADDR_UPPER, DEV_ADDR_TYPE);
 	bpConfig.dev_rev = bpReadFlash(DEV_ADDR_UPPER, DEV_ADDR_REV);
-
-	UART1TX(0x11); 	//send XON 0x11 flow control for terms that need it at startup
 
 	bpWBR; 	//send a line feed
 

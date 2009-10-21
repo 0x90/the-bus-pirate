@@ -96,7 +96,9 @@ void binBB(void){
 				binReset();
 				binBBversion(); //say name on return
 			}else if(inByte==0b1111){//return to terminal
+				UART1TX(1);
 				BP_LEDMODE=0;//light MODE LED
+				while(U1STAbits.TRMT==0); //wait untill TX finishes
 				asm("RESET");
 			//self test is only for v2go and v3
 			#if defined(BUSPIRATEV25) || defined (BUSPIRATEV3)
