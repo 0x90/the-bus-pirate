@@ -149,7 +149,7 @@ void convert(void){
 //print version info (used in menu and at startup in main.c)
 void versionInfo(void){
 	bpWline(BP_VERSION_STRING);
-	bpWline("http://dangerousprototypes.com");
+
 	bpWline(BP_FIRMWARE_STRING);
 
 	bpWstring("DEVID:");
@@ -172,8 +172,8 @@ void versionInfo(void){
 		bpWstring("UNK");
 		break;	
 	}	
-	bpWstring(")");
-	bpBR;
+	bpWline(")");
+	bpWline("http://dangerousprototypes.com");
 }
 
 //display properties of the current bus mode (pullups, vreg, lsb, output type, etc)
