@@ -37,6 +37,13 @@ If you're starting with a blank chip, follow these steps to load the firmware.
 
 III. History
 See the project tracker on our google SVN page for a complete list of updates
+
+v2.8
+*First actual release since v2.5.
+*Removed send XOFF at startup.
+*Changed info header order (help URL moved to last place).
+*Binary mode functions moved to protocol libraries for smaller code.
+
 v2.7
 *New central command struct for easier changes and lighter stack
 *Revamped UART library, added error checks, overrun notice.
