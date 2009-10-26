@@ -53,7 +53,7 @@ void SpiGui::write_spi(void)
 void SpiGui::spi_chip_id(void)
 {
 	parent->parent->statusBar()->showMessage("Getting SPI Chip Id...");
-	qWaring() << "JEDEC Chip ID";
+	qWarning() << "JEDEC Chip ID";
 	int ret = 0, i = 0;
 	char *data_byte = "\x9F\x00\x00\x00";
 	char *chip_id;
