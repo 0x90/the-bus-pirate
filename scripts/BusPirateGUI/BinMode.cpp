@@ -30,10 +30,11 @@ QByteArray BinMode::dumpBuffer()
 }
 
 /* Port Manipulation */
-void BinMode::port_open()
+bool BinMode::port_open()
 {
-	serial->open(QIODevice::ReadWrite);
+	bool ret = serial->open(QIODevice::ReadWrite);
 	serial->flush();
+	return ret;
 }
 
 void BinMode::port_close()

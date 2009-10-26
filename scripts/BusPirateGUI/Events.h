@@ -7,10 +7,11 @@
 enum BPEventType
 {
 	BPStatusMsgEvent = QEvent::User,
+	BPPortStatusMsgEvent,
 	AsciiHexLogMsgEvent,
 	SpiLogMsgEvent,
 	I2CLogMsgEvent,
-	OneWireLogMsgEvent
+	OneWireLogMsgEvent,
 };
 
 class AsciiHexLogMsgEvent : public QEvent
@@ -20,11 +21,25 @@ public:
 	AsciiHexLogMsgEvent(QString & msg);
 };
 
-class AsciiHexStatusMsgEvent : public QEvent
+class SpiLogMsgEvent : public QEvent
 {
 public:
 	QString msg;
-	AsciiHexStatusMsgEvent(QString & msg);
+	SpiLogMsgEvent(QString & msg);
+};
+
+class I2CLogMsgEvent : public QEvent
+{
+public:
+	QString msg;
+	I2CLogMsgEvent(QString & msg);
+};
+
+class OneWireLogMsgEvent : public QEvent
+{
+public:
+	QString msg;
+	OneWireLogMsgEvent(QString & msg);
 };
 
 class BPStatusMsgEvent : public QEvent
@@ -32,6 +47,13 @@ class BPStatusMsgEvent : public QEvent
 public:
 	QString msg;
 	BPStatusMsgEvent(QString & msg);
+};
+
+class BPPortStatusMsgEvent : public QEvent
+{
+public:
+	QString msg;
+	BPPortStatusMsgEvent(QString & msg);
 };
 
 #endif

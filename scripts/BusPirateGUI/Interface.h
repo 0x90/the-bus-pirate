@@ -20,6 +20,10 @@ private slots:
 private:
 	QLineEdit *spi_file;
 	BinMode *bp;
+protected:
+	virtual void customEvent(QEvent *ev);
+public:
+	void postMsgEvent(const char* msg);
 };
 
 class I2CGui : public QWidget
@@ -35,6 +39,10 @@ private:
 	QLineEdit *device_addr;
 	QLineEdit *spi_file;
 	BinMode *bp;
+protected:
+	virtual void customEvent(QEvent *ev);
+public:
+	void postMsgEvent(const char* msg);
 };
 
 class OneWireGui : public QWidget
@@ -45,6 +53,10 @@ public:
 	QLineEdit *device_addr;
 	QLineEdit *spi_file;
 	QTextEdit *msglog;
+protected:
+	virtual void customEvent(QEvent *ev);
+public:
+	void postMsgEvent(const char* msg);
 };
 
 #endif

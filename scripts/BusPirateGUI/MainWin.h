@@ -20,6 +20,7 @@ public:
 private:
 	void createActions();
 	void createMenus();
+	QLabel *bpstatus;
 };
 
 class MainWidgetFrame : public QWidget

@@ -10,6 +10,7 @@
 /* Interface: Raw Ascii Text */
 RawTextGui::RawTextGui(MainWidgetFrame *p) : QWidget(p)
 {
+	parent = p;
 	bp = p->settings->bp;
 
 	QVBoxLayout *vlayout = new QVBoxLayout;
@@ -53,13 +54,18 @@ void RawTextGui::ExecuteFile()
 	QByteArray response;
 	QByteArray byte;
 	QList<QByteArray> byte_list;
+	QString qmsg_start ="Exec: ASCII Script...";
+	QString qmsg_success = "Exec: ASCII Script...Success!";
 	QString str = "%1 | raw bytes text: %2 tx: %3 rx: %4";
+	QString qmsg;
 	uint d;
 
 	QFile file(raw_file->text());
 
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 		return;
+
+	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent::BPStatusMsgEvent(qmsg_start));
 
 	ascii_hex_val = file.readAll().trimmed();
 	byte_list = ascii_hex_val.replace('\n', ' ').split(' ');
@@ -69,14 +75,11 @@ void RawTextGui::ExecuteFile()
 		byte = byte_list.takeFirst();
 		d = byte.trimmed().toUShort(&ok, 0);
 		response = bp->command(d);
-		postMsgEvent(
-			str.arg(i++, 3, 10, QChar('0'))
-			.arg(byte.data())
-			.arg(d, 3, 10, QChar('0'))
-			.arg(response.toHex().data())
-			.toAscii()
-		);
+		qmsg = str.arg(i++, 3, 10, QChar('0')).arg(byte.data())
+			.arg(d, 3, 10, QChar('0')).arg(response.toHex().data());
+		QCoreApplication::sendEvent(this, new AsciiHexLogMsgEvent::AsciiHexLogMsgEvent(qmsg));
 	}
+	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent::BPStatusMsgEvent(qmsg_success));
 }
 
 PowerGui::PowerGui(MainWidgetFrame *p) : QWidget(p)

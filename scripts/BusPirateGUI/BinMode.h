@@ -24,7 +24,7 @@ public:
 	~BinMode();
 public slots:
 	/* Port Manipulation */
-	void       port_open(void);
+	bool       port_open(void);
 	void       port_close(void);
 public:
 	/* Command Method */

@@ -12,7 +12,9 @@ MainAppWindow::MainAppWindow()
 	createActions();
 	createMenus();
 	setStatusBar(new QStatusBar);
-	statusBar()->showMessage("Bus Pirate Closed");
+	statusBar()->showMessage("Ready");
+	bpstatus = new QLabel("Bus Pirate Closed");
+	statusBar()->addPermanentWidget(bpstatus);
 	MainWidgetFrame *frame = new MainWidgetFrame(this);
 	setCentralWidget(frame);
 }
@@ -22,6 +24,10 @@ void MainAppWindow::customEvent(QEvent *ev)
 	if (static_cast<BPEventType>(ev->type()) == BPStatusMsgEvent)
 	{
 		statusBar()->showMessage(dynamic_cast<BPStatusMsgEvent::BPStatusMsgEvent* >(ev)->msg);
+	}
+	else if (static_cast<BPEventType>(ev->type()) == BPPortStatusMsgEvent)
+	{
+		bpstatus->setText(dynamic_cast<BPPortStatusMsgEvent::BPPortStatusMsgEvent *>(ev)->msg);
 	}
 }
 
@@ -51,6 +57,6 @@ MainWidgetFrame::MainWidgetFrame(MainAppWindow *p) : QWidget(p)
 	QVBoxLayout *mainLayout = new QVBoxLayout;
 	mainLayout->addWidget(tabs);
 	setLayout(mainLayout);
-	setWindowTitle("QBusPirate");
+	setWindowTitle("BusPirateGUI");
 }
 

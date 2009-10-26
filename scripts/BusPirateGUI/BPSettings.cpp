@@ -116,15 +116,15 @@ void BPSettingsGui::setConfigSettings()
 void BPSettingsGui::openPort()
 {
 	QString qmsg = QString("Bus Pirate Ready");
-	bp->port_open();
-	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent::BPStatusMsgEvent(qmsg));
+	if (bp->port_open())
+	QCoreApplication::sendEvent(parent->parent, new BPPortStatusMsgEvent::BPPortStatusMsgEvent(qmsg));
 }
 
 void BPSettingsGui::closePort()
 {
 	QString qmsg = QString("Bus Pirate Closed");
 	bp->port_close();
-	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent::BPStatusMsgEvent(qmsg));
+	QCoreApplication::sendEvent(parent->parent, new BPPortStatusMsgEvent::BPPortStatusMsgEvent(qmsg));
 }
 
 void BPSettingsGui::setupBusPirate()
