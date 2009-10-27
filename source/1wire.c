@@ -577,6 +577,9 @@ void bin1WIRE(void){
 
 	BP_CS_DIR=0;			//set CS pin direction to output on setup
 
+	modeConfig.HiZ=1;//yes, always hiz, sets CS to open drain state 
+	modeConfig.lsbEN=0;//just in case!
+
 	bin1WIREversionString();//reply string
 
 	while(1){

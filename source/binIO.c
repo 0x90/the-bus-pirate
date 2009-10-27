@@ -23,6 +23,7 @@
 #include "I2C.h"
 #include "UART.h"
 #include "1wire.h"
+#include "binwire.h"
 
 extern struct _modeConfig modeConfig;
 
@@ -93,6 +94,11 @@ void binBB(void){
 			}else if(inByte==4){//goto 1WIRE mode
 				binReset();
 				bin1WIRE();
+				binReset();
+				binBBversion(); //say name on return
+			}else if(inByte==5){//goto RAW WIRE mode
+				binReset();
+				binwire();
 				binReset();
 				binBBversion(); //say name on return
 			}else if(inByte==0b1111){//return to terminal

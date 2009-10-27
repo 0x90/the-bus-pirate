@@ -1,4 +1,5 @@
 #include "base.h"
+extern struct _modeConfig modeConfig; //holds persistant bus pirate settings (see base.h)
 
 void binIOperipheralset(unsigned char inByte){
 	#ifndef BUSPIRATEV0A
@@ -17,6 +18,7 @@ void binIOperipheralset(unsigned char inByte){
 	}
 	#endif
 
+	//AUX pin, high/low only
 	if(inByte&0b10){
 		BP_AUX_DIR=0;//aux output
 		BP_AUX=1;//aux high
@@ -25,10 +27,18 @@ void binIOperipheralset(unsigned char inByte){
 		BP_AUX=0;//aux low
 	}
 
-	if(inByte&0b1)
-		IOLAT|=CS; //BP_CS=1;//CS high
-	else
+	//CS pin, follows HiZ setting
+	if(inByte&0b1){
+		if(modeConfig.HiZ==1){
+			IODIR|=CS; //CS iput in open drain mode
+		}else{	
+			IOLAT|=CS; //CS high
+			IODIR&=(~CS); //CS output
+		}
+	}else{
 		IOLAT&=(~CS); //BP_CS=0;
+		IODIR&=(~CS); //CS output
+	}
 
 	//UART1TX(1);//send 1/OK		
 }
