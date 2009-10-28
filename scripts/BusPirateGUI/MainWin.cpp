@@ -15,7 +15,7 @@ MainAppWindow::MainAppWindow()
 	statusBar()->showMessage("Ready");
 	bpstatus = new QLabel("Bus Pirate Closed");
 	statusBar()->addPermanentWidget(bpstatus);
-	MainWidgetFrame *frame = new MainWidgetFrame(this);
+	frame = new MainWidgetFrame(this);
 	setCentralWidget(frame);
 }
 
@@ -39,13 +39,16 @@ MainWidgetFrame::MainWidgetFrame(MainAppWindow *p) : QWidget(p)
 	parent=p;
 	tabs = new QTabWidget(p);
 	cfg = new BPSettings;
-	bp = new BinMode(this, cfg->serial_port_name);
 	settings = new BPSettingsGui(this);
 	spi = new SpiGui(this);
 	i2c = new I2CGui(this);
 	onewire = new OneWireGui(this);
 	raw_text = new RawTextGui(this);
 	power = new PowerGui(this);
+	bp = new BinMode(this);
+	
+	//connect(qApp, SIGNAL(aboutToQuit()), settings, SLOT(SaveSettings()));
+	connect(qApp, SIGNAL(lastWindowClosed()), settings, SLOT(SaveSettings()));
 	
 	tabs->addTab(spi, "SPI");
 	tabs->addTab(i2c, "I2C");

@@ -1,20 +1,18 @@
 #include <QtGui>
 #include <qextserialport/qextserialport.h>
 #include "Events.h"
-#include "BinMode.h"
 #include "MainWin.h"
-BinMode::BinMode(QObject *parent=0, QString s=QString("/dev/bus_pirate")) : QObject(parent)
+#include "BPSettings.h"
+#include "BinMode.h"
+
+BinMode::BinMode(MainWidgetFrame *parent) : QWidget(parent)
 {
+	this->parent = parent;
 	serial = new QextSerialPort(QextSerialPort::Polling);
-	serial->setPortName(s);
-	serial->setTimeout(100);
 }
 
 BinMode::~BinMode()
 {
-	qDebug() << "App Closing: Closing Serial Port";
-	command(0x00);
-	command(0x0F);
 	port_close();
 }
 
@@ -32,6 +30,13 @@ QByteArray BinMode::dumpBuffer()
 /* Port Manipulation */
 bool BinMode::port_open()
 {
+	serial->setPortName(parent->settings->s_port->text());
+	serial->setBaudRate((BaudRateType)parent->settings->usable_baud_rate->value(parent->settings->s_baud->currentText(), BAUD115200)); //BAUD115200
+	serial->setDataBits((DataBitsType)parent->settings->s_databits->currentIndex());  //DATA_8
+	serial->setStopBits((StopBitsType)parent->settings->s_stopbits->currentIndex());  //STOP_1
+	serial->setParity((ParityType)parent->settings->s_parity->currentIndex());      //PAR_NONE
+	serial->setFlowControl((FlowType)parent->settings->s_flow->currentIndex());      //FLOW_OFF
+	serial->setTimeout(100);
 	bool ret = serial->open(QIODevice::ReadWrite);
 	serial->flush();
 	return ret;

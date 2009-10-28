@@ -28,7 +28,6 @@ class PowerGui : public QWidget
 Q_OBJECT
 public:
 	PowerGui(MainWidgetFrame *p);
-	MainWidgetFrame *parent;
 private slots:
 	void hiz_power_enable();
 	void open_collector_power();
@@ -40,7 +39,9 @@ private slots:
 	void setupBusPirate();
 	void getBuffer();
 private:
+	MainWidgetFrame *parent;
 	BinMode *bp;
 };
 
 #endif
+

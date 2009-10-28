@@ -1,3 +1,6 @@
+#ifndef __MISC_H
+#define __MISC_H
+
 /* Miscellanous */
 enum bbio_pins
 {
@@ -25,3 +28,6 @@ enum spi_cfg
 	SPI_CLK_EDGE = 0x02,
 	SPI_SAMPLE = 0x01
 };
+
+#endif
+

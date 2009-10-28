@@ -11,18 +11,7 @@ class PowerGui;
 class BPSettingsGui;
 class BinMode;
 class BPSettings;
-class MainAppWindow : public QMainWindow
-{
-protected:
-	virtual void customEvent(QEvent *ev);
-public:
-	MainAppWindow();
-private:
-	void createActions();
-	void createMenus();
-	QLabel *bpstatus;
-};
-
+class MainAppWindow;
 class MainWidgetFrame : public QWidget
 {
 Q_OBJECT
@@ -40,4 +29,18 @@ public:
 	MainAppWindow *parent;
 };
 
+class MainAppWindow : public QMainWindow
+{
+protected:
+	virtual void customEvent(QEvent *ev);
+public:
+	MainAppWindow();
+	MainWidgetFrame *frame;
+private:
+	void createActions();
+	void createMenus();
+	QLabel *bpstatus;
+};
+
 #endif
+

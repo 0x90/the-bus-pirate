@@ -8,8 +8,7 @@ int main(int argc, char *argv[])
 
 	app.setApplicationName("QBusPirate");
 	app.setOrganizationName("Sean Nelson");
-
-	MainAppWindow win;
-	win.show();
+	MainAppWindow *win = new MainAppWindow;
+	win->show();
 	return app.exec();
 }

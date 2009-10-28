@@ -16,17 +16,14 @@
 #define     DP           0xB9 // A:0 U:0 D:0
 #define     RDP          0xAB // A:0 U:0 D:0
 
-class BinMode : public QObject
+class MainWidgetFrame;
+class BinMode : public QWidget
 {
 public:
 	/* Construct */
-	BinMode(QObject *parent, QString s);
+	BinMode(MainWidgetFrame *ss);
 	~BinMode();
-public slots:
-	/* Port Manipulation */
-	bool       port_open(void);
-	void       port_close(void);
-public:
+	
 	/* Command Method */
 	QByteArray command(short int command);
 	
@@ -78,6 +75,11 @@ public:
 
 	/* Serial Port Access */
 	QextSerialPort *serial;
+	MainWidgetFrame *parent;
+public slots:
+	/* Port Manipulation */
+	bool       port_open(void);
+	void       port_close(void);
 };
 
 #endif

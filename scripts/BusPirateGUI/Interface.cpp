@@ -6,10 +6,10 @@
 #include "Interface.h"
 #include "Events.h"
 /* Interface: SPI */
-SpiGui::SpiGui(MainWidgetFrame *p) : QWidget(p)
+SpiGui::SpiGui(MainWidgetFrame *parent) : QWidget(parent)
 {
-	parent=p;
-	bp = p->settings->bp;
+	this->parent=parent;
+	bp = parent->bp;
 
 	QLabel *file_label = new QLabel("File: ");
 	QLabel *log_label = new QLabel("Log: ");
@@ -152,10 +152,10 @@ void SpiGui::postMsgEvent(const char* msg)
 }
 
 /* Interface: I2C */
-I2CGui::I2CGui(MainWidgetFrame *p) : QWidget(p)
+I2CGui::I2CGui(MainWidgetFrame *parent) : QWidget(parent)
 {
-	parent = p;
-	bp = p->settings->bp;
+	this->parent = parent;
+	bp = parent->bp;
 
 	QLabel *file_label = new QLabel("File: ");
 	QLabel *device_label = new QLabel("Device: ");

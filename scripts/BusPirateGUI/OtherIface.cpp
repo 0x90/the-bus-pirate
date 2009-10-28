@@ -8,10 +8,10 @@
 #include "Events.h"
 
 /* Interface: Raw Ascii Text */
-RawTextGui::RawTextGui(MainWidgetFrame *p) : QWidget(p)
+RawTextGui::RawTextGui(MainWidgetFrame *parent) : QWidget(parent)
 {
-	parent = p;
-	bp = p->settings->bp;
+	this->parent = parent;
+	bp = parent->bp;
 
 	QVBoxLayout *vlayout = new QVBoxLayout;
 	QLabel *file_label = new QLabel("File: ");
@@ -82,9 +82,10 @@ void RawTextGui::ExecuteFile()
 	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent::BPStatusMsgEvent(qmsg_success));
 }
 
-PowerGui::PowerGui(MainWidgetFrame *p) : QWidget(p)
+PowerGui::PowerGui(MainWidgetFrame *parent) : QWidget(parent)
 {
-	bp = p->settings->bp;
+	this->parent = parent;
+	bp = parent->bp;
 	QVBoxLayout *vlayout = new QVBoxLayout;
 
 	QPushButton *bbio_mode = new QPushButton("Reset BBIO Mode");
