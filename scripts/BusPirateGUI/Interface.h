@@ -59,5 +59,19 @@ public:
 	void postMsgEvent(const char* msg);
 };
 
+class RawWireGui : public QWidget
+{
+public:
+	RawWireGui(MainWidgetFrame *p);
+	MainWidgetFrame *parent;
+	QLineEdit *device_addr;
+	QLineEdit *spi_file;
+	QTextEdit *msglog;
+protected:
+	virtual void customEvent(QEvent *ev);
+public:
+	void postMsgEvent(const char* msg);
+};
+
 #endif
 

@@ -1,5 +1,5 @@
 #include <QtGui>
-#include <qextserialport/qextserialport.h>
+#include "qextserialport/qextserialport.h"
 #include "MainWin.h"
 #include "BPSettings.h"
 #include "Events.h"
@@ -116,14 +116,14 @@ void BPSettingsGui::openPort()
 {
 	QString qmsg = QString("Bus Pirate Ready");
 	if (parent->bp->port_open())
-		QCoreApplication::sendEvent(parent->parent, new BPPortStatusMsgEvent::BPPortStatusMsgEvent(qmsg));
+		QCoreApplication::sendEvent(parent->parent, new BPPortStatusMsgEvent(qmsg));
 }
 
 void BPSettingsGui::closePort()
 {
 	QString qmsg = QString("Bus Pirate Closed");
 	parent->bp->port_close();
-	QCoreApplication::sendEvent(parent->parent, new BPPortStatusMsgEvent::BPPortStatusMsgEvent(qmsg));
+	QCoreApplication::sendEvent(parent->parent, new BPPortStatusMsgEvent(qmsg));
 }
 
 void BPSettingsGui::setupBusPirate()
@@ -189,7 +189,7 @@ void BPSettings::Load()
 	databits = value("/serial_port/databits", DATA_8).toInt();
 	stopbits = value("/serial_port/stopbits", STOP_1).toInt();
 	parity = value("/serial_port/parity", PAR_NONE).toInt();
-	flowctrl = value("/serial_port/flowctrl", FLOW_HARDWARE).toInt();
+	flowctrl = value("/serial_port/flowctrl", FLOW_OFF).toInt();
 	//qDebug() << serial_port_name;
 }
 

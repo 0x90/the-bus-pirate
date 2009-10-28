@@ -6,6 +6,7 @@
 class SpiGui;
 class I2CGui;
 class OneWireGui;
+class RawWireGui;
 class RawTextGui;
 class PowerGui;
 class BPSettingsGui;
@@ -23,6 +24,7 @@ public:
 	SpiGui *spi;
 	I2CGui *i2c;
 	OneWireGui *onewire;
+	RawWireGui *rawwire;
 	RawTextGui *raw_text;
 	PowerGui *power;
 	BPSettingsGui *settings;

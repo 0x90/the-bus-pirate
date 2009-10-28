@@ -21,13 +21,13 @@ MainAppWindow::MainAppWindow()
 
 void MainAppWindow::customEvent(QEvent *ev)
 {
-	if (static_cast<BPEventType>(ev->type()) == BPStatusMsgEvent)
+	if (static_cast<BPEventType>(ev->type()) == BPStatusMsgEventType)
 	{
-		statusBar()->showMessage(dynamic_cast<BPStatusMsgEvent::BPStatusMsgEvent* >(ev)->msg);
+		statusBar()->showMessage(dynamic_cast<BPStatusMsgEvent* >(ev)->msg);
 	}
-	else if (static_cast<BPEventType>(ev->type()) == BPPortStatusMsgEvent)
+	else if (static_cast<BPEventType>(ev->type()) == BPPortStatusMsgEventType)
 	{
-		bpstatus->setText(dynamic_cast<BPPortStatusMsgEvent::BPPortStatusMsgEvent *>(ev)->msg);
+		bpstatus->setText(dynamic_cast<BPPortStatusMsgEvent *>(ev)->msg);
 	}
 }
 
@@ -43,6 +43,7 @@ MainWidgetFrame::MainWidgetFrame(MainAppWindow *p) : QWidget(p)
 	spi = new SpiGui(this);
 	i2c = new I2CGui(this);
 	onewire = new OneWireGui(this);
+	rawwire = new RawWireGui(this);
 	raw_text = new RawTextGui(this);
 	power = new PowerGui(this);
 	bp = new BinMode(this);
@@ -53,6 +54,7 @@ MainWidgetFrame::MainWidgetFrame(MainAppWindow *p) : QWidget(p)
 	tabs->addTab(spi, "SPI");
 	tabs->addTab(i2c, "I2C");
 	tabs->addTab(onewire, "1Wire");
+	tabs->addTab(rawwire, "Raw 2/3-Wire");
 	tabs->addTab(raw_text, "Raw Text");
 	tabs->addTab(power, "Bus Pirate");
 	tabs->addTab(settings, "Settings");

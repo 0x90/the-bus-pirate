@@ -1,7 +1,7 @@
 #ifndef __BINMODE_H
 #define __BINMODE_H
 
-#include <qextserialport/qextserialport.h>
+#include "qextserialport/qextserialport.h"
 
 #define     WREN         0x06 // A:0 U:0 D:0
 #define     WRDI         0x04 // A:0 U:0 D:0
@@ -25,7 +25,7 @@ public:
 	~BinMode();
 	
 	/* Command Method */
-	QByteArray command(short int command);
+	QByteArray command(unsigned short command);
 	
 	/* Dump Buffers */
 	QByteArray dumpBuffer();
@@ -43,8 +43,8 @@ public:
 	int        enter_mode_onewire(void);
 
 	/* BBIO pin settings */
-	int        raw_set_io(short int pins);
-	int        raw_set_pins(short int pins);
+	int        raw_set_io(unsigned short pins);
+	int        raw_set_pins(unsigned short pins);
 
 	/* Self Test Methods */
 	QByteArray test_mode_short(void);
@@ -52,18 +52,18 @@ public:
 
 	/* Common Interface Methods */
 	QByteArray bbio_mode_version(void);        
-	char*      bbio_bulk_trans(char* data, short int size);
-	int        bbio_speed_set(short int speed);
+	QByteArray bbio_bulk_trans(QByteArray data, unsigned short size);
+	int        bbio_speed_set(unsigned short speed);
 	QByteArray bbio_speed_read(void);
-	int        bbio_peripherial_set(short int pins);
+	int        bbio_peripherial_set(unsigned short pins);
 	QByteArray bbio_peripherial_read(void);
 
 	/* SPI */
 	int        spi_cs_low(void);
 	int        spi_cs_high(void);
-	int        spi_nibble_high(short int nibble);
-	QByteArray spi_nibble_low(short int nibble);
-	int        spi_configure_set(short int spi_cfg);
+	int        spi_nibble_high(unsigned short nibble);
+	QByteArray spi_nibble_low(unsigned short nibble);
+	int        spi_configure_set(unsigned short spi_cfg);
 	QByteArray spi_configure_read(void);
 
 	/* I2C */

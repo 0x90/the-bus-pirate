@@ -34,16 +34,16 @@ RawTextGui::RawTextGui(MainWidgetFrame *parent) : QWidget(parent)
 
 void RawTextGui::customEvent(QEvent *ev)
 {
-	if (static_cast<BPEventType>(ev->type()) == AsciiHexLogMsgEvent)
+	if (static_cast<BPEventType>(ev->type()) == AsciiHexLogMsgEventType)
 	{
-		msglog->append(dynamic_cast<AsciiHexLogMsgEvent::AsciiHexLogMsgEvent* >(ev)->msg);
+		msglog->append(dynamic_cast<AsciiHexLogMsgEvent* >(ev)->msg);
 	}
 }
 
 void RawTextGui::postMsgEvent(const char* msg)
 {
 	QString qmsg = QString(msg);
-	QCoreApplication::sendEvent(this, new AsciiHexLogMsgEvent::AsciiHexLogMsgEvent(qmsg));
+	QCoreApplication::sendEvent(this, new AsciiHexLogMsgEvent(qmsg));
 }
 
 void RawTextGui::ExecuteFile()
@@ -65,7 +65,7 @@ void RawTextGui::ExecuteFile()
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 		return;
 
-	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent::BPStatusMsgEvent(qmsg_start));
+	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent(qmsg_start));
 
 	ascii_hex_val = file.readAll().trimmed();
 	byte_list = ascii_hex_val.replace('\n', ' ').split(' ');
@@ -74,12 +74,12 @@ void RawTextGui::ExecuteFile()
 	{
 		byte = byte_list.takeFirst();
 		d = byte.trimmed().toUShort(&ok, 0);
-		response = bp->command(d);
+		response = parent->bp->command(d);
 		qmsg = str.arg(i++, 3, 10, QChar('0')).arg(byte.data())
 			.arg(d, 3, 10, QChar('0')).arg(response.toHex().data());
-		QCoreApplication::sendEvent(this, new AsciiHexLogMsgEvent::AsciiHexLogMsgEvent(qmsg));
+		QCoreApplication::sendEvent(this, new AsciiHexLogMsgEvent(qmsg));
 	}
-	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent::BPStatusMsgEvent(qmsg_success));
+	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent(qmsg_success));
 }
 
 PowerGui::PowerGui(MainWidgetFrame *parent) : QWidget(parent)
@@ -127,12 +127,12 @@ PowerGui::PowerGui(MainWidgetFrame *parent) : QWidget(parent)
 void PowerGui::hiz_power_enable()
 {
 	qDebug() << "enable HiZ Power Mode";
-	if (bp->reset_bbio())
+	if (parent->bp->reset_bbio())
 	{
 		/* we are in bbio mode */
 	} else {
 		/* we are in the user terminal */
-		bp->reset_user_terminal();
+		parent->bp->reset_user_terminal();
 		/* setup power in high-z mode here */
 	}
 }
@@ -150,39 +150,41 @@ void PowerGui::normal_power_enable()
 void PowerGui::hardReset()
 {
 	qDebug() << "Hard Reset";
-	bp->reset_bbio();
-	bp->reset_hardware();
+	parent->bp->reset_bbio();
+	parent->bp->reset_hardware();
 }
 
 void PowerGui::enterMode()
 {
 	qDebug() << "Enter Bit Banging Mode";
-	bp->enter_mode_bbio();
+	parent->bp->enter_mode_bbio();
 }
 
 void PowerGui::userTermReset()
 {
 	qDebug() << "User Terminal Reset";
-	bp->reset_user_terminal();
+	parent->bp->reset_user_terminal();
 }
 
 void PowerGui::resetBBIO()
 {
 	qDebug() << "Reset BBIO Mode";
-	bp->reset_bbio();
+	parent->bp->reset_bbio();
 }
 
 void PowerGui::setupBusPirate()
 {
 	qDebug() << "Setup Bus Pirate";
-	bp->port_open();
-	bp->reset_bbio();
-	bp->reset_hardware();
-	bp->reset_user_terminal();
-	bp->enter_mode_bbio();	
+	parent->bp->port_open();
+	parent->bp->reset_bbio();
+	parent->bp->reset_hardware();
+	parent->bp->reset_user_terminal();
+	parent->bp->enter_mode_bbio();	
 }
 
 void PowerGui::getBuffer()
 {
-	bp->dumpBuffer();
+	parent->bp->serial->flush();
+	parent->bp->dumpBuffer();
+	parent->bp->serial->flush();
 }

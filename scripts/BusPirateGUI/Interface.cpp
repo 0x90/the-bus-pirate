@@ -45,7 +45,108 @@ SpiGui::SpiGui(MainWidgetFrame *parent) : QWidget(parent)
 }
 
 void SpiGui::read_spi(void)
-{}
+{
+	int ret = 0, i = 0;
+	unsigned long chipsize = 262144;
+	QString qmsg_start = QString("Reading SPI Chip...");
+	QString qmsg_fail = QString("Reading SPI Chip...Failed");
+	QString qmsg_success = QString("Reading SPI Chip...Success!");
+	QByteArray data_byte("\x03\x00\x00\x00");
+	QByteArray read_cmd, read_resp;
+
+	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent(qmsg_start));
+	postMsgEvent("JEDEC READ");
+
+	if (!parent->bp->serial->isOpen())
+		goto err;
+
+	ret = parent->bp->enter_mode_spi();
+	if (ret)
+	{
+		postMsgEvent("SPI OK.");
+	} else {
+		postMsgEvent("SPI Failed.");
+		goto err;
+	}
+
+	ret = parent->bp->bbio_peripherial_set(0x0B);
+	if (ret)
+	{
+		postMsgEvent("Peripherial Config Ok.");
+	} else {
+		postMsgEvent("Peripherial Config Failed.");
+		goto err;
+	}
+
+	ret = parent->bp->bbio_speed_set(0x06);
+	if (ret)
+	{
+		postMsgEvent("SPI Speed Config Ok.");
+	} else {
+		postMsgEvent("SPI Speed Config Failed.");
+		goto err;
+	}
+
+	ret = parent->bp->spi_configure_set(0x08);
+	if (ret)
+	{
+		postMsgEvent("SPI Config Ok.");
+	} else {
+		postMsgEvent("SPI Config Failed.");
+		goto err;
+	}
+
+	ret = parent->bp->spi_cs_low();
+	if (ret)
+	{
+		postMsgEvent("CS Low: Ok.");
+	} else {
+		postMsgEvent("CS Low: Failed.");
+	}
+
+	//for (i = 0; i <chipsize; i+=16)
+	//{
+		read_cmd = parent->bp->bbio_bulk_trans(data_byte, 4);
+		if (read_cmd.contains("\x01"))
+		{
+			postMsgEvent("Reading...");
+		} else {
+			postMsgEvent("Reading...Failed!");
+		}
+
+	for (i=0; i<chipsize; i+=16)
+	{
+		QByteArray ba;
+		ba.resize(16);
+		read_resp = parent->bp->bbio_bulk_trans(ba, 16);
+		if (read_resp.contains("\x01"))
+		{
+			for (i=0; i<16; i++)  postMsgEvent(QString("0x%1 ").arg((QString)read_resp.mid(i,1).toHex()).toAscii());
+		} else {
+			postMsgEvent("Reading...Failed!");
+		}
+	}
+
+	ret = parent->bp->spi_cs_high();
+	if (ret)
+	{
+		postMsgEvent("CS High: Ok.");
+	} else {
+		postMsgEvent("CS High: Failed.");
+	}
+
+	ret = parent->bp->reset_bbio();
+	if (ret)
+	{
+		postMsgEvent("Reset to BBIO mode: Ok.");
+	} else {
+		postMsgEvent("Reset to BBIO mode: Failed.");
+	}
+	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent(qmsg_success));
+	return;	
+err:
+	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent(qmsg_fail));
+}
 
 void SpiGui::write_spi(void)
 {}
@@ -55,14 +156,17 @@ void SpiGui::spi_chip_id(void)
 	QString qmsg_start = QString("Getting SPI Chip Id...");
 	QString qmsg_fail = QString("Getting SPI Chip Id...Failed");
 	QString qmsg_success = QString("Getting SPI Chip Id...Success!");
-
-	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent::BPStatusMsgEvent(qmsg_start));
-	postMsgEvent("JEDEC Chip ID");
+	QByteArray data_byte("\x9F\x00\x00\x00");
+	QByteArray chip_id;
 	int ret = 0, i = 0;
-	char *data_byte = "\x9F\x00\x00\x00";
-	char *chip_id;
+
+	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent(qmsg_start));
+	postMsgEvent("JEDEC RDID");
 	
-	ret = bp->enter_mode_spi();
+	if (!parent->bp->serial->isOpen())
+		goto err;
+
+	ret = parent->bp->enter_mode_spi();
 	if (ret)
 	{
 		postMsgEvent("SPI OK.");
@@ -71,7 +175,7 @@ void SpiGui::spi_chip_id(void)
 		goto err;
 	}
 	
-	ret = bp->bbio_peripherial_set(0x0B);
+	ret = parent->bp->bbio_peripherial_set(0x0B);
 	if (ret)
 	{
 		postMsgEvent("Peripherial Config Ok.");
@@ -80,7 +184,7 @@ void SpiGui::spi_chip_id(void)
 		goto err;
 	}
 	
-	ret = bp->bbio_speed_set(0x06);
+	ret = parent->bp->bbio_speed_set(0x06);
 	if (ret)
 	{
 		postMsgEvent("SPI Speed Config Ok.");
@@ -89,7 +193,7 @@ void SpiGui::spi_chip_id(void)
 		goto err;
 	}
 	
-	ret = bp->spi_configure_set(0x08);
+	ret = parent->bp->spi_configure_set(0x08);
 	if (ret)
 	{
 		postMsgEvent("SPI Config Ok.");
@@ -98,7 +202,7 @@ void SpiGui::spi_chip_id(void)
 		goto err;
 	}
 	
-	ret = bp->spi_cs_low();
+	ret = parent->bp->spi_cs_low();
 	if (ret)
 	{
 		postMsgEvent("CS Low: Ok.");
@@ -106,16 +210,16 @@ void SpiGui::spi_chip_id(void)
 		postMsgEvent("CS Low: Failed.");
 	}
 	
-	chip_id = bp->bbio_bulk_trans(data_byte, sizeof(data_byte));
-	if (chip_id != NULL)
+	chip_id = parent->bp->bbio_bulk_trans(data_byte, 4);
+	if (chip_id.contains("\x01"))
 	{
 		postMsgEvent("ChipID:");
-		for (i = 0; i < sizeof(chip_id); ++i)  postMsgEvent(QString("0x%1 ").arg((int)chip_id[i], 0, 16).toAscii());
+		for (i = 0; i < chip_id.size(); ++i)  postMsgEvent(QString("0x%1 ").arg((QString)chip_id.mid(i,1).toHex()).toAscii());
 	} else {
 		postMsgEvent("ChipID: Failed!");
 	}
 	
-	ret = bp->spi_cs_high();
+	ret = parent->bp->spi_cs_high();
 	if (ret)
 	{
 		postMsgEvent("CS High: Ok.");
@@ -123,32 +227,31 @@ void SpiGui::spi_chip_id(void)
 		postMsgEvent("CS High: Failed.");
 	}
 	
-	ret = bp->reset_bbio();
+	ret = parent->bp->reset_bbio();
 	if (ret)
 	{
 		postMsgEvent("Reset to BBIO mode: Ok.");
 	} else {
 		postMsgEvent("Reset to BBIO mode: Failed.");
 	}
-	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent::BPStatusMsgEvent(qmsg_success));
+	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent(qmsg_success));
 	return;	
 err:
-	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent::BPStatusMsgEvent(qmsg_fail));
-	return;
+	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent(qmsg_fail));
 }
 
 void SpiGui::customEvent(QEvent *ev)
 {
-	if (static_cast<BPEventType>(ev->type()) == SpiLogMsgEvent)
+	if (static_cast<BPEventType>(ev->type()) == SpiLogMsgEventType)
 	{
-		msglog->append(dynamic_cast<SpiLogMsgEvent::SpiLogMsgEvent* >(ev)->msg);
+		msglog->append(dynamic_cast<SpiLogMsgEvent* >(ev)->msg);
 	}
 }
 
 void SpiGui::postMsgEvent(const char* msg)
 {
 	QString qmsg = QString(msg);
-	QCoreApplication::sendEvent(this, new SpiLogMsgEvent::SpiLogMsgEvent(qmsg));
+	QCoreApplication::sendEvent(this, new SpiLogMsgEvent(qmsg));
 }
 
 /* Interface: I2C */
@@ -196,15 +299,15 @@ void I2CGui::search_i2c()
 	QString qmsg_success = "Getting I2C Devices...Success!";
 	int i = 0, dev=0, addr=0;
 	char rw;
-	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent::BPStatusMsgEvent(qmsg_start));
+	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent(qmsg_start));
 	for (i=0; i<0x100; i++)
 	{
 		dev = i;
 		addr = i>>1;
 
-		bp->i2c_start();
-		bp->serial->write((char*)&dev, 1);
-		bp->i2c_byte_read();
+		parent->bp->i2c_start();
+		parent->bp->serial->write((char*)&dev, 1);
+		parent->bp->i2c_byte_read();
 		if ((addr & 0x01)==0) 
 		{
 			rw = 'W';
@@ -213,26 +316,26 @@ void I2CGui::search_i2c()
 			bp->i2c_ack_send();
 			rw = 'R';
 		}
-		bp->i2c_stop();
+		parent->bp->i2c_stop();
 
 		dev_addr = QString("%1 (%2 %3)").arg(dev, 0, 16).arg(addr, 0, 16).arg(rw);
 		postMsgEvent(dev_addr.toAscii());
 	}
-	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent::BPStatusMsgEvent(qmsg_success));
+	QCoreApplication::sendEvent(parent->parent, new BPStatusMsgEvent(qmsg_success));
 }
 
 void I2CGui::customEvent(QEvent *ev)
 {
-	if (static_cast<BPEventType>(ev->type()) == I2CLogMsgEvent)
+	if (static_cast<BPEventType>(ev->type()) == I2CLogMsgEventType)
 	{
-		msglog->append(dynamic_cast<I2CLogMsgEvent::I2CLogMsgEvent* >(ev)->msg);
+		msglog->append(dynamic_cast<I2CLogMsgEvent* >(ev)->msg);
 	}
 }
 
 void I2CGui::postMsgEvent(const char* msg)
 {
 	QString qmsg = QString(msg);
-	QCoreApplication::sendEvent(this, new I2CLogMsgEvent::I2CLogMsgEvent(qmsg));
+	QCoreApplication::sendEvent(this, new I2CLogMsgEvent(qmsg));
 }
 
 OneWireGui::OneWireGui(MainWidgetFrame *p) : QWidget(p)
@@ -271,14 +374,62 @@ OneWireGui::OneWireGui(MainWidgetFrame *p) : QWidget(p)
 
 void OneWireGui::customEvent(QEvent *ev)
 {
-	if (static_cast<BPEventType>(ev->type()) == OneWireLogMsgEvent)
+	if (static_cast<BPEventType>(ev->type()) == OneWireLogMsgEventType)
 	{
-		msglog->append(dynamic_cast<OneWireLogMsgEvent::OneWireLogMsgEvent* >(ev)->msg);
+		msglog->append(dynamic_cast<OneWireLogMsgEvent* >(ev)->msg);
 	}
 }
 
 void OneWireGui::postMsgEvent(const char* msg)
 {
 	QString qmsg = QString(msg);
-	QCoreApplication::sendEvent(this, new OneWireLogMsgEvent::OneWireLogMsgEvent(qmsg));
+	QCoreApplication::sendEvent(this, new OneWireLogMsgEvent(qmsg));
+}
+
+RawWireGui::RawWireGui(MainWidgetFrame *p) : QWidget(p)
+{
+	QLabel *file_label = new QLabel("File: ");
+	QLabel *device_label = new QLabel("Device: ");
+	QLabel *log_label = new QLabel("Log: ");
+
+	QPushButton *scan = new QPushButton("Scan RawWire");
+	QPushButton *read_btn = new QPushButton("Read RawWire");
+	QPushButton *write_btn = new QPushButton("Write RawWire");
+	
+	device_addr = new QLineEdit;
+	spi_file = new QLineEdit;
+	msglog = new QTextEdit;
+	msglog->setReadOnly(true);
+	
+	QVBoxLayout *vlayout = new QVBoxLayout;
+	QHBoxLayout *hlayout = new QHBoxLayout;
+	
+	hlayout->addWidget(scan);
+	hlayout->addWidget(read_btn);
+	hlayout->addWidget(write_btn);
+	
+	vlayout->addWidget(file_label);
+	vlayout->addWidget(spi_file);
+	vlayout->addWidget(device_label);
+	vlayout->addWidget(device_addr);
+	vlayout->addLayout(hlayout);
+	vlayout->addSpacing(50);
+	vlayout->addWidget(log_label);
+	vlayout->addWidget(msglog);
+	
+	setLayout(vlayout);
+}
+
+void RawWireGui::customEvent(QEvent *ev)
+{
+	if (static_cast<BPEventType>(ev->type()) == RawWireLogMsgEventType)
+	{
+		msglog->append(dynamic_cast<RawWireLogMsgEvent* >(ev)->msg);
+	}
+}
+
+void RawWireGui::postMsgEvent(const char* msg)
+{
+	QString qmsg = QString(msg);
+	QCoreApplication::sendEvent(this, new RawWireLogMsgEvent(qmsg));
 }
