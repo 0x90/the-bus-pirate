@@ -81,7 +81,7 @@ BPSettingsGui::BPSettingsGui(MainWidgetFrame *parent) : QWidget(parent)
 	mlayout->addWidget(close);
 
 	setLayout(mlayout);
-	setupBusPirate();
+	//setupBusPirate();
 }
 
 BPSettingsGui::~BPSettingsGui()

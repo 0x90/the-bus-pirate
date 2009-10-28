@@ -7,7 +7,7 @@ SUBDIRS += qextserialport
 DEPENDS += qextserialport
 
 CONFIG += warn_off qt thread
-CONFIG += debug
+CONFIG += debug_and_release
 #CONFIG += release
 CONFIG += staticlib
 CONFIG += static
