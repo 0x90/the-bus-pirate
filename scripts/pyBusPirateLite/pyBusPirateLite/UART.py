@@ -22,6 +22,8 @@ along with pyBusPirate.  If not, see <http://www.gnu.org/licenses/>.
 
 from .BitBang import BBIO
 
+FOSC = (32000000/2)
+
 class UARTCfg:
 	OUTPUT_TYPE = 0x10
 	DATABITS = 0x0C
@@ -44,7 +46,10 @@ class UART(BBIO):
 	def __init__(self):
 		BBIO.__init__(self)
 
-	def manual_speed_cfg(self, BRGH, BRGL):
+	def manual_speed_cfg(self, baud):
+		BRG = ((FOSC)/(4*baud))-1
+		BRGH = ((BRG>>8)&0xFF)
+		BRGL = (BRG&0xFF)
 		self.port.write("\x02")
 		self.port.write(BRGH)
 		self.port.write(BRGL)

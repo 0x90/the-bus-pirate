@@ -85,6 +85,12 @@ class BBIO:
 		if self.response(4) == "1W01": return 1
 		else: return 0
 		
+	def enter_rawwire(self):
+		self.port.write("\x05")
+		self.timeout(0.1)
+		if self.response(4) == "RAW1": return 1
+		else: return 0
+		
 	def resetBP(self):
 		self.reset()
 		self.port.write("\x0F")
