@@ -32,6 +32,7 @@ unsigned char binBBpinset(unsigned char inByte);
 void binBBversion(void);
 void binSelfTest(unsigned char jumperTest);
 void binReset(void);
+unsigned char getRXbyte(void);
 
 /*
 Bitbang is like a player piano or bitmap. The 1 and 0 represent the pins. 
@@ -52,17 +53,21 @@ Commands:
 00000001 //enter rawSPI mode
 00000010 //enter raw I2C mode
 00000011 //enter raw UART mode
-00001101
-00001110
+00000100 // enter raw 1-wire
+00000101 //enter raw wire mode
 00001111 //reset, return to user terminal
 00010000 //short self test
 00010001 //full self test with jumpers
+00010010 // setup PWM
+00010011 // clear PWM
+00010100 //ADC measurement
 010xxxxx //set input(1)/output(0) pin state (returns pin read)
 */
 void binBBversion(void){bpWstring("BBIO1");}
 
 void binBB(void){
 	static unsigned char inByte;
+	unsigned int i;
 	
 	BP_LEDMODE=1;//light MODE LED
 	binReset();	
@@ -70,8 +75,7 @@ void binBB(void){
 
 	while(1){
 
-		while(U1STAbits.URXDA == 0);//wait for a byte
-		inByte=U1RXREG; //grab it
+		inByte=getRXbyte();
 
 		if((inByte&0b10000000)==0){//if command bit cleared, process command
 			if(inByte==0){//reset, send BB version
@@ -113,6 +117,48 @@ void binBB(void){
 				}else if(inByte == 0b10001){//full self test with jumpers
 					binSelfTest(1);
 			#endif
+			}else if(inByte == 0b10010){//setup PWM
+
+				//cleanup timers from FREQ measure
+				T2CON=0;//16 bit mode
+				T4CON=0;
+				OC5CON = 0; //clear PWM settings
+
+				BP_AUX_RPOUT = OC5_IO; //setup pin
+				
+				//get one byte
+				i=getRXbyte();
+				if(i&0b10) T2CONbits.TCKPS1=1; //set prescalers
+				if(i&0b1) T2CONbits.TCKPS0=1;
+
+				//get two bytes
+				i=(getRXbyte()<<8);
+				i|=getRXbyte();
+				OC5R=i;	//Write duty cycle to both registers
+				OC5RS=i;	
+				OC5CON=0x6;// PWM mode on OC, Fault pin disabled
+
+				//get two bytes
+				i=(getRXbyte()<<8);
+				i|=getRXbyte();
+				PR2	= i;	// write period
+
+				T2CONbits.TON=1;		// Start Timer2 
+				UART1TX(1);
+			}else if(inByte == 0b10011){//clear PWM				
+				T2CON=0;		// stop Timer2
+				OC5CON =0;
+				BP_AUX_RPOUT = 0;	 //remove output from AUX pin
+				UART1TX(1);
+			//ADC only for v1, v2, v3
+			#ifndef BUSPIRATEV0
+				}else if(inByte == 0b10100){//ADC reading (x/1024)*6.6volts
+					AD1CON1bits.ADON = 1; // turn ADC ON
+					i=bpADC(12); //take measurement
+					AD1CON1bits.ADON = 0; // turn ADC OFF
+					UART1TX((i>>8)); //send upper 8 bits
+					UART1TX(i); //send lower 8 bits											
+			#endif
 			}else if((inByte>>5)&0b010){//set pin direction, return read
 				UART1TX(binBBpindirectionset(inByte));
 			}else{//unknown command, error
@@ -124,6 +170,11 @@ void binBB(void){
 		}//if
 	}//while
 }//function
+
+unsigned char getRXbyte(void){
+	while(U1STAbits.URXDA == 0);//wait for a byte
+	return U1RXREG; //grab it
+}
 
 void binReset(void){
 	binBBpindirectionset(0xff);//pins to input on start

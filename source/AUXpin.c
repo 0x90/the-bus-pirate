@@ -35,9 +35,12 @@ void bpPWM(void){
 	//unsigned long PWM_div;
 
 	float PWM_pd;
+	//cleanup timers 
+	T2CON=0;		// clear settings
+	T4CON=0;
+	OC5CON =0;
 	
-	if(AUXmode==AUX_PWM){
-		T2CONbits.TON = 0;		// Start Timer2 with assumed settings
+	if(AUXmode==AUX_PWM){ //PWM is on, stop it
 		AUXPIN_RPOUT = 0;	 //remove output from AUX pin
 		bpWline(OUMSG_AUX_PWM_OFF);
 		AUXmode=AUX_IO;
@@ -84,23 +87,11 @@ void bpPWM(void){
 	//bpWdec(PWM_dutycycle);
 
 	//assign pin with PPS
-	//__builtin_write_OSCCONL(OSCCON & 0xbf); //unlock PPS
 	AUXPIN_RPOUT = OC5_IO;
-	//__builtin_write_OSCCONL(OSCCON | 0x40); 	//lock PPS
 
-	//cleanup timers from FREQ measure
-	T2CONbits.T32=0;//16 bit mode
-	T4CONbits.T32=0;
-	T2CONbits.TCS=0; //internal clock source
-
-
-	OC5CONbits.OCM		= 0; 		// Output compare channel is disabled
 	OC5R				= PWM_dutycycle;	// Initialize Compare Register1 with 50% duty cycle
 	OC5RS				= PWM_dutycycle;	// Initialize Secondary Compare Register1 with 50% duty cycle
-	OC5CONbits.OCSIDL	= 0;		// Output capture will continue to operate in CPU Idle mode
-	OC5CONbits.OCFLT	= 0;		// No PWM Fault condition has occurred (this bit is only used when OCM<2:0> = 111)
-	OC5CONbits.OCTSEL	= 0;		// Timer2 is the clock source for output Compare
-	OC5CONbits.OCM		= 0x6;		// PWM mode on OC, Fault pin disabled
+	OC5CON = 0x6;		// PWM mode on OC, Fault pin disabled
 	PR2					= PWM_period;	// Initialize PR2 with 0x0132 = 0d306 as PWM cycle
 	T2CONbits.TON		= 1;		// Start Timer2 with assumed settings
 
@@ -121,17 +112,17 @@ void bpFreq(void){
 
 	bpWstring(OUMSG_AUX_FREQCOUNT);
 //setup timer
-	T4CONbits.TON=0;	//make sure the counters are off
-	T2CONbits.TON=0;	
+	T4CON=0;	//make sure the counters are off
+	T2CON=0;	
 //timer 2 external
 	AUXPIN_DIR=1;//aux input
 	RPINR3bits.T2CKR=AUXPIN_RPIN; //assign T2 clock input to aux input
 
-	//T2CON=(T32|TCKPS1|TCKPS0|TCS);
-	T2CONbits.T32=1;//32 bit mode
-	T2CONbits.TCKPS1=1; //0=1,01=8,10=64,11=256....
-	T2CONbits.TCKPS0=1;
-	T2CONbits.TCS=1; //external clock source
+	T2CON=0b111010; //(TCKPS1|TCKPS0|T32|TCS);
+	//T2CONbits.T32=1;//32 bit mode
+	//T2CONbits.TCKPS1=1; //0=1,01=8,10=64,11=256....
+	//T2CONbits.TCKPS0=1;
+	//T2CONbits.TCS=1; //external clock source
 	PR3=0xffff;//most significant word
 	PR2=0xffff;//least significant word
 	//clear counter, first write hold, then tmr2....
@@ -140,12 +131,12 @@ void bpFreq(void){
 //timer 4 internal, measures interval
 	TMR5HLD=0x00;
 	TMR4=0x00;
-	//T4CON=(T32);
-	T4CONbits.T32=1;
-	T4CONbits.TCKPS0=0; //perhaps adjust these dynamically?
-	T4CONbits.TCKPS1=0;
-	T4CONbits.TCS=0; //internal source
-	T4CONbits.TGATE=0; //no gate accumulation
+	T4CON=0b1000; //.T32=1, bit 3
+	//T4CONbits.T32=1;
+	//T4CONbits.TCKPS0=0; //perhaps adjust these dynamically?
+	//T4CONbits.TCKPS1=0;
+	//T4CONbits.TCS=0; //internal source
+	//T4CONbits.TGATE=0; //no gate accumulation
 	//one second of counting time
 	PR5=0xf4;//most significant word
 	PR4=0x2400;//least significant word
@@ -183,6 +174,8 @@ void bpFreq(void){
 	bpWBR;
 	//return clock input to other pin
 	RPINR3bits.T2CKR=0b11111; //assign T2 clock input to nothing
+	T4CON=0;	//make sure the counters are off
+	T2CON=0;
 }
 
 //\leaves AUX in high impedance
