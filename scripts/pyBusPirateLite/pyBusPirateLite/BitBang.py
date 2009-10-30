@@ -129,6 +129,28 @@ class BBIO:
 		self.timeout(0.1)
 		return self.response(1, True)
 
+	""" PWM """
+	def setup_PWM(self, prescaler, dutycycle, period):
+		self.port.write("\x12")
+		self.port.write(prescaler)
+		self.port.write((dutycycle>>8)&0xFF)
+		self.port.write(dutycycle&0xFF)
+		self.port.write((period>>8)&0xFF)
+		self.port.write(period&0xFF)
+		self.timeout(0.1)
+		return self.response()
+
+	def clear_PWM(self):
+		self.port.write("\x13")
+		self.timeout(0.1)
+		return self.response()
+
+	""" ADC """	
+	def ADC_measure(self):
+		self.port.write("\x14")
+		self.timeout(0.1)
+		return self.response(2, True)
+
 	""" General Commands for Higher-Level Modes """
 	def mode_string(self):
 		self.port.write("\x01")
