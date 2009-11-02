@@ -155,6 +155,8 @@ void SUMPlogicCommand(unsigned char inByte){
 					sumpSamples<<=8;
 					sumpSamples|=sumpRX.command[1];
 					sumpSamples*=4;
+					//prevent buffer overruns
+					if(sumpSamples>LA_SAMPLE_SIZE) sumpSamples=LA_SAMPLE_SIZE;
 					break;
 				case SUMP_DIV:
 					l=sumpRX.command[3];
