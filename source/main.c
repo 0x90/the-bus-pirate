@@ -20,36 +20,19 @@
 #include "selftest.h"
 #include "binIO.h"
 
-//HACKADAY: set custom configuration for PIC 24F
+//set custom configuration for PIC 24F
 _CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
 _CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //turn off junk we don't need
 
-//****************************************
-//If defined, the reset vector pointer and boot mode entry delay
-// value will be stored in the device's vector space at addresses 0x100 and 0x102
-//#define USE_VECTOR_SPACE
-//****************************************
-//Bootloader Vectors *********************
-#ifdef USE_VECTOR_SPACE
-	/*
-		Store delay timeout value & user reset vector at 0x100 
-		(can't be used with bootloader's vector protect mode).
-		
-		Value of userReset should match reset vector as defined in linker script.
-		BLreset space must be defined in linker script.
-	*/
-	unsigned int userReset  __attribute__ ((space(prog),section(".BLreset"))) = 0xC00 ;  
-	unsigned char timeout  __attribute__ ((space(prog),section(".BLreset"))) = 0x00 ;
-#else
-	/*
-		Store delay timeout value & user reset vector at start of user space
-	
-		Value of userReset should be the start of actual program code since 
-		these variables will be stored in the same area.
-	*/
-	unsigned int userReset  __attribute__ ((space(prog),section(".init"))) = 0xC04 ;
-	unsigned char timeout  __attribute__ ((space(prog),section(".init"))) = 0x00 ;
-#endif
+/*
+	Store delay timeout value & user reset vector at start of user space
+
+	Value of userReset should be the start of actual program code since 
+	these variables will be stored in the same area.
+*/
+unsigned int userReset  __attribute__ ((space(prog),section(".init"))) = 0xC04 ;
+unsigned char timeout  __attribute__ ((space(prog),section(".init"))) = 0x00 ;
+
 
 unsigned char irqFlag=0;
 void _T1Interrupt(void);
