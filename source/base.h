@@ -26,7 +26,7 @@
 
 //#define BUSPIRATE_POST //used to switch POST on and off
 
-#define BP_FIRMWARE_STRING "Firmware v2.9-nightly"//-Seeed"
+#define BP_FIRMWARE_STRING "Firmware v3.0-nightly"
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
@@ -80,6 +80,8 @@
 #else
 	#error "No hardware defined in base.h."
 #endif
+
+#define TERMINAL_BUFFER 1024
 
 #include "baseIO.h"
 #include "baseUI.h"

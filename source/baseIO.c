@@ -53,6 +53,8 @@ unsigned int bpGetUserInput(unsigned int *currentByte, unsigned int maxBytes, un
 		switch(inbuf){
 			case 0x00://binary mode trigger
 				return 0xff;
+			case 0x02://SUMP mode trigger
+				return 0xfe;
 			//case 0x1b://escape, get 2 or 3 more bytes
 				//get 2 bytes, ABCD are arrow keys, A is up
 				//break;

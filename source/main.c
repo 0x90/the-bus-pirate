@@ -19,6 +19,7 @@
 #include "procSyntax.h"
 #include "selftest.h"
 #include "binIO.h"
+#include "SUMP.h"
 
 //set custom configuration for PIC 24F
 _CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
@@ -46,7 +47,6 @@ void Initialize(void);
 
 //this buffer holds the characters entered into the terminal 
 //		untill enter is pressed
-#define TERMINAL_BUFFER 4000
 unsigned char binmodecnt=0, terminalInput[TERMINAL_BUFFER];
 unsigned int currentByte;
 
@@ -81,6 +81,10 @@ int main(void){
 					binBB();//hand control to binary mode service loop. resume as normal on return
 					//binmodecnt=0; //this line is unreachable, exit with hardware reset
 				}
+				break;
+			case 0xfe:
+				if(binmodecnt==5) SUMP();
+				binmodecnt=0;
 				break;	
 		}
 
