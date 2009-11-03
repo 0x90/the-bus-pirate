@@ -1,6 +1,5 @@
-#include <p24fxxxx.h>
 #include "SUMP.h"
-#include "hardwarev3.h"
+#include "base.h"
 #include "UART.h"
 
 //set custom configuration for PIC 24F
@@ -33,7 +32,9 @@ void Initialize(void){
 
 	IODIR|=(AUX+MOSI+CLK+MISO+CS);//AUX, MOSI, CLK, MISO, CS pins to input
 	//IOLAT&=(~AUX+MOSI+CLK+MISO+CS); //low pin
+	#ifdef BUSPIRATEV2
 	BP_PULLUP_OFF();	//disable pullups
+	#endif
 	BP_VREG_OFF();		//disable vreg
 
 	//set pin configuration using peripheral pin select

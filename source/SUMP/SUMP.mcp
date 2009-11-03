@@ -5,8 +5,8 @@ device=PIC24FJ64GA002
 [PATH_INFO]
 BuildDirPolicy=BuildDirIsProjectDir
 dir_src=
-dir_bin=
-dir_tmp=
+dir_bin=.\output
+dir_tmp=.\work
 dir_sin=
 dir_inc=
 dir_lib=
@@ -31,6 +31,8 @@ file_003=.
 file_004=.
 file_005=.
 file_006=.
+file_007=.
+file_008=.
 [GENERATED_FILES]
 file_000=no
 file_001=no
@@ -39,6 +41,8 @@ file_003=no
 file_004=no
 file_005=no
 file_006=no
+file_007=no
+file_008=no
 [OTHER_FILES]
 file_000=no
 file_001=no
@@ -47,6 +51,8 @@ file_003=no
 file_004=no
 file_005=no
 file_006=no
+file_007=no
+file_008=no
 [FILE_INFO]
 file_000=SUMP.c
 file_001=main.c
@@ -54,7 +60,9 @@ file_002=UART.c
 file_003=SUMP.h
 file_004=hardwarev3.h
 file_005=UART.h
-file_006=APP 24FJ64GA002.gld
+file_006=hardwarev1a.h
+file_007=base.h
+file_008=APP 24FJ64GA002.gld
 [SUITE_INFO]
 suite_guid={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 suite_state=

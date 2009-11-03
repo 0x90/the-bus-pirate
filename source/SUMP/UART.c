@@ -3,8 +3,7 @@
 // Base user terminal UART functions
 //
 //
-#include <p24fxxxx.h>
-#include "hardwarev3.h"
+#include "base.h"
 
 //is data available in RX buffer?
 //#define UART1RXRdy() U1STAbits.URXDA

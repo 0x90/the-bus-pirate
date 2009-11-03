@@ -2,8 +2,7 @@
 // SUMP LA
 //
 //#ifdef SUMP_LA
-#include <p24fxxxx.h>
-#include "hardwarev3.h"
+#include "base.h"
 #include "UART.h"
 
 //commandset
