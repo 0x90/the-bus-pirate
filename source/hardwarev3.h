@@ -30,6 +30,7 @@
 #define BP_TERM_RX_RP	5
 
 //this is a different type of pin identifier used by the bitbang library
+#define AUX		0b10000000000 //RB10 on v1, 2, 2go, 3 (not v0)
 #define MOSI 	0b1000000000  //RB9
 #define CLK 	0b100000000    //RB8
 #define MISO 	0b10000000 //RB7
