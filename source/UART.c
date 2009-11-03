@@ -153,6 +153,11 @@ void uartProcess(void){
 						if((U1STAbits.URXDA==1)&& (U2STAbits.UTXBF == 0)){
 								U2TXREG = U1RXREG; //URXDA doesn't get cleared untill this happens
 						}
+						if(U2STAbits.OERR || U1STAbits.OERR){
+		   					U2STA &= (~0b10); //clear overrun error if exists
+		   					U1STA &= (~0b10); //clear overrun error if exists
+							BP_LEDMODE=0;//MODE LED off to signify overrun error
+						}
 					}
 					break;
 				case 2: //Watch raw UART
