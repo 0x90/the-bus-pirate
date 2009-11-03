@@ -45,9 +45,7 @@ struct _command bpCommand; //holds the current active command so we don't ahve t
 
 void Initialize(void);
 
-//this buffer holds the characters entered into the terminal 
-//		untill enter is pressed
-unsigned char binmodecnt=0, terminalInput[TERMINAL_BUFFER];
+unsigned char binmodecnt=0;//, terminalInput[TERMINAL_BUFFER];
 unsigned int currentByte;
 
 #pragma code
@@ -59,16 +57,16 @@ int main(void){
 	while(1){ //this is the main bus pirate loop
 		if(U1STAbits.OERR) U1STA &= (~0b10); //clear overrun error if exists
 
-		switch(bpGetUserInput(&currentByte, TERMINAL_BUFFER, terminalInput)){//service user prompt in baseIO.c
+		switch(bpGetUserInput(&currentByte, TERMINAL_BUFFER, bpConfig.terminalInput)){//service user prompt in baseIO.c
 			case 0x01://got enter, process user input
 				switch(currentByte){
 					case 0://no bytes, error
 						bpWmessage(MSG_ERROR_SYNTAX);
 						break;
 					case 1://1 byte, try to process as a menu option
-						if(checkMenuCommand(terminalInput[0]))break;
+						if(checkMenuCommand(bpConfig.terminalInput[0]))break;
 					default://multiple bytes, process as syntax
-						processSyntaxString(currentByte, terminalInput);//process a syntax string
+						processSyntaxString(currentByte, bpConfig.terminalInput);//process a syntax string
 				}
 				currentByte=0;
 				binmodecnt=0; //reset any null characters
@@ -83,7 +81,7 @@ int main(void){
 				}
 				break;
 			case 0xfe:
-				if(binmodecnt==5) SUMP();
+				if(binmodecnt>=5) SUMP();
 				binmodecnt=0;
 				break;	
 		}

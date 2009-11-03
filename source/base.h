@@ -13,14 +13,14 @@
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
-#ifndef BASE
+#ifndef BASE 
 #define BASE
 #include <p24fxxxx.h>
 
 //this sets the hardware version (v0a, or v1a)
 //#define BUSPIRATEV0A //http://hackaday.com/2008/11/19/how-to-the-bus-pirate-universal-serial-interface/
-//#define BUSPIRATEV1A //http://hackaday.com/2009/01/22/how-to-bus-pirate-v1-improved-universal-serial-interface/
 //#define BUSPIRATEV2A
+//#define BUSPIRATEV1A //http://hackaday.com/2009/01/22/how-to-bus-pirate-v1-improved-universal-serial-interface/
 //#define BUSPIRATEV25 //AKA Bus Pirate v2go
 #define BUSPIRATEV3 
 
@@ -80,8 +80,6 @@
 #else
 	#error "No hardware defined in base.h."
 #endif
-
-#define TERMINAL_BUFFER 1024
 
 #include "baseIO.h"
 #include "baseUI.h"
