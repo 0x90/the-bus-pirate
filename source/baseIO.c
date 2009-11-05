@@ -366,10 +366,13 @@ void UARTbufSetup(void){
 }
 
 void UARTbuf(char c){
-	if(ringBuf.writepointer==ringBuf.readpointer) return; //drop byte, buffer full
-	bpConfig.terminalInput[ringBuf.writepointer]=c;
-	ringBuf.writepointer++;
-	if(ringBuf.writepointer==TERMINAL_BUFFER) ringBuf.writepointer=0; //check for wrap
+	if(ringBuf.writepointer==ringBuf.readpointer){
+		BP_LEDMODE=0;//drop byte, buffer full LED off
+	}else{
+		bpConfig.terminalInput[ringBuf.writepointer]=c;
+		ringBuf.writepointer++;
+		if(ringBuf.writepointer==TERMINAL_BUFFER) ringBuf.writepointer=0; //check for wrap
+	}
 }
 
 void UARTbufService(void){
