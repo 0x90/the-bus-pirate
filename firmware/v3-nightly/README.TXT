@@ -1,4 +1,4 @@
-v2
+v3
 I. Upgrade only
 II. New installs
 III. History
@@ -37,6 +37,17 @@ If you're starting with a blank chip, follow these steps to load the firmware.
 
 III. History
 See the project tracker on our google SVN page for a complete list of updates
+
+v3.0
+*Added backend for SUMP logic analyzer.
+*User terminal input buffer moded to bpconfig struct, shared with SUMP logic analyzer.
+*Added binary access to SPI and I2C sniffers
+*Improved SPI, I2C sniffers.
+
+v2.9 
+*UART fixes (bridge auto clears overrun, turns off LED)
+*Binary mode added ADC and PWM access
+*Minor fixes
 
 v2.8
 *First actual release since v2.5.
