@@ -55,6 +55,7 @@ void SUMPreset(void){
 	CNEN1=0; //all change notice off
 	CNEN2=0;
 	T4CON=0; //stop count
+	IPC4bits.CNIP=0;
 
 	//default speed and samples
 	//setup PR register
@@ -209,18 +210,18 @@ unsigned char SUMPlogicService(void){
 			for(i=0;i<sumpSamples;i++){ //take SAMPLE_SIZE samples
 				bpConfig.terminalInput[i]=(PORTB>>6); //change to pointer for faster use...
 				while(IFS1bits.T5IF==0); //wait for timer4 (timer 5 interrupt)
-				IFS1bits.T5IF=0;//clear interrupt flag//setup timer and wait
+				IFS1bits.T5IF=0;//clear interrupt flag
 			}
+			
+			CNEN2=0;//change notice off
+			T4CON=0; //stop count
 
 			for(i=sumpSamples; i>0; i--){ //send back to SUMP, backwards
 				UART1TX(bpConfig.terminalInput[(i-1)]);
 				//for(j=0; j<sumpPadBytes; j++) UART1TX(0); //add padding if needed
 			}
 
-			LAstate = LA_IDLE;
-			BP_LEDMODE=0;//LED
-			CNEN2=0;//change notice off
-			T4CON=0; //stop count
+			SUMPreset();
 			return 1;//done, exit SUMP
 			//break;
 	}
