@@ -129,7 +129,7 @@
 #define OUMSG_I2C_CON 			"I2C mode:\x0D\x0A 1. Software\x0D\x0A 2. Hardware"
 #define OUMSG_I2C_REV3_WARN 	"WARNING: HARDWARE I2C is broken on this PIC! (REV A3)"
 #define OUMSG_I2C_HWSPEED 		"Set speed:\x0D\x0A 1. 100KHz\x0D\x0A 2. 400KHz\x0D\x0A 3. 1MHz"
-#define OUMSG_I2C_MACRO_MENU 	" 0.Macro menu\x0D\x0A 1.7bit address search"
+#define OUMSG_I2C_MACRO_MENU 	" 0.Macro menu\x0D\x0A 1.7bit address search\x0D\x0A 2.I2C sniffer"
 #define OUMSG_I2C_MACRO_SEARCH 	"Searching 7bit I2C address space. \x0D\x0A   Found devices at:"
 #define OUMSG_I2C_MACRO_SNIFFER	"I2C bus sniffer, press any key to exit"
 //menu//

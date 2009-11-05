@@ -17,7 +17,7 @@
 #define BASE
 #include <p24fxxxx.h>
 
-//this sets the hardware version (v0a, or v1a)
+//this sets the hardware version
 //#define BUSPIRATEV0A //http://hackaday.com/2008/11/19/how-to-the-bus-pirate-universal-serial-interface/
 //#define BUSPIRATEV2A
 //#define BUSPIRATEV1A //http://hackaday.com/2009/01/22/how-to-bus-pirate-v1-improved-universal-serial-interface/

@@ -16,6 +16,9 @@
 #include "base.h"
 #include "baseIO.h"
 
+#include "busPirateCore.h"//need access to bpConfig
+extern struct _bpConfig bpConfig; //holds persistant bus pirate settings (see base.h) need hardware version info
+
 //get a response value from 1-i, repeats until valid
 unsigned int bpUserNumberPrompt(unsigned int maxBytes, unsigned int maxValue, unsigned int defValue){
 	#define USER_PROMPT_MAX_BYTES 12
@@ -266,6 +269,18 @@ void bpWhex(unsigned int c){
     return;
 }
 
+void bpWhexBuf(unsigned int c){
+    unsigned int b;
+
+	UARTbuf('0');
+	UARTbuf('x');
+    b = (c>>4) & 0x0F;
+    UARTbuf(HEXASCII[b]);
+    b = c & 0x0F;
+    UARTbuf(HEXASCII[b]);
+    return;
+}
+
 // output a 16bit hex value to the user terminal
 void bpWinthex(unsigned int c) {
     unsigned int b;
@@ -334,19 +349,41 @@ void UART1TX(char c){
 	while(U1STAbits.UTXBF == 1); //if buffer is full, wait
     U1TXREG = c;
 }
-/*
-void UART1TX_buffer_service(void){
-	if(byteout==bytein) return; //no data in buffer
-	if(U1STAbits.UTXBF == 1) return; //only if buffer is free
-	U1TXREG=array[byteout];
-	byteout++;
-	if(byteout==UART_BUFFER_SIZE) byteout=0;
+
+//new UART ring buffer
+//uses user terminal input buffer to buffer UART output
+//any existing user input will be destroyed
+//best used for binary mode and sniffers
+static struct _UARTRINGBUF{
+	unsigned int writepointer;
+	unsigned int readpointer;
+}ringBuf;
+
+void UARTbufSetup(void){
+	//setup ring buffer pointers
+	ringBuf.readpointer=0;
+	ringBuf.writepointer=1;
 }
-//add byte to buffer, pause if full
-//uses PIC 4 byte UART FIFO buffer
-void UART1TX(char c){
-	
-}*/
+
+void UARTbuf(char c){
+	if(ringBuf.writepointer==ringBuf.readpointer) return; //drop byte, buffer full
+	bpConfig.terminalInput[ringBuf.writepointer]=c;
+	ringBuf.writepointer++;
+	if(ringBuf.writepointer==TERMINAL_BUFFER) ringBuf.writepointer=0; //check for wrap
+}
+
+void UARTbufService(void){
+	unsigned int i;
+
+	i=ringBuf.readpointer+1;
+	if(i==TERMINAL_BUFFER) i=0; //check for wrap
+	if(i==ringBuf.writepointer) return; //buffer empty, 
+
+	if(U1STAbits.UTXBF == 0){//free slot, move a byte to UART
+		ringBuf.readpointer=i;
+		U1TXREG=bpConfig.terminalInput[ringBuf.readpointer];
+	}
+}
 
 // Read the lower 16 bits from programming flash memory
 unsigned int bpReadFlash(unsigned int page, unsigned int addr)

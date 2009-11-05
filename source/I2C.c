@@ -31,6 +31,15 @@ extern struct _bpConfig bpConfig; //holds persistant bus pirate settings (see ba
 extern struct _modeConfig modeConfig;
 extern struct _command bpCommand;
 
+static struct _i2csniff {
+	unsigned char bits;
+	unsigned char data;
+	unsigned char ACK:1;
+	unsigned char datastate:1; //are we collecting data yet?
+	unsigned char I2CD:2;
+	unsigned char I2CC:2; //prevous and current clock pin state
+} I2Csniff;
+
 //hardware functions
 void hwi2cSetup(void);
 void hwi2cstart(void);
@@ -46,7 +55,7 @@ static unsigned char I2Cspeed[]={157,37,13};//100,400,1000khz; datasheet pg 145
 //software functions
 void I2C_Setup(void);
 void I2C_SnifferSetup(void);
-void I2C_Sniffer(void);
+void I2C_Sniffer(unsigned char termMode);
 
 //this function links the underlying i2c functions to generic commands that the bus pirate issues
 //put most used functions first for best performance
@@ -204,22 +213,15 @@ void i2cProcess(void){
 						if(i2cmode==SOFT) bbI2Cstop(); else hwi2cstop();
 					}
 					bpWBR;	
-					break;
-				case 2: 
-					if(i2cmode==SOFT){ //if not soft, fall through and say error...
-						bpWline(OUMSG_I2C_MACRO_SNIFFER);	
-						I2C_SnifferSetup();
-						while(1){
-							I2C_Sniffer();
-	
-							if(U1STAbits.URXDA == 1){//any key pressed, exit
-								i=U1RXREG;
-								bpBR;
-								break;
-							}
-						}
-						break;
-					}				
+					break;	
+				case 2:
+					if(i2cmode==HARD)I2C1CONbits.I2CEN = 0;//disable I2C module
+
+					bpWline(OUMSG_I2C_MACRO_SNIFFER);	
+					I2C_Sniffer(1); //set for terminal output
+
+					if(i2cmode==HARD) hwi2cSetup(); //setup hardware I2C again
+					break;	
 				default:
 					bpWmessage(MSG_ERROR_MACRO);
 			}
@@ -230,133 +232,6 @@ void i2cProcess(void){
 	}
 
 }
-
-//*******************/
-//
-//
-//	sofware I2C sniffer (very alpha)
-//
-//
-//*******************/
-static enum _i2cstate
-	{
-	IDLE=0,
-	 START,
-	 DATA,
-	 ACK,
-	 STOP
-	} I2C_state=IDLE;
-static struct _i2csniff
-	{
-	unsigned char pSDA:1;
-	unsigned char cSDA:1;
-	unsigned char pSCL:1;
-	unsigned char cSCL:1;
-	} I2Cpin;
-
-unsigned char I2C_bits;//=0;
-
-void I2C_SnifferSetup(void){
-//we dont actually use interrupts, we poll the interrupt flag
-/*
-1. Ensure that the CN pin is configured as a digital input by setting the associated bit in the
-TRISx register.
-2. Enable interrupts for the selected CN pins by setting the appropriate bits in the CNENx
-registers.
-3. Turn on the weak pull-up devices (if desired) for the selected CN pins by setting the
-appropriate bits in the CNPUx registers.
-4. Clear the CNxIF interrupt flag.
-*/
-	//-- Ensure pins are in high impedance mode --
-	SDA_TRIS=1;
-	SCL_TRIS=1;
-	//writes to the PORTs write to the LATCH
-	SCL=0;			//B8 scl 
-	SDA=0;			//B9 sda
-	
-	//enable change notice on SCL and SDA
-	CNEN2bits.CN21IE=1;//MOSI
-	CNEN2bits.CN22IE=1;
-
-	//clear the CNIF interrupt flag
-	IFS1bits.CNIF=0;
-
-	I2C_state=IDLE;
-	I2C_bits=0;
-	I2Cpin.pSDA=SDA; //save current pin state in var
-	I2Cpin.pSCL=SCL; //use to see which pin changes on interrupt
-
-}
-
-//S/[ - start
-//0x - data
-//A/+ - ACK +
-//N/- - NACK -
-//P/] - stop
-
-void I2C_Sniffer(void){
-	static unsigned char I2C_val;//=0;
-	unsigned char I2C_ack;//=0;
-
-	//check for change in pin state, if none, return
-	if(IFS1bits.CNIF==0) return;
-
-	I2Cpin.cSDA=SDA;
-	I2Cpin.cSCL=SCL;
-	IFS1bits.CNIF=0;
-
-	//if data changed while clock is high, start condition (HL) or stop condition (LH)
-	if(I2Cpin.pSCL==1 && I2Cpin.cSCL==1 ){//clock high, must be data transition
-
-		if(I2Cpin.pSDA==1 && I2Cpin.cSDA==0){//start condition
-			I2C_state=DATA;
-			I2C_bits=0;
-			//say start
-			UART1TX('[');//might be better to use bus pirate syntax to display data
-		}else if(I2Cpin.pSDA==0 && I2Cpin.cSDA==1){//stop condition
-			I2C_state=IDLE;
-			I2C_bits=0;
-			//say stop
-			UART1TX(']');		
-		}
-
-
-	} else if (I2Cpin.pSCL==0 && I2Cpin.cSCL==1){//sample when clock goes low to high 
-
-		switch (I2C_state){
-			//case IDLE: //do nothing
-			//	break;
-			//case START: //do nothing
-			//	break;
-			case DATA:
-				//the next 8 bits are data
-				I2C_val = I2C_val << 1; //move over one bit
-				I2C_val += I2Cpin.cSDA; //get bit
-				I2C_bits++;
-				if(I2C_bits==8){
-					I2C_bits=0;
-					I2C_state=ACK;
-				}
-				break;
-			case ACK:
-				//delay, 
-				I2C_ack=SDA; //check for ACK/NACK
-				bpWbyte(I2C_val); //write byte value
-				if(I2C_ack)UART1TX('-'); else UART1TX('+'); //write ACK status
-				I2C_state=DATA; //next time start a new byte
-				break;
-			//case STOP:
-			//	break;
-			default:
-				break;
-	
-		}
-
-	}	
-	I2Cpin.pSDA=I2Cpin.cSDA;//move current pin state to previous pin state
-	I2Cpin.pSCL=I2Cpin.cSCL;
-}
-
 
 //
 //
@@ -432,6 +307,122 @@ void hwi2cSetup(void){
 
 }
 
+//*******************/
+//
+//
+//	sofware I2C sniffer (very alpha)
+//
+//
+//*******************/
+void I2C_SnifferSetup(void){
+//we dont actually use interrupts, we poll the interrupt flag
+/*
+1. Ensure that the CN pin is configured as a digital input by setting the associated bit in the
+TRISx register.
+2. Enable interrupts for the selected CN pins by setting the appropriate bits in the CNENx
+registers.
+3. Turn on the weak pull-up devices (if desired) for the selected CN pins by setting the
+appropriate bits in the CNPUx registers.
+4. Clear the CNxIF interrupt flag.
+*/
+	//-- Ensure pins are in high impedance mode --
+	SDA_TRIS=1;
+	SCL_TRIS=1;
+	//writes to the PORTs write to the LATCH
+	SCL=0;			//B8 scl 
+	SDA=0;			//B9 sda
+	
+	//enable change notice on SCL and SDA
+	CNEN2bits.CN21IE=1;//MOSI
+	CNEN2bits.CN22IE=1;
+
+	//clear the CNIF interrupt flag
+	IFS1bits.CNIF=0;
+
+	I2Csniff.datastate=0;
+	I2Csniff.bits=0;
+	I2Csniff.I2CD|=SDA; //save current pin state in var
+	I2Csniff.I2CC|=SCL; //use to see which pin changes on interrupt
+
+}
+// \ - escape character
+//[ - start
+//0xXX - data
+//+ - ACK +
+//- - NACK -
+//] - stop
+#define ESCAPE_CHAR '\\'
+void I2C_Sniffer(unsigned char termMode){
+	unsigned char c;
+
+	//setup ring buffer pointers
+	UARTbufSetup();
+	I2C_SnifferSetup();
+
+	while(1){
+
+		//user IO service
+		UARTbufService();
+		if(U1STAbits.URXDA == 1){//any key pressed, exit
+			c=U1RXREG;
+			bpBR;
+			break;
+		}
+
+		//check for change in pin state, if none, return
+		if(IFS1bits.CNIF==0) continue;
+
+		IFS1bits.CNIF=0;
+		I2Csniff.I2CD|=SDA; //save current pin state in var
+		I2Csniff.I2CC|=SCL; //use to see which pin changes on interrupt
+	
+		if (I2Csniff.datastate==1 && I2Csniff.I2CC==0b01){//sample when clock goes low to high 
+	
+			if(I2Csniff.bits<8){
+				//the next 8 bits are data
+				I2Csniff.data <<=1; //move over one bit
+				I2Csniff.data |= (I2Csniff.I2CD & (~0b10)); //set bit, clear previous bit
+				I2Csniff.bits++;
+			}else{
+				I2Csniff.ACK=SDA; //check for ACK/NACK
+	
+				if(termMode){//output for the terminal 
+					bpWhexBuf(I2Csniff.data);
+				}else{ //output for binary mode
+					UARTbuf(ESCAPE_CHAR); //escape character
+					UARTbuf(I2Csniff.data); //write byte value
+				}
+	
+				if(I2Csniff.ACK)
+					UARTbuf('-'); 
+				else 
+					UARTbuf('+'); //write ACK status
+				
+				I2Csniff.bits=0;
+			}
+	
+		}else if(I2Csniff.I2CC==0b11){//clock high, must be data transition
+		//if data changed while clock is high, start condition (HL) or stop condition (LH)
+	
+			if(I2Csniff.I2CD==0b10){//start condition
+				I2Csniff.datastate=1;//start condition, allow data byte collection
+				I2Csniff.bits=0;
+				UARTbuf('[');//say start, use bus pirate syntax to display data
+			}else if(I2Csniff.I2CD==0b01){//stop condition
+				I2Csniff.datastate=0; //stop condition, don't allow byte collection
+				I2Csniff.bits=0;
+				UARTbuf(']');//say stop
+			}
+	
+		}
+
+		//move current pin state to previous pin state
+		I2Csniff.I2CD<<=1; //pSDA=I2Cpin.cSDA;
+		I2Csniff.I2CC<<=1; //pin.pSCL=I2Cpin.cSCL;
+
+	}
+}
+
 
 /*
 rawI2C mode:
@@ -500,6 +491,10 @@ void binI2C(void){
 						break;
 					case 7://I2C send NACK
 						bbI2Cnack();
+						UART1TX(1);
+						break;
+					case 0b1111:
+						I2C_Sniffer(0);//set for raw output
 						UART1TX(1);
 						break;
 					default:

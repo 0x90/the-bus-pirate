@@ -67,7 +67,7 @@ void SUMPreset(void){
 }
 
 unsigned char SUMPlogicCommand(unsigned char inByte){
-	static unsigned char i;
+//	static unsigned char i;
 	static unsigned long l;
 
 	static enum _SUMP {
@@ -194,7 +194,7 @@ unsigned char SUMPlogicCommand(unsigned char inByte){
 //
 unsigned char SUMPlogicService(void){
 	static unsigned int i;
-	static unsigned char j;
+//	static unsigned char j;
 
 	switch(LAstate){//dump data
 		case LA_ARMED: //check interrupt flags

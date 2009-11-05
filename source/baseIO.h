@@ -86,6 +86,16 @@ unsigned char UART1RX(void);
 void UART1TX(char c); 
 
 //
+//
+// Ring buffer for UART
+//
+//
+void UARTbufService(void);
+void UARTbufSetup(void);
+void UARTbuf(char c);
+void bpWhexBuf(unsigned int c); //write a hex value to ring buffer
+
+//
 // Hardware functions and definitions
 //
 

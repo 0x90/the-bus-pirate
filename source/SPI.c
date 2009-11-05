@@ -48,7 +48,7 @@ void spiDisable(void);
 unsigned char spiWriteByte(unsigned char c);
 void spiSlaveDisable(void);
 void spiSlaveSetup(void);
-void spiSniffer(unsigned char csState);
+void spiSniffer(unsigned char csState, unsigned char termMode);
 
 struct _SPI{
 	unsigned char ckp:1;
@@ -154,7 +154,8 @@ void spiProcess(void){
 				case 1:
 					bpWline(OUMSG_SPI_SNIFF_MENU);
 					c=(bpUserNumberPrompt(1, 3, 1)-1);
-					spiSniffer(c);
+					bpWline(OUMSG_SPI_SNIFF_BEGIN);
+					spiSniffer(c,1);//configure for terminal mode
 					break;
 				default:
 					bpWmessage(MSG_ERROR_MACRO);
@@ -231,42 +232,73 @@ unsigned char spiWriteByte(unsigned char c){
 	return c;
 }
 
-//need to use SPI2 to sniff other bus pin....
-void spiSniffer(unsigned char csState){
+//
+//
+//	SPI Sniffer 
+//
+//
+void spiSniffer(unsigned char csState, unsigned char termMode){
 	unsigned char c;
-	//use current settings, configure SPI for slave mode
-	bpWline(OUMSG_SPI_SNIFF_BEGIN);
+
+	UARTbufSetup();
 	spiDisable();
 	spiSlaveSetup();
+
 	while(1){
 		if(csState>1 || SPICS==csState){
-			if(SPI1STATbits.SPIEN==0){SPI1STATbits.SPIEN=1; SPI2STATbits.SPIEN=1;} 
+			if(SPI1STATbits.SPIEN==0){
+				SPI1STATbits.SPIEN=1; 
+				SPI2STATbits.SPIEN=1;
+				UARTbuf('[');//bpWBR; //CS enabled
+			} 
 		}else{
 			if(SPI1STATbits.SPIEN==1){
 				SPI1STATbits.SPIEN=0; //only enable when CS matches desired state
 				SPI2STATbits.SPIEN=0;
-				bpWBR; //mark the end of the current packet
+				UARTbuf(']');//bpWBR; //cs disabled
 			}
 		}
 
-		if(SPI1STATbits.SRXMPT==0){//rx buffer NOT empty, get and display byte
+		if(SPI1STATbits.SRXMPT==0 && SPI2STATbits.SRXMPT==0){//rx buffer NOT empty, get and display byte
 			c=SPI1BUF;
-			bpWbyte(c);
+			if(termMode){ //show hex output in terminal mode
+				bpWhexBuf(c);
+			}else{ //escaped byte value in binary mode
+				UARTbuf('\\');
+				UARTbuf(c);
+			}
+
+			c=SPI2BUF;
+			UARTbuf('(');
+			if(termMode){ //show hex output in terminal mode
+				bpWhexBuf(c);
+			}else{ //escaped byte value in binary mode
+				UARTbuf('\\');
+				UARTbuf(c);
+			}
+			UARTbuf(')');
 		}
+/*
 		if(SPI2STATbits.SRXMPT==0){//rx buffer NOT empty, get and display byte
 			c=SPI2BUF;
-			bpWstring("(");
-			bpWbyte(c);
-			bpWstring(") ");
+			UARTbuf('(');
+			if(termMode){ //show hex output in terminal mode
+				bpWhexBuf(c);
+			}else{ //escaped byte value in binary mode
+				UARTbuf('\\');
+				UARTbuf(c);
+			}
+			UARTbuf(')');
 		}
-
+*/
 		if(SPI1STATbits.SPIROV==1 || SPI2STATbits.SPIROV==1 ){//we weren't fast enough, buffer overflow
-			bpWline(OUMSG_SPI_SNIFF_BUFFER);	
+			//bpWline(OUMSG_SPI_SNIFF_BUFFER);	
 			SPI1STATbits.SPIROV=0;
 			SPI2STATbits.SPIROV=0;						
-			break;
+			//break;
 		}
 
+		UARTbufService();
 		if(U1STAbits.URXDA == 1){//any key pressed, exit
 			c=U1RXREG;
 			bpBR;
@@ -277,6 +309,8 @@ void spiSniffer(unsigned char csState){
 	spiSetup(SPIspeed[modeConfig.speed]);
 }
 
+//configure both SPI units for slave mode on different pins
+//use current settings
 void spiSlaveSetup(void){
 //	unsigned char c;
 	//SPI1STATbits.SPIEN=0; //SPI module off
@@ -415,6 +449,18 @@ void binSPI(void){
 						break;
 					case 3:
 						IOLAT|=CS; //SPICS=1; //cs disable/high
+						UART1TX(1);
+						break;
+					case 0b1101: //all traffic
+						spiSniffer(2, 0);
+						UART1TX(1);
+						break;
+					case 0b1110://cs low
+						spiSniffer(0, 0);
+						UART1TX(1);
+						break;
+					case 0b1111://cs high
+						spiSniffer(1, 0);
 						UART1TX(1);
 						break;
 					default:
