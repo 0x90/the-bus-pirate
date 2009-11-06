@@ -43,6 +43,7 @@ v3.0
 *User terminal input buffer moded to bpconfig struct, shared with SUMP logic analyzer.
 *Added binary access to SPI and I2C sniffers
 *Improved SPI, I2C sniffers.
+*Pullup bit triggers AUX2 on v1a hardware in binary protocol modes
 
 v2.9 
 *UART fixes (bridge auto clears overrun, turns off LED)
