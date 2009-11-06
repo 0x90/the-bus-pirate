@@ -81,6 +81,10 @@
 #define BP_VREG_ON() BP_EN50V_DIR=0; BP_EN50V=1; BP_EN33V_DIR=0; BP_EN33V=1
 #define BP_VREG_OFF() BP_EN50V_DIR=0; BP_EN50V=0; BP_EN33V_DIR=0; BP_EN33V=0
 
+#define BP_AUX2_HI() BP_PIN6_DIR=1;BP_PIN6=0
+#define BP_AUX2_LOW() BP_PIN6=0;BP_PIN6_DIR=0
+#define BP_AUX2_IN() BP_PIN6_DIR=0;BP_PIN6=0
+
 //define device ID and revision memory location
 #define DEV_ADDR_UPPER	0x00FF
 #define DEV_ADDR_TYPE	0x0000

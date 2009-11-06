@@ -179,6 +179,9 @@ unsigned char getRXbyte(void){
 void binReset(void){
 	binBBpindirectionset(0xff);//pins to input on start
 	binBBpinset(0);//startup everything off, pins at ground
+	#if defined(BUSPIRATEV1A) //aux2 pin to input on v1a
+		BP_AUX2_IN();
+	#endif
 }
 
 unsigned char binBBpindirectionset(unsigned char inByte){

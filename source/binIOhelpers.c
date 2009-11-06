@@ -17,6 +17,13 @@ void binIOperipheralset(unsigned char inByte){
 		BP_PULLUP_OFF();
 	}
 	#endif
+	#if defined(BUSPIRATEV1A)
+	if(inByte&0b100){
+		BP_AUX2_HI();//pullups on
+	}else{
+		BP_AUX2_LOW();
+	}
+	#endif
 
 	//AUX pin, high/low only
 	if(inByte&0b10){
