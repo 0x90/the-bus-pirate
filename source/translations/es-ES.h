@@ -130,7 +130,7 @@
 #define OUMSG_I2C_CON            "Modo I2C:\x0D\x0A 1. Software\x0D\x0A 2. Hardware"
 #define OUMSG_I2C_REV3_WARN     "ATENCIÓN: el hardware I2C puede no funcionar en este PIC! (REV A3)"
 #define OUMSG_I2C_HWSPEED        "Elegir velocidad:\x0D\x0A 1. 100KHz\x0D\x0A 2. 400KHz\x0D\x0A 3. 1MHz"
-#define OUMSG_I2C_MACRO_MENU     " 0.Menú de macros\x0D\x0A 1.Búsqueda de direcciones de 7bit"
+#define OUMSG_I2C_MACRO_MENU     " 0.Menú de macros\x0D\x0A 1.Búsqueda de direcciones de 7bit\x0D\x0A 2.Sniffer I2C"
 #define OUMSG_I2C_MACRO_SEARCH     "Buscando direcciones I2C de 7bit. \x0D\x0A   Encontrados dispositivos en la dirección:"
 #define OUMSG_I2C_MACRO_SNIFFER    "Sniffer de bus I2C, presionar cualquier tecla para terminar"
 //menu//
@@ -160,7 +160,7 @@
 #define OUMSG_PS_ADC_VOLT_PROBE    "MEDIDOR DE TENSIÓN: "
 #define OUMSG_PS_ADC_VOLTS        "V"
 //RAW2WIRE//
-#define OUMSG_R2W_MACRO_MENU    " 0.Menú de macros\x0D\x0A 1.ISO7816-3 ATR\x0D\x0A 2.ISO7816-3 solo análisis\x0D\x0A"
+#define OUMSG_R2W_MACRO_MENU    " 0.Menú de macros\x0D\x0A 1.ISO7813-3 ATR\x0D\x0A 2.ISO7813-3 solo análisis\x0D\x0A"
 //RAW3WIRE//
 //selftest// //just leave in english for now...
 //selftest//
@@ -171,7 +171,7 @@
 #define OUMSG_SPI_SNIFF_BEGIN    "Sniffer de bus SPI, presionar cualquier tecla para terminar"
 #define OUMSG_SPI_SNIFF_BUFFER    "BUFFER OVERFLOW!\x0D\x0A Velocidad de bus demasiado alta, ententar con la modalidad RAW"
 //UART //
-#define OUMSG_UART_MACRO_MENU 	" 0.Macro menu\x0D\x0A 1.Transparent UART bridge"
+#define OUMSG_UART_MACRO_MENU 	" 0.Menù de macros\x0D\x0A 1.UART trasparente\x0D\x0A 2.Monitor UART en tiempo real"
 #define OUMSG_UART_READ_FAIL         "FALLO, NINGÚN DATO"
 #define OUMSG_UART_LIVE_DISPLAY_ON     "MONITOR UART EN TIEMPO REAL, } PARA PARAR"
 #define OUMSG_UART_LIVE_DISPLAY_OFF "MONITOR EN TIEMPO REAL PARADO"
