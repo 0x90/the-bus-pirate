@@ -25,19 +25,24 @@ DESTDIR = ../build
 unix:VERSION = 1.0.0
 
 HEADERS += 	\
+			configure.h \
 			BinMode.h \
 			BPSettings.h \
 			Events.h \
 			Interface.h \
-			OtherIface.h \
 			MainWin.h
 
 SOURCES += 	\
 			BinMode.cpp \
 			BPSettings.cpp \
 			Events.cpp \
-			Interface.cpp \
-			OtherIface.cpp \
+			Interface_i2c.cpp \
+			Interface_jtag.cpp \
+			Interface_onewire.cpp \
+			Interface_power.cpp \
+			Interface_rawtext.cpp \
+			Interface_rawwire.cpp \
+			Interface_spi.cpp \
 			MainWin.cpp \
 			main.cpp
 

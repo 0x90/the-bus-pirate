@@ -43,3 +43,8 @@ RawWireLogMsgEvent::RawWireLogMsgEvent(QString & msg) :
 	this->msg = msg;
 }
 
+JtagLogMsgEvent::JtagLogMsgEvent(QString & msg) :
+	QEvent(static_cast<QEvent::Type>(JtagLogMsgEventType))
+{
+	this->msg = msg;
+}

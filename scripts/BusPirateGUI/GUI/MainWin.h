@@ -4,6 +4,7 @@
 #include <QtGui>
 
 class SpiGui;
+class JtagGui;
 class I2CGui;
 class OneWireGui;
 class RawWireGui;
@@ -22,6 +23,7 @@ public:
 	BPSettings *cfg;
 	BinMode *bp;
 	SpiGui *spi;
+	JtagGui *jtag;
 	I2CGui *i2c;
 	OneWireGui *onewire;
 	RawWireGui *rawwire;

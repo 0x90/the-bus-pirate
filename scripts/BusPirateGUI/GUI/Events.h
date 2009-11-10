@@ -13,6 +13,7 @@ enum BPEventType
 	I2CLogMsgEventType,
 	OneWireLogMsgEventType,
 	RawWireLogMsgEventType,
+	JtagLogMsgEventType,
 };
 
 class AsciiHexLogMsgEvent : public QEvent
@@ -62,6 +63,13 @@ class RawWireLogMsgEvent : public QEvent
 public:
 	QString msg;
 	RawWireLogMsgEvent(QString & msg);
+};
+
+class JtagLogMsgEvent : public QEvent
+{
+public:
+	QString msg;
+	JtagLogMsgEvent(QString & msg);
 };
 
 #endif
