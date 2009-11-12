@@ -102,7 +102,8 @@ unsigned int bpGetASCIInumber(unsigned int totalBytes, unsigned int *currentByte
 		if(((commandArr[*currentByte]>0x2F && commandArr[*currentByte]<0x3A) || 
 			(commandArr[*currentByte]>0x40 && commandArr[*currentByte]<0x47) ||
 			(commandArr[*currentByte]>0x60 && commandArr[*currentByte]<0x67) || 
-			commandArr[*currentByte]=='x' || commandArr[*currentByte]=='h' ) ){
+			commandArr[*currentByte]=='x' || commandArr[*currentByte]=='h' || 
+			commandArr[*currentByte]=='X' || commandArr[*currentByte]=='H') ){
 				numberArr[cnt]=commandArr[*currentByte];
 				cnt++;					
 				(*currentByte)++;		
