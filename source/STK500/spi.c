@@ -8,19 +8,20 @@
 #include "types.h"
 #include "spi.h"
 
+#define OSC_FREQ (32000000/2) //two clocks per instruction
+
 /* pinouts */
+#define SPI_PIN_MOSI BP_MOSI /* PE0, serial data in */
+#define SPI_TRIS_MOSI BP_MOSI_DIR
 
-#define SPI_PIN_MOSI PORTAbits.RA0 /* PE0, serial data in */
-#define SPI_TRIS_MOSI TRISAbits.TRISA0
+#define SPI_PIN_MISO BP_MISO /* PE1, serial data out */
+#define SPI_TRIS_MISO BP_MISO_DIR
 
-#define SPI_PIN_MISO PORTAbits.RA1 /* PE1, serial data out */
-#define SPI_TRIS_MISO TRISAbits.TRISA1
+#define SPI_PIN_SCK BP_CLK /* PB1, serial clock */
+#define SPI_TRIS_SCK BP_CLK_DIR
 
-#define SPI_PIN_SCK PORTAbits.RA2 /* PB1, serial clock */
-#define SPI_TRIS_SCK TRISAbits.TRISA2
-
-#define SPI_PIN_RESET PORTAbits.RA3 /* reset */
-#define SPI_TRIS_RESET TRISAbits.TRISA3
+#define SPI_PIN_RESET BP_CS /* reset */
+#define SPI_TRIS_RESET BP_CS_DIR
 
 
 /* wait routine */
@@ -66,8 +67,8 @@ static unsigned char write_read_byte(unsigned char ibuf)
       SPI_PIN_MOSI = (ibuf >> i) & 1;
       SPI_PIN_SCK = 1;
 
-      __asm nop __endasm;
-      __asm nop __endasm;
+      Nop();
+      Nop();
 
       obuf |= (SPI_PIN_MISO << i);
 
@@ -98,14 +99,6 @@ do {						\
 
 void spi_setup(void)
 {
-  /* have to do configure the ports as digital
-     io, otherwise they will be in analog mode
-   */
-
-  ADCON0 = 0;
-  ADCON1 = 0xf;
-  ADCON2 = 0;
-
   SPI_TRIS_MOSI = 0;
   SPI_TRIS_MISO = 1;
   SPI_TRIS_SCK = 0;
