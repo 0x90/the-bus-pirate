@@ -9,11 +9,11 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\MCC24\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|main.c|spi.c|stk500.c|UART.c||<obj>||<lib>||<lkr>|APP 24FJ64GA002.gld||
+SOLK=<src>|main.c|spi.c|stk500.c|UART.c||<obj>||<lib>||<lkr>||
 SuiteArgsString=
 ToolArgsString=-g -Wall
 TraceCmdString=
-DebugOptions=-D__DEBUG
+DebugOptions=
 [File001]
 Location=E:\Work\bus-pirate\trunk\source\STK500\work\spi.o
 Folder=Intermediary
@@ -22,11 +22,11 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\MCC24\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|main.c|spi.c|stk500.c|UART.c||<obj>||<lib>||<lkr>|APP 24FJ64GA002.gld||
+SOLK=<src>|main.c|spi.c|stk500.c|UART.c||<obj>||<lib>||<lkr>||
 SuiteArgsString=
 ToolArgsString=-g -Wall
 TraceCmdString=
-DebugOptions=-D__DEBUG
+DebugOptions=
 [File002]
 Location=E:\Work\bus-pirate\trunk\source\STK500\work\stk500.o
 Folder=Intermediary
@@ -35,11 +35,11 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\MCC24\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|main.c|spi.c|stk500.c|UART.c||<obj>||<lib>||<lkr>|APP 24FJ64GA002.gld||
+SOLK=<src>|main.c|spi.c|stk500.c|UART.c||<obj>||<lib>||<lkr>||
 SuiteArgsString=
 ToolArgsString=-g -Wall
 TraceCmdString=
-DebugOptions=-D__DEBUG
+DebugOptions=
 [File003]
 Location=E:\Work\bus-pirate\trunk\source\STK500\work\UART.o
 Folder=Intermediary
@@ -48,11 +48,11 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\MCC24\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|main.c|spi.c|stk500.c|UART.c||<obj>||<lib>||<lkr>|APP 24FJ64GA002.gld||
+SOLK=<src>|main.c|spi.c|stk500.c|UART.c||<obj>||<lib>||<lkr>||
 SuiteArgsString=
 ToolArgsString=-g -Wall
 TraceCmdString=
-DebugOptions=-D__DEBUG
+DebugOptions=
 [File004]
 Location=E:\Work\bus-pirate\trunk\source\STK500\.\output\BusPirate-stk500.cof
 Folder=Output
@@ -61,11 +61,11 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={433C3D55-811D-409D-A6BF-159CF9355B42}
 LanguageToolLocation=C:\MCC24\bin\pic30-ld.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|main.c|spi.c|stk500.c|UART.c||<obj>||<lib>||<lkr>|APP 24FJ64GA002.gld||
+SOLK=<src>|main.c|spi.c|stk500.c|UART.c||<obj>||<lib>||<lkr>||
 SuiteArgsString=
 ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
 TraceCmdString=
-DebugOptions=--defsym=__MPLAB_DEBUG=1
+DebugOptions=
 [File005]
 Location=E:\Work\bus-pirate\trunk\source\STK500\.\output\BusPirate-stk500.hex
 Folder=Output
@@ -74,11 +74,11 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={433C3D55-811D-409D-A6BF-159CF9355B42}
 LanguageToolLocation=C:\MCC24\bin\pic30-ld.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|main.c|spi.c|stk500.c|UART.c||<obj>||<lib>||<lkr>|APP 24FJ64GA002.gld||
+SOLK=<src>|main.c|spi.c|stk500.c|UART.c||<obj>||<lib>||<lkr>||
 SuiteArgsString=
 ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
 TraceCmdString=
-DebugOptions=--defsym=__MPLAB_DEBUG=1
+DebugOptions=
 [TOOL_LOC_STAMPS]
 tool_loc{069BD372-6CA0-40D4-BF2F-5DC806D05083}=C:\MCC24\bin\pic30-gcc.exe
 tool_loc{433C3D55-811D-409D-A6BF-159CF9355B42}=C:\MCC24\bin\pic30-ld.exe

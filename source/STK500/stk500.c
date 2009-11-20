@@ -64,14 +64,15 @@ static int get_param(unsigned char k, unsigned char* v)
 
   switch (k)
     {
-    case Parm_STK_HW_VER:
-    case Parm_STK_SW_MAJOR:
-    case Parm_STK_SW_MINOR:
-      {
-	/* dummy versions */
-	*v = 42;
-	break;
-      }
+    case Parm_STK_HW_VER: //my STK500: 0x0f
+		*v = 1;
+		break;
+    case Parm_STK_SW_MAJOR: //my STK500: 0x02
+		*v = 0x01; 
+		break;
+    case Parm_STK_SW_MINOR: //my STK500: 0x0a
+		*v = 0x00;
+		break;
 
     case Parm_STK_LEDS:
       {

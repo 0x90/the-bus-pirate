@@ -13,8 +13,8 @@
 _CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
 _CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //turn off junk we don't need
 
-unsigned int userReset  __attribute__ ((space(prog),section(".init"))) = 0xC04 ;
-unsigned char timeout  __attribute__ ((space(prog),section(".init"))) = 0x00 ;
+//unsigned int userReset  __attribute__ ((space(prog),section(".init"))) = 0xC04 ;
+//unsigned char timeout  __attribute__ ((space(prog),section(".init"))) = 0x00 ;
 void Initialize(void);
 void serial_write(unsigned char* s, unsigned int len);
 static int read_uint8(unsigned char* c, unsigned char do_timeout);
@@ -41,7 +41,7 @@ int main(void){
 		osize = 0;
 		
 		while (error == STK500_ERROR_MORE_DATA){
-			if (read_uint8(buf + isize, do_timeout) == -1){//try to get a byte
+			if (read_uint8(buf + isize, do_timeout)==0){//try to get a byte
 				/* has timeouted */
 				stk500_timeout(buf, isize, &osize);//reset the variables
 				error = STK500_ERROR_SUCCESS; //must be some message to send below
@@ -63,19 +63,20 @@ int main(void){
 
 /* serial helper routines */
 static int read_uint8(unsigned char* c, unsigned char do_timeout){
-	int res = 0;
-	int timeout=0xffff;
+	int timeout;
+	
+	timeout=0xffff;
 	
 	while (UART1RXRdy() == 0){//wait for a byte in buffer
 		timeout--;		
 		if (do_timeout && (timeout==0)){
-			res = -1;
-			break;
+			return 0;
 		}
 	}
 
-	if(res==0) c=UART1RX();	
-	return res;
+	*c=UART1RX();	
+	//UART1TX(*c);//debug
+	return 1;
 }
 
 void serial_write(unsigned char* s, unsigned int len){
