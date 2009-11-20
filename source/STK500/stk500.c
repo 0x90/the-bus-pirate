@@ -6,7 +6,7 @@
 */
 
 
-
+#include "base.h"
 #include "types.h"
 #include "spi.h"
 #include "stk500.h"

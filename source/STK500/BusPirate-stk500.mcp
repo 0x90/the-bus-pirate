@@ -5,8 +5,8 @@ device=PIC24FJ64GA002
 [PATH_INFO]
 BuildDirPolicy=BuildDirIsProjectDir
 dir_src=
-dir_bin=
-dir_tmp=
+dir_bin=.\output
+dir_tmp=.\work
 dir_sin=
 dir_inc=
 dir_lib=
@@ -33,6 +33,9 @@ file_005=.
 file_006=.
 file_007=.
 file_008=.
+file_009=.
+file_010=.
+file_011=.
 [GENERATED_FILES]
 file_000=no
 file_001=no
@@ -43,6 +46,9 @@ file_005=no
 file_006=no
 file_007=no
 file_008=no
+file_009=no
+file_010=no
+file_011=no
 [OTHER_FILES]
 file_000=no
 file_001=no
@@ -52,24 +58,30 @@ file_004=no
 file_005=no
 file_006=no
 file_007=no
-file_008=yes
+file_008=no
+file_009=no
+file_010=no
+file_011=no
 [FILE_INFO]
 file_000=main.c
 file_001=spi.c
 file_002=stk500.c
-file_003=spi.h
-file_004=stdint.h
+file_003=UART.c
+file_004=spi.h
 file_005=stk500.h
 file_006=stk500_proto.h
 file_007=types.h
-file_008=18f4550.lkr
+file_008=base.h
+file_009=hardwarev3.h
+file_010=UART.h
+file_011=APP 24FJ64GA002.gld
 [SUITE_INFO]
 suite_guid={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 suite_state=
 [TOOL_SETTINGS]
 TS{7D9C6ECE-785D-44CB-BA22-17BF2E119622}=-g
 TS{25AC22BD-2378-4FDB-BFB6-7345A15512D3}=-g -Wall
-TS{7DAC9A1D-4C45-45D6-B25A-D117C74E8F5A}=-o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)" -Map="$(BINDIR_)$(TARGETBASE).map" --report-mem
+TS{7DAC9A1D-4C45-45D6-B25A-D117C74E8F5A}=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
 TS{509E5861-1E2A-483B-8B6B-CA8DB7F2DD78}=
 [INSTRUMENTED_TRACE]
 enable=0

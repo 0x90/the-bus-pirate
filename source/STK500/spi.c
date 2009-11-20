@@ -4,15 +4,9 @@
 ** Started on  Sat Nov 14 17:18:15 2009 texane
 ** Last update Tue Nov 17 18:14:49 2009 texane
 */
-
-
-
-#include <pic18fregs.h>
+#include "base.h"
 #include "types.h"
-#include "osc.h"
 #include "spi.h"
-
-
 
 /* pinouts */
 

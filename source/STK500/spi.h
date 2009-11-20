@@ -8,15 +8,11 @@
 
 
 #ifndef SPI_H_INCLUDED
-# define SPI_H_INCLUDED
-
-
+#define SPI_H_INCLUDED
 
 #include "types.h"
 
-
 /* atmega128 device signature */
-
 #define SPI_SIGNATURE_ATMEGA128 "\x1e\x97\x02"
 #define SPI_SIGNATURE_BYTE_COUNT 3
 #define SPI_CALIBRATION_BYTE_COUNT 4
