@@ -750,7 +750,7 @@ int main(void)
                         cksum^=ch;
                         msg_buf[i]=ch;
                         i++;
-						//wdt_reset(); //wd_kick();
+						wdt_reset(); //wd_kick();
                         if (i==msglen){
                                 msgparsestate=MSG_WAIT_CKSUM;
                         }
@@ -760,7 +760,7 @@ int main(void)
 				if (msgparsestate==MSG_WAIT_CKSUM){
                         if (ch==cksum && msglen > 0){
                                 // message correct, process it
-                                //wdt_reset(); //wd_kick();
+                                wdt_reset(); //wd_kick();
                                 programcmd(seqnum);
                         }else{
                                 msg_buf[0] = ANSWER_CKSUM_ERROR;

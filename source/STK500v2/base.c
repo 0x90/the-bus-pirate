@@ -11,7 +11,7 @@ void Initialize(void){
 	BP_LEDMODE_DIR=0; //MODE LED output
 
 	IODIR|=(AUX+MOSI+CLK+MISO+CS);//AUX, MOSI, CLK, MISO, CS pins to input
-	//IOLAT&=(~AUX+MOSI+CLK+MISO+CS); //low pin
+	IOLAT&=(~AUX+MOSI+CLK+MISO+CS); //low pin
 	#ifdef BUSPIRATEV2
 	BP_PULLUP_OFF();	//disable pullups
 	#endif
@@ -20,8 +20,6 @@ void Initialize(void){
 	//set pin configuration using peripheral pin select
 	BP_TERM_RX=BP_TERM_RX_RP;   //Inputs UART1 RX RPINR18bits.U1RXR=4;
 	BP_TERM_TX_RP=BP_TERM_TX; 		// Outputs UART1 TX RPOR1bits.RP3R=U1TX_IO;
-	InitializeUART1(); //init the PC side serial port
-
 }
 
 //delay in MS
@@ -59,3 +57,4 @@ void bpDelayUS(const unsigned char delay)
 		//asm( "nop" );
 	}
 }
+

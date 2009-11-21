@@ -7,6 +7,23 @@
 #include "base.h"
 #include "redefines.h" /* Definitions to get the existing code working with the Bus Pirate */
 
+//direction registers
+#define SPIMOSI_TRIS 	BP_MOSI_DIR	
+#define SPICLK_TRIS 	BP_CLK_DIR	
+#define SPIMISO_TRIS 	BP_MISO_DIR	
+#define SPICS_TRIS 		BP_CS_DIR	
+
+//pin control registers
+#define SPIMOSI 		BP_MOSI
+#define SPICLK 			BP_CLK	
+#define SPIMISO 		BP_MISO	
+#define SPICS 			BP_CS	
+
+//open drain control registers for OUTPUT pins
+#define SPIMOSI_ODC 		BP_MISO_ODC	
+#define SPICLK_ODC 			BP_CLK_ODC	
+#define SPICS_ODC 			BP_CS_ODC	
+
 // timing for software spi:
 #define F_CPU 3686400UL  // 3.6864 MHz
 
@@ -25,48 +42,44 @@ static unsigned char spi_in_sw=0;
 //
 //SPI2X=SPSR bit 0
 //SPR0 and SPR1 =SPCR bit 0 and 1
+
+
 unsigned char  spi_set_sck_duration(unsigned char dur)
 {
+		SPI1STATbits.SPIEN = 0;//disable, just in case...
         spi_in_sw=0;
         if (dur >= 4){
         	// sofware spi very slow
-                spi_in_sw=1;
-                sck_dur=12;
-        	return(sck_dur);
-        }
-        if (dur >= 3){
+            spi_in_sw=1;
+            sck_dur=12;
+			SPI1CON1 =0; //30khz
+        }else if (dur >= 3){
         	// 28KHz
-        	cbi(SPSR,SPI2X);
-        	sbi(SPCR,SPR1);
-        	sbi(SPCR,SPR0);
-                sck_dur=3;
-        	return(sck_dur);
-        }
-        if (dur >= 2){
+            sck_dur=3;
+			SPI1CON1 = 0; //30khz
+        }else if (dur >= 2){
         	// 57KHz
-        	cbi(SPSR,SPI2X);
-        	sbi(SPCR,SPR1);
-        	cbi(SPCR,SPR0);
-                sck_dur=2;
-        	return(sck_dur);
-        }
-        if (dur == 1){
+            sck_dur=2;
+			SPI1CON1 =0b1000; //63khz
+        }else if (dur == 1){
         	// 230KHz
-        	cbi(SPSR,SPI2X);
-        	cbi(SPCR,SPR1);
-        	sbi(SPCR,SPR0);
-                sck_dur=1;
-        	return(sck_dur);
+            sck_dur=1;
+			SPI1CON1 =0b11100; //250khz
+        }else if (dur == 0){
+			// 921KHz
+            sck_dur=0;
+			SPI1CON1 = 0b11101; //1000khz
         }
-        if (dur == 0){
-                // 921KHz
-                cbi(SPSR,SPI2X);
-                cbi(SPCR,SPR0);
-                cbi(SPCR,SPR1);
-                sck_dur=0;
-                return(sck_dur);
-        }
-        return(1); // we should never come here
+		/* CKE=1, CKP=0, SMP=0 */
+		SPI1CON1bits.MSTEN=1;
+		//SPI1CON1bits.CKP=0;
+		SPI1CON1bits.CKE=1;		
+		//SPI1CON1bits.SMP=0;
+	    SPI1CON2 = 0;
+	    SPI1STAT = 0;    // clear SPI
+	    SPI1STATbits.SPIEN = 1;
+
+        return(sck_dur); 
 }
 
 unsigned char spi_get_sck_duration(void)
@@ -76,15 +89,14 @@ unsigned char spi_get_sck_duration(void)
 
 void spi_sck_pulse(void)
 {
-        uint8_t spcrval;
-        spcrval=SPCR; // store old value
-        SPCR=0x00;     // SPI off
-        cbi(PORTB,PB5); // SCK low
-        _delay_ms(0.10);
-        sbi(PORTB,PB5); // SCK high
-        _delay_ms(0.10);
-        cbi(PORTB,PB5); // SCK low
-        SPCR=spcrval;
+	RPOR4bits.RP8R=0;// remove SPI CLK from pin
+	SPICLK=0; // SCK low
+	_delay_ms(0.10);
+	SPICLK=1; // SCK high
+	_delay_ms(0.10);
+	SPICLK=0; // SCK low
+	RPOR4bits.RP8R=SCK1OUT_IO; 	//reassign SPI CLK
+	Nop();
 }
 
 void spi_reset_pulse(void) 
@@ -96,31 +108,46 @@ void spi_reset_pulse(void)
          * the programmer can not guarantee that SCK is held low during
          * Power-up. In this case, RESET must be given a positive pulse of at least two
          * CPU clock cycles duration after SCK has been set to 0."*/
-        PORTB|= (1<<PB2); // reset = high = not active
+        SPICS=1; // reset = high = not active
         _delay_ms(0.10);
-        PORTB &= ~(1<<PB2); // reset = low, stay active
+        SPICS=0; // reset = low, stay active
         delay_ms(20); // min stab delay
 }
 
 void spi_init(void) 
 {
-        sbi(DDRB,PB2); // pb2 as reset pin is output, this is also the ss pin which
-                       // must be output for master to work.
-        sbi(PORTB,PB2); // reset = high = not active
-        //
-	// now output pins low in case somebody used it as output in his/her circuit
-        sbi(DDRB,PB3); // MOSI is output
-        cbi(PORTB,PB3); // MOSI low
-        sbi(DDRB,PB5); // SCK is output
-        cbi(PORTB,PB5); // SCK low
+        SPICS=1; 		// pb2 as reset pin is output, this is also the ss pin which
+                    	// must be output for master to work.
+        SPICS_TRIS=0;	// reset = high = not active
+
+		// now output pins low in case somebody used it as output in his/her circuit
+		//MOSI, SCK is output/low
+		SPI1STATbits.SPIEN = 0;//disable, just in case...
+		SPIMOSI_ODC=0;
+		SPICLK_ODC=0; 
+		SPICS_ODC=0;
+		// Inputs 
+		RPINR20bits.SDI1R=7; 		//B7 MISO
+		// Outputs
+		RPOR4bits.RP9R=SDO1_IO; 	//B9 MOSI
+		RPOR4bits.RP8R=SCK1OUT_IO; 	//B8 CLK	
+		//pps configures pins and this doesn't really matter....
+		SPICLK_TRIS=0; 			//B8 sck output
+		SPIMISO_TRIS=1; 		//B7 SDI input
+		SPIMOSI_TRIS=0; 		//B9 SDO output
+		SPICLK=0; 			
+		SPIMISO=0; 		
+		SPIMOSI=0; 		
+
         delay_ms(20); // discharge MOSI/SCK
-        if (spi_in_sw==0){
+
+        //if (spi_in_sw==0){
                 /* Enable SPI, Master, set clock rate fck/16 */
-                SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
                 spi_set_sck_duration(sck_dur);
                 // now SCK and MOSI are under control of SPI
-        }
-        cbi(PORTB,PB2); // reset = low, stay active
+        //}
+
+        SPICS=0; // reset = low, stay active
         delay_ms(20); // stab delay
         spi_reset_pulse();
 }
@@ -130,14 +157,17 @@ unsigned char spi_mastertransmit(unsigned char data)
 {
         unsigned char i=128;
         unsigned char rval=0;
-        if (spi_in_sw==0){
+        //if (spi_in_sw==0){
                 /* Start transmission in hardware*/
-                SPDR = data;
+               	SPI1BUF = data;
                 /* Wait for transmission complete */
-                while(!(SPSR & (1<<SPIF)));
-                return(SPDR);
-        }
+                while(!IFS0bits.SPI1IF);
+				data=SPI1BUF;
+				IFS0bits.SPI1IF = 0;
+				return data;
+        //}
         // software spi, slow
+/*
         cbi(PORTB,PB5); // SCK low
         while(i){
                 // MOSI 
@@ -148,7 +178,7 @@ unsigned char spi_mastertransmit(unsigned char data)
                 }
                 _delay_ms(0.10);
                 // read MISO
-                if( bit_is_set(PINB,PINB4)){
+//                if( bit_is_set(PINB,PINB4)){
                         rval|= i;
                 }
                 sbi(PORTB,PB5); // SCK high
@@ -157,6 +187,7 @@ unsigned char spi_mastertransmit(unsigned char data)
                 i=i>>1;
         }
         return(rval);
+*/
 }
 
 // send 16 bit, return last rec byte
@@ -178,14 +209,27 @@ unsigned char spi_mastertransmit_32(unsigned long data)
 
 void spi_disable(void)
 {
-        SPCR=0x00;     // SPI off
-        sbi(PORTB,PB2);// reset = high, off
-        cbi(DDRB,PB3); // MOSI high impedance, input
-        cbi(PORTB,PINB3);// pullup off
-        cbi(DDRB,PB5); // SCK high impedance, input
-        cbi(PORTB,PINB5);// pullup off
-        //
-        cbi(DDRB,PINB2); // reset pin as input, high impedance
-        cbi(PORTB,PINB2);// pullup off
+
+	SPICS=1;// reset = high, off
+	
+	// SPI off
+	SPI1STATbits.SPIEN = 0;
+	RPINR20bits.SDI1R=0b11111;  //B7 MISO
+	RPOR4bits.RP9R=0; 			//B9 MOSI
+	RPOR4bits.RP8R=0; 			//B8 CLK
+	//disable all open drain control register bits
+	SPIMOSI_ODC=0;
+	SPICLK_ODC=0; 
+	SPICS_ODC=0;
+
+	//reset pins
+	SPIMOSI_TRIS=1; 		//B9 SDO output
+	SPIMOSI=0; 	
+	SPICLK_TRIS=1; 			//B8 sck output
+	SPICLK=0; 
+	SPIMISO_TRIS=1; 		//B7 SDI input			
+	SPIMISO=0; 		
+	SPICS_TRIS=1;// reset pin as input, high impedance
+	SPICS=0;
 }
 

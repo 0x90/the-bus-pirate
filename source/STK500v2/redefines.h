@@ -4,6 +4,7 @@
 #define uart_init() Initialize(); InitializeUART1() //do both
 
 #define delay_ms(X) bpDelayMS(X)
+#define _delay_ms(X) bpDelayUS(X*1000)
 
 #define LED_INIT BP_LEDMODE_DIR=0 //LED to output
 #define LED_ON BP_LEDMODE=1 //LED ON
@@ -11,3 +12,10 @@
 
 #define uint8_t unsigned char
 #define uint16_t unsigned int
+
+//unused stuff
+#define wd_kick() asm( "nop" )
+#define wdt_reset() asm( "nop" )
+
+
+
