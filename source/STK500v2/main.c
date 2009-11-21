@@ -11,13 +11,12 @@
 * Copyright: GPL
 **********************************************/
 #include "base.h"
-#include "uart.h"
+#include "UART.h"
 #include "spi.h"
 #include "command.h"
 #include "timeout.h"
-
-/* Definitions to get the existing code working with the Bus Pirate */
-#include "redefines.h"
+#include "bpinit.h"  //Bus Pirate setup function, called from uart_init macro in redefines.h
+#include "redefines.h" /* Definitions to get the existing code working with the Bus Pirate */
 
 /* Orig. source defines */
 #define CONFIG_PARAM_BUILD_NUMBER_LOW   0
@@ -43,6 +42,12 @@ uint8_t CONFIG_PARAM_SW_MINOR;
 #define MSG_WAIT_TOKEN 4
 #define MSG_WAIT_MSG 5
 #define MSG_WAIT_CKSUM 6
+
+//set custom configuration for PIC 24F
+_CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
+_CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //turn off junk we don't need
+//unsigned int userReset  __attribute__ ((space(prog),section(".init"))) = 0xC04 ;
+//unsigned char timeout  __attribute__ ((space(prog),section(".init"))) = 0x00 ;
 
 static unsigned char msg_buf[295];
 static unsigned char param_reset_polarity=1; // 1=avr (reset active=low), 0=at89 (not supported by this avrusb500)
