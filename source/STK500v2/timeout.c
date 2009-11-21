@@ -6,13 +6,8 @@
 **********************************************/
 
 //#include <avr/signal.h>
-#include <avr/interrupt.h>
-#include <avr/pgmspace.h>
-#include <avr/io.h>
-#include <avr/wdt.h>
 #define F_CPU 3686400UL  // 3.6864 MHz
-#include <util/delay.h>
-#include "avr_compat.h"
+
 
 void delay_ms(unsigned int ms)
 /* delay for a minimum of <ms> */
@@ -26,6 +21,7 @@ void delay_ms(unsigned int ms)
         }
 }
 
+/*
 void wd_init(void)
 {
         // timeout the watchdog after 2 sec:
@@ -36,5 +32,5 @@ void wd_kick(void)
 {
         wdt_reset();
 }
-
+*/
 

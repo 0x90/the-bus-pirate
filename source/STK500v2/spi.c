@@ -4,12 +4,14 @@
 * Author: Guido Socher, Copyright: GPL 
 * Copyright: GPL
 **********************************************/
-#include <avr/io.h>
-#include "avr_compat.h"
+#include "base.h"
+/* Definitions to get the existing code working with the Bus Pirate */
+#include "redefines.h"
 #include "timeout.h"
+
 // timing for software spi:
 #define F_CPU 3686400UL  // 3.6864 MHz
-#include <util/delay.h>
+
 static unsigned char sck_dur=1;
 static unsigned char spi_in_sw=0;
 //static unsigned char sck_dur=12;

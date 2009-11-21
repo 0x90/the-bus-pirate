@@ -54,6 +54,19 @@ ToolArgsString=-g -Wall
 TraceCmdString=
 DebugOptions=
 [File004]
+Location=E:\Work\bus-pirate\trunk\source\STK500v2\work\main.o
+Folder=Intermediary
+DeviceName=PIC24FJ64GA002
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
+LanguageToolLocation=C:\MCC24\bin\pic30-gcc.exe
+PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|main.c|spi.c|timeout.c|UART.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-g -Wall
+TraceCmdString=
+DebugOptions=
+[File005]
 Location=E:\Work\bus-pirate\trunk\source\STK500\.\output\BusPirate-stk500.cof
 Folder=Output
 DeviceName=PIC24FJ64GA002
@@ -66,7 +79,7 @@ SuiteArgsString=
 ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
 TraceCmdString=
 DebugOptions=
-[File005]
+[File006]
 Location=E:\Work\bus-pirate\trunk\source\STK500\.\output\BusPirate-stk500.hex
 Folder=Output
 DeviceName=PIC24FJ64GA002

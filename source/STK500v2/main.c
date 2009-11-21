@@ -10,35 +10,31 @@
 *
 * Copyright: GPL
 **********************************************/
+#include "base.h"
 #include "uart.h"
-#include "led.h"
 #include "spi.h"
-#include "avr_compat.h"
 #include "command.h"
 #include "timeout.h"
 
-// remember to change the "AvrUsb500-X.X terminal mode" version string towards the end
-// of the program at version change.
+/* Definitions to get the existing code working with the Bus Pirate */
+#include "redefines.h"
 
+/* Orig. source defines */
 #define CONFIG_PARAM_BUILD_NUMBER_LOW   0
 #define CONFIG_PARAM_BUILD_NUMBER_HIGH  1
 // be careful with changing HW versions. avrstudio does not like all numbers:
 #define CONFIG_PARAM_HW_VER             2
 // update here our own default sw version:
-#define D_CONFIG_PARAM_SW_MAJOR           2
-#define D_CONFIG_PARAM_SW_MINOR           4
+#define D_CONFIG_PARAM_SW_MAJOR         2
+#define D_CONFIG_PARAM_SW_MINOR         4
+
 #define CONFIG_PARAM_VTARGET 50
 #define CONFIG_PARAM_VADJUST 25
 #define CONFIG_PARAM_OSC_PSCALE 2
 #define CONFIG_PARAM_OSC_CMATCH 1
 
-// you can change the CONFIG_PARAM_SW in terminal mode
-#define EEPROM_MAJOR            ((uint8_t*)2)
-#define EEPROM_MINOR            ((uint8_t*)1)
-#define EEPROM_MAGIC            ((uint8_t*)0)
 uint8_t CONFIG_PARAM_SW_MAJOR;
 uint8_t CONFIG_PARAM_SW_MINOR;
-const char terminal_init[] PROGMEM = {"\x1B[0m\x1B[2J\x1B[0;0f"};
 
 #define MSG_IDLE 0
 #define MSG_WAIT_SEQNUM 1
@@ -94,6 +90,7 @@ void transmit_answer(unsigned char seqnum,unsigned int len)
         uart_sendchar(cksum);
 }
 
+/* Act on incomming packet. Comand in msg_buf, seqnum needed for reply */
 void programcmd(unsigned char seqnum)
 {
         unsigned char tmp,tmp2,addressing_is_word,ci,cj,cstatus;
@@ -109,8 +106,16 @@ void programcmd(unsigned char seqnum)
                 msg_buf[0] = CMD_SIGN_ON; // 0x01
                 msg_buf[1] = STATUS_CMD_OK; // 0x00
                 msg_buf[2] = 8; //len
-                strcpy((char *)&(msg_buf[3]),"AVRISP_2"); // note: this copied also the null termination
-                answerlen=11;
+                //strcpy((char *)&(msg_buf[3]),"AVRISP_2"); // note: this copied also the null termination
+                msg_buf[3] = 'A'; 
+                msg_buf[4] = 'V'; 
+                msg_buf[5] = 'R'; 
+                msg_buf[6] = 'I'; 
+                msg_buf[7] = 'S'; 
+                msg_buf[8] = 'P'; 
+                msg_buf[9] = ' '; 
+                msg_buf[10] = '2';             
+				answerlen=11;
                 break;
 
                 case CMD_SET_PARAMETER:
@@ -670,35 +675,33 @@ void programcmd(unsigned char seqnum)
         
 }
 
+//the main function waits for all the bytes in the STK500v2 packet, 
+//then sends for processing in the above functions
 int main(void)
 {
         unsigned char ch;
         unsigned char prev_ch=0;
-        unsigned char chr_nl=0;
+        //unsigned char chr_nl=0; //unused
         unsigned char msgparsestate;
         unsigned char cksum=0;
         unsigned char seqnum=0;
         int msglen=0;
         int i=0;
         uart_init();
-        wd_init();
+        //wd_init();
         LED_INIT;
         LED_OFF;
-        sei();
+        //sei(); //enable AVR interrupts
         msgparsestate=MSG_IDLE;
 		// default values:
 		CONFIG_PARAM_SW_MINOR=D_CONFIG_PARAM_SW_MINOR;
 		CONFIG_PARAM_SW_MAJOR=D_CONFIG_PARAM_SW_MAJOR;
-        if (eeprom_read_byte((uint8_t *)EEPROM_MAGIC) == 20){
-                // ok magic number matches accept values
-                CONFIG_PARAM_SW_MINOR=eeprom_read_byte(EEPROM_MINOR);
-                CONFIG_PARAM_SW_MAJOR=eeprom_read_byte(EEPROM_MAJOR);
-        }
+
         while(1){
                 if (msgparsestate==MSG_IDLE){
                         ch=uart_getchar(1);
                 }else{
-                        ch=uart_getchar(0);
+                        ch=uart_getchar(0); //getting extra bytes, use timeout
                 }
                 // parse message according to appl. note AVR068 table 3-1:
                 if (msgparsestate==MSG_IDLE && ch == MESSAGE_START){
@@ -744,7 +747,7 @@ int main(void)
                         cksum^=ch;
                         msg_buf[i]=ch;
                         i++;
-						wdt_reset(); //wd_kick();
+						//wdt_reset(); //wd_kick();
                         if (i==msglen){
                                 msgparsestate=MSG_WAIT_CKSUM;
                         }
@@ -754,7 +757,7 @@ int main(void)
 				if (msgparsestate==MSG_WAIT_CKSUM){
                         if (ch==cksum && msglen > 0){
                                 // message correct, process it
-                                wdt_reset(); //wd_kick();
+                                //wdt_reset(); //wd_kick();
                                 programcmd(seqnum);
                         }else{
                                 msg_buf[0] = ANSWER_CKSUM_ERROR;
