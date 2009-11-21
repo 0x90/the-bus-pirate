@@ -34,6 +34,7 @@ file_006=.
 file_007=.
 file_008=.
 file_009=.
+file_010=.
 [GENERATED_FILES]
 file_000=no
 file_001=no
@@ -45,6 +46,7 @@ file_006=no
 file_007=no
 file_008=no
 file_009=no
+file_010=no
 [OTHER_FILES]
 file_000=no
 file_001=no
@@ -56,6 +58,7 @@ file_006=no
 file_007=no
 file_008=no
 file_009=no
+file_010=no
 [FILE_INFO]
 file_000=main.c
 file_001=spi.c
@@ -67,6 +70,7 @@ file_006=hardwarev3.h
 file_007=UART.h
 file_008=command.h
 file_009=redefines.h
+file_010=APP 24FJ64GA002.gld
 [SUITE_INFO]
 suite_guid={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 suite_state=

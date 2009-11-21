@@ -15,7 +15,7 @@ void Initialize(void){
 	#ifdef BUSPIRATEV2
 	BP_PULLUP_OFF();	//disable pullups
 	#endif
-	BP_VREG_OFF();		//disable vreg
+	BP_VREG_ON();		//disable vreg
 
 	//set pin configuration using peripheral pin select
 	BP_TERM_RX=BP_TERM_RX_RP;   //Inputs UART1 RX RPINR18bits.U1RXR=4;

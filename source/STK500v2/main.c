@@ -2,12 +2,7 @@
 /*********************************************
 * An implemenation of the STK500 specification (appl. note AVR068) for atmega8
 * * Author: Guido Socher, Copyright: GPL
-*
-* Terminal capabilities for updating SW/HW version:
-* Idea from Florin-Viorel Petrov, www.fonitzu.com/electronics, Date: 28Feb2006
-* Florin-Viorel's version was a bit more fancy than the version implemented
-* here. This implemenation is just small and simple.
-*
+* * Ported to PIC24/Bus Pirate by Ian Lesnet, http://dangerousprototypes.com, 2009
 * Copyright: GPL
 **********************************************/
 #include "base.h"
@@ -20,10 +15,10 @@
 #define CONFIG_PARAM_BUILD_NUMBER_LOW   0
 #define CONFIG_PARAM_BUILD_NUMBER_HIGH  1
 // be careful with changing HW versions. avrstudio does not like all numbers:
-#define CONFIG_PARAM_HW_VER             2
+#define CONFIG_PARAM_HW_VER             2 //was 2
 // update here our own default sw version:
-#define D_CONFIG_PARAM_SW_MAJOR         2
-#define D_CONFIG_PARAM_SW_MINOR         4
+#define D_CONFIG_PARAM_SW_MAJOR         0x02 //was 2
+#define D_CONFIG_PARAM_SW_MINOR         0x0a //was 4
 
 #define CONFIG_PARAM_VTARGET 50
 #define CONFIG_PARAM_VADJUST 25
@@ -44,8 +39,8 @@ uint8_t CONFIG_PARAM_SW_MINOR;
 //set custom configuration for PIC 24F
 _CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
 _CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //turn off junk we don't need
-//unsigned int userReset  __attribute__ ((space(prog),section(".init"))) = 0xC04 ;
-//unsigned char timeout  __attribute__ ((space(prog),section(".init"))) = 0x00 ;
+unsigned int userReset  __attribute__ ((space(prog),section(".init"))) = 0xC04 ;
+unsigned char timeout  __attribute__ ((space(prog),section(".init"))) = 0x00 ;
 
 static unsigned char msg_buf[295];
 static unsigned char param_reset_polarity=1; // 1=avr (reset active=low), 0=at89 (not supported by this avrusb500)
@@ -116,7 +111,7 @@ void programcmd(unsigned char seqnum)
                 msg_buf[6] = 'I'; 
                 msg_buf[7] = 'S'; 
                 msg_buf[8] = 'P'; 
-                msg_buf[9] = ' '; 
+                msg_buf[9] = '_'; 
                 msg_buf[10] = '2';             
 				answerlen=11;
                 break;
