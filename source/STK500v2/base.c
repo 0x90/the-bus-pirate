@@ -24,3 +24,38 @@ void Initialize(void){
 
 }
 
+//delay in MS
+void bpDelayMS(const unsigned int delay){
+	volatile unsigned char i;
+	volatile unsigned int c;
+	
+	for(c=0;c<delay;c++){
+		for(i=0;i<4;i++) bpDelayUS(250);
+	}
+
+}
+
+//delay in US
+void bpDelayUS(const unsigned char delay)
+{
+	volatile unsigned char i;
+	
+	for(i=0;i<delay;i++){//@32MHz = 16MIPS, 16I/uS
+		asm( "nop" );
+		asm( "nop" );
+		asm( "nop" );
+		asm( "nop" );
+		asm( "nop" );
+		asm( "nop" );
+		asm( "nop" );
+		asm( "nop" );
+		asm( "nop" );
+		asm( "nop" );
+		asm( "nop" );
+		asm( "nop" );
+		//asm( "nop" );
+		//asm( "nop" );
+		//asm( "nop" );
+		//asm( "nop" );
+	}
+}

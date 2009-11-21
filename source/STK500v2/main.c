@@ -14,8 +14,6 @@
 #include "UART.h"
 #include "spi.h"
 #include "command.h"
-#include "timeout.h"
-#include "bpinit.h"  //Bus Pirate setup function, called from uart_init macro in redefines.h
 #include "redefines.h" /* Definitions to get the existing code working with the Bus Pirate */
 
 /* Orig. source defines */

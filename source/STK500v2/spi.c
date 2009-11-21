@@ -5,9 +5,7 @@
 * Copyright: GPL
 **********************************************/
 #include "base.h"
-/* Definitions to get the existing code working with the Bus Pirate */
-#include "redefines.h"
-#include "timeout.h"
+#include "redefines.h" /* Definitions to get the existing code working with the Bus Pirate */
 
 // timing for software spi:
 #define F_CPU 3686400UL  // 3.6864 MHz
