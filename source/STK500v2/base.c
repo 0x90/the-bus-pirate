@@ -12,10 +12,21 @@ void Initialize(void){
 
 	IODIR|=(AUX+MOSI+CLK+MISO+CS);//AUX, MOSI, CLK, MISO, CS pins to input
 	IOLAT&=(~AUX+MOSI+CLK+MISO+CS); //low pin
-	#ifdef BUSPIRATEV2
-	BP_PULLUP_OFF();	//disable pullups
+
+	//modify setup behavior according to defines in base.h
+	#ifdef BUSPIRATEV2 //only for v2 and v3, not v1a or v0a
+		#if defined(ENABLE_PULLUP_RESISTORS)
+			BP_PULLUP_ON();	//enable pullups
+		#else
+			BP_PULLUP_OFF();//disable pullups
+		#endif
 	#endif
-	BP_VREG_ON();		//disable vreg
+
+	#if defined(ENABLE_VREG)
+		BP_VREG_ON();		//enable vreg
+	#else
+		BP_VREG_OFF();		//disable vreg
+	#endif
 
 	//set pin configuration using peripheral pin select
 	BP_TERM_RX=BP_TERM_RX_RP;   //Inputs UART1 RX RPINR18bits.U1RXR=4;
