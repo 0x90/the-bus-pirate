@@ -123,9 +123,16 @@ void spi_init(void)
 		// now output pins low in case somebody used it as output in his/her circuit
 		//MOSI, SCK is output/low
 		SPI1STATbits.SPIEN = 0;//disable, just in case...
-		SPIMOSI_ODC=0;
-		SPICLK_ODC=0; 
-		SPICS_ODC=0;
+
+		#ifdef OUTPUT_HIGH_IMPEDANCE
+			SPIMOSI_ODC=1;
+			SPICLK_ODC=1; 
+			SPICS_ODC=1;
+		#else
+			SPIMOSI_ODC=0;
+			SPICLK_ODC=0; 
+			SPICS_ODC=0;
+		#endif
 		// Inputs 
 		RPINR20bits.SDI1R=7; 		//B7 MISO
 		// Outputs
