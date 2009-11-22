@@ -24,6 +24,14 @@
 //#define BUSPIRATEV25 //AKA Bus Pirate v2go
 #define BUSPIRATEV3 
 
+//these compile time options enable various features
+#define ENABLE_VREG 			//voltage regulators always on
+#define OUTPUT_HIGH_IMPEDANCE	//use high impedance outputs for multi-voltage interfacing
+#ifdef OUTPUT_HIGH_IMPEDANCE	
+	#define ENABLE_PULLUP_RESISTORS //enable on-board pullup resistors (only if Hi-Z, only on hardware v2, v3)
+#endif
+
+
 //
 //
 //
