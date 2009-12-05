@@ -171,7 +171,9 @@ void uartProcess(void){
 						if((U2STAbits.URXDA==1)&& (U1STAbits.UTXBF == 0)){
 								U1TXREG = U2RXREG; //URXDA doesn't get cleared untill this happens
 						}
-						if(UART1RX()==' ')break; //escape
+						if (U1STAbits.URXDA==1){//escape
+						 	if(U1RXREG == ' ') break;
+						}
 					}
 					break;
 				//case 2://auto UART baud rate
