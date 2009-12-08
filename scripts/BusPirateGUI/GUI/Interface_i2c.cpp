@@ -1,5 +1,4 @@
 #include <QtGui>
-#include "configure.h"
 #include "BinMode.h"
 #include "BPSettings.h"
 #include "MainWin.h"
@@ -10,30 +9,45 @@ I2CGui::I2CGui(MainWidgetFrame *parent) : QWidget(parent)
 {
 	this->parent = parent;
 
-	QLabel *file_label = new QLabel("File: ");
 	QLabel *device_label = new QLabel("Device: ");
 	QLabel *device_addr_read_label = new QLabel("Read Addr: ");
 	QLabel *device_addr_write_label = new QLabel("Write Addr: ");
-	QLabel *file_size_label = new QLabel("Chip Size: ");
+	QLabel *file_size_label = new QLabel("Data: ");
 	QLabel *log_label = new QLabel("Log: ");
 	QLabel *dev_prop_saddr_label = new QLabel("Start Mem Addr: ");
 
 	QPushButton *scan = new QPushButton("Scan I2C");
+	scan->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QPushButton *read_btn = new QPushButton("Read I2C");
+	read_btn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QPushButton *write_btn = new QPushButton("Write I2C");
-	
-	device_addr_write = new QLineEdit("0xA0");
-	device_addr_read = new QLineEdit("0xA1");
-	file_size = new QLineEdit;
-	start_addr = new QLineEdit("0x00");
-	file = new QLineEdit("i2c_test.bin");
-	msglog = new QTextEdit;
-	msglog->setReadOnly(true);
-	
+	write_btn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
 	QVBoxLayout *vlayout = new QVBoxLayout;
 	QHBoxLayout *hlayout = new QHBoxLayout;
 	QHBoxLayout *dev_addr_layout = new QHBoxLayout;
-	QHBoxLayout *dev_prop_layout = new QHBoxLayout;
+	QHBoxLayout *dev_addr_layout2 = new QHBoxLayout;
+	QHBoxLayout *dev_addr_layout3 = new QHBoxLayout;
+	QHBoxLayout *file_line = new QHBoxLayout;
+	
+	QRegExp rx("^(0x){,1}[a-fA-f0-9]{2}$");
+	QRegExp rx_int("^\\d{1,}[KMGkmg]{,1}");
+	QRegExpValidator *hex_valid = new QRegExpValidator(rx, this);
+	
+	device_addr_write = new QLineEdit("0xA0");
+	device_addr_write->setValidator(hex_valid);
+	device_addr_write->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	device_addr_read = new QLineEdit("0xA1");
+	device_addr_read->setValidator(hex_valid);
+	device_addr_read->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	//start_addr = new QLineEdit("0x00");
+	//start_addr->setValidator(hex_valid);
+	//start_addr->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	file_size = new QLineEdit;
+	file_size->setValidator(new QRegExpValidator(rx_int, this));
+
+	msglog = new QTextEdit;
+	msglog->setReadOnly(true);
 	
 	hlayout->addWidget(scan);
 	hlayout->addWidget(read_btn);
@@ -44,17 +58,16 @@ I2CGui::I2CGui(MainWidgetFrame *parent) : QWidget(parent)
 	dev_addr_layout->addWidget(device_addr_write_label);
 	dev_addr_layout->addWidget(device_addr_write);
 	
-	dev_prop_layout->addWidget(dev_prop_saddr_label);
-	dev_prop_layout->addWidget(start_addr);
-	dev_prop_layout->addWidget(file_size_label);
-	dev_prop_layout->addWidget(file_size);
+	//dev_addr_layout2->addWidget(dev_prop_saddr_label);
+	//dev_addr_layout2->addWidget(start_addr);
+	dev_addr_layout3->addWidget(file_size_label);
+	dev_addr_layout3->addWidget(file_size);
 	
-	vlayout->addWidget(file_label);
-	vlayout->addWidget(file);
 	vlayout->addSpacing(10);
 	vlayout->addWidget(device_label);
 	vlayout->addLayout(dev_addr_layout);
-	vlayout->addLayout(dev_prop_layout);
+	//vlayout->addLayout(dev_addr_layout2);
+	vlayout->addLayout(dev_addr_layout3);
 	vlayout->addSpacing(10);
 	vlayout->addLayout(hlayout);
 	vlayout->addSpacing(50);

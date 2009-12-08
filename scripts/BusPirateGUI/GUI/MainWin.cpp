@@ -40,36 +40,38 @@ MainWidgetFrame::MainWidgetFrame(MainAppWindow *p) : QWidget(p)
 	tabs = new QTabWidget(p);
 	cfg = new BPSettings;
 	settings = new BPSettingsGui(this);
-	jtag = new JtagGui(this);
-	spi = new SpiGui(this);
-	i2c = new I2CGui(this);
-	onewire = new OneWireGui(this);
-	rawwire = new RawWireGui(this);
-	raw_text = new RawTextGui(this);
-	power = new PowerGui(this);
 	bp = new BinMode(this);
 
 	connect(qApp, SIGNAL(lastWindowClosed()), settings, SLOT(SaveSettings()));
 
 #if ENABLE_SPI
+	spi = new SpiGui(this);
 	tabs->addTab(spi, "SPI");
 #endif
 #if ENABLE_I2C
+	i2c = new I2CGui(this);
 	tabs->addTab(i2c, "I2C");
 #endif
 #if ENABLE_1WIRE
+	onewire = new OneWireGui(this);
 	tabs->addTab(onewire, "1Wire");
 #endif
 #if ENABLE_RAWWIRE
+	rawwire = new RawWireGui(this);
 	tabs->addTab(rawwire, "Raw 2/3-Wire");
 #endif
 #if ENABLE_ASCII
+	raw_text = new RawTextGui(this);
 	tabs->addTab(raw_text, "Raw Text");
 #endif
 #if ENABLE_JTAG
+	jtag = new JtagGui(this);
 	tabs->addTab(jtag, "JTAG");
 #endif
-	tabs->addTab(power, "Bus Pirate");
+	//power = new PowerGui(this);
+	//tabs->addTab(power, "Bus Pirate");
+	bbio = new BBIOSettingsGui(this);
+	tabs->addTab(bbio, "BBIO Settings");
 	tabs->addTab(settings, "Settings");
 
 	QVBoxLayout *mainLayout = new QVBoxLayout;

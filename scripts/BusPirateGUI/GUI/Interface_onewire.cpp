@@ -1,5 +1,4 @@
 #include <QtGui>
-#include "configure.h"
 #include "BinMode.h"
 #include "BPSettings.h"
 #include "MainWin.h"
@@ -8,30 +7,45 @@
 
 OneWireGui::OneWireGui(MainWidgetFrame *p) : QWidget(p)
 {
-	QLabel *file_label = new QLabel("File: ");
 	QLabel *device_label = new QLabel("Device: ");
 	QLabel *log_label = new QLabel("Log: ");
-
-	QPushButton *scan = new QPushButton("Scan 1Wire");
-	QPushButton *read_btn = new QPushButton("Read 1Wire");
-	QPushButton *write_btn = new QPushButton("Write 1Wire");
+	QLabel *rread = new QLabel("Data:");
 	
-	device_addr = new QLineEdit;
-	file = new QLineEdit;
-	msglog = new QTextEdit;
-	msglog->setReadOnly(true);
+	QPushButton *scan = new QPushButton("Scan 1Wire");
+	scan->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	QPushButton *read_btn = new QPushButton("Read 1Wire");
+	read_btn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	QPushButton *write_btn = new QPushButton("Write 1Wire");
+	write_btn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
 	
 	QVBoxLayout *vlayout = new QVBoxLayout;
 	QHBoxLayout *hlayout = new QHBoxLayout;
+	QHBoxLayout *rom_layout = new QHBoxLayout;
+	QHBoxLayout *pad_layout = new QHBoxLayout;
+	QHBoxLayout *mem_layout = new QHBoxLayout;
+	QHBoxLayout *file_input_layout = new QHBoxLayout;
+	QHBoxLayout *dev_input_layout = new QHBoxLayout;
 	
+	msglog = new QTextEdit;
+	msglog->setReadOnly(true);
+	device_addr = new QLineEdit;
+	
+	dev_rom_read = new QLineEdit("0x33");
+
+	rom_layout->addWidget(rread);
+	rom_layout->addWidget(dev_rom_read);
+
 	hlayout->addWidget(scan);
 	hlayout->addWidget(read_btn);
 	hlayout->addWidget(write_btn);
-	
-	vlayout->addWidget(file_label);
-	vlayout->addWidget(file);
-	vlayout->addWidget(device_label);
-	vlayout->addWidget(device_addr);
+	dev_input_layout->addWidget(device_label);
+	dev_input_layout->addWidget(device_addr);
+	vlayout->addLayout(dev_input_layout);
+	vlayout->addLayout(rom_layout);
+	vlayout->addLayout(pad_layout);
+	vlayout->addLayout(mem_layout);
+	vlayout->addSpacing(10);
 	vlayout->addLayout(hlayout);
 	vlayout->addSpacing(50);
 	vlayout->addWidget(log_label);

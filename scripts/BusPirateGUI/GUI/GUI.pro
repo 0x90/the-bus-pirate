@@ -39,10 +39,10 @@ SOURCES += 	\
 			Interface_i2c.cpp \
 			Interface_jtag.cpp \
 			Interface_onewire.cpp \
-			Interface_power.cpp \
+			#Interface_power.cpp \
 			Interface_rawtext.cpp \
 			Interface_rawwire.cpp \
-			Interface_spi.cpp \
+			#Interface_spi.cpp \
 			MainWin.cpp \
 			main.cpp
 

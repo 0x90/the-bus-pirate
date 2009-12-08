@@ -10,6 +10,7 @@ class OneWireGui;
 class RawWireGui;
 class RawTextGui;
 class PowerGui;
+class BBIOSettingsGui;
 class BPSettingsGui;
 class BinMode;
 class BPSettings;
@@ -29,6 +30,7 @@ public:
 	RawWireGui *rawwire;
 	RawTextGui *raw_text;
 	PowerGui *power;
+	BBIOSettingsGui *bbio;
 	BPSettingsGui *settings;
 	MainAppWindow *parent;
 };

@@ -1,5 +1,4 @@
 #include <QtGui>
-#include "configure.h"
 #include "BinMode.h"
 #include "BPSettings.h"
 #include "MainWin.h"
@@ -13,17 +12,27 @@ PowerGui::PowerGui(MainWidgetFrame *parent) : QWidget(parent)
 	QVBoxLayout *vlayout = new QVBoxLayout;
 
 	QPushButton *bbio_mode = new QPushButton("Reset BBIO Mode");
+	bbio_mode->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QPushButton *hard_reset = new QPushButton("Hardware Reset - Bus Pirate");
+	hard_reset->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QPushButton *userterm_reset = new QPushButton("User Terminal Reset");
+	userterm_reset->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QPushButton *enter_bbio = new QPushButton("Enter BBIO Mode");
+	enter_bbio->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 	QPushButton *hiz_mode =  new QPushButton("Enable Hi-Z Power");
+	hiz_mode->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QPushButton *normal_mode = new QPushButton("Enable Normal (3.3v) Power");
+	normal_mode->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QPushButton *open_collector = new QPushButton("Enable Open Collector (5v) Power");
+	open_collector->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 	QPushButton *short_test = new QPushButton("Short Self-Test");
+	short_test->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QPushButton *long_test = new QPushButton("Long Self-Test");
+	long_test->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QPushButton *fetch_buffer = new QPushButton("Fetch Buffer Contents");
+	fetch_buffer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	
 	connect(hiz_mode, SIGNAL(clicked()), this, SLOT(hiz_power_enable()));
 

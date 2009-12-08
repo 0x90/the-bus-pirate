@@ -1,5 +1,4 @@
 #include <QtGui>
-#include "configure.h"
 #include "BinMode.h"
 #include "BPSettings.h"
 #include "MainWin.h"
