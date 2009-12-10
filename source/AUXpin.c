@@ -89,11 +89,11 @@ void bpPWM(void){
 	//assign pin with PPS
 	AUXPIN_RPOUT = OC5_IO;
 
-	OC5R				= PWM_dutycycle;	// Initialize Compare Register1 with 50% duty cycle
-	OC5RS				= PWM_dutycycle;	// Initialize Secondary Compare Register1 with 50% duty cycle
-	OC5CON = 0x6;		// PWM mode on OC, Fault pin disabled
-	PR2					= PWM_period;	// Initialize PR2 with 0x0132 = 0d306 as PWM cycle
-	T2CONbits.TON		= 1;		// Start Timer2 with assumed settings
+	OC5R = PWM_dutycycle;
+	OC5RS = PWM_dutycycle;
+	OC5CON = 0x6;			
+	PR2	= PWM_period;	
+	T2CONbits.TON = 1;	
 
 	bpWline(OUMSG_AUX_PWM_ON);
 	AUXmode=AUX_PWM;
