@@ -17,21 +17,16 @@
 *   Free Software Foundation, Inc.,                                       *
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 **************************************************************************/
- 
+//#include "base.h"
+#include "io_cfg.h"             // I/O pin mapping
+//#define while((tick-lasttick)<X)continue bpDelayUS(X)
+
 #include "prog_lolvl.h"
-#ifdef SDCC
-#include <pic18f2550.h>
-#else
-#include <p18cxxx.h>
-#endif
-#include "typedefs.h"
-#include "interrupt.h"
 #include "prog.h"
 #include "upp.h" 
-#include "io_cfg.h"             // I/O pin mapping
 
-extern long tick;
-extern long lasttick;
+//extern long tick;
+//extern long lasttick;
 
 void set_vdd_vpp(PICTYPE pictype, PICFAMILY picfamily,char level)
 {
@@ -52,23 +47,23 @@ void set_vdd_vpp(PICTYPE pictype, PICFAMILY picfamily,char level)
 				VPP=0;
 				break;
 			default:
-				VDD=0; //high, (inverted)
+				//VDD=0; //high, (inverted)
 				break;
 		}
-		lasttick=tick;
-		while((tick-lasttick)<100)continue;
+		//lasttick=tick;
+		bpDelayUS(100);//while((tick-lasttick)<100)continue;
 		switch(pictype)
 		{
 			case P12F629:
 			case P12F6XX:
-				VDD=0;
+				//VDD=0;
 				break;
 			case dsP30F:
-				VDD=0;
+				//VDD=0;
 				clock_delay();
 				VPP=0;
-				lasttick=tick;
-				while((tick-lasttick)<26)continue;
+				//lasttick=tick;
+				bpDelayUS(26);//while((tick-lasttick)<26)continue;
 				dspic_send_24_bits(0);
 				dspic_send_24_bits(0);
 				dspic_send_24_bits(0);
@@ -83,21 +78,21 @@ void set_vdd_vpp(PICTYPE pictype, PICFAMILY picfamily,char level)
 				VPP=0; //high, (inverted)
 				break;
 		}
-		lasttick=tick;
-		while((tick-lasttick)<100)continue;
+		//lasttick=tick;
+		bpDelayUS(100);//while((tick-lasttick)<100)continue;
 	}
 	else
 	{
 		VPP=1; //low, (inverted)
 		VPP_RST=1; //hard reset, low (inverted)
-		lasttick=tick;
-		while((tick-lasttick)<40)continue;
+		//lasttick=tick;
+		bpDelayUS(40);//while((tick-lasttick)<40)continue;
 		VPP_RST=0; //hard reset, high (inverted)
-		VDD=1; //low, (inverted)
+		//VDD=1; //low, (inverted)
 		TRISPGD =1;    //PGD input
 		TRISPGC =1;    //PGC input
-		lasttick=tick;
-		while((tick-lasttick)<20)continue;
+		//lasttick=tick;
+		bpDelayUS(20);//while((tick-lasttick)<20)continue;
 	}
 }
 

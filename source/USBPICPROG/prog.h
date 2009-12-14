@@ -26,7 +26,13 @@
     Programming routines for PIC16 and PIC18.
 **/
 typedef enum _PICFAMILY{
-        PIC10=0,PIC12,PIC16,PIC18,PIC24,dsPIC30,dsPIC33
+        PIC10=0,
+		PIC12,
+		PIC16,
+		PIC18,
+		PIC24,
+		DSPIC30,
+		dsPIC33
 }PICFAMILY;
 
 typedef enum _PICTYPE{

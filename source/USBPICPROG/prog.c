@@ -18,21 +18,17 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 **************************************************************************/
 
-
+//#include "base.h"
+#define DelayMs(X) bpDelayMS(X)
 #include "upp.h" 
-#ifdef SDCC
-#include <pic18f2550.h>
-#else
-#include <p18cxxx.h>
-#endif
-#include "typedefs.h"
+//#include "typedefs.h"
 #include "io_cfg.h"             // I/O pin mapping
 #include "prog.h"
-#include "interrupt.h"
+//#include "interrupt.h"
 #include "prog_lolvl.h"
 
-extern long lasttick;
-extern long tick;
+unsigned char lasttick=0;
+unsigned char tick=0;
 
 
 #define NORESTORE 0xAA
@@ -714,7 +710,7 @@ char write_data(PICFAMILY picfamily, PICTYPE pictype, unsigned long address, uns
 	if((pictype==P10F200)||(pictype==P10F202))return 3;	//these devices have no data memory.
 	switch(picfamily)
 	{
-		case dsPIC30:
+		case DSPIC30:
 			//Step 1: Exit the Reset vector.
 			dspic_send_24_bits(0x000000);	//NOP
 			dspic_send_24_bits(0x000000);	//NOP
@@ -801,7 +797,7 @@ char write_data(PICFAMILY picfamily, PICTYPE pictype, unsigned long address, uns
 					pic_send(4,0x00,0x6EF5); //movwf TABLAT
 					pic_send(4,0x00,0x0000); //nop
 					receiveddata=pic_read_byte2(4,0x02); //Shift TABLAT register out
-				}while(((receiveddata&0x02)==0x02)&&((tick-lasttick)<P11A)); //poll for WR bit to clear
+				}while(((receiveddata&0x02)==0x02));//&&((tick-lasttick)<P11A)); //poll for WR bit to clear
 				//PGC=0;	//hold PGC low for P10 (100us)
 				DelayMs(P10);
 				pic_send(4,0x00,0x94A6); //BCF EECON1, WREN
@@ -1099,7 +1095,7 @@ void read_code(PICFAMILY picfamily, PICTYPE pictype, unsigned long address, unsi
 	if(lastblock&1)set_vdd_vpp(pictype, picfamily,1);
 	switch(picfamily)
 	{
-		case dsPIC30:
+		case DSPIC30:
 			if(address>=0xF80000)
 			{
 				if(lastblock&1)
@@ -1287,7 +1283,7 @@ unsigned char read_data(PICFAMILY picfamily, PICTYPE pictype, unsigned long addr
 	if(lastblock&1)set_vdd_vpp(pictype, picfamily,1);
 	switch(picfamily)
 	{
-		case dsPIC30:
+		case DSPIC30:
 			
 			//Step 1: Exit the Reset vector.
 			dspic_send_24_bits(0x000000);	//NOP
