@@ -21,7 +21,7 @@
 #if defined(BUSPIRATEV25) || defined (BUSPIRATEV3)
 void bpTest(unsigned char p, unsigned char d);
 void bpBusPinsTest(unsigned char d);
-void bpADCPinTest(unsigned char a, unsigned int val);
+void bpADCPinTest(unsigned char a, unsigned int lval, unsigned int hval);
 void bpPOSTWline(char *s);
 void bpPOSTWstring(char *s);
 
@@ -74,25 +74,31 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 	//ADC check
 	bpPOSTWline("ADC and supply");
 	AD1CON1bits.ADON = 1; // turn ADC ON
+#define V5BASE 0x307 //(((5/2)/3.3)*1024))
+#define V5H	V5BASE+0x50
+#define V5L V5BASE-0x50
+#define V33BASE 0x200 //(((3.3/2)/3.3)*1024))
+#define V33H	V33BASE+0x50
+#define V33L	V33BASE-0x50
 
 	//0x030F is 5volts
 	bpPOSTWstring("5V");
-	bpADCPinTest(9,0x250);
+	bpADCPinTest(9,V5L, V5H);
 	
 	if(jumperTest){
 		//Vpullup is connected to 5volts
 		bpPOSTWstring("VPU");
-		bpADCPinTest(11,0x250);
+		bpADCPinTest(11,V5L, V5H);
 	}
 
 	//0x0208 is 3.3volts
 	bpPOSTWstring("3.3V");
-	bpADCPinTest(10,0x150);
+	bpADCPinTest(10,V33L, V33H);
 
 	if(jumperTest){
 		//ADC is connected to 3.3volts
 		bpPOSTWstring("ADC");
-		bpADCPinTest(12,0x150);
+		bpADCPinTest(12,V33L, V33H);
 	}
 
 	AD1CON1bits.ADON = 0; // turn ADC OFF 
@@ -134,13 +140,13 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 
 }
 
-void bpADCPinTest(unsigned char a, unsigned int val){
+void bpADCPinTest(unsigned char a, unsigned int lval, unsigned int hval){
 	unsigned int b;
 	bpPOSTWstring("(");
 	b=bpADC(a);
 	if(display) bpWvolts(b); //only if display active
 	bpPOSTWstring(")");
-	bpTest(b>val,1);
+	bpTest(((b>lval)&&(b<hval)),1);
 }
 
 //test that all bus pins are direction d
