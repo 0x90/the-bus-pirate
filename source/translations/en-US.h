@@ -169,7 +169,7 @@
 #define OUMSG_SPI_SNIFF_BEGIN	"SPI bus sniffer, any key exists"
 #define OUMSG_SPI_SNIFF_BUFFER	"BUFFER OVERFLOW!\x0D\x0A Bus too fast, try raw display mode"
 //UART //
-#define OUMSG_UART_MACRO_MENU 	" 0.Macro menu\x0D\x0A 1.Transparent UART bridge\x0D\x0A 2. Live UART monitor"
+#define OUMSG_UART_MACRO_MENU 	" 0.Macro menu\x0D\x0A 1.Transparent UART bridge\x0D\x0A 2. Live UART monitor\x0D\x0A 3.UART bridge with flow control"
 #define OUMSG_UART_READ_FAIL 		"FAILED, NO DATA"
 #define OUMSG_UART_LIVE_DISPLAY_ON 	"UART LIVE DISPLAY, } TO STOP"
 #define OUMSG_UART_LIVE_DISPLAY_OFF "LIVE DISPLAY STOPPED"

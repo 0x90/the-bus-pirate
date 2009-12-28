@@ -66,6 +66,13 @@
 #define BP_CS_ODC 		ODCBbits.ODB6
 #define BP_AUX_ODC 		ODCBbits.ODB10
 
+//flow control connections for FTDI chip
+//used in uart brige
+#define FTDI_RTS_DIR TRISAbits.TRISA4
+#define FTDI_RTS PORTAbits.RA4
+#define FTDI_CTS_DIR TRISAbits.TRISA3
+#define FTDI_CTS PORTAbits.RA3
+
 //define the PPS input/output for the AUX pin
 #define BP_AUX_RPIN 10	
 #define BP_AUX_RPOUT RPOR5bits.RP10R

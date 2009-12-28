@@ -137,6 +137,18 @@ void uartProcess(void){
 				case 0://menu
 					bpWline(OUMSG_UART_MACRO_MENU);
 					break;
+				#ifdef BUSPIRATEV2
+				case 3://UART bridge with flow control
+					//setup RTS CTS on FTDI chip side
+					FTDI_CTS_DIR=0; //CTS (PIC output to FTDI)
+					FTDI_RTS_DIR=1; //RTS (PIC input from FTDI)
+					//PORTAbits.RA4=0;
+					//PORTAbits.RA5=0;
+					BP_CS_DIR=1;//external CTS (PIC input from external circuit)
+					BP_CLK_DIR=0;//external RTS (PIC output mirrors output from FTDI)
+					//BP_CS=0;//external CTS (PIC input from external circuit)
+					//BP_CLK=0;//external RTS (PIC mirrors output from FTDI)
+				#endif
 				case 1://transparent UART
 					bpWline("UART bridge. Space continues, anything else exits.");
 					if(UART1RX()!=' ')break; //escape
@@ -157,6 +169,11 @@ void uartProcess(void){
 		   					U2STA &= (~0b10); //clear overrun error if exists
 		   					U1STA &= (~0b10); //clear overrun error if exists
 							BP_LEDMODE=0;//MODE LED off to signify overrun error
+						}
+						if(bpCommand.num==3){
+							//pass RTS/CTS
+							BP_CLK=FTDI_RTS;
+							FTDI_CTS=BP_CS;								
 						}
 					}
 					break;
