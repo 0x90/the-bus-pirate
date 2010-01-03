@@ -62,7 +62,7 @@
 #define MSG_OPT_CKP_T            "Polaridad del Reloj:\x0D\x0A 1. Parado bajo *por defecto\x0D\x0A 2. Parado alto\x0D\x0A" //use these with BB library too
 #define MSG_OPT_CKE_T            "Frente del reloj de salida:\x0D\x0A 1. Frente de subida\x0D\x0A 2. Frente de bajada *por defecto\x0D\x0A"
 #define MSG_OPT_SMP_T            "Fase de muestro de la entrada:\x0D\x0A 1. Mitad *por defecto\x0D\x0A 2. Final \x0D\x0A"
-#define MSG_OPT_BB_SPEED_T        "Elegir velocidad:\x0D\x0A 1. Baja(~5KHz)\x0D\x0A 2. Alta(~50KHz)\x0D\x0A"
+#define MSG_OPT_BB_SPEED_T        "Elegir velocidad:\x0D\x0A 1. ~50KHz\x0D\x0A 2. ~100KHz\x0D\x0A 3. ~400KHz\x0D\x0A"
 
 #define MSG_STATUS_OUTPUT_HIZ_T     "Salidas en drenador abierto (H=entrada, L=GND)\x0D\x0A"
 #define MSG_STATUS_OUTPUT_NORMAL_T     "Salidas normales (H=V+, L=GND)\x0D\x0A"

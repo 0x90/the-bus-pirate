@@ -22,13 +22,21 @@
 #include "base.h"
 #include "bitbang.h" //need own functions
 
-#define	BB_LOWSPEED_SETTLE 20 //~5KHz
-#define	BB_LOWSPEED_CLOCK 100
-#define	BB_LOWSPEED_HALFCLOCK BB_LOWSPEED_CLOCK/2
+#define	BB_5KHZSPEED_SETTLE 20 //~5KHz
+#define	BB_5KHZSPEED_CLOCK 100
+#define	BB_5KHZSPEED_HALFCLOCK BB_5KHZSPEED_CLOCK/2
 
-#define	BB_HISPEED_SETTLE 2 //~50KHz
-#define	BB_HISPEED_CLOCK 10
-#define	BB_HISPEED_HALFCLOCK BB_LOWSPEED_CLOCK/2
+#define	BB_50KHZSPEED_SETTLE 2 //~50KHz
+#define	BB_50KHZSPEED_CLOCK 10
+#define	BB_50KHZSPEED_HALFCLOCK BB_50KHZSPEED_CLOCK/2
+
+#define	BB_100KHZSPEED_SETTLE 1 //~100KHz
+#define	BB_100KHZSPEED_CLOCK 5
+#define	BB_100KHZSPEED_HALFCLOCK 2
+
+#define	BB_MAXSPEED_SETTLE 0 //~400KHz
+#define	BB_MAXSPEED_CLOCK 0
+#define	BB_MAXSPEED_HALFCLOCK 0
 
 extern struct _modeConfig modeConfig;
 
@@ -57,14 +65,22 @@ void bbSetup(unsigned char pins, unsigned char speed){
 	
 	//define delays for differnt speeds
 	// I2C Bus timing in uS
-	if(speed == 0){ //~~5khz
-		bitbang.delaySettle = BB_LOWSPEED_SETTLE;
-		bitbang.delayClock = BB_LOWSPEED_CLOCK;
-		bitbang.delayHalfClock = BB_LOWSPEED_HALFCLOCK;
-	}else{ //~50khz
-		bitbang.delaySettle = BB_HISPEED_SETTLE;
-		bitbang.delayClock = BB_HISPEED_CLOCK;
-		bitbang.delayHalfClock = BB_HISPEED_HALFCLOCK;
+	switch(speed){
+		case 0:
+			bitbang.delaySettle = BB_50KHZSPEED_SETTLE;
+			bitbang.delayClock = BB_50KHZSPEED_CLOCK;
+			bitbang.delayHalfClock = BB_50KHZSPEED_HALFCLOCK;
+			break;
+		case 1:
+			bitbang.delaySettle = BB_100KHZSPEED_SETTLE;
+			bitbang.delayClock = BB_100KHZSPEED_CLOCK;
+			bitbang.delayHalfClock = BB_100KHZSPEED_HALFCLOCK;
+			break;
+		case 2:
+			bitbang.delaySettle = BB_MAXSPEED_SETTLE;
+			bitbang.delayClock = BB_MAXSPEED_CLOCK;
+			bitbang.delayHalfClock = BB_MAXSPEED_HALFCLOCK;
+			break;
 	}
 }
 

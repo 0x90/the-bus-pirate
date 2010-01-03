@@ -58,7 +58,7 @@
 #define MSG_OPT_CKP_T 		"Polarità del Clock:\x0D\x0A 1. Inattivo basso *default\x0D\x0A 2. Inattivo alto\x0D\x0A"  //use these with BB library too
 #define MSG_OPT_CKE_T 		"Fronte del clock di uscita:\x0D\x0A 1. Fronte di salita\x0D\x0A 2.Fronte di discesa *default\x0D\x0A"
 #define MSG_OPT_SMP_T 		"Punto di campionamento ingresso:\x0D\x0A 1. Metà bit *default\x0D\x0A 2. Fine bit\x0D\x0A"
-#define MSG_OPT_BB_SPEED_T 	"Selezionare velocità:\x0D\x0A 1. Bassa(~5KHz)\x0D\x0A 2. Alta(~50KHz)\x0D\x0A"
+#define MSG_OPT_BB_SPEED_T 	"Selezionare velocità:\x0D\x0A 1. ~50KHz\x0D\x0A 2. ~100KHz\x0D\x0A 3. ~400KHz\x0D\x0A"
 #define MSG_OPT_UART_DBP_T 	"Bit di dati e parità:\x0D\x0A 1. 8, NESSUNA *default \x0D\x0A 2. 8, PARI \x0D\x0A 3. 8, DISPARI \x0D\x0A 4. 9, NESSUNA \x0D\x0A"
 #define MSG_OPT_UART_STOPBITS_T "Bits di stop:\x0D\x0A 1. 1 *default\x0D\x0A 2. 2 \x0D\x0A"
 #define MSG_OPT_UART_RXP_T 	"Polarità di ricezione:\x0D\x0A 1. Inattivo a 1 *default\x0D\x0A 2. Inattivo a 0\x0D\x0A"

@@ -61,7 +61,7 @@
 #define MSG_OPT_CKP_T 			"Clock polarity:\x0D\x0A 1. Idle low *default\x0D\x0A 2. Idle high\x0D\x0A" //use these with BB library too
 #define MSG_OPT_CKE_T 			"Output clock edge:\x0D\x0A 1. Idle to active\x0D\x0A 2. Active to idle *default\x0D\x0A"
 #define MSG_OPT_SMP_T 			"Input sample phase:\x0D\x0A 1. Middle *default\x0D\x0A 2. End\x0D\x0A"
-#define MSG_OPT_BB_SPEED_T 		"Set speed:\x0D\x0A 1. Slow(~5KHz)\x0D\x0A 2. Fast(~50KHz)\x0D\x0A"
+#define MSG_OPT_BB_SPEED_T 		"Set speed:\x0D\x0A 1. ~50KHz\x0D\x0A 2. ~100KHz\x0D\x0A 3. ~400KHz\x0D\x0A"
 
 #define MSG_STATUS_OUTPUT_HIZ_T 	"Open drain outputs (H=Hi-Z, L=GND)\x0D\x0A"
 #define MSG_STATUS_OUTPUT_NORMAL_T 	"Normal outputs (H=V+, L=GND)\x0D\x0A"

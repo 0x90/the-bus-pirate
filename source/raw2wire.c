@@ -119,7 +119,7 @@ void r2wProcess(void){
 			modeConfig.allowlsb=1;
 			modeConfig.allowpullup=1; 
 			bpWmessage(MSG_OPT_BB_SPEED);
-			modeConfig.speed=(bpUserNumberPrompt(1, 2, 1)-1);
+			modeConfig.speed=(bpUserNumberPrompt(1, 3, 1)-1);
 			bpWmessage(MSG_OPT_OUTPUT_TYPE);
 			modeConfig.HiZ=(~(bpUserNumberPrompt(1, 2, 1)-1));
 			break;

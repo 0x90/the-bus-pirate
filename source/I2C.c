@@ -147,7 +147,7 @@ void i2cProcess(void){
 
 			if(i2cmode==SOFT){
 				bpWmessage(MSG_OPT_BB_SPEED);
-				modeConfig.speed=(bpUserNumberPrompt(1, 2, 1)-1);
+				modeConfig.speed=(bpUserNumberPrompt(1, 3, 1)-1);
 			}else{
 				// There is a hardware incompatibility with <B4
 				// See http://forum.microchip.com/tm.aspx?m=271183&mpage=1
