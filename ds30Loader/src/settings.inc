@@ -50,7 +50,7 @@
 ;------------------------------------------------------------------------------
 		.equ 	FCY, 		16000000			;xxx speed of internal cycle clock[Hz], used to calculate uart brg and delay
 		.equ 	BAUDRATE, 	115200				;xxx baudrate
-		.equ	BLTIME,		10000				;xxx time in ms before bootloader loads the user application
+		.equ	BLTIME,		1					;xxx time in ms before bootloader loads the user application
         .equ    USE_UART1,	1					;xxx uncomment to use uart1
         ;.equ	USE_UART2,	1					;xxx uncomment to use uart2
         ;.equ	USE_UART3,	1					;xxx uncomment to use uart3

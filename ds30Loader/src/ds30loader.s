@@ -1,5 +1,6 @@
 ;------------------------------------------------------------------------------
 ; Title:			ds30 loader for PIC24FJ
+;					Modified for Bus Pirate v2go, v3
 ;
 ; File description:	Main firmwarefile
 ;
@@ -136,10 +137,11 @@
 
 		.equ	BLDELAY,	( BLTIME * (FCY / 1000) / (65536 * 7) )	/*delay berfore user application is loaded*/
 		;.equ	UARTBR,		( (((FCY / BAUDRATE) / 8) - 1) / 2 )	/*baudrate*/
-		.equ UARTBR, ((FCY/(4*BAUDRATE))-1)
+		.equ 	UARTBR, ((FCY/(4*BAUDRATE))-1)
 		.equ	PAGESIZE,	512										/*words*/
 		.equ	ROWSIZE,	64										/*words*/		
-		.equ	STARTADDR,	( FLASHSIZE - 2 * (PAGESIZE * 2) ) 		/*place bootloader in 2nd last program page*/
+		.equ	STARTADDR,	( FLASHSIZE - 2*(PAGESIZE * 2) ) 		/*place bootloader in 2nd last program page*/
+;		.equ	STARTADDR,	( FLASHSIZE - (PAGESIZE) ) 		/*place bootloader in last program page*/
 
 
 ;------------------------------------------------------------------------------
@@ -198,7 +200,30 @@ __reset:mov 	#__SP_init, WSTPTR	;initalize the Stack Pointer
 ;------------------------------------------------------------------------------
 ; User specific entry code go here, see also user exit code section at end of file
 ;------------------------------------------------------------------------------
-		bclr CLKDIV, #RCDIV0
+		bclr OSCCON, #SOSCEN
+		bclr CLKDIV, #RCDIV0 ;set clock divider to 0
+waitPLL:btss OSCCON, #LOCK		
+		bra waitPLL ;wait for the PLL to lock
+
+		mov #0xFFFF, W0 ;all pins to digital
+		mov W0, AD1PCFG	
+
+;jumper check test
+		;setup the jumper check
+		;enable input on PGx
+		bclr LATB, #LATB1 ;rb1 low
+		bset TRISB, #TRISB1 ;rb1 input
+		bset CNPU1, #CN5PUE ;enable pullups on PGC/CN5/RB1
+		;ground/output on PGx
+		bclr LATB, #RB0 ;rb0 low
+		bclr TRISB, #TRISB0 ;rb0 output
+		;wait
+		nop
+		nop
+		;check for jumper
+		btsc PORTB,#RB1	;skip next instruction if RB1=0 (jumper)
+		bra quit ;branch to the user application if RB1=0
+		;remove timeout???
 
 		;----------------------------------------------------------------------
 		; UART pps config
@@ -215,7 +240,7 @@ __reset:mov 	#__SP_init, WSTPTR	;initalize the Stack Pointer
 			
 			; Backup, these are restored in exit code at end of file
 			; Changes needs to be done in exit, search for xxx
-			mov		RPINR18, PPSTEMP1		;xxx
+setup:		mov		RPINR18, PPSTEMP1		;xxx
 			mov		RPOR2, PPSTEMP2			;xxx
 
 			; Receive, map pin to uart (RP5)
@@ -232,6 +257,10 @@ __reset:mov 	#__SP_init, WSTPTR	;initalize the Stack Pointer
 			bclr	RPOR2, #RP4R3			;xxx
 			bclr	RPOR2, #RP4R4			;xxx		
 		.endif	
+		
+		;MODE LED on during bootload 
+		bset LATA, #LATA1 ;on
+		bclr TRISA, #TRISA1 ;output
 
         			
 ;------------------------------------------------------------------------------
@@ -448,6 +477,9 @@ exit:	bclr	UIFS, #URXIF		;clear uart received interupt flag
 		bclr	USTA, #UTXEN		;disable uart transmit
 		bclr 	UMODE, #UARTEN		;disable uart
 		clr		PR1					;clear PR1 was used as temporary sfr
+		;MODE LED off
+		bclr LATA, #LATA1 ;off
+		bset TRISA, #TRISA1 ;input
 	
 	
 ;------------------------------------------------------------------------------
@@ -459,6 +491,11 @@ exit:	bclr	UIFS, #URXIF		;clear uart received interupt flag
 			mov		PPSTEMP2, RPOR2		;xxx  pps settings
 		.endif
 
+quit:	;clean up from jumper test
+		bclr CNPU1, #CN5PUE ;disable pullups on PGC/CN5/RB1
+		bset TRISB, #TRISB0 ;rb0 back to input
+		mov #0x0000, W0 ;clear pins to analog default
+		mov W0, AD1PCFG	
 
 ;------------------------------------------------------------------------------
 ; Load user application
