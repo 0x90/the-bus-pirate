@@ -140,8 +140,8 @@
 		.equ 	UARTBR, ((FCY/(4*BAUDRATE))-1)
 		.equ	PAGESIZE,	512										/*words*/
 		.equ	ROWSIZE,	64										/*words*/		
-		.equ	STARTADDR,	( FLASHSIZE - 2*(PAGESIZE * 2) ) 		/*place bootloader in 2nd last program page*/
-;		.equ	STARTADDR,	( FLASHSIZE - (PAGESIZE) ) 		/*place bootloader in last program page*/
+;		.equ	STARTADDR,	( FLASHSIZE - 2*(PAGESIZE * 2) ) 		/*place bootloader in 2nd last program page*/
+		.equ	STARTADDR,	( FLASHSIZE - (2* (PAGESIZE)) ) 		/*place bootloader in last program page*/
 
 
 ;------------------------------------------------------------------------------
