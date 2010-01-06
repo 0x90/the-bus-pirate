@@ -220,10 +220,18 @@ namespace ds30Loader
             //--------------------------------------------------------------------------
             // Calculate adresses
             //--------------------------------------------------------------------------
-            int iBootloaderStartRow = (pobjSettings.device.flashSizeP / 2 - 2 * pobjSettings.device.pageSizeR * pobjSettings.device.rowsizeW) / pobjSettings.device.rowsizeW;
+            int iBootloaderStartRow = ((pobjSettings.device.flashSizeP / 2) - (pobjSettings.device.pageSizeR * pobjSettings.device.rowsizeW)) / pobjSettings.device.rowsizeW;
+            //int iBootloaderStartRow = (pobjSettings.device.flashSizeP / 2 - 2 * pobjSettings.device.pageSizeR * pobjSettings.device.rowsizeW) / pobjSettings.device.rowsizeW;
             int iBootloaderEndRow = iBootloaderStartRow + pobjSettings.bootloaderSizeR - 1;
-            int iBootloaderStartAdress = pobjSettings.device.flashSizeP - 2 * pobjSettings.device.pageSizeR * pobjSettings.device.rowsizeW * 2;   //bootloader is placed in 2nd last page
+            int iBootloaderStartAdress = pobjSettings.device.flashSizeP - (pobjSettings.device.pageSizeR * pobjSettings.device.rowsizeW * 2);   //bootloader is placed in 2nd last page
+            //int iBootloaderStartAdress = pobjSettings.device.flashSizeP - 2 * pobjSettings.device.pageSizeR * pobjSettings.device.rowsizeW * 2;   //bootloader is placed in 2nd last page
 
+            if (clsds30Loader.debugMode)
+            {
+                OnHexFileParse(new clsHexFileParseEventArgs(clsHexFileParseEventArgs.EventType.info, "BootloaderStartRow:" + iBootloaderStartRow.ToString(), iTabLevel));
+                OnHexFileParse(new clsHexFileParseEventArgs(clsHexFileParseEventArgs.EventType.info, "BootloaderEndRow:" + iBootloaderEndRow.ToString(), iTabLevel));
+                OnHexFileParse(new clsHexFileParseEventArgs(clsHexFileParseEventArgs.EventType.info, "BootloaderStartAddress:" + iBootloaderStartAdress.ToString("X2"), iTabLevel));
+            }
             int iBootloaderStartAdressB3 = (iBootloaderStartAdress / 2) * 3;	//starting index in buffer
             int iUserAppGotoAdressB3 = iBootloaderStartAdressB3 - 6;			//starting index in buffer
 
@@ -322,7 +330,11 @@ namespace ds30Loader
                 // First goto word
                 iProgMem[0] = 0x04;												//goto instruction
                 iProgMem[1] = ((iBootloaderStartAdress & 0x0000FE));			//low adress byte			
-                iProgMem[2] = ((iBootloaderStartAdress & 0x00FF00) >> 8);		//high adress byte				
+                iProgMem[2] = ((iBootloaderStartAdress & 0x00FF00) >> 8);		//high adress byte		
+                if (clsds30Loader.debugMode)
+                {
+                    OnHexFileParse(new clsHexFileParseEventArgs(clsHexFileParseEventArgs.EventType.info, "GOTO at 0x0000: 0x" + iProgMem[2].ToString("X2") + iProgMem[1].ToString("X2") , iTabLevel));
+                }
                 // Second goto word
                 iProgMem[3] = 0x00;												//not used by goto
                 iProgMem[4] = ((iBootloaderStartAdress & 0x7F0000) >> 16);	    //upper adress byte
