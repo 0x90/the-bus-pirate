@@ -142,8 +142,12 @@ void i2cProcess(void){
 			modeConfig.allowpullup=1; 
 			//modeConfig.allowlsb=0; //auto cleared on mode change
 
-			bpWline(OUMSG_I2C_CON);
-			i2cmode=(bpUserNumberPrompt(1, 2, 1)-1);
+			#ifdef BP_USE_I2C_HW
+				bpWline(OUMSG_I2C_CON);
+				i2cmode=(bpUserNumberPrompt(1, 2, 1)-1);
+			#else
+				i2cmode=SOFT;
+			#endif
 
 			if(i2cmode==SOFT){
 				bpWmessage(MSG_OPT_BB_SPEED);

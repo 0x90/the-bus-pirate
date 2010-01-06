@@ -170,11 +170,13 @@ void uartProcess(void){
 		   					U1STA &= (~0b10); //clear overrun error if exists
 							BP_LEDMODE=0;//MODE LED off to signify overrun error
 						}
+						#ifdef BUSPIRATEV2
 						if(bpCommand.num==3){
 							//pass RTS/CTS
 							BP_CLK=FTDI_RTS;
 							FTDI_CTS=BP_CS;								
 						}
+						#endif
 					}
 					break;
 				case 2: //Watch raw UART

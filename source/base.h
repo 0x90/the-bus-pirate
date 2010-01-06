@@ -26,7 +26,7 @@
 
 //#define BUSPIRATE_POST //used to switch POST on and off
 
-#define BP_FIRMWARE_STRING "Firmware 3v3-nightly"
+#define BP_FIRMWARE_STRING "Firmware 3.5"
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
@@ -36,6 +36,7 @@
 #define BP_USE_1WIRE
 #define BP_USE_HWUART //hardware uart (now also MIDI)
 #define BP_USE_I2C
+//#define BP_USE_I2C_HW
 #define BP_USE_HWSPI //hardware spi
 #define BP_USE_JTAG
 #define BP_USE_RAW2WIRE
