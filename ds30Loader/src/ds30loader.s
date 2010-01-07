@@ -72,7 +72,7 @@
 		.equ	WADDR,		W5		;memory pointer		
 		.equ	PPSTEMP1,	W6		;used to restore pps register
 		.equ	PPSTEMP2,	W7		;used to restore pps register
-		;.equ	UNUSED,		W8		;
+		;.equ	WADDERROR,	W8		;
 		;.equ	UNUSED,		W9		;
 		.equ	WDEL1,		W10		;delay outer
 		.equ	WDEL2,		W11		;delay inner
@@ -142,7 +142,7 @@
 		.equ	ROWSIZE,	64										/*words*/		
 ;		.equ	STARTADDR,	( FLASHSIZE - 2*(PAGESIZE * 2) ) 		/*place bootloader in 2nd last program page*/
 		.equ	STARTADDR,	( FLASHSIZE - (2* (PAGESIZE)) ) 		/*place bootloader in last program page*/
-
+		.equ	PGMENDADDR, (BLSTARTWD-1)							/*program space ends 1 word before the bootloader*/
 
 ;------------------------------------------------------------------------------
 ; Validate user settings
@@ -362,10 +362,10 @@ ptrinit:mov 	#buffer, WBUFPTR
 		;----------------------------------------------------------------------
 		; Check address
 		;----------------------------------------------------------------------	
-		;check that address is not to bootloader
-		;btsc
-		;bra		Main ;fail silently?
-		;bra 	vfail ;send verification fail notice?
+		;check that address does not overlap the bootloader
+		;if(TBLPAG=0){
+		;	if( (WADDR+(WCNT/3))> (#PGMENDADDR) )
+		bra 	vfail ;send verification fail notice, could also bra Main to fail silently
 		
 		;----------------------------------------------------------------------
 		; Check command
