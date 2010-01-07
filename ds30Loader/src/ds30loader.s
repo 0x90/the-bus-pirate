@@ -359,6 +359,13 @@ rcvdata:
 		;----------------------------------------------------------------------			
 ptrinit:mov 	#buffer, WBUFPTR
 		
+		;----------------------------------------------------------------------
+		; Check address
+		;----------------------------------------------------------------------	
+		;check that address is not to bootloader
+		;btsc
+		;bra		Main ;fail silently?
+		;bra 	vfail ;send verification fail notice?
 		
 		;----------------------------------------------------------------------
 		; Check command
