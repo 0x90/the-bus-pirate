@@ -72,7 +72,7 @@
 		.equ	WADDR,		W5		;memory pointer		
 		.equ	PPSTEMP1,	W6		;used to restore pps register
 		.equ	PPSTEMP2,	W7		;used to restore pps register
-		;.equ	WADDERROR,	W8		;
+		;.equ	UNUSED,		W8		;
 		;.equ	UNUSED,		W9		;
 		.equ	WDEL1,		W10		;delay outer
 		.equ	WDEL2,		W11		;delay inner
@@ -142,7 +142,6 @@
 		.equ	ROWSIZE,	64										/*words*/		
 ;		.equ	STARTADDR,	( FLASHSIZE - 2*(PAGESIZE * 2) ) 		/*place bootloader in 2nd last program page*/
 		.equ	STARTADDR,	( FLASHSIZE - (2* (PAGESIZE)) ) 		/*place bootloader in last program page*/
-		.equ	PGMENDADDR, (BLSTARTWD-1)							/*program space ends 1 word before the bootloader*/
 
 ;------------------------------------------------------------------------------
 ; Validate user settings
@@ -363,10 +362,23 @@ ptrinit:mov 	#buffer, WBUFPTR
 		; Check address
 		;----------------------------------------------------------------------	
 		;check that address does not overlap the bootloader
-		;if(TBLPAG=0){
-		;	if( (WADDR+(WCNT/3))> (#PGMENDADDR) )
-		bra 	vfail ;send verification fail notice, could also bra Main to fail silently
-		
+		;if(TBLPAG=0){ ;always 0 on this PIC (?)
+		;write row size is fixed, no need to convert, just add rowsize to starting postion
+		mov 	#ROWSIZE, WCNT		;load row size 
+		;don't DEC the number so we can use bra NC
+		;dec 	WCNT, WCNT			;subtract 1 from end position (write 10 bytes to 10 = end at 19)
+		add 	WADDR, WCNT, W0		;find the end write address W0=(WADDR+ #ROWSIZE)
+		mov #0xa900, W0
+		mov 	#BLSTARTWD, WCNT	;load start word into WCNT
+		;asr 	W0, #8, W0				;shift 8 bits off end
+		;asr 	WCNT, #8, WCNT
+		;if bootloader start word (WCNT) is > write end address (W0) then skip fail
+		cp		WCNT, W0
+		;sub 	WCNT, W0, W0		;w0=wcnt-w0 (w0=blstart-end write address)
+		bra 	LEU, vfail				;send verification fail notice if write > bl start (= is ok because we don't DEC above)
+										;could also bra Main to fail silently
+
+				
 		;----------------------------------------------------------------------
 		; Check command
 		;----------------------------------------------------------------------			

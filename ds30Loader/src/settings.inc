@@ -59,7 +59,7 @@
 ;------------------------------------------------------------------------------
 ; Bootloader location to prevent overwrites
 ;------------------------------------------------------------------------------
-		.equ	BLSTARTWD	0xA800				;xxx where the bootloader starts
+		.equ	BLSTARTWD,	0xA800				;xxx where the bootloader starts
 												;writes here and above return verify error
 ;------------------------------------------------------------------------------
 ; Configuration bits, these macros can be found at the end of the inc-files located in 
