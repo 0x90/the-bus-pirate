@@ -222,7 +222,6 @@ waitPLL:btss OSCCON, #LOCK
 		;check for jumper
 		btsc PORTB,#RB1	;skip next instruction if RB1=0 (jumper)
 		bra quit ;branch to the user application if RB1=0
-		;remove timeout???
 
 		;----------------------------------------------------------------------
 		; UART pps config
@@ -317,7 +316,7 @@ main1:	clr 	WCRC
 		mov		PR1, WREG
 		mov		W0,	WADDR
 		mov		W0, WADDR2
-		
+	
 		
 		;----------------------------------------------------------------------
 		; Receive command
@@ -357,33 +356,35 @@ rcvdata:
 		; Init pointer
 		;----------------------------------------------------------------------			
 ptrinit:mov 	#buffer, WBUFPTR
-		
+					
 		;----------------------------------------------------------------------
 		; Check address
 		;----------------------------------------------------------------------	
-		;check that address does not overlap the bootloader
+		;check that write and erase range does not overlap the bootloader
 		;if(TBLPAG=0){ ;always 0 on this PIC (?)
-		;write row size is fixed, no need to convert, just add rowsize to starting postion
-		mov 	#ROWSIZE, WCNT		;load row size 
-		;don't DEC the number so we can use bra NC
-		;dec 	WCNT, WCNT			;subtract 1 from end position (write 10 bytes to 10 = end at 19)
-		add 	WADDR, WCNT, W0		;find the end write address W0=(WADDR+ #ROWSIZE)
-		mov #0xa900, W0
-		mov 	#BLSTARTWD, WCNT	;load start word into WCNT
-		;asr 	W0, #8, W0				;shift 8 bits off end
-		;asr 	WCNT, #8, WCNT
-		;if bootloader start word (WCNT) is > write end address (W0) then skip fail
-		cp		WCNT, W0
-		;sub 	WCNT, W0, W0		;w0=wcnt-w0 (w0=blstart-end write address)
-		bra 	LEU, vfail				;send verification fail notice if write > bl start (= is ok because we don't DEC above)
-										;could also bra Main to fail silently
+		;check the start address
+		;if write start address (WADDR) >= bl start address (WCNT) then error
+		mov 	#STARTADDR, WCNT;reuse WCNT to hold start address
+		cp		WADDR, WCNT 	;compare the start address, does it overlap?
+		bra		GEU, bladdrerror	;yes, then branch to error handler
+		;check the end address
+		;write row size is fixed, add rowsize to starting postion
+		mov		#ROWSIZE, W0	;hold row size in W0
+		add 	WADDR, W0, W0	;find the end write address W0=(WADDR+ #ROWSIZE)
+		;if write end address (W0) is <= bl start address (WCNT) then OK
+		;= is ok because we don't DEC after adding, write 10 bytes to 10 = end at 19
+		cp		W0, WCNT		;compare end address, does it overlap?
+		bra 	LEU, bladdrok		;continue to erase and program is no error
+		 ;handle the address error
+bladdrerror:clr	DOERASE 			;clear, just in case
+		bra vfail ;Main				;fail silently
 
-				
+
 		;----------------------------------------------------------------------
 		; Check command
 		;----------------------------------------------------------------------			
 		; Write row			0x00 02 00 - 0x02 AB FA 
-		btsc	WCMD,	#1		
+bladdrok:btsc	WCMD,	#1		
 		bra		erase
 		; Else erase page
 		mov		#0xffff, DOERASE
