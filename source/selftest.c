@@ -57,7 +57,6 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 	bpPOSTWstring("MODE LED");
 	bpTest(BP_LEDMODE,1);
 	BP_LEDMODE=0;
-	BP_LEDMODE_DIR=1;
 	
 	BP_PULLUP_ON();
 	bpPOSTWstring("PULLUP H");
@@ -132,6 +131,18 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 		TRISB|= 0b1111000000;//output
 		bpDelayMS(100);
 		bpBusPinsTest(1);
+	}
+
+//instructions (skip pause if no display output)
+	if(display && jumperTest){
+		BP_VREG_ON();
+		BP_LEDMODE=1;
+		bpPOSTWline("MODE and VREG LEDs should be on! Any key exits.");
+		while(!UART1RXRdy());
+		UART1RX();
+		BP_LEDMODE=0;
+		BP_LEDMODE_DIR=1;
+		BP_VREG_OFF();
 	}
 
 	bpInit();//clean up
