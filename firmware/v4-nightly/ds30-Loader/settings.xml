@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ds30LoaderSettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Debugmode>true</Debugmode>
+  <CheckVerStart>false</CheckVerStart>
+  <WindowOnTop>false</WindowOnTop>
+  <WindowWidth>399</WindowWidth>
+  <WindowHeight>448</WindowHeight>
+  <Filename></Filename>
+</ds30LoaderSettings>
