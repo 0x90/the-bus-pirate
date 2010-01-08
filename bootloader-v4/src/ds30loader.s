@@ -361,20 +361,23 @@ ptrinit:mov 	#buffer, WBUFPTR
 		; Check address
 		;----------------------------------------------------------------------	
 		;check that write and erase range does not overlap the bootloader
-		;if(TBLPAG=0){ ;always 0 on this PIC (?)
+		;this is pretty specific to the bootloader being in the last page
+		;additional checks are needed if your bootloader is located elsewhere.
+		;TBLPAG is always = to 0 on this PIC, no need to verify (check if you have bigger than 64K flash)
+
 		;check the start address
 		;if write start address (WADDR) >= bl start address (WCNT) then error
 		mov 	#STARTADDR, WCNT;reuse WCNT to hold start address
 		cp		WADDR, WCNT 	;compare the start address, does it overlap?
 		bra		GEU, bladdrerror	;yes, then branch to error handler
 		;check the end address
-		;write row size is fixed, add rowsize to starting postion
+		;write row size is fixed, add rowsize to starting position
 		mov		#ROWSIZE, W0	;hold row size in W0
 		add 	WADDR, W0, W0	;find the end write address W0=(WADDR+ #ROWSIZE)
 		;if write end address (W0) is <= bl start address (WCNT) then OK
 		;= is ok because we don't DEC after adding, write 10 bytes to 10 = end at 19
 		cp		W0, WCNT		;compare end address, does it overlap?
-		bra 	LEU, bladdrok		;continue to erase and program is no error
+		bra 	LEU, bladdrok		;continue to erase and program if no error
 		 ;handle the address error
 bladdrerror:clr	DOERASE 			;clear, just in case
 		bra vfail ;Main				;fail silently
