@@ -142,6 +142,7 @@
 		.equ	ROWSIZE,	64										/*words*/		
 ;		.equ	STARTADDR,	( FLASHSIZE - 2*(PAGESIZE * 2) ) 		/*place bootloader in 2nd last program page*/
 		.equ	STARTADDR,	( FLASHSIZE - (2* (PAGESIZE)) ) 		/*place bootloader in last program page*/
+		.equ	BLCHECKST,  ( STARTADDR - (ROWSIZE) )			/*precalculate the first row write position that would overwrite the bootloader*/
 
 ;------------------------------------------------------------------------------
 ; Validate user settings
@@ -371,12 +372,11 @@ ptrinit:mov 	#buffer, WBUFPTR
 		cp		WADDR, WCNT 	;compare the start address, does it overlap?
 		bra		GEU, bladdrerror	;yes, then branch to error handler
 		;check the end address
-		;write row size is fixed, add rowsize to starting position
-		mov		#ROWSIZE, W0	;hold row size in W0
-		add 	WADDR, W0, W0	;find the end write address W0=(WADDR+ #ROWSIZE)
+		;write row size is fixed, any writes at (bootloader start-63) are an error
 		;if write end address (W0) is <= bl start address (WCNT) then OK
 		;= is ok because we don't DEC after adding, write 10 bytes to 10 = end at 19
-		cp		W0, WCNT		;compare end address, does it overlap?
+		mov		#BLCHECKST, WCNT	;first row write postion that would overwrite the bootloader
+		cp		WADDR, WCNT		;compare end address, does it overlap?
 		bra 	LEU, bladdrok		;continue to erase and program if no error
 		 ;handle the address error
 bladdrerror:clr	DOERASE 			;clear, just in case
