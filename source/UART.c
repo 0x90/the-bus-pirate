@@ -137,7 +137,7 @@ void uartProcess(void){
 				case 0://menu
 					bpWline(OUMSG_UART_MACRO_MENU);
 					break;
-				#ifdef BUSPIRATEV2
+				#if defined(BUSPIRATEV25) || defined(BUSPIRATEV3)
 				case 3://UART bridge with flow control
 					//setup RTS CTS on FTDI chip side
 					FTDI_CTS_DIR=0; //CTS (PIC output to FTDI)
@@ -170,7 +170,7 @@ void uartProcess(void){
 		   					U1STA &= (~0b10); //clear overrun error if exists
 							BP_LEDMODE=0;//MODE LED off to signify overrun error
 						}
-						#ifdef BUSPIRATEV2
+						#if defined(BUSPIRATEV25) || defined(BUSPIRATEV3)
 						if(bpCommand.num==3){
 							//pass RTS/CTS
 							BP_CLK=FTDI_RTS;
