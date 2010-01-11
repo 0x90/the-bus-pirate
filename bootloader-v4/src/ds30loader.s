@@ -133,6 +133,7 @@
 		.equ 	OK, 		'K'										/*erase/write ok*/
 		.equ 	CHECKSUMERR,'N'										/*checksum error*/
 		.equ	VERFAIL,	'V'										/*verification failed*/
+		.equ   	BLPROT,     'P'                              		/*bl protection tripped*/
 		
 
 		.equ	BLDELAY,	( BLTIME * (FCY / 1000) / (65536 * 7) )	/*delay berfore user application is loaded*/
@@ -380,7 +381,9 @@ ptrinit:mov 	#buffer, WBUFPTR
 		bra 	LEU, bladdrok		;continue to erase and program if no error
 		 ;handle the address error
 bladdrerror:clr	DOERASE 			;clear, just in case
-		bra vfail ;Main				;fail silently
+		;bra vfail ;Main				;fail silently
+      	SendL   BLPROT	;send bootloader protection error
+      	bra      main1	;
 
 
 		;----------------------------------------------------------------------
