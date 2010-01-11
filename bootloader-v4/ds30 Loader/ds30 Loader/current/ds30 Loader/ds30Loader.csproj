@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D7B00D8E-C7D8-4FA4-8440-C6BB109CC9FA}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -50,7 +50,7 @@
   <ItemGroup>
     <Reference Include="GHelper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\C#\GHelper\GHelper\bin\Release\GHelper.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Projects\BusPirate\svn\ds30Loader\loader-apps\GHelper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

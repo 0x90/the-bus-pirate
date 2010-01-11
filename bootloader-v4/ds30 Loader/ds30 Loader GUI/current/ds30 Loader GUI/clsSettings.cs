@@ -97,5 +97,12 @@ namespace ds30_Loader_GUI
 		        strFilename = value;
 	        }
         }
-    }// Class: settings
+
+		//---------------------------------------------------------------------
+		// Distribution Specific
+		//---------------------------------------------------------------------
+    	public DefaultStartSettings DefaultStartSettings { get; set;}
+    }
+
+// Class: settings
 }

@@ -448,7 +448,7 @@ namespace ds30_Loader_GUI
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(53, 13);
             this.label3.TabIndex = 9;
-            this.label3.Text = "Baudrate:";
+            this.label3.Text = "BaudRate:";
             // 
             // cboCOMPort
             // 
@@ -791,7 +791,7 @@ namespace ds30_Loader_GUI
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(53, 13);
             this.label10.TabIndex = 17;
-            this.label10.Text = "Baudrate:";
+            this.label10.Text = "BaudRate:";
             // 
             // cboResetBaudrate
             // 
@@ -1101,7 +1101,7 @@ namespace ds30_Loader_GUI
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(53, 13);
             this.label9.TabIndex = 11;
-            this.label9.Text = "Baudrate:";
+            this.label9.Text = "BaudRate:";
             // 
             // toolStrip2
             // 

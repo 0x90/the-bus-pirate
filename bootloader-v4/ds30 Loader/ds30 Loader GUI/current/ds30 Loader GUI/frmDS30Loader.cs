@@ -746,7 +746,7 @@ namespace ds30_Loader_GUI
             }
             
             // Tab basic 
-            cboFiles.Text = objSettings.Filename;
+            cboFiles.Text = Path.GetFullPath( objSettings.Filename);
 
 
 			//-----------------------------------------------------------------
@@ -779,8 +779,26 @@ namespace ds30_Loader_GUI
             // If the file isn't a recent file, copy settings from gui
             // ----------------------------------------------------------------
             if ( bExistingRecentFile == false ) {
-                UpdateRecentFile( objRecentFile );
-            
+				if (objSettings.DefaultStartSettings != null)
+				{
+					cboBaudrate.Text = objSettings.DefaultStartSettings.BaudRate;
+					cboFamily.Text = objSettings.DefaultStartSettings.FamilyName;
+					cboDevice.SelectedItem = clsDevices.DeviceGet(cboFamily.Text + objSettings.DefaultStartSettings.DeviceName);
+					chkWriteProgram.Checked = objSettings.DefaultStartSettings.WriteProgram;
+					if (objSettings.DefaultStartSettings.UseCustomBootLoaderPlacement)
+					{
+						txtCustomBlPlacementP.Text = objSettings.DefaultStartSettings.CustomBootLoaderPlacement.ToString();
+						chkCustomBl.Checked = true;						
+					}
+
+					if (objSettings.DefaultStartSettings.ProtectOverwriteBootLoader)
+					{
+						chkAllowBlOverwrite.Enabled = false;
+					}
+				}
+				
+				UpdateRecentFile( objRecentFile );
+				
 
             // ----------------------------------------------------------------
             // It's a recent file, apply settings
@@ -1768,7 +1786,7 @@ namespace ds30_Loader_GUI
 		//---------------------------------------------------------------------
         private void picHexContent_Paint(object sender, PaintEventArgs e)
         {
-            if ( objHex == null ) {
+            if ( objHex == null || objHex.objParsedSettings.device == null) {
                 return;
             }
             //
