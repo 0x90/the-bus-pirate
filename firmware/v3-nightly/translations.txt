@@ -1,5 +1,0 @@
-v2.3 has translations for v3, v2go, and v1a. If you want others, just ask at dangerousprototypes.com.
-
-2.2 has Italian and Spanish translations for all versions.
-I don't always compile translations for all versions. Right now I always make v1a, v2go, and v3.
-It only takes a second, so if you want translations on a version not here, just let me know your language and hardware and I'll compile it for you.  Cheers - Ian.

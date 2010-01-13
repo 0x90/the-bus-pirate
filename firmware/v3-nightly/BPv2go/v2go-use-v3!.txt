@@ -1,3 +1,0 @@
-v2go and v3 have different bootloaders, but the firmware is identical except for the version string. 
-
-v2go users should use firmware for v3. We won't release a seperate v2go firmware after v3.1.
