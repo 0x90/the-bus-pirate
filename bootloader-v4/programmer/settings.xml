@@ -5,10 +5,10 @@
   <WindowOnTop>false</WindowOnTop>
   <WindowWidth>346</WindowWidth>
   <WindowHeight>538</WindowHeight>
-  <Filename></Filename>
+  <Filename>BPv3-Firmware-v4.hex</Filename>
   <DefaultStartSettings>
     <AdvancedMode>true</AdvancedMode>
-    <AdvancedModeAllow>true</AdvancedModeAllow>
+    <AdvancedModeAllow>false</AdvancedModeAllow>
     <FilenameAllow>true</FilenameAllow>
     <Portname />
     <PortnameAllow>true</PortnameAllow>
@@ -34,15 +34,15 @@
     <CustomBlPlacementPAllow>false</CustomBlPlacementPAllow>
     <CustomBlSizeP>1</CustomBlSizeP>
     <CustomBlSizePAllow>false</CustomBlSizePAllow>
-    <Polltime />
+    <Polltime>250</Polltime>
     <PolltimeAllow>true</PolltimeAllow>
-    <Timeout />
+    <Timeout>5000</Timeout>
     <TimeoutAllow>true</TimeoutAllow>
     <CommandReset>false</CommandReset>
     <CommandResetAllow>true</CommandResetAllow>
     <ResetCommand />
     <ResetCommandAllow>true</ResetCommandAllow>
-    <ResetBaudrate />
+    <ResetBaudrate>9600</ResetBaudrate>
     <ResetBaudrateAllow>true</ResetBaudrateAllow>
     <DTRReset>false</DTRReset>
     <DTRResetAllow>true</DTRResetAllow>
@@ -50,14 +50,14 @@
     <ManualResetAllow>true</ManualResetAllow>
     <RTSReset>false</RTSReset>
     <RTSResetAllow>true</RTSResetAllow>
-    <ResetTime>0</ResetTime>
+    <ResetTime>250</ResetTime>
     <ResetTimeAllow>true</ResetTimeAllow>
     <ActivateDTR>false</ActivateDTR>
     <ActivateDTRAllow>true</ActivateDTRAllow>
     <ActivateRTS>false</ActivateRTS>
     <ActivateRTSAllow>true</ActivateRTSAllow>
     <TermSwithTo>false</TermSwithTo>
-    <TermBaudrate />
+    <TermBaudrate>115200</TermBaudrate>
     <TermRxType>0</TermRxType>
     <TermTxType>0</TermTxType>
     <TermTx />
