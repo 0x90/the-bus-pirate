@@ -4,6 +4,6 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 NOTE: not all files are public domain.
 
-Code, code modifications, and hardware created by Hack a Day (legal@hackaday.com) are released into the public domain under the Creative Commons '0' license, as noted in the file header.
+Code, code modifications, and hardware created by Dangerous Prototypes are released into the public domain under the Creative Commons '0' license, as noted in the file header.
 
 This source may also include files from other authors which have other licenses, for example GPL, or other open but restrictive licenses.
