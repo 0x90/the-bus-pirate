@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ds30LoaderSettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Debugmode>true</Debugmode>
-  <CheckVerStart>false</CheckVerStart>
-  <WindowOnTop>false</WindowOnTop>
-  <WindowWidth>399</WindowWidth>
-  <WindowHeight>448</WindowHeight>
-  <Filename>E:\Work\bus-pirate\trunk\firmware\v4-nightly\BPv3&amp;v2go\BPv3-Firmware-v4.hex</Filename>
-</ds30LoaderSettings>
