@@ -1,11 +1,12 @@
 /*
-** Linker script outline for PIC24F bootloader user application 
-** (for PIC24FJ64GA004 device)
+** Linker script for PIC24FJ64GA002
 */
 
 OUTPUT_ARCH("24FJ64GA002")
-EXTERN(__resetPRI)
-EXTERN(__resetALT)
+CRT0_STARTUP(crt0_standard.o)
+CRT1_STARTUP(crt1_standard.o)
+
+OPTIONAL(-lpPIC24Fxxx)
 
 /*
 ** Memory Regions
@@ -13,35 +14,23 @@ EXTERN(__resetALT)
 MEMORY
 {
   data  (a!xr) : ORIGIN = 0x800,         LENGTH = 0x2000
-  reset        : ORIGIN = 0x000,         LENGTH = 0x4
+  reset        : ORIGIN = 0x0,           LENGTH = 0x4
   ivt          : ORIGIN = 0x4,           LENGTH = 0xFC
   aivt         : ORIGIN = 0x104,         LENGTH = 0xFC
-
-  /*Starting location and length of user program  */
-  program (xr) : ORIGIN = 0xC00, LENGTH = 0x9FFC
-
+  program (xr) : ORIGIN = 0x200,         LENGTH = 0xA5FE
   config2      : ORIGIN = 0xABFC,        LENGTH = 0x2
   config1      : ORIGIN = 0xABFE,        LENGTH = 0x2
-
-  /* 
-  ** Section for storing user app reset vector and BL time out value.  This  
-  ** section must be defined to allow use of the two location at address 
-  ** 0x100 (the bootloader's default setting).  
-  ** This is not needed if these values are placed in addresses in 
-  ** the "program" section.
-  */
-  /*BLreset	   : ORIGIN = 0x100, LENGTH = 0x4*/
-
 }
 
 __CONFIG2 = 0xABFC;
 __CONFIG1 = 0xABFE;
 
+__NO_HANDLES = 1;          /* Suppress handles on this device  */
+
 __IVT_BASE  = 0x4;
 __AIVT_BASE = 0x104;
 __DATA_BASE = 0x800;
-__CODE_BASE = 0xC00; /* starting location of user application */
-
+__CODE_BASE = 0x200;
 
 
 /*
@@ -76,31 +65,64 @@ SECTIONS
 
 
   /*
-  ** Outputs the BLreset section into the hex file at the area specified in     
-  ** memory map above. This is where the bootloader, by default, stores its 
-  ** user reset and entry mode timer. This is not needed if these values 
-  ** are placed in addresses in the "program" section.
-  */
-  .BLreset :
-  {
-		*(.BLreset);
-  } >BLreset
-
-
-  /*
   ** User Code and Library Code
   **
   ** This section must not be assigned to __CODE_BASE,
   ** because CodeGuard(tm) sections may be located there.
+  **
+  ** Note that input sections *(.text) are not mapped here.
+  ** The best-fit allocator locates them, so that .text
+  ** may flow around PSV sections as needed.
   */
   .text :
   {
         *(.init);
-	    *(.handle);
+        *(.user_init);
+        *(.handle);
         *(.libc) *(.libm) *(.libdsp);  /* keep together in this order */
         *(.lib*);
-        *(.text);
   } >program
+
+
+  /*
+  ** User-Defined Section in Program Memory
+  **
+  ** note: can specify an address using
+  **       the following syntax:
+  **
+  **       usercode 0x1234 :
+  **         {
+  **           *(usercode);
+  **         } >program
+  */
+  usercode :
+  {
+        *(usercode);
+  } >program
+
+
+  /*
+  ** User-Defined Constants in Program Memory
+  **
+  ** For PSV type sections, the Load Memory Address (LMA)
+  ** should be specified as follows:
+  **
+  **       userconst : AT(0x1234)
+  **         {
+  **           *(userconst);
+  **         } >program
+  **
+  ** Note that mapping PSV sections in linker scripts
+  ** is not generally recommended.
+  **
+  ** Because of page alignment restrictions, memory is
+  ** often used more efficiently when PSV sections
+  ** do not appear in the linker script.
+  **
+  ** For more information on memory allocation,
+  ** please refer to chapter 10, 'Linker Processing'
+  ** in the Assembler, Linker manual (DS51317).
+  */
 
 
   /*
@@ -1178,18 +1200,6 @@ _LATBbits     = 0x2CC;
  ODCB         = 0x2CE;
 _ODCB         = 0x2CE;
 _ODCBbits     = 0x2CE;
- TRISC        = 0x2D0;
-_TRISC        = 0x2D0;
-_TRISCbits    = 0x2D0;
- PORTC        = 0x2D2;
-_PORTC        = 0x2D2;
-_PORTCbits    = 0x2D2;
- LATC         = 0x2D4;
-_LATC         = 0x2D4;
-_LATCbits     = 0x2D4;
- ODCC         = 0x2D6;
-_ODCC         = 0x2D6;
-_ODCCbits     = 0x2D6;
  PADCFG1      = 0x2FC;
 _PADCFG1      = 0x2FC;
 _PADCFG1bits  = 0x2FC;
@@ -1287,6 +1297,7 @@ _CRCCON       = 0x640;
 _CRCCONbits   = 0x640;
  CRCXOR       = 0x642;
 _CRCXOR       = 0x642;
+_CRCXORbits   = 0x642;
  CRCDAT       = 0x644;
 _CRCDAT       = 0x644;
  CRCWDAT      = 0x646;
@@ -1357,27 +1368,16 @@ _RPOR6bits    = 0x6CC;
  RPOR7        = 0x6CE;
 _RPOR7        = 0x6CE;
 _RPOR7bits    = 0x6CE;
- RPOR8        = 0x6D0;
-_RPOR8        = 0x6D0;
-_RPOR8bits    = 0x6D0;
- RPOR9        = 0x6D2;
-_RPOR9        = 0x6D2;
-_RPOR9bits    = 0x6D2;
- RPOR10       = 0x6D4;
-_RPOR10       = 0x6D4;
-_RPOR10bits   = 0x6D4;
- RPOR11       = 0x6D6;
-_RPOR11       = 0x6D6;
-_RPOR11bits   = 0x6D6;
- RPOR12       = 0x6D8;
-_RPOR12       = 0x6D8;
-_RPOR12bits   = 0x6D8;
  RCON         = 0x740;
 _RCON         = 0x740;
 _RCONbits     = 0x740;
  OSCCON       = 0x742;
 _OSCCON       = 0x742;
 _OSCCONbits   = 0x742;
+ OSCCONL      = 0x742;
+_OSCCONL      = 0x742;
+ OSCCONH      = 0x743;
+_OSCCONH      = 0x743;
  CLKDIV       = 0x744;
 _CLKDIV       = 0x744;
 _CLKDIVbits   = 0x744;

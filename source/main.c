@@ -25,16 +25,6 @@
 _CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
 _CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //turn off junk we don't need
 
-/*
-	Store delay timeout value & user reset vector at start of user space
-
-	Value of userReset should be the start of actual program code since 
-	these variables will be stored in the same area.
-*/
-unsigned int userReset  __attribute__ ((space(prog),section(".init"))) = 0xC04 ;
-unsigned char timeout  __attribute__ ((space(prog),section(".init"))) = 0x00 ;
-
-
 unsigned char irqFlag=0;
 void _T1Interrupt(void);
 void ISRTable(); //Pseudo function to hold ISR remap jump table
