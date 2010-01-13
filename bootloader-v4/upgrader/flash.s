@@ -30,6 +30,7 @@
 _Ferase:tblwtl		W0, [W0]	; erase page 0x10
 		mov			#0x4042, W0	; WREN=1, ERASE=1, NVMOP=mempageerase
 		rcall		write
+		return
 
 ; write a row
 ;
@@ -47,12 +48,13 @@ latlo:	tblwth.b	[W0++], [W1]			; transfer 3 bytes
 		mov			#0x4001, W0	; WREN=1, ERAsE=0, NVMOP=memrowprog
 		rcall		write
 		pop			W2
+		return
 
 ; general write function
 ; unlocksequence+set wr bit and wait until operation completes.
 ; W0 = value to write to NVM
 ; 
-write:mov			W0, NVMCON
+write:	mov			W0, NVMCON
 		mov			#0x55, W0
 		mov			W0, NVMKEY
 		mov			#0xAA, W0

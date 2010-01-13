@@ -21,8 +21,6 @@
 #include "flash.h"
 #include "firmware.h"
 
-#define BPBR() UART1TX(0x0d);UART1TX(0x0a)
-
 // functions
 void BpInit(void);
 int main(void);
@@ -53,17 +51,23 @@ int main(void)
 	//wait for confirmation
 	while(1){
 		usermessage();
-	 	while(UART1RX()!='Y') usermessage();
-		//last chance
-		BPBR();
-		bpWline("Are you sure? Press 'Y' again.");
-		if(UART1RX()=='Y')break;
-		bpWline("Upgrade cancelled.");
-		BPBR();
+
+		if(UART1RX()=='Y')					// absorb 'Yes' and echo it back
+		{	UART1TX('Y');					// if any typo is made it should cancel and start over again
+			if(UART1RX()=='e')
+			{	UART1TX('e');
+				if(UART1RX()=='s') 
+				{	bpWline("s");
+					break;
+				}
+			}
+		}
+
+		bpWline("    Upgrade cancelled.");
+		bpWline("");
 	}
-	BPBR();
+	bpWline("");
 	bpWline("Sit back and enjoy the show");
-	BPBR();
 
 	// the user is really sure
 	// erase the page before the bootloader 
@@ -112,8 +116,11 @@ int main(void)
 	#endif
 
 	// finish up 
+	bpWline("");
 	bpWline("Upload v4+ firmware with the ds30 Loader app to complete the upgrade.");
 	bpWline("Light up a candle, say lots of prayers, keep your fingers crossed, and reset your buspirate."); //hey Dutchman, we use serial commas in English! :) 
+
+			// Yo American! can the buspirate snif serial comma's? :P
 
 	while(1)
 	{	BP_LEDMODE=1;						// we want some attention!
@@ -128,15 +135,16 @@ int main(void)
 }
 
 void usermessage(void){
-	BPBR();
-	bpWline("C30 Bootloader installer v0.1 (very ALPHA)");
+	bpWline("");
+	bpWline("DS30 Bootloader installer v0.2 (very ALPHA)");
 	bpWline("(C)hris 2010");
 	bpWline("Released under Creative Commons null license");
 	#ifdef DEBUG
 	bpWline("RUNNING IN DEBUG MODE!!!!");
 	#endif
-	bpWline("Press 'Y' program the new loader");
-	bpWline("or disconnect power if unsure");
+	bpWline("Type 'Yes' to program the new loader");
+	bpWline("or disconnect power if unsure (no harm done)");
+	bpWline("");
 }
 
 // mostly copied from base.c, baseIO.c and baseUI.h
