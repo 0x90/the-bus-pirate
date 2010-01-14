@@ -138,7 +138,10 @@
 
 		.equ	BLDELAY,	( BLTIME * (FCY / 1000) / (65536 * 7) )	/*delay berfore user application is loaded*/
 		;.equ	UARTBR,		( (((FCY / BAUDRATE) / 8) - 1) / 2 )	/*baudrate*/
-		.equ 	UARTBR, ((FCY/(4*BAUDRATE))-1)
+		/* issue 11 in errata for A3, optimal value causes reception to fail */
+		/* autocalculate: 0x21, <2.5% error	*/
+		/* working: 0x22, <3% error, same as main firmware */
+		.equ 	UARTBR, 	0x22;((FCY/(4*BAUDRATE))-1)
 		.equ	PAGESIZE,	512										/*words*/
 		.equ	ROWSIZE,	64										/*words*/		
 ;		.equ	STARTADDR,	( FLASHSIZE - 2*(PAGESIZE * 2) ) 		/*place bootloader in 2nd last program page*/
@@ -156,10 +159,10 @@
 		; Baudrate error
 		.equ REALBR,	( FCY / (4 * (UARTBR+1)) )
 		.equ BAUDERR,	( (1000 * ( BAUDRATE - REALBR)) / BAUDRATE )
-		.if ( BAUDERR > 25) || (BAUDERR < -25 )
-			.error "Baudrate error is more than 2.5%. Remove this check or try another baudrate and/or clockspeed."
+		.if ( BAUDERR > 30) || (BAUDERR < -30 )
+			.error "Baudrate error is more than 3%. Remove this check or try another baudrate and/or clockspeed."
 		.endif 
-		
+
 
 ;------------------------------------------------------------------------------
 ; Global declarations
@@ -257,7 +260,7 @@ setup:		mov		RPINR18, PPSTEMP1		;xxx
 			bclr	RPOR2, #RP4R3			;xxx
 			bclr	RPOR2, #RP4R4			;xxx		
 		.endif	
-		
+
 		;MODE LED on during bootload 
 		bset LATA, #LATA1 ;on
 		bclr TRISA, #TRISA1 ;output
