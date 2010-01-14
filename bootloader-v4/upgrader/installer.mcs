@@ -65,7 +65,7 @@ SOLK=<src>|flash.s|main.c||<obj>||<lib>||<lkr>|APP 24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g
 TraceCmdString=
-DebugOptions=--defsym=__DEBUG=1
+DebugOptions=
 [File005]
 Location=E:\Work\bus-pirate\trunk\bootloader-v4\upgrader\main.o
 Folder=Intermediary
@@ -78,7 +78,7 @@ SOLK=<src>|flash.s|main.c||<obj>||<lib>||<lkr>|APP 24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall
 TraceCmdString=
-DebugOptions=-D__DEBUG
+DebugOptions=
 [File006]
 Location=D:\buspiraat.src\installer2\installer.cof
 Folder=Output
@@ -143,7 +143,7 @@ SOLK=<src>|flash.s|main.c||<obj>||<lib>||<lkr>|APP 24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)" -Map="$(BINDIR_)$(TARGETBASE).map" --report-mem
 TraceCmdString=
-DebugOptions=--defsym=__MPLAB_DEBUG=1
+DebugOptions=
 [File011]
 Location=E:\Work\bus-pirate\trunk\bootloader-v4\upgrader\installer.hex
 Folder=Output
@@ -156,7 +156,7 @@ SOLK=<src>|flash.s|main.c||<obj>||<lib>||<lkr>|APP 24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)" -Map="$(BINDIR_)$(TARGETBASE).map" --report-mem
 TraceCmdString=
-DebugOptions=--defsym=__MPLAB_DEBUG=1
+DebugOptions=
 [TOOL_LOC_STAMPS]
 tool_loc{DE18EB1A-B46B-486B-B96F-A811A635DFAC}=C:\MC30\bin\pic30-as.exe
 tool_loc{069BD372-6CA0-40D4-BF2F-5DC806D05083}=C:\MC30\bin\pic30-gcc.exe

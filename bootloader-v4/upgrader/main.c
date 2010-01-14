@@ -35,6 +35,7 @@ void bpDelayMS(const unsigned char delay);
 unsigned char UART1RXRdy(void);
 unsigned char UART1RX(void);
 void usermessage(void);
+unsigned char checkChar(unsigned char c);
 
 // cvD: needed??
 _CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
@@ -51,13 +52,13 @@ int main(void)
 	//wait for confirmation
 	while(1){
 		usermessage();
-
-		if(UART1RX()=='Y')					// absorb 'Yes' and echo it back
-		{	UART1TX('Y');					// if any typo is made it should cancel and start over again
-			if(UART1RX()=='e')
-			{	UART1TX('e');
-				if(UART1RX()=='s') 
-				{	bpWline("s");
+		if(checkChar('Y'))					// absorb 'Yes' and echo it back
+		{									// if any typo is made it should cancel and start over again
+			if(checkChar('E'))
+			{	
+				if(checkChar('S')) 
+				{
+					bpWline("");
 					break;
 				}
 			}
@@ -103,7 +104,7 @@ int main(void)
 		Ferase(0x0000);
 		bpWline(" done");
 	
-		bpWstring("Writing new jump instruction to row 0... ");
+		bpWstring("Writing row 0... ");
 		for(j=0; j<(3*64); j++) buf[j]=0xFF;// 1's are easier to write
 		buf[0]=0x04;							// goto FWLOCATION
 		buf[1]=(FWLOCATION&0x00FF);	
@@ -117,10 +118,11 @@ int main(void)
 
 	// finish up 
 	bpWline("");
+	bpWline("Success!");
 	bpWline("Upload v4+ firmware with the ds30 Loader app to complete the upgrade.");
 	bpWline("Light up a candle, say lots of prayers, keep your fingers crossed, and reset your buspirate."); //hey Dutchman, we use serial commas in English! :) 
 
-			// Yo American! can the buspirate snif serial comma's? :P
+			// Yo American! can the buspirate sniff serial comma's? :P
 
 	while(1)
 	{	BP_LEDMODE=1;						// we want some attention!
@@ -131,6 +133,15 @@ int main(void)
 		bpDelayMS(250);
 	}
 
+	return 0;
+}
+
+unsigned char checkChar(unsigned char c){
+	unsigned char d;
+	d=UART1RX();
+	UART1TX(d);	
+	if(d>='a' && d<='z') d-=0x20; //convert to upper
+	if(c==d) return 1;
 	return 0;
 }
 
