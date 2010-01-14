@@ -66,7 +66,7 @@ file_005=hardwarev1a.h
 file_006=hardwarev3.h
 file_007=uart.h
 file_008=usbprogjtag.h
-file_009=APP 24FJ64GA002.gld
+file_009=..\STK500v2\p24FJ64GA002.gld
 [SUITE_INFO]
 suite_guid={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 suite_state=

@@ -40,8 +40,6 @@
 //set custom configuration for PIC 24F
 _CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
 _CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //turn off junk we don't need
-unsigned int userReset  __attribute__ ((space(prog),section(".init"))) = 0xC04 ;//bootloader stuff
-unsigned char timeout  __attribute__ ((space(prog),section(".init"))) = 0x00 ;
 
 void CommandAnswer(int length);
 void Commands(void);
