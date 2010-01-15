@@ -231,39 +231,56 @@ waitPLL:btss OSCCON, #LOCK
 		;----------------------------------------------------------------------
 		; UART pps config
 		;----------------------------------------------------------------------
-		.ifdef HAS_PPS
-			;.error "UART pps is not configured. Read datasheet and configure pps."			;xxx remove this line			
-			
-			; ** IMPORTANT **
-			;
-			; THIS CODE IS JUST A TEMPLATE AND WILL MOST LIKELY NOT WORK FOR YOU, 
-			; READ THE DATASHEET AND ALTER LINES MARKED WITH XXX
-			;
-			; ** IMPORTANT **
-			
+		.ifdef BUSPIRATEV2
 			; Backup, these are restored in exit code at end of file
 			; Changes needs to be done in exit, search for xxx
 setup:		mov		RPINR18, PPSTEMP1		;xxx
 			mov		RPOR2, PPSTEMP2			;xxx
 
-			; Receive, map pin to uart (RP5)
+			; Receive, map pin to uart (RP5 on 2/3, RP3 on v1a)
 			bset	RPINR18, #U1RXR0		;xxx
 			bclr	RPINR18, #U1RXR1		;xxx
 			bset	RPINR18, #U1RXR2		;xxx
 			bclr	RPINR18, #U1RXR3		;xxx
 			bclr	RPINR18, #U1RXR4		;xxx
 			
-			; Transmit, map uart to pin (RPOR2bits.RP4R = 3)
+			; Transmit, map uart to pin (RPOR2bits.RP4R = 3 on 2/3, RPOR1bits.RP2R=3 on v1a)
 			bset	RPOR2, #RP4R0			;xxx
 			bset	RPOR2, #RP4R1			;xxx
 			bclr	RPOR2, #RP4R2			;xxx
 			bclr	RPOR2, #RP4R3			;xxx
-			bclr	RPOR2, #RP4R4			;xxx		
-		.endif	
+			bclr	RPOR2, #RP4R4			;xxx	
+			
+			;MODE LED on during bootload  (A1 on 2/3, B4 on v1a)
+			bset LATA, #LATA1 ;on
+			bclr TRISA, #TRISA1 ;output
+		.endif
 
-		;MODE LED on during bootload 
-		bset LATA, #LATA1 ;on
-		bclr TRISA, #TRISA1 ;output
+
+		.ifdef BUSPIRATEV1A
+			; Backup, these are restored in exit code at end of file
+			; Changes needs to be done in exit, search for xxx
+setup:		mov		RPINR18, PPSTEMP1		;xxx
+			mov		RPOR1, PPSTEMP2			;xxx
+
+			; Receive, map pin to uart (RP5 on 2/3, RP3 on v1a)
+			bset	RPINR18, #U1RXR0		;xxx
+			bset	RPINR18, #U1RXR1		;xxx
+			bclr	RPINR18, #U1RXR2		;xxx
+			bclr	RPINR18, #U1RXR3		;xxx
+			bclr	RPINR18, #U1RXR4		;xxx
+			
+			; Transmit, map uart to pin (RPOR2bits.RP4R = 3 on 2/3, RPOR1bits.RP2R=3 on v1a)
+			bset	RPOR1, #RP2R0			;xxx
+			bset	RPOR1, #RP2R1			;xxx
+			bclr	RPOR1, #RP2R2			;xxx
+			bclr	RPOR1, #RP2R3			;xxx
+			bclr	RPOR1, #RP2R4			;xxx	
+			
+			;MODE LED on during bootload  (A1 on 2/3, B4 on v1a)
+			bset LATB, #LATB4 ;on
+			bclr TRISB, #TRISB4 ;output
+		.endif
 
         			
 ;------------------------------------------------------------------------------
@@ -506,18 +523,26 @@ exit:	bclr	UIFS, #URXIF		;clear uart received interupt flag
 		bclr	USTA, #UTXEN		;disable uart transmit
 		bclr 	UMODE, #UARTEN		;disable uart
 		clr		PR1					;clear PR1 was used as temporary sfr
-		;MODE LED off
-		bclr LATA, #LATA1 ;off
-		bset TRISA, #TRISA1 ;input
-	
 	
 ;------------------------------------------------------------------------------
 ; User specific exit code go here
 ;------------------------------------------------------------------------------
-		.ifdef HAS_PPS
-			;.error "PPS restoration is not configured."			;xxx remove this line
+		.ifdef BUSPIRATEV2
+			;MODE LED off
+			bclr LATA, #LATA1 ;off
+			bset TRISA, #TRISA1 ;input
+			;restore PPS
 			mov		PPSTEMP1, RPINR18	;xxx restore 
 			mov		PPSTEMP2, RPOR2		;xxx  pps settings
+		.endif
+
+		.ifdef BUSPIRATEV1A
+			;MODE LED off
+			bclr LATB, #LATB4 ;off
+			bset TRISB, #TRISB4 ;input
+			;restore PPS
+			mov		PPSTEMP1, RPINR18	;xxx restore 
+			mov		PPSTEMP2, RPOR1		;xxx  pps settings
 		.endif
 
 quit:	;clean up from jumper test
