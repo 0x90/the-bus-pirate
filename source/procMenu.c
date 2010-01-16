@@ -106,7 +106,7 @@ unsigned char checkMenuCommand(unsigned char c){
 		case '=':
 			convert();
 			break;
-		case '\\': //jump to bootloader
+		case '@': //jump to bootloader
 			bpWline("BOOTLOADER");
 			while(U1STAbits.TRMT==0); //wait untill TX finishes
 			asm volatile ("mov #BLJUMPADDRESS, w1 \n" //bootloader location
