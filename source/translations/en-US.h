@@ -200,6 +200,7 @@
 #define HELP_MENUS_HDBCONVERT_T		"= HEX/DEC/BIN converter"
 #define HELP_MENUS_SELFTEST_T		"~ Self test"
 #define HELP_MENUS_RESET_T			"# Reset"
+#define HELP_MENUS_BOOTLOADER_T		"$ Bootloader"
 
 #define HELP_TITLE_SYNTAX_T			"SYNTAX"
 #define HELP_SYNTAX_AUXPIN_T		"A/a/@ AUX output toggle H/L/read"
