@@ -108,6 +108,7 @@ unsigned char checkMenuCommand(unsigned char c){
 			break;
 		case '$': //jump to bootloader
 			bpWline("BOOTLOADER");
+			bpInit();		// turn off nasty things, cleanup first needed?
 			while(U1STAbits.TRMT==0); //wait untill TX finishes
 			asm volatile ("mov #BLJUMPADDRESS, w1 \n" //bootloader location
 						  "goto w1 \n");

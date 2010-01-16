@@ -316,12 +316,20 @@ void bpWvolts(unsigned int a){
 											
 	UART1TX('.');
 
-	v = (v - (int) v);               //Remove integer part... fval=0.456789
-				
-	v *= 10;
-									
-	c = (char) v;		//convert to long integer - ltemp=45678
+			// the precision of 1 bit is 0.006V ( 6.6 V / 1024) so we could display two digits!! Whoot
+			// too bad we depend on some cheapy 3.3v regulator ;)
+			// first digit :)
+	v = (v - (int) v);				//Remove integer part... fval=0.456789
+ 	v *= 10;
+	c = (char) v;					//convert to long integer - ltemp=45678
+ 	bpWdec(c);
+
+			// second digit :) whoot!!
+	v=(v-(int)v);
+	v*=10;
+	c=(char) v;
 	bpWdec(c);
+
 }
 #endif
 

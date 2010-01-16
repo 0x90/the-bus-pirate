@@ -118,6 +118,10 @@ void processSyntaxString(unsigned int totalBytes, unsigned char *commandArr){
 					bpADCprobe();
 					bpWline(OUMSG_PS_ADC_VOLTS);
 					break;
+				case CMD_ADCC://dumb voltmeter mode
+					bpADCCprobe();
+					break;
+
 			#endif
 			default: //send command to library
 				bpCommand.cmd=command; //move to global command struct
@@ -180,7 +184,7 @@ unsigned char ASCII2CMD(unsigned char ASCIIcommand){
 #if defined( BUSPIRATEV1A) || defined( BUSPIRATEV2)
 		case 'W':return CMD_PWR_EN;
 		case 'w':return CMD_PWR_DIS;
-		case 'D':
+		case 'D':return CMD_ADCC;
 		case 'd':return CMD_ADC;
 #endif
 		default: return CMD_ERROR;

@@ -156,6 +156,8 @@
 //procSyntax//
 #define OUMSG_PS_DELAY			"DELAY "
 #define OUMSG_PS_DELAY_US		"uS"
+#define OUMSG_PS_ADCC			"VOLTMETER MODE"
+#define OUMSG_PS_ANY_KEY		"Press any key to exit"					//could be a generic message??
 #define OUMSG_PS_ADC_VOLT_PROBE	"VOLTAGE PROBE: "
 #define OUMSG_PS_ADC_VOLTS		"V"
 //RAW2WIRE//
@@ -205,7 +207,7 @@
 #define HELP_TITLE_SYNTAX_T			"SYNTAX"
 #define HELP_SYNTAX_AUXPIN_T		"A/a/@ AUX output toggle H/L/read"
 #define HELP_SYNTAX_VREG_T			"W/w Power supply toggle on/off"
-#define HELP_SYNTAX_VPROBE_T		"D Measure voltage on ADC probe"
+#define HELP_SYNTAX_VPROBE_T		"d (D) Measure voltage on ADC probe (continuous)"
 #define HELP_SYNTAX_START_T			"[ ({) Start (with read)"
 #define HELP_SYNTAX_STOP_T			"] or } Stop"
 #define HELP_SYNTAX_READ_T			"R or r Read byte"

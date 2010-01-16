@@ -26,7 +26,7 @@
 
 //#define BUSPIRATE_POST //used to switch POST on and off
 
-#define BP_FIRMWARE_STRING "Firmware v4.1-nightly"
+#define BP_FIRMWARE_STRING "Firmware v4.1 (r251)"
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
@@ -161,6 +161,7 @@ enum{
 	CMD_PWR_EN,
 	CMD_PWR_DIS,
 	CMD_ADC,
+	CMD_ADCC,				// DVM mode
 	
 	//internal commands
 	CMD_PERIODIC_SERVICE,
@@ -182,6 +183,7 @@ void InitializeUART1(void);
 unsigned int bpADC(unsigned char c);
 //takes a measurement from the ADC probe and prints the result to the user terminal
 void bpADCprobe(void);
+void bpADCCprobe(void);
 
 //print byte c to the user terminal in the format 
 //  specified by the bpConfig.displayMode setting
