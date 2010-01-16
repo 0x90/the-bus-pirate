@@ -26,7 +26,7 @@
 
 //#define BUSPIRATE_POST //used to switch POST on and off
 
-#define BP_FIRMWARE_STRING "Firmware v4.0"
+#define BP_FIRMWARE_STRING "Firmware v4.1-nightly"
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
@@ -46,6 +46,10 @@
 //#define BP_USE_LIN
 //#define BP_USE_CAN
 #define BP_USE_LCD // include HD44780 LCD library
+
+//sets the address in the bootloader to jump to on the bootloader command
+//must be defined in asm
+asm (".equ BLJUMPADDRESS, 0xA820");
 
 //
 //

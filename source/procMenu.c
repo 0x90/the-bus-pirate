@@ -106,6 +106,12 @@ unsigned char checkMenuCommand(unsigned char c){
 		case '=':
 			convert();
 			break;
+		case '\\': //jump to bootloader
+			bpWline("BOOTLOADER");
+			while(U1STAbits.TRMT==0); //wait untill TX finishes
+			asm volatile ("mov #BLJUMPADDRESS, w1 \n" //bootloader location
+						  "goto w1 \n");
+			break;
 #if defined(BUSPIRATEV25) || defined (BUSPIRATEV3)
 		case '~':
 			if(bpConfig.busMode==HIZ){			
