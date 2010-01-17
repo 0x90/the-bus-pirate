@@ -184,7 +184,14 @@ buffer:	.space ( ROWSIZE * 3 + 1/*checksum*/ )
 			mov #\char, W0
 			mov W0, UTXREG
 		.endm
-		
+
+;------------------------------------------------------------------------------
+; variables at the end of the bootloader page
+;------------------------------------------------------------------------------
+		.section *, code, address(STARTADDR+(PAGESIZE*2)-8)
+blver: .word 0x0401 ;bootloader major and minor version
+bljump: bra setup		;jump to bootloader after jumper check (for main program)
+
 
 ;------------------------------------------------------------------------------
 ; Start of code section in program memory
@@ -398,16 +405,17 @@ bladdrchk:mov	#BLCHECKST, WCNT	;last row write postion that won't overwrite the 
 		cp0		WADDR ;, WCNT		;compare address and end of first row, 
 		bra		NZ, ptrinit	;if greater than unsigned, then OK
 		;insert the correct jump address
+		;4 00 a8 00 00 00
 		mov 	#buffer, WBUFPTR
 		mov.b 	#0x04, W0
-		mov.b	W0, [WBUFPTR++] 		;upper byte
-		mov.b 	#0x00, W0
-		mov.b 	W0, [WBUFPTR++] 	;low byte
-		mov.b 	#0xA8, W0
+		mov.b	W0, [WBUFPTR++] ;upper byte
+		mov.b 	#(0xff & STARTADDR), W0
+		mov.b 	W0, [WBUFPTR++] ;low byte
+		mov.b 	#(0xff & (STARTADDR>>8)), W0
 		mov.b 	W0, [WBUFPTR++]	;high byte	
 		mov.b 	#0x00, W0
 		mov.b 	W0, [WBUFPTR++]	;upper byte
-		mov.b 	#0x00, W0
+		mov.b 	#(0xff & (STARTADDR>>16)), W0
 		mov.b 	W0, [WBUFPTR++]  ;low byte
 		mov.b 	#0x00, W0
 		mov.b 	W0, [WBUFPTR++]  ;high byte
