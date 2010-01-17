@@ -119,10 +119,7 @@ int main(void)
 	// finish up 
 	bpWline("");
 	bpWline("Success!");
-	bpWline("Upload v4+ firmware with the ds30 Loader app to complete the upgrade.");
-	bpWline("Light up a candle, say lots of prayers, keep your fingers crossed, and reset your buspirate."); //hey Dutchman, we use serial commas in English! :) 
-
-			// Yo American! can the buspirate sniff serial comma's? :P
+	bpWline("Upload v4+ firmware with the ds30 Loader app to complete the upgrade.");// Yo American! can the buspirate sniff serial comma's? :P
 
 	while(1)
 	{	BP_LEDMODE=1;						// we want some attention!
@@ -147,14 +144,15 @@ unsigned char checkChar(unsigned char c){
 
 void usermessage(void){
 	bpWline("");
-	bpWline("DS30 Bootloader installer v0.2 (very ALPHA)");
+	bpWline("DS30 Loader installer v0.2 (ALPHA)");
 	bpWline("(C)hris 2010");
-	bpWline("Released under Creative Commons null license");
+	bpWline("Released under Creative Commons null license.");
 	#ifdef DEBUG
 	bpWline("RUNNING IN DEBUG MODE!!!!");
 	#endif
-	bpWline("Type 'Yes' to program the new loader");
-	bpWline("or disconnect power if unsure (no harm done)");
+	bpWline("This will install bootloader v4.1.");
+	bpWline("Type 'Yes' to program the new bootloader.");
+	bpWline("Disconnect power if unsure (no harm done).");
 	bpWline("");
 }
 
