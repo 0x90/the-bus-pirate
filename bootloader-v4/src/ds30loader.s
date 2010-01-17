@@ -369,15 +369,12 @@ rcvdata:
 		; Check checksum
 		;----------------------------------------------------------------------
 		cp0.b 	WCRC
-		bra 	z, ptrinit
+		bra 	z, bladdrchk
 		SendL 	CHECKSUMERR
 		bra 	main1			
 		
 	
-		;----------------------------------------------------------------------
-		; Init pointer
-		;----------------------------------------------------------------------			
-ptrinit:mov 	#buffer, WBUFPTR
+
 					
 		;----------------------------------------------------------------------
 		; Check address
@@ -386,31 +383,52 @@ ptrinit:mov 	#buffer, WBUFPTR
 		;this is pretty specific to the bootloader being in the last page
 		;additional checks are needed if your bootloader is located elsewhere.
 		;TBLPAG is always = to 0 on this PIC, no need to verify (check if you have bigger than 64K flash)
-
-		;check the start address
-		;if write start address (WADDR) >= bl start address (WCNT) then error
-		mov 	#STARTADDR, WCNT;reuse WCNT to hold start address
-		cp		WADDR, WCNT 	;compare the start address, does it overlap?
-		bra		GEU, bladdrerror	;yes, then branch to error handler
+		
 		;check the end address
 		;write row size is fixed, any writes at (bootloader start-63) are an error
 		;if write end address (W0) is <= bl start address (WCNT) then OK
 		;= is ok because we don't DEC after adding, write 10 bytes to 10 = end at 19
-		mov		#BLCHECKST, WCNT	;first row write postion that would overwrite the bootloader
-		cp		WADDR, WCNT		;compare end address, does it overlap?
-		bra 	LEU, bladdrok		;continue to erase and program if no error
+bladdrchk:mov	#BLCHECKST, WCNT	;last row write postion that won't overwrite the bootloader
+		cp		WADDR, WCNT			;compare end address, does it overlap?
+		bra 	GTU, bladdrerror	;if greater unsigned then error
+		;protect the jump instruction
+		;check if this is row 0
+		;row 0 ends at 0x3f
+		;mov		#0x003f, WCNT
+		cp0		WADDR ;, WCNT		;compare address and end of first row, 
+		bra		NZ, ptrinit	;if greater than unsigned, then OK
+		;insert the correct jump address
+		mov 	#buffer, WBUFPTR
+		mov.b 	#0x04, W0
+		mov.b	W0, [WBUFPTR++] 		;upper byte
+		mov.b 	#0x00, W0
+		mov.b 	W0, [WBUFPTR++] 	;low byte
+		mov.b 	#0xA8, W0
+		mov.b 	W0, [WBUFPTR++]	;high byte	
+		mov.b 	#0x00, W0
+		mov.b 	W0, [WBUFPTR++]	;upper byte
+		mov.b 	#0x00, W0
+		mov.b 	W0, [WBUFPTR++]  ;low byte
+		mov.b 	#0x00, W0
+		mov.b 	W0, [WBUFPTR++]  ;high byte
+		bra ptrinit	;continue below
+
 		 ;handle the address error
 bladdrerror:clr	DOERASE 			;clear, just in case
 		;bra vfail ;Main				;fail silently
       	SendL   BLPROT	;send bootloader protection error
       	bra      main1	;
 
+		;----------------------------------------------------------------------
+		; Init pointer
+		;----------------------------------------------------------------------			
+ptrinit:mov 	#buffer, WBUFPTR
 
 		;----------------------------------------------------------------------
 		; Check command
 		;----------------------------------------------------------------------			
 		; Write row			0x00 02 00 - 0x02 AB FA 
-bladdrok:btsc	WCMD,	#1		
+		btsc	WCMD,	#1		
 		bra		erase
 		; Else erase page
 		mov		#0xffff, DOERASE
