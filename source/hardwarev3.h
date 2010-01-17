@@ -93,6 +93,7 @@
 #define DEV_ADDR_TYPE	0x0000
 #define DEV_ADDR_REV	0x0002
 #define CFG_ADDR_UPPER 0x0000
+#define BL_ADDR_VER		0xABFA //location of the bootloader version info
 #define CFG_ADDR_1     0xABFC
 #define CFG_ADDR_2     0xABFE
 

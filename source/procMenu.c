@@ -155,9 +155,16 @@ void convert(void){
 
 //print version info (used in menu and at startup in main.c)
 void versionInfo(void){
+	unsigned int i;
 	bpWline(BP_VERSION_STRING);
 
-	bpWline(BP_FIRMWARE_STRING);
+	bpWstring(BP_FIRMWARE_STRING);
+	bpWstring(" Bootloader v");
+	i=bpReadFlash(CFG_ADDR_UPPER, BL_ADDR_VER);
+	bpWdec(i>>8);
+	UART1TX('.');
+	bpWdec(i);
+	bpWline("");
 
 	bpWstring("DEVID:");
 	bpWinthex(bpConfig.dev_type);

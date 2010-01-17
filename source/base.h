@@ -49,7 +49,7 @@
 
 //sets the address in the bootloader to jump to on the bootloader command
 //must be defined in asm
-asm (".equ BLJUMPADDRESS, 0xA820");
+asm (".equ BLJUMPADDRESS, 0xABF8");
 
 //
 //

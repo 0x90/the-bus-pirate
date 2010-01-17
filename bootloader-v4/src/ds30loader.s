@@ -189,8 +189,8 @@ buffer:	.space ( ROWSIZE * 3 + 1/*checksum*/ )
 ; variables at the end of the bootloader page
 ;------------------------------------------------------------------------------
 		.section *, code, address(STARTADDR+(PAGESIZE*2)-8)
-blver: .word 0x0401 ;bootloader major and minor version
 bljump: bra setup		;jump to bootloader after jumper check (for main program)
+blver: .word 0x0401 ;bootloader major and minor version
 
 
 ;------------------------------------------------------------------------------
