@@ -147,7 +147,7 @@
 ;		.equ	STARTADDR,	( FLASHSIZE - 2*(PAGESIZE * 2) ) 		/*place bootloader in 2nd last program page*/
 		.equ	STARTADDR,	( FLASHSIZE - (2* (PAGESIZE)) ) 		/*place bootloader in last program page*/
 		.equ	BLCHECKST,  ( STARTADDR - (ROWSIZE) )			/*precalculate the first row write position that would overwrite the bootloader*/
-		.equ	BLVERSION,	0x0403	;bootloader version for Bus Pirate firmware (located at last instruction before flash config words)
+		.equ	BLVERSION,	0x0402	;bootloader version for Bus Pirate firmware (located at last instruction before flash config words)
 ;------------------------------------------------------------------------------
 ; Validate user settings
 ;------------------------------------------------------------------------------
@@ -423,7 +423,6 @@ bladdrchk:mov	#BLCHECKST, WCNT	;last row write postion that won't overwrite the 
 
 		 ;handle the address error
 bladdrerror:clr	DOERASE 			;clear, just in case
-		;bra vfail ;Main				;fail silently
       	SendL   BLPROT	;send bootloader protection error
       	bra      main1	;
 
@@ -539,7 +538,8 @@ notrcv:	dec 	WDEL2, WDEL2
 		bra 	nz, rpt1
 		; If we get here, uart receive timed out
         mov 	#__SP_init, WSTPTR	;reinitialize the Stack Pointer
-        
+ 		btss  PORTB,#RB1
+		bra   setup       
 		
 ;------------------------------------------------------------------------------
 ; Exit point, clean up and load user application
