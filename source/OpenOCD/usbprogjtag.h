@@ -25,8 +25,8 @@
 #define BIT2	    CLK //clk
 #define BIT3	    CS //tms
 
-#define BIT4	    AUX//jp2left(?)
-#define BIT5	    0b01//jp2right(?)
+#define BIT4	    AUX//SRST
+#define BIT5	    0b01//TRST
 
 #define BIT4_1	    0b1//jumper power???
 #define BIT5_1	    0b01
