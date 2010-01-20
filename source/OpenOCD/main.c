@@ -56,7 +56,7 @@ void CommandAnswer(int length){
 
 /* central command parser */
 void Commands(void){
-  int i;
+  static int i,j;
   switch(buf[0]){
     case PORT_DIRECTION://1 extra byte
       set_direction((uint8_t)buf[1]);
@@ -78,17 +78,6 @@ void Commands(void){
       CommandAnswer(2);
     break;
     
-    case WRITE_TDI:// buf[1]+buf[2] extra bytes?????
-      write_tdi(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
-      // tck 0 tms 0 tdi 0
-      CLEARBIT(BIT2_WRITE,BIT2);  // clk
-      CLEARBIT(BIT1_WRITE,BIT1);  // tdi
-      CLEARBIT(BIT3_WRITE,BIT3);  // tms
-      
-      // tck 1 tms 0 tdi 0
-      SETBIT(BIT2_WRITE,BIT2);  // clk
-    break;
- 
     case WRITE_TMS://1 extra bytes
       write_tms((uint8_t)buf[1]);
     break;
@@ -101,8 +90,22 @@ void Commands(void){
       }
     break;
 
+    case WRITE_TDI:// buf[1]+buf[2] extra bytes?????
+      write_tdi(buf+3,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
+      // tck 0 tms 0 tdi 0
+      CLEARBIT(BIT2_WRITE,BIT2);  // clk
+      CLEARBIT(BIT1_WRITE,BIT1);  // tdi
+      CLEARBIT(BIT3_WRITE,BIT3);  // tms
+      
+      // tck 1 tms 0 tdi 0
+      SETBIT(BIT2_WRITE,BIT2);  // clk
+    break;
+
     case READ_TDO:// buf[1]+buf[2] extra bytes?????
-      read_tdo(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
+      //read_tdo(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
+      j = ((uint8_t)buf[1]*256)+(uint8_t)buf[2];
+	  read_tdo(buf+3,j);	// size = numbers of byte not bits!!! round up
+
       #if 1
       // tck 0 tms 0 tdi 0
       CLEARBIT(BIT2_WRITE,BIT2);  // clk
@@ -112,14 +115,23 @@ void Commands(void){
       // tck 1 tms 0 tdi 0
       SETBIT(BIT2_WRITE,BIT2);  // clk
       #endif
-      for(i=0;i<64;i++)
+      //for(i=0;i<64;i++)
+	//	answer[i]=buf[i];
+
+	  j=(j/8)+1;
+      for(i=0;i<j;i++)
 		answer[i]=buf[i];
-      CommandAnswer(64);
+
+      //CommandAnswer(64);
+      CommandAnswer(j); // for future use :) bigger packets
+
     break;
 
     case WRITE_AND_READ:// buf[1]+buf[2] extra bytes?????
-      write_and_read(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
-      
+      //write_and_read(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
+      j = ((uint8_t)buf[1]*256)+(uint8_t)buf[2];
+      write_and_read(buf+3, j);        // skip 3 bytes on buf,  size from openocd is actually number of bits used in the buffer (max 61 * 8 = 488)
+    
       #if 1
       // tck 0 tms 0 tdi 0
       CLEARBIT(BIT2_WRITE,BIT2);  // clk
@@ -129,9 +141,16 @@ void Commands(void){
       // tck 1 tms 0 tdi 0
       SETBIT(BIT2_WRITE,BIT2);  // clk
       #endif
-      for(i=0;i<64;i++)
+
+//      for(i=0;i<64;i++)
+//		answer[i]=buf[i];
+
+	  j=(j/8)+1;
+      for(i=0;i<j;i++)
 		answer[i]=buf[i];
-      CommandAnswer(64);
+
+      //CommandAnswer(64);
+      CommandAnswer(j); // for future use :) bigger packets
     break;
     
     default:// 0 extra bytes
@@ -183,6 +202,7 @@ int main(void){
 				buf[1]=UART1RX();//get extra byte
 				buf[2]=UART1RX();//get extra byte
 				j=((uint8_t)buf[1]*256)+(uint8_t)buf[2]; //get data packet size
+				j=(j/8)+1;
 			   	for(i=0;i<j;i++){
 					buf[2+i]=UART1RX();
 				}
