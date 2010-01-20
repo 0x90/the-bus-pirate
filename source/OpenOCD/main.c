@@ -123,7 +123,7 @@ void Commands(void){
 		answer[i]=buf[i];
 
       //CommandAnswer(64);
-      CommandAnswer(j); // for future use :) bigger packets
+      CommandAnswer((j+3)); // for future use :) bigger packets
 
     break;
 
@@ -150,7 +150,7 @@ void Commands(void){
 		answer[i]=buf[i];
 
       //CommandAnswer(64);
-      CommandAnswer(j); // for future use :) bigger packets
+      CommandAnswer((j+3)); // for future use :) bigger packets
     break;
     
     default:// 0 extra bytes
