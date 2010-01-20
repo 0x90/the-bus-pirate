@@ -118,7 +118,7 @@ void Commands(void){
       //for(i=0;i<64;i++)
 	//	answer[i]=buf[i];
 
-	  j=(j/8)+1;
+	  j = (j >> 3) + (j & 0x07)?1:0;
       for(i=0;i<j;i++)
 		answer[i]=buf[i];
 
@@ -145,7 +145,7 @@ void Commands(void){
 //      for(i=0;i<64;i++)
 //		answer[i]=buf[i];
 
-	  j=(j/8)+1;
+	  j = (j >> 3) + (j & 0x07)?1:0;
       for(i=0;i<j;i++)
 		answer[i]=buf[i];
 
@@ -202,7 +202,7 @@ int main(void){
 				buf[1]=UART1RX();//get extra byte
 				buf[2]=UART1RX();//get extra byte
 				j=((uint8_t)buf[1]*256)+(uint8_t)buf[2]; //get data packet size
-				j=(j/8)+1;
+				j = (j >> 3) + (j & 0x07)?1:0;
 			   	for(i=0;i<j;i++){
 					buf[2+i]=UART1RX();
 				}
