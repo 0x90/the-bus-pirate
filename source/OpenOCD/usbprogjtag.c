@@ -20,18 +20,15 @@
 
 void write_and_read(char * buf, uint16_t size)
 {
-//  uint16_t i,j;
-  // until byte 3 (0=cmd,1,2=size,3... data)
+  uint16_t i;
   uint16_t bit_cnt;
   for (bit_cnt = 0; bit_cnt < size; bit_cnt++) {
-    // write tdi
-    
     // control tdi
     if ((buf[(bit_cnt+24)/8] >> ((bit_cnt+24) % 8)) & 0x1) //tdi 1
       SETBIT(BIT3_WRITE,BIT3);
     else // tdi 0
       CLEARBIT(BIT3_WRITE,BIT3);
-    
+
     // control tms line - goes to high at last bit
     if(size != 488){
       if(bit_cnt==(size-1))
@@ -43,7 +40,7 @@ void write_and_read(char * buf, uint16_t size)
     // clock
     CLEARBIT(BIT2_WRITE,BIT2);
     //asm("nop");
-    //for(i=0;i<0xFF;i++)asm("nop");
+    for(i=0;i<0xFF;i++)asm("nop");
     asm("nop");
     SETBIT(BIT2_WRITE,BIT2);
 
@@ -59,7 +56,7 @@ void write_and_read(char * buf, uint16_t size)
 void write_tdi(char * buf, uint16_t size)
 {
 
-//  uint16_t i,j;
+  uint16_t i;//,j;
   // until byte 3 (0=cmd,1,2=size,3... data)
   uint16_t bit_cnt;
   
@@ -71,6 +68,7 @@ void write_tdi(char * buf, uint16_t size)
       SETBIT(BIT3_WRITE,BIT3);
     else // tdi 0
       CLEARBIT(BIT3_WRITE,BIT3);
+
     // control tms line - goes to high at last bit
     if(size != 488){
       if(bit_cnt==(size-1))
@@ -78,10 +76,11 @@ void write_tdi(char * buf, uint16_t size)
       else
 	CLEARBIT(BIT1_WRITE,BIT1);
     }
+
     // clock
     CLEARBIT(BIT2_WRITE,BIT2);
     asm("nop");
-    //for(i=0;i<0xFF;i++)asm("nop");
+    for(i=0;i<0xFF;i++)asm("nop");
     //asm("nop");
     SETBIT(BIT2_WRITE,BIT2);
   }
@@ -89,19 +88,16 @@ void write_tdi(char * buf, uint16_t size)
 
 void write_tms(uint8_t buf)
 {
-
   uint8_t i;
   CLEARBIT(BIT3_WRITE,BIT3);
   // until byte 3 (0=cmd,1,2=size,3... data)
   uint8_t tms; 
   for (i = 0; i < 7; i++) {
-    // write tdi
-    
-    // control tdi
-    tms = ((buf >> i) & 1); //tdi 1
-    if (tms) //tdi 1
+    // control tms
+    tms = ((buf >> i) & 1);
+    if (tms) //tms 1
       SETBIT(BIT1_WRITE,BIT1);
-    else // tdi 0
+    else // tms 0
       CLEARBIT(BIT1_WRITE,BIT1);
     
     // clock
@@ -110,14 +106,16 @@ void write_tms(uint8_t buf)
     asm("nop");
     asm("nop");
     asm("nop");
+	asm("nop");
+    asm("nop");
     SETBIT(BIT2_WRITE,BIT2);
   }
  
   // from openocd moved to here
   CLEARBIT(BIT2_WRITE,BIT2);
-  if (tms) //tdi 1
+  if (tms) //tms 1
     SETBIT(BIT1_WRITE,BIT1);
-  else // tdi 0
+  else // tms 0
     CLEARBIT(BIT1_WRITE,BIT1);
 
 }
@@ -125,6 +123,7 @@ void write_tms(uint8_t buf)
 void read_tdo(char * buf, uint16_t size)
 {
 //  uint16_t i,j;
+uint16_t i;
   // until byte 3 (0=cmd,1,2=size,3... data)
   uint16_t bit_cnt;
   for (bit_cnt = 0; bit_cnt < size; bit_cnt++) {
@@ -140,7 +139,7 @@ void read_tdo(char * buf, uint16_t size)
     // clock
     CLEARBIT(BIT2_WRITE,BIT2);
     asm("nop");
-    //for(i=0;i<0xFF;i++)asm("nop");
+    for(i=0;i<0xFF;i++)asm("nop");
     //asm("nop");
     SETBIT(BIT2_WRITE,BIT2);
 
@@ -165,9 +164,7 @@ void set_direction(uint8_t direction)
   if(direction & 0x04) SETBIT(BIT2_DDR,BIT2); else CLEARBIT(BIT2_DDR,BIT2);
   if(direction & 0x08) SETBIT(BIT3_DDR,BIT3); else CLEARBIT(BIT3_DDR,BIT3);
   if(direction & 0x10) SETBIT(BIT4_DDR,BIT4); else CLEARBIT(BIT4_DDR,BIT4);
-  if(direction & 0x10) SETBIT(BIT4_1_DDR,BIT4_1); else CLEARBIT(BIT4_1_DDR,BIT4_1);
   if(direction & 0x20) SETBIT(BIT5_DDR,BIT5); else CLEARBIT(BIT5_DDR,BIT5);
-  if(direction & 0x20) SETBIT(BIT5_1_DDR,BIT5_1); else CLEARBIT(BIT5_1_DDR,BIT5_1);
   if(direction & 0x40) SETBIT(BIT6_DDR,BIT6); else CLEARBIT(BIT6_DDR,BIT6);
 }
 
@@ -223,9 +220,7 @@ uint8_t get_port()
   if(IS_BIT2_SET()) result |= (0x04);
   if(IS_BIT3_SET()) result |= (0x08);
   if(IS_BIT4_SET()) result |= (0x10);
-  if(IS_BIT4_1_SET()) result |= (0x10);
   if(IS_BIT5_SET()) result |= (0x20);
-  if(IS_BIT5_1_SET()) result |= (0x20);
   if(IS_BIT6_SET()) result |= (0x40);
   return result;
 }
@@ -238,10 +233,8 @@ void set_bit(uint8_t bit, uint8_t value)
     case 1: if(value==1) SETBIT(BIT1_WRITE,BIT1); else CLEARBIT(BIT1_WRITE,BIT1); break;
     case 2: if(value==1) SETBIT(BIT2_WRITE,BIT2); else CLEARBIT(BIT2_WRITE,BIT2); break;
     case 3: if(value==1) SETBIT(BIT3_WRITE,BIT3); else CLEARBIT(BIT3_WRITE,BIT3); break;
-    case 4: if(value==1) SETBIT(BIT4_WRITE,BIT4); else CLEARBIT(BIT4_WRITE,BIT4);
-	    if(value==1) SETBIT(BIT4_1_WRITE,BIT4_1); else CLEARBIT(BIT4_1_WRITE,BIT4_1); break;
-    case 5: if(value==1) SETBIT(BIT5_WRITE,BIT5); else CLEARBIT(BIT5_WRITE,BIT5);
-	    if(value==1) SETBIT(BIT5_1_WRITE,BIT5_1); else CLEARBIT(BIT5_1_WRITE,BIT5_1); break;
+    case 4: if(value==1) SETBIT(BIT4_WRITE,BIT4); else CLEARBIT(BIT4_WRITE,BIT4); break;
+    case 5: if(value==1) SETBIT(BIT5_WRITE,BIT5); else CLEARBIT(BIT5_WRITE,BIT5); break;
     case 6: if(value==1) SETBIT(BIT5_WRITE,BIT6); else CLEARBIT(BIT6_WRITE,BIT6); break;
   }
 }

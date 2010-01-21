@@ -20,16 +20,13 @@
 #define SETBIT(addr,x)    (addr |= x)
 #define CLEARBIT(addr,x)  (addr &= ~(x))
 
-#define BIT0	    MISO //tdo(?)
-#define BIT1  	    MOSI //tdi
+#define BIT0	    MISO //tdo  from the chip
+#define BIT1  	    CS //tms
 #define BIT2	    CLK //clk
-#define BIT3	    CS //tms
+#define BIT3	    MOSI //tdi  to the chip
 
 #define BIT4	    AUX//SRST
-#define BIT5	    0b01//TRST
-
-#define BIT4_1	    0b1//jumper power???
-#define BIT5_1	    0b01
+#define BIT5	    0b1//TRST on PGD
 
 #define BIT6	    LEDMODE //red LED
 
@@ -40,9 +37,7 @@
 #define BIT3_DDR    IODIR
 
 #define BIT4_DDR    IODIR
-#define BIT4_1_DDR  IODIR 
 #define BIT5_DDR    IODIR
-#define BIT5_1_DDR  IODIR  
 #define BIT6_DDR    LEDMODEDIR
 
 
@@ -53,8 +48,6 @@
 
 #define BIT4_READ   IOPOR
 #define BIT5_READ   IOPOR
-#define BIT4_1_READ  IOPOR 
-#define BIT5_1_READ  IOPOR 
 #define BIT6_READ   LEDMODEPOR
 
 //output port for pin writes (see3 hardwarevX.h for actual pins)
@@ -65,8 +58,6 @@
 
 #define BIT4_WRITE   IOLAT
 #define BIT5_WRITE   IOLAT
-#define BIT4_1_WRITE  IOLAT 
-#define BIT5_1_WRITE  IOLAT 
 #define BIT6_WRITE   LEDMODELAT
 
 // check if tdo == 1
@@ -77,8 +68,6 @@
 
 #define IS_BIT4_SET()			    (BIT4_READ & BIT(BIT4))
 #define IS_BIT5_SET()			    (BIT5_READ & BIT(BIT5))
-#define IS_BIT4_1_SET()			    (BIT4_1_READ & BIT(BIT4_1))
-#define IS_BIT5_1_SET()			    (BIT5_1_READ & BIT(BIT5_1))
 #define IS_BIT6_SET()			    (BIT6_READ & BIT(BIT6))
 
 
@@ -89,8 +78,6 @@
 
 #define SET_BIT4()			     SETBIT( BIT4_WRITE, BIT4 )
 #define SET_BIT5()			     SETBIT( BIT5_WRITE, BIT5 )
-#define SET_BIT4_1()			     SETBIT( BIT4_1_WRITE, BIT4_1 )
-#define SET_BIT5_1()			     SETBIT( BIT5_1_WRITE, BIT5_1 )
 #define SET_BIT6()			     SETBIT( BIT6_WRITE, BIT6 )
 
 #define CLEAR_BIT0()			     CLEARBIT( BIT0_WRITE, BIT0 )
@@ -100,8 +87,6 @@
 
 #define CLEAR_BIT4()			     CLEARBIT( BIT4_WRITE, BIT4 )
 #define CLEAR_BIT5()			     CLEARBIT( BIT5_WRITE, BIT5 )
-#define CLEAR_BIT4_1()			     CLEARBIT( BIT4_1_WRITE, BIT4_1 )
-#define CLEAR_BIT5_1()			     CLEARBIT( BIT5_1_WRITE, BIT5_1 )
 #define CLEAR_BIT6()			     CLEARBIT( BIT6_WRITE, BIT6 )
 
 

@@ -1,6 +1,6 @@
 /*
  * usbprog - A Downloader/Uploader for AVR device programmers
- * Copyright (C) 2006 Benedikt Sauter 
+ * Copyright (C) 2006 Benedikt Sauter
     //USBNDeviceManufacture("B.Sauter");
     //USBNDeviceProduct("OpenOCD Debugger");
     //USBNDeviceSerialNumber("GNU/GPL2");
@@ -44,131 +44,112 @@ _CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //tu
 void CommandAnswer(int length);
 void Commands(void);
 
-char answer[64];
 char buf[1024];//max packet should be 320 bytes, but why not 1024?
 
-void CommandAnswer(int length){
-  int i;
+void CommandAnswer(int length) {
+	int i;
 
-  for(i = 0; i < length; i++)
-    UART1TX(answer[i]);
+	for(i = 0; i < length; i++)
+		UART1TX(buf[i]);
+
 }
 
 /* central command parser */
-void Commands(void){
-  static int i,j;
-  switch(buf[0]){
-    case PORT_DIRECTION://1 extra byte
-      set_direction((uint8_t)buf[1]);
-    break;
-    case PORT_SET://1 extra byte
-      set_port((uint8_t)buf[1]);
-    break;
-    case PORT_GET://0 extra bytes
-      answer[0] = PORT_GET; 
-      answer[1] = get_port();
-      CommandAnswer(2);
-    break;
-    case PORT_SETBIT://2 extra bytes
-      set_bit((uint8_t)buf[1],(uint8_t)buf[2]);
-    break;
-    case PORT_GETBIT://1 extra bytes
-      answer[0] = PORT_GETBIT; 
-      answer[1] = (char)get_bit((uint8_t)buf[1]);
-      CommandAnswer(2);
-    break;
-    
-    case WRITE_TMS://1 extra bytes
-      write_tms((uint8_t)buf[1]);
-    break;
-   
-    case WRITE_TMS_CHAIN://buf[1] extra bytes
-      for(i=0;i<(int)buf[1];i++){
-		write_tms((uint8_t)buf[2+i]);
-		asm("nop");
-		asm("nop");
-      }
-    break;
+void Commands(void) {
+	static int i,j;
+	switch(buf[0]){
+		case PORT_DIRECTION://1 extra byte
+			set_direction((uint8_t)buf[1]);
+			break;
+		case PORT_SET://1 extra byte
+			set_port((uint8_t)buf[1]);
+			break;
+		case PORT_GET://0 extra bytes
+			buf[0] = PORT_GET;
+			buf[1] = get_port();
+			CommandAnswer(2);
+			break;
+		case PORT_SETBIT://2 extra bytes
+			set_bit((uint8_t)buf[1],(uint8_t)buf[2]);
+			break;
+		case PORT_GETBIT://1 extra bytes
+			buf[0] = PORT_GETBIT; 
+			buf[1] = (char)get_bit((uint8_t)buf[1]);
+			CommandAnswer(2);
+			break;
+		case WRITE_TMS://1 extra bytes
+			write_tms((uint8_t)buf[1]);
+			break;
+		case WRITE_TMS_CHAIN://buf[1] extra bytes
+			for(i=0;i<(int)buf[1];i++){
+				write_tms((uint8_t)buf[2+i]);
+				asm("nop");
+				asm("nop");
+				asm("nop");
+				asm("nop");
+			}
+			break;
+		case WRITE_TDI:// buf[1]+buf[2] extra bytes?????
+			j = ((uint8_t)buf[1] << 8) | ((uint8_t)buf[2]);
+			write_tdi(buf, j);
 
-    case WRITE_TDI:// buf[1]+buf[2] extra bytes?????
-      write_tdi(buf+3,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
-      // tck 0 tms 0 tdi 0
-      CLEARBIT(BIT2_WRITE,BIT2);  // clk
-      CLEARBIT(BIT1_WRITE,BIT1);  // tdi
-      CLEARBIT(BIT3_WRITE,BIT3);  // tms
-      
-      // tck 1 tms 0 tdi 0
-      SETBIT(BIT2_WRITE,BIT2);  // clk
-    break;
+			// tck 0 tms 0 tdi 0
+			CLEARBIT(BIT2_WRITE,BIT2);  // clk
+			CLEARBIT(BIT1_WRITE,BIT1);  // tdi
+			CLEARBIT(BIT3_WRITE,BIT3);  // tms
 
-    case READ_TDO:// buf[1]+buf[2] extra bytes?????
-      //read_tdo(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
-      j = ((uint8_t)buf[1]*256)+(uint8_t)buf[2];
-	  read_tdo(buf+3,j);	// size = numbers of byte not bits!!! round up
+			// tck 1 tms 0 tdi 0
+			SETBIT(BIT2_WRITE,BIT2);  // clk
+			break;
 
-      #if 1
-      // tck 0 tms 0 tdi 0
-      CLEARBIT(BIT2_WRITE,BIT2);  // clk
-      CLEARBIT(BIT1_WRITE,BIT1);  // tdi
-      CLEARBIT(BIT3_WRITE,BIT3);  // tms
-      
-      // tck 1 tms 0 tdi 0
-      SETBIT(BIT2_WRITE,BIT2);  // clk
-      #endif
-      //for(i=0;i<64;i++)
-	//	answer[i]=buf[i];
+		case READ_TDO:// buf[1]+buf[2] extra bytes?????
+			j = ((uint8_t)buf[1] << 8) | ((uint8_t)buf[2]);
+			read_tdo(buf, j); // size = numbers of byte not bits!!! round up
+#if 1
+			// tck 0 tms 0 tdi 0
+			CLEARBIT(BIT2_WRITE,BIT2);  // clk
+			CLEARBIT(BIT1_WRITE,BIT1);  // tdi
+			CLEARBIT(BIT3_WRITE,BIT3);  // tms
+			// tck 1 tms 0 tdi 0
+			SETBIT(BIT2_WRITE,BIT2);  // clk
+#endif
+			j = (j >> 3) + ((j & 0x07)?1:0);
+			CommandAnswer(j+3); // arbitrary packet len
 
-	  j = (j >> 3) + (j & 0x07)?1:0;
-      for(i=0;i<j;i++)
-		answer[i]=buf[i];
+			break;
 
-      //CommandAnswer(64);
-      CommandAnswer((j+3)); // for future use :) bigger packets
+		case WRITE_AND_READ:// buf[1]+buf[2] extra bytes?????
+			j = ((uint8_t)buf[1] << 8) | ((uint8_t)buf[2]);
+			// j is size from openocd - number of bits used in the buffer
+			// passing the buf, as the function does know the offset of data
+			write_and_read(buf, j);
+#if 1
+			// tck 0 tms 0 tdi 0
+			CLEARBIT(BIT2_WRITE,BIT2);  // clk
+			CLEARBIT(BIT1_WRITE,BIT1);  // tdi
+			CLEARBIT(BIT3_WRITE,BIT3);  // tms
 
-    break;
+			// tck 1 tms 0 tdi 0
+			SETBIT(BIT2_WRITE,BIT2);  // clk
+#endif
+			j = (j >> 3) + ((j & 0x07)?1:0); // calculate number of bytes
+			CommandAnswer(j+3); // arbitrary packet len
+			break;
 
-    case WRITE_AND_READ:// buf[1]+buf[2] extra bytes?????
-      //write_and_read(buf,((uint8_t)buf[1]*256)+(uint8_t)buf[2]);	// size = numbers of byte not bits!!! round up
-      j = ((uint8_t)buf[1]*256)+(uint8_t)buf[2];
-      write_and_read(buf+3, j);        // skip 3 bytes on buf,  size from openocd is actually number of bits used in the buffer (max 61 * 8 = 488)
-    
-      #if 1
-      // tck 0 tms 0 tdi 0
-      CLEARBIT(BIT2_WRITE,BIT2);  // clk
-      CLEARBIT(BIT1_WRITE,BIT1);  // tdi
-      CLEARBIT(BIT3_WRITE,BIT3);  // tms
-      
-      // tck 1 tms 0 tdi 0
-      SETBIT(BIT2_WRITE,BIT2);  // clk
-      #endif
-
-//      for(i=0;i<64;i++)
-//		answer[i]=buf[i];
-
-	  j = (j >> 3) + (j & 0x07)?1:0;
-      for(i=0;i<j;i++)
-		answer[i]=buf[i];
-
-      //CommandAnswer(64);
-      CommandAnswer((j+3)); // for future use :) bigger packets
-    break;
-    
-    default:// 0 extra bytes
-      // unkown command
-      answer[0] = UNKOWN_COMMAND; 
-      answer[1] = 0x00; 
-      CommandAnswer(2);
-  }
-
-
+		default:// 0 extra bytes
+			// unkown command
+			buf[0] = UNKOWN_COMMAND;
+			buf[1] = 0x00;
+			CommandAnswer(2);
+	}
 }
 
 
 //this is adopted from USB bulk to UART serial on the Bus Pirate
-//		since we don't have packet transfer abilities, 
-//      each case gathers the extra bytes it needs
-//		before handing off processing to the Commands function
-int main(void){
+//since we don't have packet transfer abilities,
+//each case gathers the extra bytes it needs
+//before handing off processing to the Commands function
+int main(void) {
 	int i,j;
 
 	//do setup and configuration
@@ -177,43 +158,42 @@ int main(void){
 	BP_LEDMODE_DIR=0; //LED to output
 	BP_LEDMODE=1;//mode LED on
 
-    while(1){
+	while(1){
 		buf[0]=UART1RX();//get command byte
-  		switch(buf[0]){
-    		case PORT_DIRECTION://1 extra byte
-    		case PORT_SET://1 extra byte
-    		case PORT_GETBIT://1 extra bytes
-    		case WRITE_TMS://1 extra bytes
+		switch(buf[0]){
+		case PORT_DIRECTION://1 extra byte
+		case PORT_SET://1 extra byte
+		case PORT_GETBIT://1 extra bytes
+		case WRITE_TMS://1 extra bytes
 				buf[1]=UART1RX();//get extra byte
 				break;
-    		case PORT_SETBIT://2 extra bytes
+		case PORT_SETBIT://2 extra bytes
 				buf[1]=UART1RX();//get extra byte
 				buf[2]=UART1RX();//get extra byte
 				break;
-    		case WRITE_TMS_CHAIN://buf[1] extra bytes    
+		case WRITE_TMS_CHAIN://buf[1] extra bytes
 				buf[1]=UART1RX();//get data length
-			   	for(i=0;i<(int)buf[1];i++){
+				for(i=0;i<(int)buf[1];i++){
 					buf[2+i]=UART1RX();
 				}
 				break;
-    		case WRITE_TDI:// buf[1]+buf[2] extra bytes?????
-			case READ_TDO:// buf[1]+buf[2] extra bytes?????
-    		case WRITE_AND_READ:// buf[1]+buf[2] extra bytes?????
+		case WRITE_TDI:// buf[1]+buf[2] extra bytes?????
+		case READ_TDO:// buf[1]+buf[2] extra bytes?????
+		case WRITE_AND_READ:// buf[1]+buf[2] extra bytes?????
 				buf[1]=UART1RX();//get extra byte
 				buf[2]=UART1RX();//get extra byte
-				j=((uint8_t)buf[1]*256)+(uint8_t)buf[2]; //get data packet size
-				j = (j >> 3) + (j & 0x07)?1:0;
-			   	for(i=0;i<j;i++){
-					buf[2+i]=UART1RX();
+				j = ((uint8_t)buf[1] << 8) | ((uint8_t)buf[2]); //get data packet size
+				j = (j >> 3) + ((j & 0x07)?1:0);
+				for(i=0;i<j;i++){
+					buf[3+i]=UART1RX();
 				}
 				break;
-    		case PORT_GET://0 extra bytes
+		case PORT_GET://0 extra bytes
 			default:// 0 extra bytes
 				break;
-  		}
+		}
 		Commands();//process first command byte, gather remaining bytes wihtin this function
 	}
-
 }
 
 
