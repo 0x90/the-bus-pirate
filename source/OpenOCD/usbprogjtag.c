@@ -18,9 +18,38 @@
 
 #include "usbprogjtag.h"
 
+void tap_shift(char *tdo_buf, char *tms_buf, uint16_t size)
+{
+  uint16_t bit_cnt;
+  for (bit_cnt = 0; bit_cnt < size; bit_cnt++) {
+    // control tdi
+    if ((tdo_buf[bit_cnt/8] >> ((bit_cnt) % 8)) & 0x1) //tdi 1
+      SETBIT(BIT3_WRITE,BIT3);
+    else // tdi 0
+      CLEARBIT(BIT3_WRITE,BIT3);
+
+    // control tms line
+    if((tms_buf[bit_cnt/8] >> ((bit_cnt) % 8)) & 0x1)
+      SETBIT(BIT1_WRITE,BIT1);
+    else
+      CLEARBIT(BIT1_WRITE,BIT1);
+
+    // clock
+    CLEARBIT(BIT2_WRITE,BIT2);
+    asm("nop");
+    SETBIT(BIT2_WRITE,BIT2);
+
+    // read tdo
+    if(IS_BIT0_SET())
+      tdo_buf[(bit_cnt)/8] |= 1 << ((bit_cnt) % 8);
+    else
+      tdo_buf[(bit_cnt)/8] &= ~(1 << ((bit_cnt) % 8));
+  }
+}
+
 void write_and_read(char * buf, uint16_t size)
 {
-  uint16_t i;
+  //uint16_t i;
   uint16_t bit_cnt;
   for (bit_cnt = 0; bit_cnt < size; bit_cnt++) {
     // control tdi
@@ -30,17 +59,19 @@ void write_and_read(char * buf, uint16_t size)
       CLEARBIT(BIT3_WRITE,BIT3);
 
     // control tms line - goes to high at last bit
-    if(size != 488){
-      if(bit_cnt==(size-1))
-	SETBIT(BIT1_WRITE,BIT1);
-      else
-	CLEARBIT(BIT1_WRITE,BIT1);
-    }
-    
+    // to the transition to DRPAUSE everytime the sequence ends
+    // if we want to continue clocking of the same sequence, we first
+    // need to walk tms to DRSHIFT state
+    if(bit_cnt==(size-1))
+      SETBIT(BIT1_WRITE,BIT1);
+    else
+      CLEARBIT(BIT1_WRITE,BIT1);
+
+
     // clock
     CLEARBIT(BIT2_WRITE,BIT2);
     //asm("nop");
-    for(i=0;i<0xFF;i++)asm("nop");
+    //for(i=0;i<0xFF;i++)asm("nop");
     asm("nop");
     SETBIT(BIT2_WRITE,BIT2);
 
@@ -56,7 +87,7 @@ void write_and_read(char * buf, uint16_t size)
 void write_tdi(char * buf, uint16_t size)
 {
 
-  uint16_t i;//,j;
+  //uint16_t i;//,j;
   // until byte 3 (0=cmd,1,2=size,3... data)
   uint16_t bit_cnt;
   
@@ -70,18 +101,18 @@ void write_tdi(char * buf, uint16_t size)
       CLEARBIT(BIT3_WRITE,BIT3);
 
     // control tms line - goes to high at last bit
-    if(size != 488){
-      if(bit_cnt==(size-1))
-	SETBIT(BIT1_WRITE,BIT1);
-      else
-	CLEARBIT(BIT1_WRITE,BIT1);
-    }
+    // see comment in write_and_read
+    if(bit_cnt==(size-1))
+      SETBIT(BIT1_WRITE,BIT1);
+    else
+      CLEARBIT(BIT1_WRITE,BIT1);
+
 
     // clock
     CLEARBIT(BIT2_WRITE,BIT2);
-    asm("nop");
-    for(i=0;i<0xFF;i++)asm("nop");
     //asm("nop");
+    //for(i=0;i<0xFF;i++)asm("nop");
+    asm("nop");
     SETBIT(BIT2_WRITE,BIT2);
   }
 }
@@ -106,8 +137,8 @@ void write_tms(uint8_t buf)
     asm("nop");
     asm("nop");
     asm("nop");
-	asm("nop");
-    asm("nop");
+	//asm("nop");
+    //asm("nop");
     SETBIT(BIT2_WRITE,BIT2);
   }
  
@@ -123,24 +154,23 @@ void write_tms(uint8_t buf)
 void read_tdo(char * buf, uint16_t size)
 {
 //  uint16_t i,j;
-uint16_t i;
+//  uint16_t i;
   // until byte 3 (0=cmd,1,2=size,3... data)
   uint16_t bit_cnt;
   for (bit_cnt = 0; bit_cnt < size; bit_cnt++) {
     
     // control tms line - goes to high at last bit
-    if(size != 488){
-      if(bit_cnt==(size-1))
-	SETBIT(BIT1_WRITE,BIT1);
-      else
-	CLEARBIT(BIT1_WRITE,BIT1);
-    }
+    // see comment in write_and_read
+    if(bit_cnt==(size-1))
+      SETBIT(BIT1_WRITE,BIT1);
+    else
+      CLEARBIT(BIT1_WRITE,BIT1);
     
     // clock
     CLEARBIT(BIT2_WRITE,BIT2);
-    asm("nop");
-    for(i=0;i<0xFF;i++)asm("nop");
     //asm("nop");
+    //for(i=0;i<0xFF;i++)asm("nop");
+    asm("nop");
     SETBIT(BIT2_WRITE,BIT2);
 
     // read tdo

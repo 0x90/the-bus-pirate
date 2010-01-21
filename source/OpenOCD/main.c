@@ -31,6 +31,8 @@
 #define WRITE_AND_READ	0x08
 #define WRITE_TMS	0x09
 #define WRITE_TMS_CHAIN	0x0A
+#define RUNTEST_CHAIN 0x10
+#define TAP_SHIFT   0x20
 
 //#define F_CPU 16000000
 #include "base.h"
@@ -44,7 +46,7 @@ _CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //tu
 void CommandAnswer(int length);
 void Commands(void);
 
-char buf[1024];//max packet should be 320 bytes, but why not 1024?
+char buf[4096];//max packet should be 320 bytes, but why not 1024?
 
 void CommandAnswer(int length) {
 	int i;
@@ -57,6 +59,7 @@ void CommandAnswer(int length) {
 /* central command parser */
 void Commands(void) {
 	static int i,j;
+
 	switch(buf[0]){
 		case PORT_DIRECTION://1 extra byte
 			set_direction((uint8_t)buf[1]);
@@ -80,12 +83,15 @@ void Commands(void) {
 		case WRITE_TMS://1 extra bytes
 			write_tms((uint8_t)buf[1]);
 			break;
+		case RUNTEST_CHAIN://buf[1] extra bytes
+			for(i=0;i<(int)buf[1];i++){
+				set_port((uint8_t)buf[2+i]);
+				asm("nop");
+			}
+			break;
 		case WRITE_TMS_CHAIN://buf[1] extra bytes
 			for(i=0;i<(int)buf[1];i++){
 				write_tms((uint8_t)buf[2+i]);
-				asm("nop");
-				asm("nop");
-				asm("nop");
 				asm("nop");
 			}
 			break;
@@ -135,6 +141,14 @@ void Commands(void) {
 			j = (j >> 3) + ((j & 0x07)?1:0); // calculate number of bytes
 			CommandAnswer(j+3); // arbitrary packet len
 			break;
+		case TAP_SHIFT:
+			j = ((uint8_t)buf[1] << 8) | ((uint8_t)buf[2]); // number of bit sequences
+			i = (j+7) / 8;
+
+			tap_shift(&buf[3], &buf[3+i], j); // tap_shift doesn't know about packet header
+
+			CommandAnswer(i+3);
+			break;
 
 		default:// 0 extra bytes
 			// unkown command
@@ -171,6 +185,7 @@ int main(void) {
 				buf[1]=UART1RX();//get extra byte
 				buf[2]=UART1RX();//get extra byte
 				break;
+		case RUNTEST_CHAIN:
 		case WRITE_TMS_CHAIN://buf[1] extra bytes
 				buf[1]=UART1RX();//get data length
 				for(i=0;i<(int)buf[1];i++){
@@ -185,6 +200,16 @@ int main(void) {
 				j = ((uint8_t)buf[1] << 8) | ((uint8_t)buf[2]); //get data packet size
 				j = (j >> 3) + ((j & 0x07)?1:0);
 				for(i=0;i<j;i++){
+					buf[3+i]=UART1RX();
+				}
+				break;
+		case TAP_SHIFT:
+				buf[1]=UART1RX();
+				buf[2]=UART1RX();
+				j = ((uint8_t)buf[1] << 8) | ((uint8_t)buf[2]); //get data packet size
+				j = (j >> 3) + ((j & 0x07)?1:0);
+				// j - number of bytes for TMS and TDI
+				for(i=0;i<j*2;i++) { // we need *2
 					buf[3+i]=UART1RX();
 				}
 				break;
