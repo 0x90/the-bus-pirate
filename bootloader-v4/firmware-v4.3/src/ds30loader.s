@@ -163,6 +163,10 @@
 			.error "Baudrate error is more than 3%. Remove this check or try another baudrate and/or clockspeed."
 		.endif 
 
+		.if BLDELAY<1
+		   .error "Bootloader delay is 0"
+		.endif 
+
 
 ;------------------------------------------------------------------------------
 ; Global declarations
@@ -539,7 +543,7 @@ notrcv:	dec 	WDEL2, WDEL2
 		; If we get here, uart receive timed out
         mov 	#__SP_init, WSTPTR	;reinitialize the Stack Pointer
  		btss  PORTB,#RB1
-		bra   setup       
+		bra   setup  
 		
 ;------------------------------------------------------------------------------
 ; Exit point, clean up and load user application

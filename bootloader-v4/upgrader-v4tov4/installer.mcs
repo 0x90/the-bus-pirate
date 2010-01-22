@@ -80,6 +80,32 @@ ToolArgsString=-g -Wall
 TraceCmdString=
 DebugOptions=
 [File006]
+Location=E:\Work\bus-pirate\trunk\bootloader-v4\upgrader-v4tov4\flash.o
+Folder=Intermediary
+DeviceName=PIC24FJ64GA002
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={DE18EB1A-B46B-486B-B96F-A811A635DFAC}
+LanguageToolLocation=C:\MC30\bin\pic30-as.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|flash.s|main.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SuiteArgsString=
+ToolArgsString=-g
+TraceCmdString=
+DebugOptions=
+[File007]
+Location=E:\Work\bus-pirate\trunk\bootloader-v4\upgrader-v4tov4\main.o
+Folder=Intermediary
+DeviceName=PIC24FJ64GA002
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
+LanguageToolLocation=C:\MC30\bin\pic30-gcc.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|flash.s|main.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SuiteArgsString=
+ToolArgsString=-g -Wall
+TraceCmdString=
+DebugOptions=
+[File008]
 Location=D:\buspiraat.src\installer2\installer.cof
 Folder=Output
 DeviceName=PIC24FJ64GA002
@@ -92,7 +118,7 @@ SuiteArgsString=
 ToolArgsString=-o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)" -Map="$(BINDIR_)$(TARGETBASE).map" --report-mem
 TraceCmdString=
 DebugOptions=--defsym=__MPLAB_DEBUG=1
-[File007]
+[File009]
 Location=D:\buspiraat.src\installer2\installer.hex
 Folder=Output
 DeviceName=PIC24FJ64GA002
@@ -105,7 +131,7 @@ SuiteArgsString=
 ToolArgsString=-o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)" -Map="$(BINDIR_)$(TARGETBASE).map" --report-mem
 TraceCmdString=
 DebugOptions=--defsym=__MPLAB_DEBUG=1
-[File008]
+[File010]
 Location=C:\Documents and Settings\ian\Desktop\installer2(2)\installer.cof
 Folder=Output
 DeviceName=PIC24FJ64GA002
@@ -118,7 +144,7 @@ SuiteArgsString=
 ToolArgsString=-o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)" -Map="$(BINDIR_)$(TARGETBASE).map" --report-mem
 TraceCmdString=
 DebugOptions=
-[File009]
+[File011]
 Location=C:\Documents and Settings\ian\Desktop\installer2(2)\installer.hex
 Folder=Output
 DeviceName=PIC24FJ64GA002
@@ -131,7 +157,7 @@ SuiteArgsString=
 ToolArgsString=-o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)" -Map="$(BINDIR_)$(TARGETBASE).map" --report-mem
 TraceCmdString=
 DebugOptions=
-[File010]
+[File012]
 Location=E:\Work\bus-pirate\trunk\bootloader-v4\upgrader\installer.cof
 Folder=Output
 DeviceName=PIC24FJ64GA002
@@ -144,7 +170,7 @@ SuiteArgsString=
 ToolArgsString=-o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)" -Map="$(BINDIR_)$(TARGETBASE).map" --report-mem
 TraceCmdString=
 DebugOptions=
-[File011]
+[File013]
 Location=E:\Work\bus-pirate\trunk\bootloader-v4\upgrader\installer.hex
 Folder=Output
 DeviceName=PIC24FJ64GA002
@@ -153,6 +179,32 @@ LanguageToolID={433C3D55-811D-409D-A6BF-159CF9355B42}
 LanguageToolLocation=C:\MC30\bin\pic30-ld.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
 SOLK=<src>|flash.s|main.c||<obj>||<lib>||<lkr>|APP 24FJ64GA002.gld||
+SuiteArgsString=
+ToolArgsString=-o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)" -Map="$(BINDIR_)$(TARGETBASE).map" --report-mem
+TraceCmdString=
+DebugOptions=
+[File014]
+Location=E:\Work\bus-pirate\trunk\bootloader-v4\upgrader-v4tov4\installer.cof
+Folder=Output
+DeviceName=PIC24FJ64GA002
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={433C3D55-811D-409D-A6BF-159CF9355B42}
+LanguageToolLocation=C:\MC30\bin\pic30-ld.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|flash.s|main.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SuiteArgsString=
+ToolArgsString=-o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)" -Map="$(BINDIR_)$(TARGETBASE).map" --report-mem
+TraceCmdString=
+DebugOptions=
+[File015]
+Location=E:\Work\bus-pirate\trunk\bootloader-v4\upgrader-v4tov4\installer.hex
+Folder=Output
+DeviceName=PIC24FJ64GA002
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={433C3D55-811D-409D-A6BF-159CF9355B42}
+LanguageToolLocation=C:\MC30\bin\pic30-ld.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|flash.s|main.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)" -Map="$(BINDIR_)$(TARGETBASE).map" --report-mem
 TraceCmdString=

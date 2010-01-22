@@ -37,7 +37,7 @@ unsigned char UART1RX(void);
 void usermessage(void);
 unsigned char checkChar(unsigned char c);
 
-// cvD: needed??
+//config fuses. These will be protected and always set like this for all bootloaded firmwares.
 _CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
 _CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //turn off junk we don't need
 
@@ -150,7 +150,7 @@ void usermessage(void){
 	#ifdef DEBUG
 	bpWline("RUNNING IN DEBUG MODE!!!!");
 	#endif
-	bpWline("This will install bootloader v4.1.");
+	bpWline("This will install bootloader v4.3.");
 	bpWline("Type 'Yes' to program the new bootloader.");
 	bpWline("Disconnect power if unsure (no harm done).");
 	bpWline("");

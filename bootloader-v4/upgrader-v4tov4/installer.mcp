@@ -70,7 +70,7 @@ file_006=hardwarev1a.h
 file_007=hardwarev25.h
 file_008=hardwarev2a.h
 file_009=hardwarev3.h
-file_010=APP 24FJ64GA002.gld
+file_010=p24FJ64GA002.gld
 [SUITE_INFO]
 suite_guid={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 suite_state=
