@@ -21,7 +21,7 @@
 #include "binIO.h"
 #include "SUMP.h"
 
-//set custom configuration for PIC 24F
+//set custom configuration for PIC 24F (now always set in bootloader page, not needed here)
 _CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
 _CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //turn off junk we don't need
 

@@ -598,8 +598,8 @@ void bin1WIRE(void){
 					case 1://id reply string
 						bin1WIREversionString();//reply string
 						break;
-					case 2://reset
-						DS1wireReset();
+					case 2://reset (might want to do something with c in the future)
+						c=OWReset();
 						UART1TX(1);
 						break;
 					case 4://read byte
