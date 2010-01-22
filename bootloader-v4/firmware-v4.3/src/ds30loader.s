@@ -72,7 +72,7 @@
 		.equ	WADDR,		W5		;memory pointer		
 		.equ	PPSTEMP1,	W6		;used to restore pps register
 		.equ	PPSTEMP2,	W7		;used to restore pps register
-		;.equ	UNUSED,		W8		;
+		.equ	WFWJUMP,	W8		;did we jump here from the firmware?
 		;.equ	UNUSED,		W9		;
 		.equ	WDEL1,		W10		;delay outer
 		.equ	WDEL2,		W11		;delay inner
@@ -193,7 +193,7 @@ buffer:	.space ( ROWSIZE * 3 + 1/*checksum*/ )
 ; variables at the end of the bootloader page
 ;------------------------------------------------------------------------------
 		.section *, code, address(STARTADDR+(PAGESIZE*2)-8)
-bljump: bra setup		;jump to bootloader after jumper check (for main program)
+bljump: bra firmwarejump	;main program jump here to access bootloader
 blver: .word BLVERSION ;bootloader major and minor version
 
 
@@ -238,6 +238,8 @@ waitPLL:btss OSCCON, #LOCK
 		;check for jumper
 		btsc PORTB,#RB1	;skip next instruction if RB1=0 (jumper)
 		bra quit ;branch to the user application if RB1=0
+	
+		clr WFWJUMP		;we came from jumper and reset, not firmware jump
 
 		;----------------------------------------------------------------------
 		; UART pps config
@@ -298,6 +300,7 @@ setup:		mov		RPINR18, PPSTEMP1		;xxx
 ; Init
 ;------------------------------------------------------------------------------
 		clr		DOERASE
+		
 		
 		;UART
 		mov		#UARTBR, W0 		;set	
@@ -542,7 +545,10 @@ notrcv:	dec 	WDEL2, WDEL2
 		bra 	nz, rpt1
 		; If we get here, uart receive timed out
         mov 	#__SP_init, WSTPTR	;reinitialize the Stack Pointer
- 		btss  PORTB,#RB1
+ 		
+		btsc  WFWJUMP,#0x00 ;if we timed out and came from firmware, go to setup
+		bra   setup 
+ 		btss  PORTB,#RB1;if we time out and jumper still attached, go to setup
 		bra   setup  
 		
 ;------------------------------------------------------------------------------
@@ -586,7 +592,13 @@ quit:	;clean up from jumper test
 ;------------------------------------------------------------------------------
         bra 	usrapp
 
-	
+;------------------------------------------------------------------------------
+; firmware jump entry point (kind of like a function because it's never reached from the above code
+;------------------------------------------------------------------------------
+firmwarejump:
+		mov #0xffff, WFWJUMP	;flag that we jumped from firmware
+		bra setup	;jump to just after jumper check
+			
 ;------------------------------------------------------------------------------
 ; End of code
 ;------------------------------------------------------------------------------
