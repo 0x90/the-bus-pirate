@@ -22,7 +22,9 @@
 #define BASE
 #include <p24fxxxx.h>
 
-//#define DEBUG //safe debug release, won't overwrite bootloader v2
+// if you want debug select debug in the MPLAB ide!!!
+
+#define BPBLVERLOC		0xABFA
 
 //this sets the hardware version
 //#define BUSPIRATEV0A //http://hackaday.com/2008/11/19/how-to-the-bus-pirate-universal-serial-interface/
@@ -49,4 +51,6 @@
 #endif
 
 #endif
+
+
 

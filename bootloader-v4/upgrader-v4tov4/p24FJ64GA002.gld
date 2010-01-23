@@ -17,7 +17,8 @@ MEMORY
   reset        : ORIGIN = 0x0,           LENGTH = 0x4
   ivt          : ORIGIN = 0x4,           LENGTH = 0xFC
   aivt         : ORIGIN = 0x104,         LENGTH = 0xFC
-  program (xr) : ORIGIN = 0x200,         LENGTH = 0xA5FE
+/*  program (xr) : ORIGIN = 0x200,         LENGTH = 0xA5FE */
+  program (xr) : ORIGIN = 0xC00,         LENGTH = 0x9BFE
   config2      : ORIGIN = 0xABFC,        LENGTH = 0x2
   config1      : ORIGIN = 0xABFE,        LENGTH = 0x2
 }
@@ -30,7 +31,8 @@ __NO_HANDLES = 1;          /* Suppress handles on this device  */
 __IVT_BASE  = 0x4;
 __AIVT_BASE = 0x104;
 __DATA_BASE = 0x800;
-__CODE_BASE = 0x200;
+/* __CODE_BASE = 0x200; */
+__CODE_BASE = 0xC00;
 
 
 /*

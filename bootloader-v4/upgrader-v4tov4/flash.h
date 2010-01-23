@@ -17,4 +17,5 @@
 
 void Ferase(int page);
 void Fwrite(unsigned char *buf, int address);
+unsigned int Fread(int addr);
 

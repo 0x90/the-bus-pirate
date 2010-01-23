@@ -13,13 +13,15 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "hardware.h" //for debug status
-
-#ifndef DEBUG
+#ifndef __DEBUG
 	#define FWLOCATION	0xA800 //actual last page
 #else // use a safe location for now :D since i don't have a proper programmer (someone wants to send me one?? :P)
 	#define FWLOCATION	0x9000 
 #endif
+
+#define FWBLVERLOC_MAJ		1529		// location where version number (major) is stored
+#define FWBLVERLOC_MIN		1528		// location where version number (minor) is stored
+
 
 // test firmware (size should be exactly 1 page!)
 // replace with the right bootloader

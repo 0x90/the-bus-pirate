@@ -36,10 +36,14 @@ unsigned char UART1RXRdy(void);
 unsigned char UART1RX(void);
 void usermessage(void);
 unsigned char checkChar(unsigned char c);
+void  bpWintdec(unsigned int i);
+
 
 //config fuses. These will be protected and always set like this for all bootloaded firmwares.
-_CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
-_CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //turn off junk we don't need
+// CVD: config fuses deleted so it doesn't upset the new loader ;)
+//      also disabled them in the workspace/project
+//_CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
+//_CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //turn off junk we don't need
 
 // it all happens from here
 int main(void)
@@ -47,7 +51,7 @@ int main(void)
 	unsigned char buf[3*64];
 
 	BpInit();
-	BP_LEDMODE=1;
+	BP_LEDMODE=0;							// to avoid confusing?
 
 	//wait for confirmation
 	while(1){
@@ -68,7 +72,6 @@ int main(void)
 		bpWline("");
 	}
 	bpWline("");
-	bpWline("Sit back and enjoy the show");
 
 	// the user is really sure
 	// erase the page before the bootloader 
@@ -98,7 +101,9 @@ int main(void)
 	}
 	bpWline("done");
 
-	#ifndef DEBUG
+	// __DEBUG is set in the MPLAB ide/.
+
+	#ifndef __DEBUG
 		// erase 1st page and write jump to new bootloader
 		bpWstring("Erasing 0x0000...");
 		Ferase(0x0000);
@@ -119,7 +124,7 @@ int main(void)
 	// finish up 
 	bpWline("");
 	bpWline("Success!");
-	bpWline("Upload v4+ firmware with the ds30 Loader app to complete the upgrade.");// Yo American! can the buspirate sniff serial comma's? :P
+	bpWline("Upload new firmware with the ds30 Loader app to complete the upgrade.");
 
 	while(1)
 	{	BP_LEDMODE=1;						// we want some attention!
@@ -144,13 +149,26 @@ unsigned char checkChar(unsigned char c){
 
 void usermessage(void){
 	bpWline("");
-	bpWline("DS30 Loader installer v0.2 (ALPHA)");
-	bpWline("(C)hris 2010");
+	bpWline("Universal DS30 Loader installer v0.3 (C)hris 2010");
+	bpWline("");
 	bpWline("Released under Creative Commons null license.");
-	#ifdef DEBUG
+	#ifdef __DEBUG
 	bpWline("RUNNING IN DEBUG MODE!!!!");
 	#endif
-	bpWline("This will install bootloader v4.3.");
+	
+	bpWstring("Found bootloader v");
+	bpWintdec(Fread(BPBLVERLOC)>>8);
+	UART1TX('.');
+	bpWintdec(Fread(BPBLVERLOC)&0x00FF);
+	bpWline("");
+
+	bpWstring("Will install bootloader v");
+	bpWintdec(firmware[FWBLVERLOC_MAJ]);
+	UART1TX('.');
+	bpWintdec(firmware[FWBLVERLOC_MIN]);
+	bpWline("");
+
+	bpWline("");
 	bpWline("Type 'Yes' to program the new bootloader.");
 	bpWline("Disconnect power if unsure (no harm done).");
 	bpWline("");
@@ -316,6 +334,23 @@ unsigned char UART1RX(void){
 	return U1RXREG;
 }
 
+//output an 16bit/integer decimal value to the user terminal
+void  bpWintdec(unsigned int i){
+    unsigned int c,m;
+	unsigned char j,k=0;
+
+	c=10000;
+	for(j=0; j<4; j++){
+		m=i/c;
+		if(k || m){
+			UART1TX(m + '0');
+		    i = i - (m*c);
+			k=1;
+		}
+		c/=10;	
+	}
+    UART1TX(i + '0');
+}
 
 
 

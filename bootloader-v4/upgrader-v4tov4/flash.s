@@ -66,3 +66,12 @@ chk:	btsc		NVMCON, #15	; bit15
 		bra			chk
 		return
 		
+
+; read a word from flash
+; unsigned int Fread(int addr)
+
+.global	_Fread
+
+_Fread:	tblrdl		[W0], W0
+		return
+
