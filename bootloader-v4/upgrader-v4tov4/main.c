@@ -157,10 +157,15 @@ void usermessage(void){
 	#endif
 	
 	bpWstring("Found bootloader v");
-	bpWintdec(Fread(BPBLVERLOC)>>8);
-	UART1TX('.');
-	bpWintdec(Fread(BPBLVERLOC)&0x00FF);
-	bpWline("");
+	if(Fread(BPBLVERLOC)==0xFFFF)
+	{	bpWstring(" unknown (probably v2)");
+	}
+	else
+	{	bpWintdec(Fread(BPBLVERLOC)>>8);
+		UART1TX('.');
+		bpWintdec(Fread(BPBLVERLOC)&0x00FF);
+		bpWline("");
+	}
 
 	bpWstring("Will install bootloader v");
 	bpWintdec(firmware[FWBLVERLOC_MAJ]);
