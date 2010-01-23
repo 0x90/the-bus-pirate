@@ -2,7 +2,11 @@
  
  Pirate-Loader for Bootloader v4
  
+ Version  : 1.0.0
+ 
  Changelog:
+ 
+  + 2010-01-22 - Added loader version number to the console output and source code
  
   + 2010-01-19 - Fixed BigEndian incompatibility
 			   - Added programming simulate switch ( --simulate ) for data verification 
@@ -33,6 +37,12 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#define PIRATE_LOADER_VERSION "1.0.0"
+
+#define STR_EXPAND(tok) #tok
+#define OS_NAME(tok) STR_EXPAND(tok)
+
+
 #ifdef WIN32
 	#include <windows.h>
 	#include <time.h>
@@ -40,6 +50,8 @@
 	#define O_NOCTTY 0
 	#define O_NDELAY 0
 	#define B115200 115200
+
+	#define OS WINDOWS
 	
 	int write(int fd, const void* buf, int len)
 	{
@@ -134,6 +146,10 @@
 #endif
 
 /* macro definitions */
+
+#if !defined OS
+#define OS UNKNOWN
+#endif
 
 #define BOOTLOADER_HELLO_STR "\xC1"
 #define BOOTLOADER_OK 0x4B
@@ -559,6 +575,7 @@ int parseCommandLine(int argc, const char** argv)
 		puts(" ./pirate-loader --dev=/path/to/device --hello");
 		puts(" ./pirate-loader --dev=/path/to/device --hex=/path/to/hexfile.hex [ --verbose");
 		puts(" ./pirate-loader --simulate --hex=/path/to/hexfile.hex [ --verbose");
+		puts("");
 		
 		return 0;
 	}
@@ -577,7 +594,8 @@ int main (int argc, const char** argv)
 	
 	
 	puts("+++++++++++++++++++++++++++++++++++++++++++");
-	puts("+ Pirate-Loader for BP with Bootloader v4 +");
+	puts("  Pirate-Loader for BP with Bootloader v4+  ");
+	puts("  Loader version: " PIRATE_LOADER_VERSION "  OS: " OS_NAME(OS));
 	puts("+++++++++++++++++++++++++++++++++++++++++++\n");
 	
 	if( (res = parseCommandLine(argc, argv)) < 0 ) {
@@ -595,7 +613,7 @@ int main (int argc, const char** argv)
 	
 		bin_buff = (uint8*)malloc(256 << 10); //256kB
 		if( !bin_buff ) {
-			fprintf(stderr, "Could not allocate 128kB buffer\n");
+			fprintf(stderr, "Could not allocate 256kB buffer\n");
 			goto Error;
 		}
 		
@@ -644,7 +662,7 @@ int main (int argc, const char** argv)
 		fprintf(stderr, "Could not configure device, errno=%d\n", errno);
 		goto Error;
 	}
-	puts("OK"); //extra LF for spacing
+	puts("OK");
 	
 	printf("Sending Hello to the Bootloader...");
 	
