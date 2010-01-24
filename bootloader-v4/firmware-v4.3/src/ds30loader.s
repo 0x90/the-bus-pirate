@@ -315,7 +315,7 @@ setup:		mov		RPINR18, PPSTEMP1		;xxx
 ;------------------------------------------------------------------------------
 		rcall 	Receive
 		sub 	#HELLO, W0			;check
-		bra 	nz, exit			; prompt
+		bra 	nz, checkexit		; prompt
 
 
 ;------------------------------------------------------------------------------
@@ -546,6 +546,7 @@ notrcv:	dec 	WDEL2, WDEL2
 		; If we get here, uart receive timed out
         mov 	#__SP_init, WSTPTR	;reinitialize the Stack Pointer
  		
+checkexit: 
 		btsc  WFWJUMP,#0x00   ; skip next if bit0 is 0 (=not jumped from bp)
  		btss  PORTB,#RB1;if we time out and jumper still attached, go to setup
 		bra   setup  
