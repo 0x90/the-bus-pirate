@@ -42,8 +42,10 @@ void  bpWintdec(unsigned int i);
 //config fuses. These will be protected and always set like this for all bootloaded firmwares.
 // CVD: config fuses deleted so it doesn't upset the new loader ;)
 //      also disabled them in the workspace/project
-//_CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
-//_CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //turn off junk we don't need
+//Undid this because p24qp.py erases who chip and update without config bits will brick the pirate
+//needed for v2 to v4 legacy upgrades
+_CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
+_CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //turn off junk we don't need
 
 /*
 	Store delay timeout value & user reset vector at start of user space
@@ -84,6 +86,7 @@ int main(void)
 		bpWline("");
 	}
 	bpWline("");
+	BP_LEDMODE=1;							// on when upgrade active
 
 	// the user is really sure
 	// erase the page before the bootloader 
