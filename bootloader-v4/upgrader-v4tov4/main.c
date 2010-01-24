@@ -179,8 +179,8 @@ void usermessage(void){
 	{	bpWintdec(Fread(BPBLVERLOC)>>8);
 		UART1TX('.');
 		bpWintdec(Fread(BPBLVERLOC)&0x00FF);
-		bpWline("");
 	}
+	bpWline("");
 
 	bpWstring("Will install bootloader v");
 	bpWintdec(firmware[FWBLVERLOC_MAJ]);
