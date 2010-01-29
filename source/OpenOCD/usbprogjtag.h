@@ -90,18 +90,12 @@
 #define CLEAR_BIT6()			     CLEARBIT( BIT6_WRITE, BIT6 )
 
 
+extern uint8_t bit_available;
 
 
-
-void write_tdi(char *buf, uint16_t size);
-void write_tms(uint8_t  buf);
-void write_and_read(char * buf, uint16_t size);
-void read_tdo(char * buf, uint16_t size);
-void tap_shift(char *tdo_buf, char *tms_buf, uint16_t size);
+void tap_shift(uint8_t *tdo_buf, uint8_t *tms_buf, uint16_t size);
+void tap_shift_interrupt(uint8_t *in_buf, uint8_t *tdo_buf, uint16_t end_cnt);
 
 void set_direction(uint8_t direction);
 void set_port(uint8_t value);
-uint8_t get_port();
-void set_bit(uint8_t bit, uint8_t value);
-uint8_t get_bit(uint8_t bit);
 

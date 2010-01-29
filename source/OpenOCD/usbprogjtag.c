@@ -16,271 +16,114 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "uart.h"
+
 #include "usbprogjtag.h"
 
-void tap_shift(char *tdo_buf, char *tms_buf, uint16_t size)
+
+
+void tap_shift_interrupt(uint8_t *in_buf, uint8_t *tdo_buf, uint16_t end_cnt)
 {
-  uint16_t bit_cnt;
-  for (bit_cnt = 0; bit_cnt < size; bit_cnt++) {
-    // control tdi
-    if ((tdo_buf[bit_cnt/8] >> ((bit_cnt) % 8)) & 0x1) //tdi 1
-      SETBIT(BIT3_WRITE,BIT3);
-    else // tdi 0
-      CLEARBIT(BIT3_WRITE,BIT3);
+	uint8_t unsent_data = 0;
+	uint16_t bit_cnt;
+	uint16_t buf_off;
 
-    // control tms line
-    if((tms_buf[bit_cnt/8] >> ((bit_cnt) % 8)) & 0x1)
-      SETBIT(BIT1_WRITE,BIT1);
-    else
-      CLEARBIT(BIT1_WRITE,BIT1);
+	for (bit_cnt = 0; bit_cnt < end_cnt; bit_cnt++) {
+		buf_off = (bit_cnt/8);
 
-    // clock
-    CLEARBIT(BIT2_WRITE,BIT2);
-    asm("nop");
-    SETBIT(BIT2_WRITE,BIT2);
+		// wait for interrupt to receive atleast 2 bytes
+		while (bytes_recv <= buf_off*2+1);
 
-    // read tdo
-    if(IS_BIT0_SET())
-      tdo_buf[(bit_cnt)/8] |= 1 << ((bit_cnt) % 8);
-    else
-      tdo_buf[(bit_cnt)/8] &= ~(1 << ((bit_cnt) % 8));
-  }
+		// control tdi
+		if ((in_buf[buf_off*2] >> ((bit_cnt % 8))) & 0x1) //tdi 1
+			SETBIT(BIT3_WRITE,BIT3);
+		else // tdi 0
+			CLEARBIT(BIT3_WRITE,BIT3);
+
+		// control tms line
+		if((in_buf[(buf_off*2)+1] >> ((bit_cnt % 8))) & 0x1)
+			SETBIT(BIT1_WRITE,BIT1);
+		else
+			CLEARBIT(BIT1_WRITE,BIT1);
+
+		// clock
+		CLEARBIT(BIT2_WRITE,BIT2);
+		asm("nop");
+		asm("nop");
+		//asm("nop");
+		SETBIT(BIT2_WRITE,BIT2);
+
+		// read tdo
+		if(IS_BIT0_SET())
+			tdo_buf[(bit_cnt)/8] |= 1 << (bit_cnt % 8);
+		else
+			tdo_buf[(bit_cnt)/8] &= ~(1 << (bit_cnt % 8));
+
+
+		unsent_data = 1;
+		// if last bit of one byte was written
+		if (bit_cnt%8 == 7) {
+			unsent_data = 0;
+			bytes_send_available++;
+			// go send something
+			if (bytes_send_available - bytes_send > 64) {
+				UART1TX_Int();
+			}
+		}
+	}
+	if (unsent_data == 1) {
+		bytes_send_available++;
+	}
+
+	// if there is something left - send it
+	UART1TX_Int();
 }
 
-void write_and_read(char * buf, uint16_t size)
+void tap_shift(uint8_t *tdo_buf, uint8_t *tms_buf, uint16_t size)
 {
-  //uint16_t i;
-  uint16_t bit_cnt;
-  for (bit_cnt = 0; bit_cnt < size; bit_cnt++) {
-    // control tdi
-    if ((buf[(bit_cnt+24)/8] >> ((bit_cnt+24) % 8)) & 0x1) //tdi 1
-      SETBIT(BIT3_WRITE,BIT3);
-    else // tdi 0
-      CLEARBIT(BIT3_WRITE,BIT3);
+	uint16_t bit_cnt;
+	for (bit_cnt = 0; bit_cnt < size; bit_cnt++) {
+		// control tdi
+		if ((tdo_buf[bit_cnt/8] >> ((bit_cnt) % 8)) & 0x1) //tdi 1
+			SETBIT(BIT3_WRITE,BIT3);
+		else // tdi 0
+			CLEARBIT(BIT3_WRITE,BIT3);
 
-    // control tms line - goes to high at last bit
-    // to the transition to DRPAUSE everytime the sequence ends
-    // if we want to continue clocking of the same sequence, we first
-    // need to walk tms to DRSHIFT state
-    if(bit_cnt==(size-1))
-      SETBIT(BIT1_WRITE,BIT1);
-    else
-      CLEARBIT(BIT1_WRITE,BIT1);
+		// control tms line
+		if((tms_buf[bit_cnt/8] >> ((bit_cnt) % 8)) & 0x1)
+			SETBIT(BIT1_WRITE,BIT1);
+		else
+			CLEARBIT(BIT1_WRITE,BIT1);
 
+		// clock
+		CLEARBIT(BIT2_WRITE,BIT2);
+		asm("nop");
+		SETBIT(BIT2_WRITE,BIT2);
 
-    // clock
-    CLEARBIT(BIT2_WRITE,BIT2);
-    //asm("nop");
-    //for(i=0;i<0xFF;i++)asm("nop");
-    asm("nop");
-    SETBIT(BIT2_WRITE,BIT2);
-
-    // read tdo
-    if(IS_BIT0_SET())
-      buf[(bit_cnt+24)/8] |= 1 << ((bit_cnt+24) % 8);
-    else
-      buf[(bit_cnt+24)/8] &= ~(1 << ((bit_cnt+24) % 8));
-  }
+		// read tdo
+		if(IS_BIT0_SET())
+			tdo_buf[(bit_cnt)/8] |= 1 << ((bit_cnt) % 8);
+		else
+			tdo_buf[(bit_cnt)/8] &= ~(1 << ((bit_cnt) % 8));
+	}
 }
-
-
-void write_tdi(char * buf, uint16_t size)
-{
-
-  //uint16_t i;//,j;
-  // until byte 3 (0=cmd,1,2=size,3... data)
-  uint16_t bit_cnt;
-  
-  for (bit_cnt = 0; bit_cnt < size; bit_cnt++) {
-    // write tdi
-    
-    // control tdi
-    if ((buf[(bit_cnt+24)/8] >> ((bit_cnt+24) % 8)) & 0x1) //tdi 1
-      SETBIT(BIT3_WRITE,BIT3);
-    else // tdi 0
-      CLEARBIT(BIT3_WRITE,BIT3);
-
-    // control tms line - goes to high at last bit
-    // see comment in write_and_read
-    if(bit_cnt==(size-1))
-      SETBIT(BIT1_WRITE,BIT1);
-    else
-      CLEARBIT(BIT1_WRITE,BIT1);
-
-
-    // clock
-    CLEARBIT(BIT2_WRITE,BIT2);
-    //asm("nop");
-    //for(i=0;i<0xFF;i++)asm("nop");
-    asm("nop");
-    SETBIT(BIT2_WRITE,BIT2);
-  }
-}
-
-void write_tms(uint8_t buf)
-{
-  uint8_t i;
-  CLEARBIT(BIT3_WRITE,BIT3);
-  // until byte 3 (0=cmd,1,2=size,3... data)
-  uint8_t tms; 
-  for (i = 0; i < 7; i++) {
-    // control tms
-    tms = ((buf >> i) & 1);
-    if (tms) //tms 1
-      SETBIT(BIT1_WRITE,BIT1);
-    else // tms 0
-      CLEARBIT(BIT1_WRITE,BIT1);
-    
-    // clock
-    CLEARBIT(BIT2_WRITE,BIT2);
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-	//asm("nop");
-    //asm("nop");
-    SETBIT(BIT2_WRITE,BIT2);
-  }
- 
-  // from openocd moved to here
-  CLEARBIT(BIT2_WRITE,BIT2);
-  if (tms) //tms 1
-    SETBIT(BIT1_WRITE,BIT1);
-  else // tms 0
-    CLEARBIT(BIT1_WRITE,BIT1);
-
-}
-
-void read_tdo(char * buf, uint16_t size)
-{
-//  uint16_t i,j;
-//  uint16_t i;
-  // until byte 3 (0=cmd,1,2=size,3... data)
-  uint16_t bit_cnt;
-  for (bit_cnt = 0; bit_cnt < size; bit_cnt++) {
-    
-    // control tms line - goes to high at last bit
-    // see comment in write_and_read
-    if(bit_cnt==(size-1))
-      SETBIT(BIT1_WRITE,BIT1);
-    else
-      CLEARBIT(BIT1_WRITE,BIT1);
-    
-    // clock
-    CLEARBIT(BIT2_WRITE,BIT2);
-    //asm("nop");
-    //for(i=0;i<0xFF;i++)asm("nop");
-    asm("nop");
-    SETBIT(BIT2_WRITE,BIT2);
-
-    // read tdo
-    if(IS_BIT0_SET())
-      buf[(bit_cnt+24)/8] |= 1 << ((bit_cnt+24) % 8);
-    else
-      buf[(bit_cnt+24)/8] &= ~(1 << ((bit_cnt+24) % 8));
-  }
-
-}
-
-
-
-
 
 void set_direction(uint8_t direction)
 {
-  // 0 = input, 1 = output
-  if(direction & 0x01) SETBIT(BIT0_DDR,BIT0); else CLEARBIT(BIT0_DDR,BIT0);
-  if(direction & 0x02) SETBIT(BIT1_DDR,BIT1); else CLEARBIT(BIT1_DDR,BIT1);
-  if(direction & 0x04) SETBIT(BIT2_DDR,BIT2); else CLEARBIT(BIT2_DDR,BIT2);
-  if(direction & 0x08) SETBIT(BIT3_DDR,BIT3); else CLEARBIT(BIT3_DDR,BIT3);
-  if(direction & 0x10) SETBIT(BIT4_DDR,BIT4); else CLEARBIT(BIT4_DDR,BIT4);
-  if(direction & 0x20) SETBIT(BIT5_DDR,BIT5); else CLEARBIT(BIT5_DDR,BIT5);
-  if(direction & 0x40) SETBIT(BIT6_DDR,BIT6); else CLEARBIT(BIT6_DDR,BIT6);
+	// 0 = input, 1 = output
+	if(direction & 0x01) SETBIT(BIT0_DDR,BIT0); else CLEARBIT(BIT0_DDR,BIT0);
+	if(direction & 0x02) SETBIT(BIT1_DDR,BIT1); else CLEARBIT(BIT1_DDR,BIT1);
+	if(direction & 0x04) SETBIT(BIT2_DDR,BIT2); else CLEARBIT(BIT2_DDR,BIT2);
+	if(direction & 0x08) SETBIT(BIT3_DDR,BIT3); else CLEARBIT(BIT3_DDR,BIT3);
+	if(direction & 0x10) SETBIT(BIT4_DDR,BIT4); else CLEARBIT(BIT4_DDR,BIT4);
+	if(direction & 0x20) SETBIT(BIT5_DDR,BIT5); else CLEARBIT(BIT5_DDR,BIT5);
 }
 
 
 void set_port(uint8_t value)
 {
-  // BIT0 - BIT 3
-  //PORTB hinbauen	
-/*
-  uint8_t port=0;
-  if(value & 0x01) port |= (1<<BIT0);
-  if(value & 0x02) port |= (1<<BIT1);
-  if(value & 0x04) port |= (1<<BIT2);
-  if(value & 0x08) port |= (1<<BIT3);
-
-  // all together
-  //PORTB = port;
-*/ 
-  
-  if(value & 0x01) SETBIT(BIT0_WRITE,BIT0); else CLEARBIT(BIT0_WRITE,BIT0);
-  if(value & 0x02) SETBIT(BIT1_WRITE,BIT1); else CLEARBIT(BIT1_WRITE,BIT1);
-  if(value & 0x04) SETBIT(BIT2_WRITE,BIT2); else CLEARBIT(BIT2_WRITE,BIT2);
-  if(value & 0x08) SETBIT(BIT3_WRITE,BIT3); else CLEARBIT(BIT3_WRITE,BIT3);
-  
-/*
-  //BIT4 - BIT 5
-  if(value & 0x10) SETBIT(BIT4_WRITE,BIT4); else CLEARBIT(BIT4_WRITE,BIT4);
-  if(value & 0x20) SETBIT(BIT5_WRITE,BIT5); else CLEARBIT(BIT5_WRITE,BIT5);
-
-  // BIT 6
-  if(value & 0x40) SETBIT(BIT6_WRITE,BIT6); else CLEARBIT(BIT6_WRITE,BIT6);
-*/
+	if(value & 0x01) SETBIT(BIT0_WRITE,BIT0); else CLEARBIT(BIT0_WRITE,BIT0);
+	if(value & 0x02) SETBIT(BIT1_WRITE,BIT1); else CLEARBIT(BIT1_WRITE,BIT1);
+	if(value & 0x04) SETBIT(BIT2_WRITE,BIT2); else CLEARBIT(BIT2_WRITE,BIT2);
+	if(value & 0x08) SETBIT(BIT3_WRITE,BIT3); else CLEARBIT(BIT3_WRITE,BIT3);
 }
-
-//returns port read
-//we want this to match the origional, so it needs to use these bits:
-/*
-  if(direction & 0x01) SETBIT(BIT0_DDR,BIT0); else CLEARBIT(BIT0_DDR,BIT0);
-  if(direction & 0x02) SETBIT(BIT1_DDR,BIT1); else CLEARBIT(BIT1_DDR,BIT1);
-  if(direction & 0x04) SETBIT(BIT2_DDR,BIT2); else CLEARBIT(BIT2_DDR,BIT2);
-  if(direction & 0x08) SETBIT(BIT3_DDR,BIT3); else CLEARBIT(BIT3_DDR,BIT3);
-  if(direction & 0x10) SETBIT(BIT4_DDR,BIT4); else CLEARBIT(BIT4_DDR,BIT4);
-  if(direction & 0x10) SETBIT(BIT4_1_DDR,BIT4_1); else CLEARBIT(BIT4_1_DDR,BIT4_1);
-  if(direction & 0x20) SETBIT(BIT5_DDR,BIT5); else CLEARBIT(BIT5_DDR,BIT5);
-  if(direction & 0x20) SETBIT(BIT5_1_DDR,BIT5_1); else CLEARBIT(BIT5_1_DDR,BIT5_1);
-  if(direction & 0x40) SETBIT(BIT6_DDR,BIT6); else CLEARBIT(BIT6_DDR,BIT6);
-*/
-uint8_t get_port()
-{
-  uint8_t result=0x00; 
-  if(IS_BIT0_SET()) result |= (0x01);
-  if(IS_BIT1_SET()) result |= (0x02);
-  if(IS_BIT2_SET()) result |= (0x04);
-  if(IS_BIT3_SET()) result |= (0x08);
-  if(IS_BIT4_SET()) result |= (0x10);
-  if(IS_BIT5_SET()) result |= (0x20);
-  if(IS_BIT6_SET()) result |= (0x40);
-  return result;
-}
-
-
-void set_bit(uint8_t bit, uint8_t value)
-{
-  switch(bit) {
-    case 0: if(value==1) SETBIT(BIT0_WRITE,BIT0); else CLEARBIT(BIT0_WRITE,BIT0); break;
-    case 1: if(value==1) SETBIT(BIT1_WRITE,BIT1); else CLEARBIT(BIT1_WRITE,BIT1); break;
-    case 2: if(value==1) SETBIT(BIT2_WRITE,BIT2); else CLEARBIT(BIT2_WRITE,BIT2); break;
-    case 3: if(value==1) SETBIT(BIT3_WRITE,BIT3); else CLEARBIT(BIT3_WRITE,BIT3); break;
-    case 4: if(value==1) SETBIT(BIT4_WRITE,BIT4); else CLEARBIT(BIT4_WRITE,BIT4); break;
-    case 5: if(value==1) SETBIT(BIT5_WRITE,BIT5); else CLEARBIT(BIT5_WRITE,BIT5); break;
-    case 6: if(value==1) SETBIT(BIT5_WRITE,BIT6); else CLEARBIT(BIT6_WRITE,BIT6); break;
-  }
-}
-
-
-uint8_t get_bit(uint8_t bit)
-{
-  switch(bit) {
-    case 0: if(IS_BIT0_SET())return 1; else return 0; break;
-    case 1: if(IS_BIT1_SET())return 1; else return 0; break;
-    case 2: if(IS_BIT2_SET())return 1; else return 0; break;
-    case 3: if(IS_BIT3_SET())return 1; else return 0; break;
-    case 4: if(IS_BIT4_SET())return 1; else return 0; break;
-    case 5: if(IS_BIT5_SET())return 1; else return 0; break;
-    case 6: if(IS_BIT6_SET())return 1; else return 0; break;
-  }
-  return 0;
-}
-
