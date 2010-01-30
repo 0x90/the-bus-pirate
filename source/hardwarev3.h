@@ -48,6 +48,7 @@
 #define BP_LEDMODE		PORTAbits.RA1 //single MODE led on v2a
 #define BP_VREGEN		PORTAbits.RA0 //single vreg enable pin on v2a
 #define BP_PULLUP		PORTBbits.RB11 //Pull-up pin on V2a
+#define BP_PGD			PORTBbits.RB0 //PGD pin on programming header
 
 //these macros set the direction registers for each IO pin
 #define BP_MOSI_DIR 	TRISBbits.TRISB9
@@ -58,6 +59,7 @@
 #define BP_LEDMODE_DIR	TRISAbits.TRISA1
 #define BP_VREGEN_DIR	TRISAbits.TRISA0
 #define BP_PULLUP_DIR	TRISBbits.TRISB11
+#define BP_PGD_DIR		TRISBbits.TRISB0
 
 //Open drain/high impedance pin setup
 #define BP_MOSI_ODC 	ODCBbits.ODB9

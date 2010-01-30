@@ -13,6 +13,9 @@
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+#include "base.h"
+
 //manage user terminal input
 unsigned int bpUserNumberPrompt(unsigned int maxBytes, unsigned int maxValue, unsigned int defValue);
 
@@ -77,6 +80,19 @@ void bpWvolts(unsigned int a);
 // Base user terminal UART functions
 //
 //
+#define UART_NORMAL_SPEED 34
+#define UART_FAST_SPEED    3
+
+/* interrupt transfer related stuff */
+extern unsigned char *UART1RXBuf;
+extern unsigned int UART1RXToRecv;
+extern unsigned int UART1RXRecvd;
+extern unsigned char *UART1TXBuf;
+extern unsigned int UART1TXSent;
+extern unsigned int UART1TXAvailable;
+
+// starts interrupt TX
+void UART1TXInt(void);
 
 //is byte available in RX buffer?
 unsigned char UART1RXRdy(void); 
@@ -88,6 +104,8 @@ unsigned char UART1RX(void);
 //uses PIC 4 byte UART FIFO buffer
 void UART1TX(char c); 
 
+// sets the uart baudrate generator
+void UART1Speed(unsigned char brg);
 //
 //
 // Ring buffer for UART

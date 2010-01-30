@@ -90,8 +90,6 @@
 #define CLEAR_BIT6()			     CLEARBIT( BIT6_WRITE, BIT6 )
 
 
-extern uint8_t bit_available;
-
 
 void tap_shift(uint8_t *tdo_buf, uint8_t *tms_buf, uint16_t size);
 void tap_shift_interrupt(uint8_t *in_buf, uint8_t *tdo_buf, uint16_t end_cnt);

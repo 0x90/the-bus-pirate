@@ -111,7 +111,7 @@ void Commands(void) {
 
 	switch(buf[0]){
 		case CMD_PORT_MODE://1 extra byte
-			j = 0;
+			j = 0xFF; // hiz
 			if (buf[1] == 0x01) {
 				j = 0x01;
 			}
