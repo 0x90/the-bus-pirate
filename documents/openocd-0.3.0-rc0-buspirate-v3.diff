@@ -1,35 +1,6 @@
-
-#this is highly experimental patch that adds support for buspirate
-# use only with openocd-0.3.0-rc0
-
-# to compile:
-
-# tar xvf openocd-0.3.0-rc0.tar.bz2
-# cd openocd-0.3.0-rc0
-# patch -p2 < ../openocd-0.3.0-rc0-buspirate.diff
-# aclocal
-# automake
-# autoconfig
-# mkdir build
-# cd build
-# ../configure --enable-buspirate
-# make
-# make install (as root)
-
-# create config that contains these lines (without #) :
-
-# interface buspirate
-# buspirate_port /dev/ttyUSB0
-# tms_sequence long #this line was necessary for usbprog not sure it is needed now
-
-
-# enjoy ;)
-
-
-
-diff -Naur ./openocd-0.3.0-rc0/config.h.in ./openocd-0.3.0-rc0-BP/config.h.in
---- ./openocd-0.3.0-rc0/config.h.in	2009-10-29 05:23:51.000000000 +0100
-+++ ./openocd-0.3.0-rc0-BP/config.h.in	2010-01-18 17:37:20.000000000 +0100
+diff -Naur openocd-0.3.0-rc0/config.h.in openocd-0.3.0-rc0-BP/config.h.in
+--- openocd-0.3.0-rc0/config.h.in	2009-10-29 05:23:51.000000000 +0100
++++ openocd-0.3.0-rc0-BP/config.h.in	2010-01-18 17:37:20.000000000 +0100
 @@ -69,6 +69,9 @@
  /* 0 if you don't want the usbprog JTAG driver. */
  #undef BUILD_USBPROG
@@ -40,9 +11,9 @@ diff -Naur ./openocd-0.3.0-rc0/config.h.in ./openocd-0.3.0-rc0-BP/config.h.in
  /* 0 if you don't want the Versaloon-Link JTAG driver. */
  #undef BUILD_VSLLINK
  
-diff -Naur ./openocd-0.3.0-rc0/configure.in ./openocd-0.3.0-rc0-BP/configure.in
---- ./openocd-0.3.0-rc0/configure.in	2009-10-29 05:23:17.000000000 +0100
-+++ ./openocd-0.3.0-rc0-BP/configure.in	2010-01-18 17:37:04.000000000 +0100
+diff -Naur openocd-0.3.0-rc0/configure.in openocd-0.3.0-rc0-BP/configure.in
+--- openocd-0.3.0-rc0/configure.in	2009-10-29 05:23:17.000000000 +0100
++++ openocd-0.3.0-rc0-BP/configure.in	2010-01-18 17:37:04.000000000 +0100
 @@ -376,6 +376,10 @@
    AS_HELP_STRING([--enable-usbprog], [Enable building support for the usbprog JTAG Programmer]),
    [build_usbprog=$enableval], [build_usbprog=no])
@@ -75,9 +46,9 @@ diff -Naur ./openocd-0.3.0-rc0/configure.in ./openocd-0.3.0-rc0-BP/configure.in
  AM_CONDITIONAL(OOCD_TRACE, test $build_oocd_trace = yes)
  AM_CONDITIONAL(JLINK, test $build_jlink = yes)
  AM_CONDITIONAL(VSLLINK, test $build_vsllink = yes)
-diff -Naur ./openocd-0.3.0-rc0/src/jtag/Makefile.am ./openocd-0.3.0-rc0-BP/src/jtag/Makefile.am
---- ./openocd-0.3.0-rc0/src/jtag/Makefile.am	2009-10-21 13:45:59.000000000 +0200
-+++ ./openocd-0.3.0-rc0-BP/src/jtag/Makefile.am	2010-01-18 17:41:03.000000000 +0100
+diff -Naur openocd-0.3.0-rc0/src/jtag/Makefile.am openocd-0.3.0-rc0-BP/src/jtag/Makefile.am
+--- openocd-0.3.0-rc0/src/jtag/Makefile.am	2009-10-21 13:45:59.000000000 +0200
++++ openocd-0.3.0-rc0-BP/src/jtag/Makefile.am	2010-01-18 17:41:03.000000000 +0100
 @@ -68,6 +68,9 @@
  if ARMJTAGEW
  DRIVERFILES += arm-jtag-ew.c
@@ -88,13 +59,13 @@ diff -Naur ./openocd-0.3.0-rc0/src/jtag/Makefile.am ./openocd-0.3.0-rc0-BP/src/j
  
  endif
  # endif // MINIDRIVER
-diff -Naur ./openocd-0.3.0-rc0/src/jtag/buspirate.c ./openocd-0.3.0-rc0-BP/src/jtag/buspirate.c
---- ./openocd-0.3.0-rc0/src/jtag/buspirate.c	1970-01-01 01:00:00.000000000 +0100
-+++ ./openocd-0.3.0-rc0-BP/src/jtag/buspirate.c	2010-01-21 19:56:55.000000000 +0100
-@@ -0,0 +1,654 @@
+diff -Naur openocd-0.3.0-rc0/src/jtag/buspirate.c openocd-0.3.0-rc0-BP/src/jtag/buspirate.c
+--- openocd-0.3.0-rc0/src/jtag/buspirate.c	1970-01-01 01:00:00.000000000 +0100
++++ openocd-0.3.0-rc0-BP/src/jtag/buspirate.c	2010-01-31 14:12:12.000000000 +0100
+@@ -0,0 +1,941 @@
 +/***************************************************************************
 + *   Copyright (C) 2010 by Michal Demin                                    *
-+ *   heavily based on Benedikt Sauter's usnprog.c and arm-jtag-ew.c        *
++ *   based on Benedikt Sauter's usbprog.c and arm-jtag-ew.c                *
 + *                                                                         *
 + *   This program is free software; you can redistribute it and/or modify  *
 + *   it under the terms of the GNU General Public License as published by  *
@@ -121,16 +92,13 @@ diff -Naur ./openocd-0.3.0-rc0/src/jtag/buspirate.c ./openocd-0.3.0-rc0-BP/src/j
 +
 +#include <termios.h>
 +#include <fcntl.h>
++#include <sys/ioctl.h>
 +
-+/* Pins at buspirate */
-+#define TDO_BIT			0
-+#define TDI_BIT			3
-+#define TCK_BIT			2
-+#define TMS_BIT			1
-+
-+
++#undef DEBUG_SERIAL
++//#define DEBUG_SERIAL
 +static int buspirate_execute_queue(void);
 +static int buspirate_speed(int speed);
++static int buspirate_khz(int khz, int *jtag_speed);
 +static int buspirate_register_commands(struct command_context_s *cmd_ctx);
 +static int buspirate_init(void);
 +static int buspirate_quit(void);
@@ -146,58 +114,108 @@ diff -Naur ./openocd-0.3.0-rc0/src/jtag/buspirate.c ./openocd-0.3.0-rc0-BP/src/j
 +	.name = "buspirate",
 +	.execute_queue = buspirate_execute_queue,
 +	.speed = buspirate_speed,
++	.khz = buspirate_khz,
 +	.register_commands = buspirate_register_commands,
 +	.init = buspirate_init,
 +	.quit = buspirate_quit
 +};
 +
-+#define UNKOWN_COMMAND	0x00
-+#define PORT_DIRECTION	0x01
-+#define PORT_SET		0x02
-+#define PORT_GET		0x03
-+#define PORT_SETBIT		0x04
-+#define PORT_GETBIT		0x05
-+#define WRITE_TDI		0x06
-+#define READ_TDO		0x07
-+#define WRITE_AND_READ	0x08
-+#define WRITE_TMS		0x09
-+#define WRITE_TMS_CHAIN	0x0A
-+#define RUNTEST_CHAIN 0x10
-+#define TAP_SHIFT 0x20 
++#define CMD_UNKOWN        0x00
++#define CMD_PORT_MODE     0x01
++#define CMD_FEATURE       0x02
++#define CMD_READ_ADCS     0x03
++//#define CMD_TAP_SHIFT     0x04 // old protocol 
++#define CMD_TAP_SHIFT     0x05
++#define CMD_ENTER_OOCD    0x06
++#define CMD_UART_SPEED    0x07
++#define CMD_JTAG_SPEED    0x08
++
++enum {
++	MODE_HIZ=0,
++	MODE_JTAG=1, // push-pull outputs
++	MODE_JTAG_OD=2, // open-drain outputs 
++};
++
++enum {
++	FEATURE_LED=0x01,
++	FEATURE_VREG=0x02,
++	FEATURE_TRST=0x04,
++	FEATURE_SRST=0x08,
++	FEATURE_PULLUP=0x10
++};
++
++enum {
++	ACTION_DISABLE=0,
++	ACTION_ENABLE=1
++};
++
++enum {
++	SERIAL_NORMAL=0,
++	SERIAL_FAST=1
++};
++
 +
 +static int buspirate_fd = -1;
++static int buspirate_baudrate = SERIAL_NORMAL;
 +static char* buspirate_port = NULL;
 +
 +
-+
++/* TAP interface */
 +static void buspirate_tap_init(void);
 +static int buspirate_tap_execute(void);
 +static void buspirate_tap_append(int tms, int tdi);
 +static void buspirate_tap_append_scan(int length, uint8_t *buffer, scan_command_t *command);
 +static void buspirate_tap_make_space(int scan, int bits);
 +
-+
-+
-+static void buspirate_write_direct(int tck, int tms, int tdi);
 +static void buspirate_reset(int trst, int srst);
 +
 +/* low level interface */
-+static unsigned char buspirate_jtag_message(int buspirate_fd, char *msg, int msglen);
-+static void buspirate_jtag_set_direction(int buspirate_fd, unsigned char direction);
-+static void buspirate_jtag_write_slice(int buspirate_fd,unsigned char value);
-+static void buspirate_jtag_set_bit(int buspirate_fd,int bit, int value);
++static void buspirate_jtag_reset(int);
++static void buspirate_jtag_enable(int);
++static unsigned char buspirate_jtag_command(int, char *, int);
++static void buspirate_jtag_set_speed(int, char);
++static void buspirate_jtag_set_mode(int, char);
++static void buspirate_jtag_set_feature(int, char, char);
++static void buspirate_jtag_get_adcs(int);
 +
++/* command interface */
++static int buspirate_handle_adc_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc);
++static int buspirate_handle_vreg_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc);
++static int buspirate_handle_pullup_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc);
++static int buspirate_handle_led_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc);
++static int buspirate_handle_speed_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc);
 +static int buspirate_handle_port_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc);
++
++/* low level HW communication interface */
++static int buspirate_serial_setspeed(int fd, speed_t speed);
++static int buspirate_serial_write(int fd, char *buf, int size);
 +static int buspirate_serial_read(int fd, char *buf, int size);
 +static void buspirate_print_buffer(char* buf, int size);
 +
 +static int buspirate_speed(int speed)
 +{
++	// TODO
++	LOG_INFO("Want to set speed to %dkHz, but not implemented :(", speed);
++	return ERROR_OK;
++}
++
++static int buspirate_khz(int khz, int *jtag_speed) {
++	*jtag_speed = khz;
 +	return ERROR_OK;
 +}
 +
 +static int buspirate_register_commands(struct command_context_s *cmd_ctx)
 +{
++	register_command(cmd_ctx, NULL, "buspirate_adc", buspirate_handle_adc_command,
++		COMMAND_EXEC, "reads voltages on adc pins");
++	register_command(cmd_ctx, NULL, "buspirate_vreg", buspirate_handle_vreg_command,
++		COMMAND_EXEC, "changes the state of voltage regulators");
++	register_command(cmd_ctx, NULL, "buspirate_pullup", buspirate_handle_pullup_command,
++		COMMAND_EXEC, "changes the state of pullup");
++	register_command(cmd_ctx, NULL, "buspirate_led", buspirate_handle_led_command,
++		COMMAND_EXEC, "changes the state of led");
++	register_command(cmd_ctx, NULL, "buspirate_speed", buspirate_handle_speed_command,
++		COMMAND_CONFIG, "speed of the interface");
 +	register_command(cmd_ctx, NULL, "buspirate_port", buspirate_handle_port_command,
 +		COMMAND_CONFIG, "name of the serial port to open");
 +	return ERROR_OK;
@@ -215,30 +233,30 @@ diff -Naur ./openocd-0.3.0-rc0/src/jtag/buspirate.c ./openocd-0.3.0-rc0-BP/src/j
 +		switch (cmd->type)
 +		{
 +			case JTAG_RUNTEST:
-+//#ifdef _DEBUG_JTAG_IO_
++#ifdef _DEBUG_JTAG_IO_
 +				LOG_DEBUG("runtest %i cycles, end in %s", cmd->cmd.runtest->num_cycles, tap_state_name(cmd->cmd.runtest->end_state));
-+//#endif
++#endif
 +				buspirate_end_state(cmd->cmd.runtest->end_state);
 +				buspirate_runtest(cmd->cmd.runtest->num_cycles);
 +				break;
 +			case JTAG_STATEMOVE:
-+//#ifdef _DEBUG_JTAG_IO_
++#ifdef _DEBUG_JTAG_IO_
 +				LOG_DEBUG("statemove end in %s", tap_state_name(cmd->cmd.statemove->end_state));
-+//#endif
++#endif
 +				buspirate_end_state(cmd->cmd.statemove->end_state);
 +				buspirate_state_move();
 +				break;
 +			case JTAG_PATHMOVE:
-+//#ifdef _DEBUG_JTAG_IO_
++#ifdef _DEBUG_JTAG_IO_
 +				LOG_DEBUG("pathmove: %i states, end in %s", cmd->cmd.pathmove->num_states,
 +					tap_state_name(cmd->cmd.pathmove->path[cmd->cmd.pathmove->num_states - 1]));
-+//#endif
++#endif
 +				buspirate_path_move(cmd->cmd.pathmove);
 +				break;
 +			case JTAG_SCAN:
-+//#ifdef _DEBUG_JTAG_IO_
++#ifdef _DEBUG_JTAG_IO_
 +				LOG_DEBUG("scan end in %s", tap_state_name(cmd->cmd.scan->end_state));
-+//#endif
++#endif
 +
 +				buspirate_end_state(cmd->cmd.scan->end_state);
 +
@@ -248,9 +266,9 @@ diff -Naur ./openocd-0.3.0-rc0/src/jtag/buspirate.c ./openocd-0.3.0-rc0-BP/src/j
 +
 +				break;
 +			case JTAG_RESET:
-+//#ifdef _DEBUG_JTAG_IO_
++#ifdef _DEBUG_JTAG_IO_
 +				LOG_DEBUG("reset trst: %i srst %i", cmd->cmd.reset->trst, cmd->cmd.reset->srst);
-+//#endif
++#endif
 +				// flush buffers, so we can reset
 +				buspirate_tap_execute();
 +
@@ -261,9 +279,9 @@ diff -Naur ./openocd-0.3.0-rc0/src/jtag/buspirate.c ./openocd-0.3.0-rc0-BP/src/j
 +				buspirate_reset(cmd->cmd.reset->trst, cmd->cmd.reset->srst);
 +				break;
 +			case JTAG_SLEEP:
-+//#ifdef _DEBUG_JTAG_IO_
++#ifdef _DEBUG_JTAG_IO_
 +				LOG_DEBUG("sleep %i", cmd->cmd.sleep->us);
-+//#endif
++#endif
 +				buspirate_tap_execute();
 +				jtag_sleep(cmd->cmd.sleep->us);
 +					break;
@@ -280,8 +298,8 @@ diff -Naur ./openocd-0.3.0-rc0/src/jtag/buspirate.c ./openocd-0.3.0-rc0-BP/src/j
 +
 +static int buspirate_init(void)
 +{
-+	struct termios t_opt;
-+buspirate_print_buffer(" ", 0);
++	buspirate_print_buffer("", 0);
++
 +	if (buspirate_port == NULL) {
 +		buspirate_port = "/dev/ttyUSB0";
 +	}
@@ -294,35 +312,30 @@ diff -Naur ./openocd-0.3.0-rc0/src/jtag/buspirate.c ./openocd-0.3.0-rc0-BP/src/j
 +		return ERROR_JTAG_INIT_FAILED;
 +	}
 +
-+	/* set the serial port parameters */
-+	fcntl(buspirate_fd, F_SETFL, 0);
-+	tcgetattr(buspirate_fd, &t_opt);
-+	cfsetispeed(&t_opt, B115200);
-+	cfsetospeed(&t_opt, B115200);
-+	t_opt.c_cflag |= (CLOCAL | CREAD);
-+	t_opt.c_cflag &= ~PARENB;
-+	t_opt.c_cflag &= ~CSTOPB;
-+	t_opt.c_cflag &= ~CSIZE;
-+	t_opt.c_cflag |= CS8;
-+	t_opt.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
-+	t_opt.c_iflag &= ~(IXON | IXOFF | IXANY);
-+	t_opt.c_oflag &= ~OPOST;
-+	t_opt.c_cc[VMIN] = 0;
-+	t_opt.c_cc[VTIME] = 10;
-+	tcsetattr(buspirate_fd, TCSANOW, &t_opt);
++	buspirate_serial_setspeed(buspirate_fd, B115200);
++
++	buspirate_jtag_enable(buspirate_fd);
 +	
++	if (buspirate_baudrate != SERIAL_NORMAL) {
++		buspirate_jtag_set_speed(buspirate_fd, SERIAL_FAST);
++	}
++
 +	LOG_INFO("Buspirate Interface ready!");
 +
 +	buspirate_tap_init();
-+	buspirate_jtag_set_direction(buspirate_fd, 0x01);
++	buspirate_jtag_set_mode(buspirate_fd, MODE_JTAG);
 +	buspirate_reset(0, 0);
-+	buspirate_write_direct(0, 0, 0);
 +
 +	return ERROR_OK;
 +}
 +
 +static int buspirate_quit(void)
 +{
++	LOG_INFO("Shuting down buspirate ");
++	buspirate_jtag_set_mode(buspirate_fd, MODE_HIZ);
++
++	buspirate_jtag_set_speed(buspirate_fd, SERIAL_NORMAL);
++	buspirate_jtag_reset(buspirate_fd);
 +	if (buspirate_port) {
 +		free(buspirate_port);
 +		buspirate_port = NULL;
@@ -404,9 +417,9 @@ diff -Naur ./openocd-0.3.0-rc0/src/jtag/buspirate.c ./openocd-0.3.0-rc0-BP/src/j
 +		buspirate_tap_append(0, 0);
 +	}
 +
-+//#ifdef _DEBUG_JTAG_IO_
++#ifdef _DEBUG_JTAG_IO_
 +	LOG_DEBUG("runtest: cur_state %s end_state %s", tap_state_name(tap_get_state()), tap_state_name(tap_get_end_state()));
-+//#endif
++#endif
 +
 +	/* finish in end_state */
 +	buspirate_end_state(saved_end_state);
@@ -479,6 +492,7 @@ diff -Naur ./openocd-0.3.0-rc0/src/jtag/buspirate.c ./openocd-0.3.0-rc0-BP/src/j
 +	char tmp[4096];
 +	uint8_t *in_buf;
 +	int i;
++	int fill_index = 0;
 +	int ret;
 +  int bytes_to_send;
 +
@@ -488,28 +502,34 @@ diff -Naur ./openocd-0.3.0-rc0/src/jtag/buspirate.c ./openocd-0.3.0-rc0-BP/src/j
 +
 +	bytes_to_send = (tap_chain_index+7) / 8;
 +
-+	tmp[0] = TAP_SHIFT; // this command expects number of bits
++	tmp[0] = CMD_TAP_SHIFT; // this command expects number of bits
 +	tmp[1] = (char)(tap_chain_index >> 8);	/* high */
 +	tmp[2] = (char)(tap_chain_index);			  /* low */
 +
-+	memcpy(&tmp[3], tdi_chain, bytes_to_send);
-+	memcpy(&tmp[3+bytes_to_send], tms_chain, bytes_to_send);
++	fill_index = 3;
++	for (i=0; i<bytes_to_send; i++) {
++		tmp[fill_index] = tdi_chain[i];
++		fill_index++;
++		tmp[fill_index] = tms_chain[i];
++		fill_index++;
++	}
 +
-+	ret = write(buspirate_fd, tmp, 3 + bytes_to_send*2);
++	ret = buspirate_serial_write(buspirate_fd, tmp, 3 + bytes_to_send*2);
 +	if (ret != bytes_to_send*2+3)
 +	{
 +		LOG_ERROR("error writing :(");
-+		return 0;
++		return ERROR_JTAG_DEVICE_ERROR;
 +	}
-+//fprintf(stderr,"bytes writen %i:\n", ret);
-+//buspirate_print_buffer(tmp, bytes_to_send*2+3);
-+
-+	usleep(1);
++#ifdef DEBUG_SERIAL
++fprintf(stderr,"bytes writen %i:\n", ret);
++buspirate_print_buffer(tmp, bytes_to_send*2+3);
++#endif
 +
 +	ret = buspirate_serial_read(buspirate_fd, tmp, bytes_to_send + 3);
-+//fprintf(stderr,"bytes read %i should have read %i:\n", ret, bytes_to_send + 3);
-+//buspirate_print_buffer(tmp, bytes_to_send+3);
-+
++#ifdef DEBUG_SERIAL
++fprintf(stderr,"bytes read %i should have read %i:\n", ret, bytes_to_send + 3);
++buspirate_print_buffer(tmp, bytes_to_send+3);
++#endif
 +	in_buf = (uint8_t*)(&tmp[3]);
 +	/* parse the scans */
 +	for (i = 0; i < tap_pending_scans_num; i++) {
@@ -596,70 +616,205 @@ diff -Naur ./openocd-0.3.0-rc0/src/jtag/buspirate.c ./openocd-0.3.0-rc0-BP/src/j
 +
 +/*************** jtag wrapper functions *********************/
 +
-+static void buspirate_write_direct(int tck, int tms, int tdi)
-+{
-+	unsigned char output_value = 0x00;
-+
-+	if (tms)
-+		output_value |= (1 << TMS_BIT);
-+	if (tdi)
-+		output_value |= (1 << TDI_BIT);
-+	if (tck)
-+		output_value |= (1 << TCK_BIT);
-+
-+	buspirate_jtag_write_slice(buspirate_fd, output_value);
-+}
-+
 +/* (1) assert or (0) deassert reset lines */
 +static void buspirate_reset(int trst, int srst)
 +{
 +	LOG_DEBUG("trst: %i, srst: %i", trst, srst);
 +
 +	if (trst)
-+		buspirate_jtag_set_bit(buspirate_fd, 5, 0);
++		buspirate_jtag_set_feature(buspirate_fd, FEATURE_TRST, ACTION_DISABLE);
 +	else
-+		buspirate_jtag_set_bit(buspirate_fd, 5, 1);
++		buspirate_jtag_set_feature(buspirate_fd, FEATURE_TRST, ACTION_ENABLE);
 +
 +	if (srst)
-+		buspirate_jtag_set_bit(buspirate_fd, 4, 0);
++		buspirate_jtag_set_feature(buspirate_fd, FEATURE_SRST, ACTION_DISABLE);
 +	else
-+		buspirate_jtag_set_bit(buspirate_fd, 4, 1);
++		buspirate_jtag_set_feature(buspirate_fd, FEATURE_SRST, ACTION_ENABLE);
 +}
 +
 +/*************** jtag lowlevel functions ********************/
++static void buspirate_jtag_enable(int fd)
++{
++	int ret;
++	char tmp[21] = { [0 ... 20] = 0x00 };
++	int done = 0;
++	int cmd_sent = 0;
++	
++	buspirate_serial_write(fd, tmp, 20);
++	usleep(10000);
 +
-+static unsigned char buspirate_jtag_message(int buspirate_fd, char *msg, int msglen)
++	// reads 1 to x "BBIO1" and one "OCD1"
++	while (!done)
++	{
++		ret = buspirate_serial_read(fd, tmp, 4);
++#ifdef DEBUG_SERIAL
++fprintf(stderr,"bytes read %i:\n", ret);
++buspirate_print_buffer(tmp, ret);
++#endif
++		if (ret != 4)
++		{
++			LOG_ERROR("Buspirate did not respond :(( restart everything");
++			exit(-1);
++		}
++		if (strncmp(tmp, "BBIO", 4)==0)
++		{
++			ret = buspirate_serial_read(fd, tmp, 1);
++#ifdef DEBUG_SERIAL
++fprintf(stderr,"bytes read %i:\n", ret);
++buspirate_print_buffer(tmp, ret);
++#endif
++			if (ret != 1) {
++				LOG_ERROR("Buspirate did not respond well :( restart everything");
++				exit(-1);
++			}
++			if (tmp[0] != '1')
++			{
++				LOG_ERROR("Unsupported binary protocol ");
++				exit(-1);
++			}
++			if (cmd_sent == 0)
++			{
++				cmd_sent = 1;
++				tmp[0] = CMD_ENTER_OOCD;
++				ret = buspirate_serial_write(fd, tmp, 1);
++#ifdef DEBUG_SERIAL
++fprintf(stderr,"bytes written %i:\n", ret);
++#endif
++			}
++		} 
++		else if (strncmp(tmp, "OCD1", 4) == 0)
++		{
++			done = 1;
++		} 
++		else 
++		{
++			LOG_ERROR("Buspirate did not respond :((( restart everything");
++			exit(-1);
++		}
++	}
++
++}
++
++static void buspirate_jtag_reset(int fd) {
++	int ret;
++	char tmp[5];
++
++	tmp[0] = 0x00; // exit OCD1 mode
++	buspirate_serial_write(fd, tmp, 1);
++	usleep(10000);
++	ret = buspirate_serial_read(fd, tmp, 5);
++	if (strncmp(tmp, "BBIO1", 5)==0)
++	{
++		tmp[0] = 0x0F; //  reset BP
++		buspirate_serial_write(fd, tmp, 1);
++	}
++	else 
++	{
++		LOG_ERROR("Bad reply :( Please restart manually");
++	}
++
++}
++
++static void buspirate_jtag_set_speed(int fd, char speed)
++{
++	int ret;
++	char tmp[2];
++	char ack[2];
++	speed_t baudrate = B115200;
++
++	ack[0] = 0xAA;
++	ack[1] = 0x55;
++
++	tmp[0] = CMD_UART_SPEED;
++	tmp[1] = speed;
++	buspirate_jtag_command(fd, tmp, 2);
++
++	// here the adapter changes speed, we need follow
++	if (speed == SERIAL_FAST) {
++		baudrate = B1000000;
++	}
++	buspirate_serial_setspeed(fd, baudrate);
++
++	buspirate_serial_write(fd, ack, 2);
++	ret = buspirate_serial_read(fd, tmp, 2);
++	if (ret != 2) {
++		LOG_ERROR("Buspirate did not respond :(( restart everything");
++		exit(-1);
++	}
++	if ((tmp[0] != CMD_UART_SPEED) || (tmp[1] != speed)) {
++		LOG_ERROR("Buspirate didn't reply as expected :(( restart everything");
++		exit(-1);
++	}
++	LOG_INFO("Running in %s mode", (speed==SERIAL_NORMAL)?"normal":"FAST");
++}
++
++
++static void buspirate_jtag_set_mode(int fd, char mode)
++{
++	char tmp[2];
++	tmp[0] = CMD_PORT_MODE;
++	tmp[1] = mode;
++	buspirate_jtag_command(fd, tmp, 2);
++}
++
++static void buspirate_jtag_set_feature(int fd, char feat, char action)
++{
++	char tmp[3];
++	tmp[0] = CMD_FEATURE;
++	tmp[1] = feat;   // what
++	tmp[2] = action; // action
++	buspirate_jtag_command(fd, tmp, 3);
++}
++
++static void buspirate_jtag_get_adcs(int fd)
++{
++	uint8_t tmp[10];
++	uint16_t a,b,c,d;
++	tmp[0] = CMD_READ_ADCS;
++	buspirate_jtag_command(fd, (char*)tmp, 1);
++	a = tmp[2] << 8 | tmp[3];
++	b = tmp[4] << 8 | tmp[5];
++	c = tmp[6] << 8 | tmp[7];
++	d = tmp[8] << 8 | tmp[9];
++
++	LOG_INFO("ADC: ADC_Pin = %.02f VPullup = %.02f V33 = %.02f V50 = %.02f", 
++		((float)a)/155.1515, ((float)b)/155.1515, ((float)c)/155.1515, ((float)d)/155.1515);
++}
++
++static unsigned char buspirate_jtag_command(int buspirate_fd, char *cmd, int cmdlen)
 +{
 +	int res;
 +	int len = 0;
 +	
-+	res = write(buspirate_fd, msg, msglen);
-+//LOG_INFO("jtag_message  %i",(int)msg[0]);
-+//LOG_INFO("write cmd = %i bytes %i", msg[0], res); 
-+//buspirate_print_buffer(msg, msglen);
-+	if ((msg[0] == 2) || (msg[0] == 1) || (msg[0] == 4) || (msg[0] == 0) || \
-+			(msg[0] == 6) || (msg[0] == 0x0A) || (msg[0] == 9) || (msg[0]== 0x10))
++	res = buspirate_serial_write(buspirate_fd, cmd, cmdlen);
++#ifdef DEBUG_SERIAL
++//LOG_INFO("jtag_message  %i",(int)cmd[0]);
++LOG_INFO("write cmd = %i bytes %i", cmd[0], res); 
++buspirate_print_buffer(cmd, cmdlen);
++#endif
++	if ((cmd[0] == CMD_UART_SPEED) || (cmd[0] == CMD_PORT_MODE) || (cmd[0] == CMD_FEATURE) || (cmd[0] == CMD_JTAG_SPEED))
 +		return 1;
-+	if (res == msglen)
++
++	if (res == cmdlen)
 +	{
 +	//	LOG_INFO("waiting jtag_message response %i",(int)msg[0]);
-+		switch (msg[0]) {
-+			case PORT_GET:
-+			case PORT_GETBIT:
-+				len = 2;
++		switch (cmd[0]) {
++			case CMD_READ_ADCS:
++				len = 10; // 2+2*4
 +				break;
-+			case READ_TDO:
-+			case WRITE_AND_READ:
-+				len = msglen;
++			case CMD_TAP_SHIFT:
++				len = cmdlen;
 +				break;
 +			default:
 +				LOG_INFO("Wrong !");
 +		}
-+		res =  buspirate_serial_read(buspirate_fd, msg, len);
-+//LOG_INFO("read bytes  %i should have read  %i", res, len); 
-+//buspirate_print_buffer(msg, msglen);
++		res =  buspirate_serial_read(buspirate_fd, cmd, len);
++#ifdef DEBUG_SERIAL
++LOG_INFO("read bytes  %i should have read  %i", res, len); 
++buspirate_print_buffer(cmd, len);
++#endif
 +		if (res > 0)
-+			return (unsigned char)msg[1];
++			return (unsigned char)cmd[1];
 +		else
 +			return -1;
 +	}
@@ -668,33 +823,99 @@ diff -Naur ./openocd-0.3.0-rc0/src/jtag/buspirate.c ./openocd-0.3.0-rc0-BP/src/j
 +	return 0;
 +}
 +
++/* openocd command interface */
++static int buspirate_handle_adc_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc) {
++	if (argc != 0)
++	{
++		command_print(cmd_ctx, "usage: buspirate_adc");
++		return ERROR_OK;
++	}
 +
-+static void buspirate_jtag_set_direction(int buspirate_fd, unsigned char direction)
-+{
-+	char tmp[2];
-+	tmp[0] = PORT_DIRECTION;
-+	tmp[1] = (char)direction;
-+	buspirate_jtag_message(buspirate_fd, tmp, 2);
++	if (buspirate_fd == -1) {
++		return ERROR_OK;
++	}
++
++	// send the command
++	buspirate_jtag_get_adcs(buspirate_fd);
++
++	return ERROR_OK;
++	
 +}
 +
-+static void buspirate_jtag_write_slice(int buspirate_fd,unsigned char value)
-+{
-+	char tmp[2];
-+	tmp[0] = PORT_SET;
-+	tmp[1] = (char)value;
-+	buspirate_jtag_message(buspirate_fd, tmp, 2);
++static int buspirate_handle_vreg_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc) {
++	if (argc != 1)
++	{
++		command_print(cmd_ctx, "usage: buspirate_vreg <1|0>");
++		return ERROR_OK;
++	}
++
++	if (atoi(args[0]) == 1) {
++		// enable vreg
++		buspirate_jtag_set_feature(buspirate_fd, FEATURE_VREG, ACTION_ENABLE);
++	} else {
++		// disable vreg
++		buspirate_jtag_set_feature(buspirate_fd, FEATURE_VREG, ACTION_DISABLE);
++	}
++
++	return ERROR_OK;
++	
 +}
 +
-+static void buspirate_jtag_set_bit(int buspirate_fd,int bit, int value)
-+{
-+	char tmp[3];
-+	tmp[0] = PORT_SETBIT;
-+	tmp[1] = (char)bit;
-+	if (value == 1)
-+		tmp[2] = 0x01;
-+	else
-+		tmp[2] = 0x00;
-+	buspirate_jtag_message(buspirate_fd, tmp, 3);
++static int buspirate_handle_pullup_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc) {
++	if (argc != 1)
++	{
++		command_print(cmd_ctx, "usage: buspirate_pullup <1|0>");
++		return ERROR_OK;
++	}
++
++	if (atoi(args[0]) == 1) {
++		// enable led
++		buspirate_jtag_set_feature(buspirate_fd, FEATURE_PULLUP, ACTION_ENABLE);
++	} else {
++		// disable led
++		buspirate_jtag_set_feature(buspirate_fd, FEATURE_PULLUP, ACTION_DISABLE);
++	}
++
++	return ERROR_OK;
++	
++}
++
++static int buspirate_handle_led_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc) {
++	if (argc != 1)
++	{
++		command_print(cmd_ctx, "usage: buspirate_led <1|0>");
++		return ERROR_OK;
++	}
++
++	if (atoi(args[0]) == 1) {
++		// enable led
++		buspirate_jtag_set_feature(buspirate_fd, FEATURE_LED, ACTION_ENABLE);
++	} else {
++		// disable led
++		buspirate_jtag_set_feature(buspirate_fd, FEATURE_LED, ACTION_DISABLE);
++	}
++
++	return ERROR_OK;
++	
++}
++
++static int buspirate_handle_speed_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc) {
++	if (argc != 1)
++	{
++		command_print(cmd_ctx, "usage: buspirate_speed <normal|fast>");
++		return ERROR_OK;
++	}
++
++	if (args[0][0] == 'n') {
++		buspirate_baudrate = SERIAL_NORMAL;
++	} else if (args[0][0] == 'f') {
++		buspirate_baudrate = SERIAL_FAST;
++	} else {
++		command_print(cmd_ctx, "usage: buspirate_speed <normal|fast>");
++	}
++
++	return ERROR_OK;
++	
 +}
 +
 +static int buspirate_handle_port_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc) {
@@ -710,6 +931,43 @@ diff -Naur ./openocd-0.3.0-rc0/src/jtag/buspirate.c ./openocd-0.3.0-rc0-BP/src/j
 +
 +	return ERROR_OK;
 +	
++}
++
++/* low level serial port */
++static int buspirate_serial_setspeed(int fd, speed_t speed) {
++	struct termios t_opt;
++
++	/* set the serial port parameters */
++	fcntl(buspirate_fd, F_SETFL, 0);
++	tcgetattr(buspirate_fd, &t_opt);
++	cfsetispeed(&t_opt, speed);
++	cfsetospeed(&t_opt, speed);
++	t_opt.c_cflag |= (CLOCAL | CREAD);
++	t_opt.c_cflag &= ~PARENB;
++	t_opt.c_cflag &= ~CSTOPB;
++	t_opt.c_cflag &= ~CSIZE;
++	t_opt.c_cflag |= CS8;
++	t_opt.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
++	t_opt.c_iflag &= ~(IXON | IXOFF | IXANY);
++	t_opt.c_oflag &= ~OPOST;
++	t_opt.c_cc[VMIN] = 0;
++	t_opt.c_cc[VTIME] = 10;
++	tcflush(buspirate_fd, TCIFLUSH);
++	tcsetattr(buspirate_fd, TCSANOW, &t_opt);
++
++	return 0;
++}
++
++static int buspirate_serial_write(int fd, char *buf, int size) {
++	int ret = 0;
++
++	ret = write(fd, buf, size);
++
++	if (ret != size) {
++		LOG_ERROR("Error sending data");
++	}
++	
++	return ret;
 +}
 +
 +static int buspirate_serial_read(int fd, char *buf, int size) {
@@ -746,9 +1004,9 @@ diff -Naur ./openocd-0.3.0-rc0/src/jtag/buspirate.c ./openocd-0.3.0-rc0-BP/src/j
 +	}
 +	fprintf(stderr, "\n");
 +}
-diff -Naur ./openocd-0.3.0-rc0/src/jtag/interfaces.c ./openocd-0.3.0-rc0-BP/src/jtag/interfaces.c
---- ./openocd-0.3.0-rc0/src/jtag/interfaces.c	2009-10-21 13:45:59.000000000 +0200
-+++ ./openocd-0.3.0-rc0-BP/src/jtag/interfaces.c	2010-01-18 17:41:44.000000000 +0100
+diff -Naur openocd-0.3.0-rc0/src/jtag/interfaces.c openocd-0.3.0-rc0-BP/src/jtag/interfaces.c
+--- openocd-0.3.0-rc0/src/jtag/interfaces.c	2009-10-21 13:45:59.000000000 +0200
++++ openocd-0.3.0-rc0-BP/src/jtag/interfaces.c	2010-01-18 17:41:44.000000000 +0100
 @@ -88,6 +88,9 @@
  #if BUILD_ARMJTAGEW == 1
  extern jtag_interface_t armjtagew_interface;
@@ -769,4 +1027,20 @@ diff -Naur ./openocd-0.3.0-rc0/src/jtag/interfaces.c ./openocd-0.3.0-rc0-BP/src/
  #endif // standard drivers
  		NULL,
  	};
-
+diff -Naur openocd-0.3.0-rc0/tcl/interface/buspirate.cfg openocd-0.3.0-rc0-BP/tcl/interface/buspirate.cfg
+--- openocd-0.3.0-rc0/tcl/interface/buspirate.cfg	1970-01-01 01:00:00.000000000 +0100
++++ openocd-0.3.0-rc0-BP/tcl/interface/buspirate.cfg	2010-01-31 13:54:45.000000000 +0100
+@@ -0,0 +1,13 @@
++#
++# Buspirate with OpenOCD support
++#
++# http://dangerousprototypes.com/category/bus-pirate/
++#
++
++interface buspirate
++buspirate_port /dev/ttyUSB0 # adjust to your needs
++buspirate_speed normal # or fast
++
++# this depends on the cable, you are safe with this option
++reset_config srst_only
++
