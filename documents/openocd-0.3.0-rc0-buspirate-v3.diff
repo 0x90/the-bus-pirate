@@ -61,8 +61,8 @@ diff -Naur openocd-0.3.0-rc0/src/jtag/Makefile.am openocd-0.3.0-rc0-BP/src/jtag/
  # endif // MINIDRIVER
 diff -Naur openocd-0.3.0-rc0/src/jtag/buspirate.c openocd-0.3.0-rc0-BP/src/jtag/buspirate.c
 --- openocd-0.3.0-rc0/src/jtag/buspirate.c	1970-01-01 01:00:00.000000000 +0100
-+++ openocd-0.3.0-rc0-BP/src/jtag/buspirate.c	2010-01-31 14:12:12.000000000 +0100
-@@ -0,0 +1,941 @@
++++ openocd-0.3.0-rc0-BP/src/jtag/buspirate.c	2010-01-31 14:47:55.000000000 +0100
+@@ -0,0 +1,964 @@
 +/***************************************************************************
 + *   Copyright (C) 2010 by Michal Demin                                    *
 + *   based on Benedikt Sauter's usbprog.c and arm-jtag-ew.c                *
@@ -156,6 +156,7 @@ diff -Naur openocd-0.3.0-rc0/src/jtag/buspirate.c openocd-0.3.0-rc0-BP/src/jtag/
 +
 +
 +static int buspirate_fd = -1;
++static int buspirate_pinmode = MODE_JTAG_OD;
 +static int buspirate_baudrate = SERIAL_NORMAL;
 +static char* buspirate_port = NULL;
 +
@@ -184,6 +185,7 @@ diff -Naur openocd-0.3.0-rc0/src/jtag/buspirate.c openocd-0.3.0-rc0-BP/src/jtag/
 +static int buspirate_handle_pullup_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc);
 +static int buspirate_handle_led_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc);
 +static int buspirate_handle_speed_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc);
++static int buspirate_handle_mode_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc);
 +static int buspirate_handle_port_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc);
 +
 +/* low level HW communication interface */
@@ -215,6 +217,8 @@ diff -Naur openocd-0.3.0-rc0/src/jtag/buspirate.c openocd-0.3.0-rc0-BP/src/jtag/
 +	register_command(cmd_ctx, NULL, "buspirate_led", buspirate_handle_led_command,
 +		COMMAND_EXEC, "changes the state of led");
 +	register_command(cmd_ctx, NULL, "buspirate_speed", buspirate_handle_speed_command,
++		COMMAND_CONFIG, "speed of the interface");
++	register_command(cmd_ctx, NULL, "buspirate_mode", buspirate_handle_mode_command,
 +		COMMAND_CONFIG, "speed of the interface");
 +	register_command(cmd_ctx, NULL, "buspirate_port", buspirate_handle_port_command,
 +		COMMAND_CONFIG, "name of the serial port to open");
@@ -323,7 +327,7 @@ diff -Naur openocd-0.3.0-rc0/src/jtag/buspirate.c openocd-0.3.0-rc0-BP/src/jtag/
 +	LOG_INFO("Buspirate Interface ready!");
 +
 +	buspirate_tap_init();
-+	buspirate_jtag_set_mode(buspirate_fd, MODE_JTAG);
++	buspirate_jtag_set_mode(buspirate_fd, buspirate_pinmode);
 +	buspirate_reset(0, 0);
 +
 +	return ERROR_OK;
@@ -893,6 +897,25 @@ diff -Naur openocd-0.3.0-rc0/src/jtag/buspirate.c openocd-0.3.0-rc0-BP/src/jtag/
 +	} else {
 +		// disable led
 +		buspirate_jtag_set_feature(buspirate_fd, FEATURE_LED, ACTION_DISABLE);
++	}
++
++	return ERROR_OK;
++	
++}
++
++static int buspirate_handle_mode_command(struct command_context_s *cmd_ctx, char *cmd, char **args, int argc) {
++	if (argc != 1)
++	{
++		command_print(cmd_ctx, "usage: buspirate_mode <normal|open-drain>");
++		return ERROR_OK;
++	}
++
++	if (args[0][0] == 'n') {
++		buspirate_pinmode = MODE_JTAG;
++	} else if (args[0][0] == 'o') {
++		buspirate_pinmode = MODE_JTAG_OD;
++	} else {
++		command_print(cmd_ctx, "usage: buspirate_speed <normal|fast>");
 +	}
 +
 +	return ERROR_OK;
