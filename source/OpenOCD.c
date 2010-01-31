@@ -5,21 +5,35 @@
 
 extern struct _modeConfig modeConfig;
 extern struct _bpConfig bpConfig;
-
+// tris registers
 #define OOCD_TDO_TRIS   BP_MISO_DIR
 #define OOCD_TMS_TRIS   BP_CS_DIR
 #define OOCD_CLK_TRIS   BP_CLK_DIR
 #define OOCD_TDI_TRIS   BP_MOSI_DIR
 #define OOCD_SRST_TRIS  BP_AUX_DIR
+#if defined (BUSPIRATEV3)
 #define OOCD_TRST_TRIS  BP_PGD_DIR
+#endif
 
+// io ports
 #define OOCD_TDO        BP_MISO
 #define OOCD_TMS        BP_CS 
 #define OOCD_CLK        BP_CLK 
 #define OOCD_TDI        BP_MOSI 
 #define OOCD_SRST       BP_AUX
+#if defined (BUSPIRATEV3)
 #define OOCD_TRST       BP_PGD
+#endif
 
+// open-drain control
+#define OOCD_TDO_ODC    BP_MISO
+#define OOCD_TMS_ODC    BP_CS 
+#define OOCD_CLK_ODC    BP_CLK 
+#define OOCD_TDI_ODC    BP_MOSI 
+#define OOCD_SRST_ODC   BP_AUX
+#if defined (BUSPIRATEV3)
+#define OOCD_TRST_ODC   BP_PGD
+#endif
 
 #define CMD_UNKNOWN       0x00
 #define CMD_PORT_MODE     0x01
@@ -27,8 +41,9 @@ extern struct _bpConfig bpConfig;
 #define CMD_READ_ADCS     0x03
 //#define CMD_TAP_SHIFT     0x04 // old protocol
 #define CMD_TAP_SHIFT     0x05
-#define CMD_JTAG_SPEED    0x06
+#define CMD_ENTER_OOCD    0x06 // this is the same as in binIO
 #define CMD_UART_SPEED    0x07
+#define CMD_JTAG_SPEED    0x08
 
 static void binOpenOCDString(void);
 static void binOpenOCDPinMode(unsigned char mode);
@@ -52,7 +67,8 @@ enum {
 
 enum {
 	MODE_HIZ=0,
-	MODE_JTAG=1
+	MODE_JTAG=1,
+	MODE_JTAG_OD=2, // open-drain outputs
 };
 
 
@@ -72,13 +88,15 @@ void binOpenOCD(void){
 
 	while(1){
 /*
+this will misbehave when polling is turned off in OpenOCD
+
 		// enable timeout timer (1sec) taken from AUX measurement
 		T4CON=0;
-		TMR5HLD=0x00;
+		TMR5HLD=0x00; // reset the counter
 		TMR4=0x00;
-		T4CON=0b1000;
-		PR5=0xf4;
-		PR4=0x2400;
+		T4CON=0b1000; // 32bit timer
+		PR5=0x1e8;  // 0xf4;
+		PR4=0x4800; // 0x2400;
 		IFS1bits.T5IF=0;
 
 		// enable timer
@@ -99,26 +117,32 @@ void binOpenOCD(void){
 		T4CONbits.TON=0;
 
 		// read the byte
-		inByte=U1RXREG;*/
-		inByte=UART1RX();//U1RXREG;
+		inByte=U1RXREG; 
+*/
+		inByte=UART1RX();
 
 		switch(inByte){
+			case CMD_UNKNOWN:
+				return;
+			case CMD_ENTER_OOCD:
+				binOpenOCDString();
+				break;
 			case CMD_READ_ADCS:
 				buf[0] = CMD_READ_ADCS;
 				buf[1] = 8;
 				AD1CON1bits.ADON = 1; // turn ADC ON
 				i=bpADC(12); // ADC pin
-				buf[2] = i>>8;
-				buf[3] = i&0xff;
+				buf[2] = (unsigned char)(i>>8);
+				buf[3] = (unsigned char)(i);
 				i=bpADC(11); // VEXT pin
-				buf[4] = i>>8;
-				buf[5] = i&0xff;
+				buf[4] = (unsigned char)(i>>8);
+				buf[5] = (unsigned char)(i);
 				i=bpADC(10); // V33 pin
-				buf[6] = i>>8;
-				buf[7] = i&0xff;
+				buf[6] = (unsigned char)(i>>8);
+				buf[7] = (unsigned char)(i);
 				i=bpADC(9); // V50 pin
-				buf[8] = i>>8;
-				buf[9] = i&0xff;
+				buf[8] = (unsigned char)(i>>8);
+				buf[9] = (unsigned char)(i);
 				AD1CON1bits.ADON = 0; // turn ADC OFF
 				binOpenOCDAnswer(buf, 10);
 				break;
@@ -183,7 +207,6 @@ void binOpenOCD(void){
 
 				binOpenOCDTapShift(UART1RXBuf, UART1TXBuf, j, OpenOCDJtagDelay);
 				break;
-			case CMD_UNKNOWN:
 			default:
 				buf[0] = 0x00; // unknown command
 				buf[1] = 0x00;
@@ -200,7 +223,22 @@ static void binOpenOCDPinMode(unsigned char mode) {
 	OOCD_CLK=0;
 	OOCD_SRST=0;
 	OOCD_TRST=0;
-	if (mode == MODE_JTAG) {
+	// setup open-drain if necessary
+	if (mode == MODE_JTAG_OD) {
+		OOCD_TMS_ODC=1;
+		OOCD_CLK_ODC=1;
+		OOCD_TDI_ODC=1;
+		OOCD_SRST_ODC=1;
+		OOCD_TRST_ODC=1;
+	} else {
+		OOCD_TMS_ODC=0;
+		OOCD_CLK_ODC=0;
+		OOCD_TDI_ODC=0;
+		OOCD_SRST_ODC=0;
+		OOCD_TRST_ODC=0;
+	}
+	// make pins output
+	if (mode == MODE_JTAG || mode == MODE_JTAG_OD) {
 		OOCD_TMS_TRIS=0;
 		OOCD_TDI_TRIS=0;
 		OOCD_CLK_TRIS=0;
@@ -244,9 +282,11 @@ static void binOpenOCDHandleFeature(unsigned char feat, unsigned char action) {
 				BP_PULLUP_OFF();
 			}
 			break;
+#if defined (BUSPIRATEV3)
 		case FEATURE_TRST:
 			OOCD_TRST=action;
 			break;
+#endif
 		case FEATURE_SRST:
 			OOCD_SRST=action;
 			break;
