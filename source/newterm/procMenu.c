@@ -301,7 +301,7 @@ void serviceuser(void)
 							bpWmessage(MSG_OPT_AUXPIN_AUX);
 							break;
 				case 'C':	//bpWline("-aux pin assigment");
-							modeConfig.altAUX=0;
+							modeConfig.altAUX=1;
 							bpWmessage(MSG_OPT_AUXPIN_CS);
 							break;
 				case 'l':	//bpWline("-bit order set (MSB)");
@@ -329,6 +329,7 @@ void serviceuser(void)
 							}
 							else
 							{	BP_PULLUP_OFF(); //pseudofunction in hardwarevx.h
+								modeConfig.pullupEN=1;
 								bpWmessage(MSG_OPT_PULLUP_OFF);
 							}
 #elif defined(BUSPIRATEV1A)
@@ -344,7 +345,9 @@ void serviceuser(void)
 							{	bpWmessage(MSG_ERROR_MODE);
 							}
 							else
-							{	BP_PULLUP_ON(); //pseudofunction in hardwarevx.h
+							{	if(modeConfig.HiZ==0){bpWmessage(MSG_ERROR_NOTHIZPIN);}
+								BP_PULLUP_ON(); //pseudofunction in hardwarevx.h
+								modeConfig.pullupEN=1;
 								bpWmessage(MSG_OPT_PULLUP_ON);
 							}
 #elif defined(BUSPIRATEV1A)
@@ -541,10 +544,10 @@ void serviceuser(void)
 			if(cmderror)
 			{	bpWstring("Syntax error at char ");
 				if(cmdstart>oldstart)						// find error position :S
-				{	bpWinthex(cmdstart-oldstart);			
+				{	bpWdec(cmdstart-oldstart);			
 				}
 				else
-				{	bpWinthex((CMDBUFLEN+cmdstart)-oldstart);
+				{	bpWdec((CMDBUFLEN+cmdstart)-oldstart);
 				}
 				cmderror=0;
 				stop=1;
@@ -694,6 +697,7 @@ void changemode(void)
 		{	bpWline("Nonexistent protocol!!");
 		}
 	}
+	cmdstart=(cmdend-1)&CMDLENMSK;
 }
 
 int cmdhistory(void)
@@ -771,7 +775,9 @@ again:											// need to do it proper with whiles and ifs..
 	stop=0;
 	temp=0;
 
-	bpWstring("\r\n> ");
+	bpWstring("\r\n(");
+	bpWdec(def);
+	bpWstring(")> ");
 
 	while(!stop)
 	{	c=UART1RX();
