@@ -23,8 +23,10 @@ along with pyBusPirate.  If not, see <http://www.gnu.org/licenses/>.
 from .BitBang import BBIO
 
 class I2CSpeed:
-	_50KHZ = 0b000
-	_5KHZ = 0b001
+	_400KHZ = 0x03
+	_100KHZ = 0x02
+	_50KHZ = 0x01
+	_5KHZ = 0x00
 
 class I2CPins:
 	POWER = 0x8
