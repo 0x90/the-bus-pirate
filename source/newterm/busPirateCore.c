@@ -192,11 +192,15 @@ void bpEchoCurrentBusMode(void){bpWstring(mode[bpConfig.busMode]);}
 void bpEchoBusMode(unsigned char m){bpWstring(mode[m]);}
 */
 
+extern int cmderror;	
+
 void nullfunc1(void)
-{
+{	bpWline("ERROR: command has no effect here");
+	cmderror=1;
 }
 void nullfunc2(unsigned int c)
-{
+{	bpWline("ERROR: command has no effect here");
+	cmderror=1;
 }
 
 void HiZsetup(void)
@@ -270,12 +274,12 @@ proto protos[MAXPROTO+1] = {
 #endif
 #ifdef BP_USE_I2C
 ,
-{	nullfunc1,				// start
-	nullfunc1,				// startR
-	nullfunc1,				// stop
+{	I2Cstart,				// start
+	I2Cstart,				// startR
+	I2Cstop,				// stop
 	nullfunc1,				// stopR
-	nullfunc2,				// send
-	nullfunc1,				// read
+	I2Cwrite,				// send
+	I2Cread,				// read
 	nullfunc1,				// clkh
 	nullfunc1,				// clkl
 	nullfunc1,				// dath
@@ -283,9 +287,9 @@ proto protos[MAXPROTO+1] = {
 	nullfunc1,				// dats
 	nullfunc1,				// clk
 	nullfunc1,				// bitr
-	nullfunc2,				// macro
-	HiZsetup,				// setup
-	HiZcleanup,				// cleanup
+	I2Cmacro,				// macro
+	I2Csetup,				// setup
+	I2Ccleanup,				// cleanup
 	"I2C" 					// name
 }
 #endif

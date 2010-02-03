@@ -43,6 +43,9 @@ void UARTread(void)
 			U2STA &= (~0b10); //clear overrun error if exists
 		}	
 	}
+	else
+	{	bpWline(OUMSG_UART_READ_FAIL);	
+	}
 }
 
 void UARTwrite(unsigned int c)
@@ -140,10 +143,6 @@ void UARTmacro(unsigned int macro)
 			break;
 		case 2: //Watch raw UART
 			bpWline("Raw UART input. Space to exit.");
-
-			if(UART1RX()!=' ')break; //escape		// someone forgot this??
-			bpWline("Reset to exit.");
-
 
 			// could use a lot of improvement
 			//buffers for baud rate differences

@@ -57,6 +57,212 @@ void I2C_Setup(void);
 void I2C_SnifferSetup(void);
 void I2C_Sniffer(unsigned char termMode);
 
+int i2cmode;
+int ackPending;
+
+extern int getnumber(int def, int max); //linker happy? everybody happy :D
+
+
+void I2Cread(void)
+{	unsigned char c;
+	if(ackPending)
+	{	bpSP;
+		bpWmessage(MSG_ACK);
+		bpSP;
+		if(i2cmode==SOFT)
+		{	bbI2Cack();
+		}
+		else 
+		{	hwi2csendack(0);//all other reads get an ACK
+		}
+		ackPending=0;
+	}
+	if(i2cmode==SOFT)
+	{	c=bbReadByte(); 
+	}
+	else
+	{	c=hwi2cread();
+	}
+	bpWbyte(c);
+	ackPending=1;
+}
+
+void I2Cwrite(void)
+{	unsigned char c;
+	if(ackPending)
+	{	bpSP;
+		bpWmessage(MSG_ACK);
+		bpSP;
+		if(i2cmode==SOFT)
+		{	bbI2Cack();
+		}
+		else 
+		{	hwi2csendack(0);//all other reads get an ACK
+		}
+		ackPending=0;
+	}
+
+	if(i2cmode==SOFT)
+	{	bbWriteByte(bpCommand.num); 
+		c=bbReadBit();
+	}
+	else
+	{	hwi2cwrite(bpCommand.num);
+		c=hwi2cgetack();
+	}
+	bpSP;
+	if(c==0)
+	{	bpWmessage(MSG_ACK);
+	}
+	else 
+	{	bpWmessage(MSG_NACK);	
+	}
+	bpBR;
+}
+
+void I2Cstart(void)
+{	if(ackPending)
+	{	bpWmessage(MSG_NACK);
+		bpBR;//bpWline(OUMSG_I2C_READ_PEND_NACK);
+		if(i2cmode==SOFT)
+		{	bbI2Cnack();
+		}
+		else 
+		{	hwi2csendack(1); //the last read before a stop/start condition gets an NACK
+		}
+		ackPending=0;
+	}
+
+	if(i2cmode==SOFT)
+	{	bbI2Cstart();
+	}
+	else 
+	{	hwi2cstart();
+	}
+	bpWmessage(MSG_I2C_START);
+}
+
+void I2Cstop(void)
+{	if(ackPending)
+	{	bpWmessage(MSG_NACK);
+		bpBR;//bpWline(OUMSG_I2C_READ_PEND_NACK);
+		if(i2cmode==SOFT)
+		{	bbI2Cnack();
+		}
+		else 
+		{	hwi2csendack(1); //the last read before a stop/start condition gets an NACK
+		}
+		ackPending=0;
+	}
+
+	if(i2cmode==SOFT) 
+	{	bbI2Cstop();
+	}
+	else
+	{	hwi2cstop();
+	}
+	bpWmessage(MSG_I2C_STOP);
+}
+
+void I2Csetup(void)
+{	//set the options avaiable here....
+	modeConfig.HiZ=1;//yes, always hiz
+	modeConfig.allowpullup=1; 
+	//modeConfig.allowlsb=0; //auto cleared on mode change
+
+	#ifdef BP_USE_I2C_HW
+		bpWline(OUMSG_I2C_CON);
+		i2cmode=(getnumber(1,2)-1);
+	#else
+		i2cmode=SOFT;
+	#endif
+
+	if(i2cmode==SOFT){
+		bpWmessage(MSG_OPT_BB_SPEED);
+		modeConfig.speed=(getnumber(1,3)-1); 
+	}else{
+		// There is a hardware incompatibility with <B4
+		// See http://forum.microchip.com/tm.aspx?m=271183&mpage=1
+		if(bpConfig.dev_rev<=PIC_REV_A3) bpWline(OUMSG_I2C_REV3_WARN);
+		bpWline(OUMSG_I2C_HWSPEED);
+		modeConfig.speed=(getnumber(1,3)-1);
+	}
+
+	if(i2cmode==SOFT){
+		SDA_TRIS=1;
+		SCL_TRIS=1;
+		SCL=0;			//B8 scl 
+		SDA=0;			//B9 sda
+		bbSetup(2, modeConfig.speed);//configure the bitbang library for 2-wire, set the speed
+	}else{
+		hwi2cSetup();
+	}
+}
+
+void I2Ccleanup(void)
+{	ackPending=0;//clear any pending ACK from previous use
+	if(i2cmode==HARD) I2C1CONbits.I2CEN = 0;//disable I2C module
+}
+
+void I2Cmacro(unsigned int c)
+{	int i;
+
+	switch(c)
+	{	case 0://menu
+			bpWline(OUMSG_I2C_MACRO_MENU);// 2. I2C bus sniffer\x0D\x0A");
+			break;
+		case 1:
+			bpWline(OUMSG_I2C_MACRO_SEARCH);
+			for(i=0;i<0x100;i++){
+		
+				if(i2cmode==SOFT){
+					bbI2Cstart(); //send start
+					bbWriteByte(i);//send address
+					c=bbReadBit();//look for ack
+				}else{
+					hwi2cstart();
+			 		hwi2cwrite(i);
+					c=hwi2cgetack();
+				}
+		
+				if(c==0){//0 is ACK
+					bpWbyte(i);
+					bpWchar('('); //bpWstring("(");
+					bpWbyte((i>>1));
+					if((i&0b1)==0){//if the first bit is set it's a read address, send a byte plus nack to clean up
+						bpWstring(" W");
+					}else{
+						if(i2cmode==SOFT){
+							bbReadByte();
+							bbI2Cnack(); //bbWriteBit(1);//high bit is NACK
+						}else{
+							hwi2cread();
+							hwi2csendack(1);//high bit is NACK
+						}
+						bpWstring(" R");
+					}
+					bpWstring(")");
+					bpSP;	
+				}
+				if(i2cmode==SOFT) bbI2Cstop(); else hwi2cstop();
+			}
+			bpWBR;	
+			break;	
+		case 2:
+			if(i2cmode==HARD)I2C1CONbits.I2CEN = 0;//disable I2C module
+		
+			bpWline(OUMSG_I2C_MACRO_SNIFFER);	
+			I2C_Sniffer(1); //set for terminal output
+		
+			if(i2cmode==HARD) hwi2cSetup(); //setup hardware I2C again
+			break;	
+		default:
+			bpWmessage(MSG_ERROR_MACRO);
+	}
+}
+
+
+/*
 //this function links the underlying i2c functions to generic commands that the bus pirate issues
 //put most used functions first for best performance
 void i2cProcess(void){
@@ -237,6 +443,7 @@ void i2cProcess(void){
 
 }
 
+*/
 //
 //
 //	HARDWARE I2C BASE FUNCTIONS

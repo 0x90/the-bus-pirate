@@ -16,3 +16,12 @@
 
 void i2cProcess(void);
 void binI2C(void);
+
+
+void I2Cread(void);
+void I2Cwrite(unsigned int c);
+void I2Cstart(void);
+void I2Cstop(void);
+void I2Csetup(void);
+void I2Ccleanup(void);
+void I2Cmacro(unsigned int c);

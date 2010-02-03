@@ -245,6 +245,11 @@ void serviceuser(void)
 		stop=0;
 		cmderror=0;
 
+		// cvd: Better to use a ISR to service this?? only the 
+		if(modeConfig.periodicService==1)
+		{	
+		}
+
 		while(!stop)
 		{	c=cmdbuf[cmdstart];
 			switch(c)
@@ -551,6 +556,7 @@ void serviceuser(void)
 				}
 				cmderror=0;
 				stop=1;
+				bpBR;
 			}
 				
 			if(cmdstart==cmdend) stop=1;						// reached end of user input??
