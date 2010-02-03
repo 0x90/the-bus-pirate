@@ -117,7 +117,7 @@ void r3wProcess(void){
 			break;
 		case CMD_PRESETUP:
 			bpWmessage(MSG_OPT_BB_SPEED);
-			modeConfig.speed=(bpUserNumberPrompt(1, 3, 1)-1);
+			modeConfig.speed=(bpUserNumberPrompt(1, 4, 1)-1);
 			bpWmessage(MSG_OPT_OUTPUT_TYPE);
 			modeConfig.HiZ=(~(bpUserNumberPrompt(1, 2, 1)-1));
 			modeConfig.allowlsb=1;

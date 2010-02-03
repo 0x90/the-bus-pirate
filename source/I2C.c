@@ -151,7 +151,7 @@ void i2cProcess(void){
 
 			if(i2cmode==SOFT){
 				bpWmessage(MSG_OPT_BB_SPEED);
-				modeConfig.speed=(bpUserNumberPrompt(1, 3, 1)-1);
+				modeConfig.speed=(bpUserNumberPrompt(1, 4, 1)-1);
 			}else{
 				// There is a hardware incompatibility with <B4
 				// See http://forum.microchip.com/tm.aspx?m=271183&mpage=1
@@ -438,7 +438,7 @@ rawI2C mode:
 # 00000110 - ACK bit
 # 00000111 - NACK bit
 # 0001xxxx – Bulk transfer, send 1-16 bytes (0=1byte!)
-# (0110)000x - Set I2C speed, 1=high (50kHz) 0=low (5kHz) (was 0100)
+# (0110)000x - Set I2C speed, 3 = 400khz 2=100khz 1=50khz 0=5khz
 # (0111)000x - Read speed, (planned)
 # (0100)wxyz – Configure peripherals w=power, x=pullups, y=AUX, z=CS (was 0110)
 # (0101)wxyz – read peripherals (planned, not implemented)
@@ -459,7 +459,7 @@ void binI2C(void){
 
 	modeConfig.HiZ=1;//yes, always hiz (bbio uses this setting, should be changed to a setup variable because stringing the modeconfig struct everyhwere is getting ugly!)
 	modeConfig.lsbEN=0;//just in case!
-	bbSetup(2, 1);//configure the bitbang library for 2-wire, set the speed to high speed (50khz)
+	bbSetup(2, 0xff);//configure the bitbang library for 2-wire, set the speed to default/high
 	binI2CversionString();//reply string
 
 	while(1){
@@ -521,7 +521,7 @@ void binI2C(void){
 				break;
 
 			case 0b0110://set speed 
-				inByte&=(~0b11111110);//clear command portion
+				inByte&=(~0b11111100);//clear command portion
 				bbSetup(2, inByte);//set I2C speed
 				UART1TX(1);
 				break;
