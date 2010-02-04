@@ -2,9 +2,11 @@
  
  Pirate-Loader for Bootloader v4
  
- Version  : 1.0.0
+ Version  : 1.0.1
  
  Changelog:
+ 
+  + 2010-02-04 - Added sleep(0) between write instructions, patch submitted by kbulgrien
  
   + 2010-01-22 - Added loader version number to the console output and source code
  
@@ -37,7 +39,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#define PIRATE_LOADER_VERSION "1.0.0"
+#define PIRATE_LOADER_VERSION "1.0.1"
 
 #define STR_EXPAND(tok) #tok
 #define OS_NAME(tok) STR_EXPAND(tok)
@@ -134,6 +136,13 @@
 
 			Sleep(250);
 		}
+		return 0;
+	}
+
+	unsigned int sleep(unsigned int sec)
+	{
+		Sleep(sec * 1000);
+		
 		return 0;
 	}
 
@@ -458,6 +467,8 @@ int sendFirmware(int fd, uint8* data, uint8* pages_used)
 			}
 			
 			puts("OK");
+			
+			sleep(0);
 			
 			if( g_verbose ) {
 				dumpHex(command, HEADER_LENGTH + command[LENGTH_OFFSET]);
