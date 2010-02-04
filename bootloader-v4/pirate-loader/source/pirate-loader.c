@@ -2,10 +2,12 @@
  
  Pirate-Loader for Bootloader v4
  
- Version  : 1.0.1
+ Version  : 1.0.2
  
  Changelog:
  
+  + 2010-02-04 - Changed polling interval to 10ms on Windows select wrapper, suggested by Michal (robots)
+  
   + 2010-02-04 - Added sleep(0) between write instructions, patch submitted by kbulgrien
  
   + 2010-01-22 - Added loader version number to the console output and source code
@@ -39,7 +41,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#define PIRATE_LOADER_VERSION "1.0.1"
+#define PIRATE_LOADER_VERSION "1.0.2"
 
 #define STR_EXPAND(tok) #tok
 #define OS_NAME(tok) STR_EXPAND(tok)
@@ -134,7 +136,7 @@
 				return 1;
 			}
 
-			Sleep(250);
+			Sleep(10);
 		}
 		return 0;
 	}
