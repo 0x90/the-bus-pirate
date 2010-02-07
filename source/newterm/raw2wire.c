@@ -34,6 +34,124 @@ extern struct _command bpCommand;
 void r2wMacro_78133Read(void);
 void r2wMacro_78133Write(void);
 
+// move into a .h or other .c??? 
+int getnumber(int def, int max); // everything to make the compiler happy *dubbelzucht*
+int getint(void);
+int getrepeat(void);
+void consumewhitechars(void);
+extern int cmderror;
+
+
+
+void R2Wread(void)
+{	bpWbyte(bbReadByte());
+}
+
+void R2Wwrite(unsigned int c)
+{	bbWriteByte(c);//send byte
+}
+
+void R2Wstart(void)
+{	bbI2Cstart();
+	bpWstring("(\\-/_\\)");
+	bpWmessage(MSG_I2C_START);
+}
+
+void R2Wstop(void)
+{	bbI2Cstop();
+	bpWstring("(_/-\\)");
+	bpWmessage(MSG_I2C_STOP);
+}
+
+void R2Wbitr(void)
+{	bpEchoState(bbReadBit());
+	bpWmessage(MSG_BIT_NOWINPUT);
+}
+
+void R2Wbitp(void)
+{	bpEchoState(bbMISO());
+	bpWmessage(MSG_BIT_NOWINPUT);
+}
+		
+void R2Wclkl(void)
+{	bbCLK(0);
+}
+
+void R2Wclkh(void)
+{	bbCLK(1);
+}
+
+void R2Wclk(void)
+{	bbClockTicks(1);
+}
+
+void R2Wdatl(void)
+{	bbMOSI(0);
+}
+
+void R2Wdath(void)
+{	bbMOSI(1);
+}
+
+void R2Wsetup(void)
+{	int speed, output;
+
+	modeConfig.allowlsb=1;
+	modeConfig.allowpullup=1; 
+
+	consumewhitechars();
+	speed=getint();
+	consumewhitechars();
+	output=getint();
+
+	// check for userinput (and sanitycheck it!!)
+	if((speed>0)&&(speed<=3))
+	{	modeConfig.speed=speed-1;
+	}
+	else	
+	{	speed=0;					// when speed is 0 we ask the user
+	}
+	if((output>0)&&(output<=2))
+	{	modeConfig.HiZ=(~(output-1));
+	}
+	else	
+	{	speed=0;					// when speed is 0 we ask the user
+	}
+
+	if(speed==0)
+	{	cmderror=0;
+		bpWmessage(MSG_OPT_BB_SPEED);
+		modeConfig.speed=(getnumber(1,3)-1);
+		bpWmessage(MSG_OPT_OUTPUT_TYPE);
+		modeConfig.HiZ=(~(getnumber(1,2)-1));
+	}
+	//writes to the PORTs write to the LATCH
+	R2WCLK=0;			//B8 scl 
+	R2WDIO=0;			//B9 sda
+	R2WDIO_TRIS=1;//data input
+	R2WCLK_TRIS=0;//clock output
+	bbSetup(2, modeConfig.speed);
+	
+}
+
+
+void R2Wmacro(void)
+{
+	switch(bpCommand.num)
+	{	case MENU:
+			bpWstring(OUMSG_R2W_MACRO_MENU);
+			break;
+		case ISO78133ATR:
+			r2wMacro_78133Write();
+		case ISO78133ATR_PARSE:
+			r2wMacro_78133Read();
+			break;
+		default:
+			bpWmessage(MSG_ERROR_MACRO);
+	}
+}
+
+/*
 void r2wProcess(void){
 	static unsigned char c;
 	static unsigned int i;
@@ -155,7 +273,7 @@ void r2wProcess(void){
 
 }
 
-
+*/
 //
 // R2W macros
 

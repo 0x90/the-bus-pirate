@@ -30,11 +30,118 @@
 
 extern struct _modeConfig modeConfig;
 extern struct _command bpCommand;
+// move into a .h or other .c??? 
+int getnumber(int def, int max); // everything to make the compiler happy *dubbelzucht*
+int getint(void);
+int getrepeat(void);
+void consumewhitechars(void);
+extern int cmderror;
+
+
 
 struct _R3W{
 	unsigned char wwr:1;
 } r3wSettings;
 
+
+void R3Wread(void)
+{	bpWbyte(bbReadWriteByte(0xff));
+}
+
+void R3Wwrite(unsigned int c)
+{	c=bbReadWriteByte(c);
+	if(r3wSettings.wwr==1)
+	{	bpSP;
+		bpWmessage(MSG_READ);
+		bpWbyte(c);
+	}
+}
+void R3Wstartr(void)
+{	r3wSettings.wwr=1;
+	bbCS(0);
+	bpWmessage(MSG_CS_ENABLED);
+}
+void R3Wstart(void)
+{	r3wSettings.wwr=0;
+	bbCS(0);
+	bpWmessage(MSG_CS_ENABLED);
+}
+void R3Wstop(void)
+{	r3wSettings.wwr=0;
+	bbCS(1);
+	bpWmessage(MSG_CS_DISABLED);
+}
+void R3Wbitr(void)
+{	bpEchoState(bbReadBit());
+}
+void R3Wbitp(void)
+{	bpEchoState(bbMISO());
+}
+void R3Wclk(void)
+{	bbClockTicks(1);
+}
+void R3Wclkh(void)
+{	bbCLK(1);				// same as r2wire?
+}
+void R3Wclkl(void)
+{	bbCLK(0);				// same as r2wire?
+}
+void R3Wdath(void)
+{	bbMOSI(1);				// same as r2wire?
+}
+void R3Wdatl(void)
+{	bbMOSI(0);				// same as r2wire?
+}
+void R3Wsetup(void)
+{	int speed, output;
+
+	consumewhitechars();
+	speed=getint();
+	consumewhitechars();
+	output=getint();
+
+	if((speed>0)&&(speed<=3))
+	{	modeConfig.speed=speed-1;
+	}
+	else	
+	{	speed=0;					// when speed is 0 we ask the user
+	}
+	if((output>0)&&(output<=2))
+	{	modeConfig.HiZ=(~(output-1));
+	}
+	else	
+	{	speed=0;					// when speed is 0 we ask the user
+	}
+
+	if(speed==0)
+	{	bpWmessage(MSG_OPT_BB_SPEED);
+		modeConfig.speed=(getnumber(1,3)-1);
+		bpWmessage(MSG_OPT_OUTPUT_TYPE);
+		modeConfig.HiZ=(~(getnumber(1,2)-1));
+	}
+	modeConfig.allowlsb=1;
+	#ifdef BUSPIRATEV2
+	modeConfig.allowpullup=1;
+	#endif
+
+	//reset the write with read variable
+	r3wSettings.wwr=0;
+	
+	bbSetup(3, modeConfig.speed); //setup the bitbang library, must be done before calling bbCS below
+	//setup pins (pins are input/low when we start)
+	//MOSI output, low
+	//clock output, low
+	//MISO input
+	//CS output, high
+	R3WMOSI_TRIS=0;
+	R3WCLK_TRIS=0;
+	R3WMISO_TRIS=1;
+	bbCS(1);//takes care of custom HiZ settings too
+}
+
+
+
+/*
 void r3wProcess(void){
 	static unsigned char c;
 	static unsigned int i;
@@ -156,4 +263,6 @@ void r3wProcess(void){
 	}
 
 }
+*/
+
 

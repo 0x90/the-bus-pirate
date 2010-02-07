@@ -175,6 +175,7 @@ void serviceuser(void)
 	int repeat;
 	unsigned char c;
 	int temp;
+	int binmodecnt;
 
 	// init
 	cmd=0;
@@ -182,6 +183,7 @@ void serviceuser(void)
 	cmdend=0;
 	bpConfig.busMode=0;
 	cmderror=0;							// we don;t want to start with error do we?
+	binmodecnt=0;
 
 	while(1)
 	{	bpWstring(protos[bpConfig.busMode].protocol_name);
@@ -207,6 +209,17 @@ void serviceuser(void)
 								cmdbuf[cmdend]=0x00;
 							}
 							bpWline("");
+							break;
+				case 0x00:	binmodecnt++;
+							if(binmodecnt==20)
+							{	binBB();
+								binmodecnt=0;			// do we get here or not?
+							}
+							break;
+				case 0x02:	if(binmodecnt>=5)
+							{	SUMP();
+								binmodecnt=0;
+							}
 							break;
 				default:	if(((cmdend+1)&CMDLENMSK)!=cmdstart)			// do we have room to store it?
 							{	if((c>=0x20)&&(c<=127))		// printable??
@@ -480,8 +493,8 @@ void serviceuser(void)
 							cmdstart&=CMDLENMSK;
 							repeat=getrepeat()+1;
 							while(--repeat)
-							{	protos[bpConfig.busMode].protocol_send(sendw);
-								bpWbyte(sendw);
+							{	bpWbyte(sendw);
+								protos[bpConfig.busMode].protocol_send(sendw);
 								bpSP;
 							}
 							bpBR;
@@ -497,19 +510,31 @@ void serviceuser(void)
 							break;
 				case '/':	//bpWline("-CLK hi");
 							repeat=getrepeat()+1;
-							while(--repeat)	protos[bpConfig.busMode].protocol_clkh();
+							while(--repeat)
+							{	bpWmessage(MSG_BIT_CLKH);
+								protos[bpConfig.busMode].protocol_clkh();
+							}
 							break;
 				case '\\':	//bpWline("-CLK lo");
 							repeat=getrepeat()+1;
-							while(--repeat)	protos[bpConfig.busMode].protocol_clkl();
+							while(--repeat)
+							{	bpWmessage(MSG_BIT_CLKL);
+								protos[bpConfig.busMode].protocol_clkl();
+							}
 							break;
 				case '-':	//bpWline("-DAT hi");
 							repeat=getrepeat()+1;
-							while(--repeat)	protos[bpConfig.busMode].protocol_dath();
+							while(--repeat)	
+							{	bpWmessage(MSG_BIT_DATH);
+								protos[bpConfig.busMode].protocol_dath();
+							}
 							break;
 				case '_':	//bpWline("-DAT lo");
 							repeat=getrepeat()+1;
-							while(--repeat)	protos[bpConfig.busMode].protocol_datl();
+							while(--repeat)
+							{	bpWmessage(MSG_BIT_DATL);
+								protos[bpConfig.busMode].protocol_datl();
+							}
 							break;
 				case '.':	//bpWline("-DAT state read");
 							repeat=getrepeat()+1;
@@ -517,7 +542,10 @@ void serviceuser(void)
 							break;
 				case '^':	//bpWline("-CLK pulse");
 							repeat=getrepeat()+1;
-							while(--repeat)	protos[bpConfig.busMode].protocol_clk();
+							while(--repeat)
+							{	bpWmessage(MSG_BIT_CLK);
+								protos[bpConfig.busMode].protocol_clk();
+							}
 							break;
 				case '!':	//bpWline("-bit read");
 							repeat=getrepeat()+1;

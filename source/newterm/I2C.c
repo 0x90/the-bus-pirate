@@ -61,7 +61,12 @@ int i2cmode;
 int ackPending;
 
 extern int getnumber(int def, int max); //linker happy? everybody happy :D
-
+// move into a .h or other .c??? 
+int getnumber(int def, int max); // everything to make the compiler happy *dubbelzucht*
+int getint(void);
+int getrepeat(void);
+void consumewhitechars(void);
+extern int cmderror;
 
 void I2Cread(void)
 {	unsigned char c;
@@ -77,6 +82,7 @@ void I2Cread(void)
 		}
 		ackPending=0;
 	}
+
 	if(i2cmode==SOFT)
 	{	c=bbReadByte(); 
 	}
@@ -87,8 +93,8 @@ void I2Cread(void)
 	ackPending=1;
 }
 
-void I2Cwrite(void)
-{	unsigned char c;
+void I2Cwrite(unsigned int c)
+{	//unsigned char c;
 	if(ackPending)
 	{	bpSP;
 		bpWmessage(MSG_ACK);
@@ -103,11 +109,11 @@ void I2Cwrite(void)
 	}
 
 	if(i2cmode==SOFT)
-	{	bbWriteByte(bpCommand.num); 
+	{	bbWriteByte(c); 
 		c=bbReadBit();
 	}
 	else
-	{	hwi2cwrite(bpCommand.num);
+	{	hwi2cwrite(c);
 		c=hwi2cgetack();
 	}
 	bpSP;
@@ -117,7 +123,6 @@ void I2Cwrite(void)
 	else 
 	{	bpWmessage(MSG_NACK);	
 	}
-	bpBR;
 }
 
 void I2Cstart(void)
@@ -165,28 +170,77 @@ void I2Cstop(void)
 }
 
 void I2Csetup(void)
-{	//set the options avaiable here....
+{	int HW, speed;
+
+	HW=0; // keep compiler happy if BP_USE_HW is not defined
+
+#ifdef BP_USE_I2C_HW
+	consumewhitechars();
+	HW=getint();
+#else
+	i2cmode=SOFT;
+#endif
+
+	consumewhitechars();
+	speed=getint();
+
+#ifdef BP_USE_I2C_HW
+	if((HW>0)&&(HW<=2))
+	{	i2cmode=HW-1;
+	}
+	else
+	{	speed=0;
+	}
+#endif
+
+	if((speed>0)&&(speed<=3))
+	{	modeConfig.speed=speed-1;
+	}
+	else
+	{	speed=0;
+	}
+
+	if(speed==0)
+	{	cmderror=0;
+
+#ifdef BP_USE_I2C_HW
+		bpWline(OUMSG_I2C_CON);
+		i2cmode=(getnumber(1,2)-1);
+#else
+		i2cmode=SOFT;
+#endif
+
+		if(i2cmode==SOFT){
+			bpWmessage(MSG_OPT_BB_SPEED);
+			modeConfig.speed=(getnumber(1,3)-1); 
+		}else{
+			// There is a hardware incompatibility with <B4
+			// See http://forum.microchip.com/tm.aspx?m=271183&mpage=1
+			if(bpConfig.dev_rev<=PIC_REV_A3) bpWline(OUMSG_I2C_REV3_WARN);
+			bpWline(OUMSG_I2C_HWSPEED);
+			modeConfig.speed=(getnumber(1,3)-1);
+		}
+	}
+	else
+	{	// There is a hardware incompatibility with <B4
+		// See http://forum.microchip.com/tm.aspx?m=271183&mpage=1
+		if(bpConfig.dev_rev<=PIC_REV_A3) bpWline(OUMSG_I2C_REV3_WARN);
+
+		bpWstring("I2C ( ");
+#ifdef BP_USE_I2C_HW
+		bpWdec(spiSettings.ckp); bpSP;
+#endif
+		bpWdec(modeConfig.speed); bpSP;
+		bpWline(")\r\n");
+
+		ackPending=0;
+//		I2Cstop();			// this needs to be done after a mode change??
+	}
+
+	//set the options avaiable here....
 	modeConfig.HiZ=1;//yes, always hiz
 	modeConfig.allowpullup=1; 
 	//modeConfig.allowlsb=0; //auto cleared on mode change
-
-	#ifdef BP_USE_I2C_HW
-		bpWline(OUMSG_I2C_CON);
-		i2cmode=(getnumber(1,2)-1);
-	#else
-		i2cmode=SOFT;
-	#endif
-
-	if(i2cmode==SOFT){
-		bpWmessage(MSG_OPT_BB_SPEED);
-		modeConfig.speed=(getnumber(1,3)-1); 
-	}else{
-		// There is a hardware incompatibility with <B4
-		// See http://forum.microchip.com/tm.aspx?m=271183&mpage=1
-		if(bpConfig.dev_rev<=PIC_REV_A3) bpWline(OUMSG_I2C_REV3_WARN);
-		bpWline(OUMSG_I2C_HWSPEED);
-		modeConfig.speed=(getnumber(1,3)-1);
-	}
 
 	if(i2cmode==SOFT){
 		SDA_TRIS=1;

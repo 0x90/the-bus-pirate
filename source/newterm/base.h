@@ -47,7 +47,7 @@
 //#define BP_USE_CAN
 #define BP_USE_LCD // include HD44780 LCD library
 
-#define MAXPROTO 9	// need to set it manually for now (is there a smart way for this?)
+#define MAXPROTO 10	// need to set it manually for now (is there a smart way for this?)
 
 //sets the address in the bootloader to jump to on the bootloader command
 //must be defined in asm

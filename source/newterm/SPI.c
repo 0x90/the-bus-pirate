@@ -114,6 +114,12 @@ void SPIsetup(void)
 	consumewhitechars();
 	output=getint();
 
+//	bpWdec(speed); bpSP;
+//	bpWdec(clkpol); bpSP;
+//	bpWdec(clkedge); bpSP;
+//	bpWdec(sample); bpSP;
+//	bpWdec(output); bpBR;
+
 	// check for userinput (and sanitycheck it!!)
 	if((speed>0)&&(speed<=4))
 	{	modeConfig.speed=speed-1;
@@ -130,6 +136,13 @@ void SPIsetup(void)
 	}
 
 	if((clkedge>0)&&(clkedge<=2))
+	{	spiSettings.cke=clkedge-1;
+	}
+	else	
+	{	speed=0;					// when speed is 0 we ask the user
+	}
+
+	if((sample>0)&&(sample<=2))
 	{	spiSettings.smp=sample-1;
 	}
 	else	
@@ -170,13 +183,21 @@ void SPIsetup(void)
 		bpWmessage(MSG_OPT_OUTPUT_TYPE);
 		//modeConfig.HiZ=(~(bpUserNumberPrompt(1, 2, 1)-1));
 		modeConfig.HiZ=(~(getnumber(1,2)-1));
-		
-		modeConfig.allowlsb=0;
-		#ifdef BUSPIRATEV2
-		modeConfig.allowpullup=1;
-		#endif
 	}
-	
+	else
+	{	bpWstring("SPI ( ");
+		bpWdec(modeConfig.speed); bpSP;
+		bpWdec(spiSettings.ckp); bpSP;
+		bpWdec(spiSettings.cke); bpSP;
+		bpWdec(spiSettings.smp); bpSP;
+		bpWdec(modeConfig.HiZ); bpSP;
+		bpWline(")\r\n");
+	}	
+
+	modeConfig.allowlsb=0;
+	#ifdef BUSPIRATEV2
+	modeConfig.allowpullup=1;
+	#endif
 	
 	spiSettings.wwr=0;
 	//do SPI peripheral setup
