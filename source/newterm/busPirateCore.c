@@ -337,42 +337,42 @@ proto protos[MAXPROTO+1] = {
 #endif
 #ifdef BP_USE_RAW2WIRE
 ,
-{	nullfunc1,				// start
-	nullfunc1,				// startR
-	nullfunc1,				// stop
-	nullfunc1,				// stopR
-	nullfunc2,				// send
-	nullfunc1,				// read
-	nullfunc1,				// clkh
-	nullfunc1,				// clkl
-	nullfunc1,				// dath
-	nullfunc1,				// datl
-	nullfunc1,				// dats
-	nullfunc1,				// clk
-	nullfunc1,				// bitr
+{	R2Wstart,				// start
+	R2Wstart,				// startR
+	R2Wstop,				// stop
+	R2Wstop,				// stopR
+	R2Wwrite,				// send
+	R2Wread,				// read
+	R2Wclkl,				// clkh
+	R2Wclkh,				// clkl
+	R2Wdath,				// dath
+	R2Wdatl,				// datl
+	R2Wbitp,				// dats (=bitpeek)
+	R2Wclk,					// clk
+	R2Wbitr,				// bitr
 	nullfunc2,				// macro
-	HiZsetup,				// setup
+	R2Wsetup,				// setup
 	HiZcleanup,				// cleanup
 	"2WIRE"					// name
 }
 #endif
 #ifdef BP_USE_RAW3WIRE
 ,
-{	nullfunc1,				// start
-	nullfunc1,				// startR
-	nullfunc1,				// stop
-	nullfunc1,				// stopR
-	nullfunc2,				// send
-	nullfunc1,				// read
-	nullfunc1,				// clkh
-	nullfunc1,				// clkl
-	nullfunc1,				// dath
-	nullfunc1,				// datl
-	nullfunc1,				// dats
-	nullfunc1,				// clk
-	nullfunc1,				// bitr
+{	R3Wstart,				// start
+	R3Wstartr,				// startR
+	R3Wstop,				// stop
+	R3Wstop,				// stopR
+	R2Wwrite,				// send
+	R3Wread,				// read
+	R3Wclkh,				// clkh
+	R3Wclkl,				// clkl
+	R3Wdath,				// dath
+	R3Wdatl,				// datl
+	R3Wbitp,				// dats
+	R3Wclk,					// clk
+ 	R3Wbitr,				// bitr
 	nullfunc2,				// macro
-	HiZsetup,				// setup
+	R3Wsetup,				// setup
 	HiZcleanup,				// cleanup
 	"3WIRE" 					// name
 }

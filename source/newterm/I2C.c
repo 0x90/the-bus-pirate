@@ -227,6 +227,9 @@ void I2Csetup(void)
 		if(bpConfig.dev_rev<=PIC_REV_A3) bpWline(OUMSG_I2C_REV3_WARN);
 
 		bpWstring("I2C ( ");
+#ifdef BP_USE_I2C_HW
+ 		bpWdec(i2cmode); bpSP;
+#endif 
 		bpWdec(modeConfig.speed); bpSP;
 		bpWline(")\r\n");
 
