@@ -26,6 +26,8 @@
 extern struct _bpConfig bpConfig;
 extern struct _modeConfig modeConfig;
 extern struct _command bpCommand;
+extern proto protos[MAXPROTO];
+
 
 void setMode(void); //change protocol/bus mode
 void setDisplayMode(void); //user terminal number display mode dialog (eg HEX, DEC, BIN, RAW)
@@ -704,7 +706,7 @@ void changemode(void)
 		}
 		bpWline("x. exit(without change)");
 		cmderror=0;							// error is set because no number found, but it is no error here:S eeeh confusing right?
-		busmode=getnumber(1, MAXPROTO)-1;
+		busmode=getnumber(1, MAXPROTO, 1)-1;
 //		bpWstring("busmode= ");
 //		bpWdec(busmode);
 		if((busmode==-2)||(busmode==-1))
@@ -771,7 +773,7 @@ int cmdhistory(void)
 	}
 	bpWline("x. exit");
 
-	j=getnumber(0,i);
+	j=getnumber(0,i,1);
 //	if((j==0)||(j>(i+1)))
 //	{	bpWline("invalid response!");
 //		return 1;
@@ -800,10 +802,12 @@ int cmdhistory(void)
 // -1 = abort (x)
 // -2 = input to much
 // 0-max return
-int getnumber(int def, int max)	
+// x=1 exit is enabled (we don't want that in the mode changes ;)
+
+int getnumber(int def, int max, int x)	
 {	char c;
-	char buf[2];									// max 2 digits;
-	int i, stop, temp;
+	char buf[4];									// max 4 digits;
+	int i, j, stop, temp;
 
 again:											// need to do it proper with whiles and ifs..
 
@@ -826,11 +830,11 @@ again:											// need to do it proper with whiles and ifs..
 			case 0x0A:
 			case 0x0D:	stop=1;
 						break;
-			case 'x':	return -1;					// user wants to quit :(
+			case 'x':	if(x) return -1;					// user wants to quit :( only if we enable it :D
 			default:	if((c>=0x30)&&(c<=0x39))	// we got a digit 
-						{	if(i>1)					// 0-99 should be enough??
+						{	if(i>3)					// 0-9999 should be enough??
 							{	UART1TX(BELL);
-								i=2;
+								i=4;
 							}
 							else
 							{	UART1TX(c);
@@ -850,12 +854,15 @@ again:											// need to do it proper with whiles and ifs..
 	{	return def;							// no user input so return default option
 	}
 	else
-	{	temp=buf[0]-0x30;
+	{	temp=0;
+		i--;
+		j=i;
 
-		if(i==2)
+		for( ; i>=0; i--)
 		{	temp*=10;
-			temp+=(buf[1]-0x30);
+			temp+=(buf[j-i]-0x30);
 		}
+
 		if((temp>=0)&&(temp<=max))
 		{	return temp;
 		}
@@ -980,9 +987,23 @@ void setMode(void){
 
 //user terminal number display mode dialog (eg HEX, DEC, BIN, RAW)
 void setDisplayMode(void)
-{	bpWmessage(MSG_OPT_DISPLAYMODE); //show the display mode options message			
-//	bpConfig.displayMode=(bpUserNumberPrompt(1, 4, 1)-1); //get, store user reply
-	bpConfig.displayMode=getnumber(1,4); //get, store user reply
+{	int mode;
+
+	cmdstart++;
+	cmdstart&=CMDLENMSK;
+
+	consumewhitechars();
+	mode=getint();
+
+	if((mode>0)&&(mode<=4))
+	{	bpConfig.displayMode=mode;
+	}
+	else
+	{	cmderror=0;
+		bpWmessage(MSG_OPT_DISPLAYMODE); //show the display mode options message			
+		//	bpConfig.displayMode=(bpUserNumberPrompt(1, 4, 1)-1); //get, store user reply
+		bpConfig.displayMode=getnumber(1,4,0); //get, store user reply
+	}
 	bpWmessage(MSG_OPT_DISPLAYMODESET);//show display mode update text
 }
 
@@ -1035,6 +1056,7 @@ void measureSupplyVoltages(void){
 }
 #endif
 
+/*
 //LSB/MSB menu for modes that allow it
 void setBitOrder(void){
 	
@@ -1050,7 +1072,7 @@ void setBitOrder(void){
 		bpWmessage(MSG_OPT_BITORDER_LSB);
 	}
 }
-
+*/
 /*
 //configure AUX syntax to control AUX or CS pin
 void setAltAuxPin(void){
@@ -1067,13 +1089,26 @@ void setAltAuxPin(void){
 */
 
 //configure user terminal side UART baud rate
-void setBaudRate(void){
-	unsigned char i;
+void setBaudRate(void)
+{	unsigned char i;
 
-	bpWmessage(MSG_OPT_UART_BAUD); //show stored dialog
-//	bpConfig.termSpeed=(bpUserNumberPrompt(1, 9, 9)-1);
-	bpConfig.termSpeed=getnumber(9,9)-1;
+	cmdstart++;
+	cmdstart&=CMDLENMSK;
+	
+	consumewhitechars();
+	i=getint();
+
+	if((i>0)&&(i<=9))
+	{	bpConfig.termSpeed=i-1;
+	}
+	else
+	{	bpWmessage(MSG_OPT_UART_BAUD); //show stored dialog
+	//	bpConfig.termSpeed=(bpUserNumberPrompt(1, 9, 9)-1);
+		bpConfig.termSpeed=getnumber(9,9,0)-1;
+	}
+
 	bpWmessage(MSG_OPT_TERMBAUD_ADJUST); //show 'adjust and press space dialog'
+
 	while(U1STAbits.TRMT==0);//wait for TX to finish or reinit flushes part of prompt string from buffer
 	InitializeUART1();
 	while(1){ //wait for space to prove valid baud rate switch

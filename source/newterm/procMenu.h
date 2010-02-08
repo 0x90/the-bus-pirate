@@ -43,20 +43,22 @@ unsigned char checkMenuCommand(unsigned char c);
 #define CMDLENMSK	(CMDBUFLEN-1)
 
 extern char cmdbuf[CMDBUFLEN];
-extern unsigned int end;
-extern unsigned int start;
-extern int error;
-extern int currentproto;
-extern proto protos[MAXPROTO];
+extern unsigned int cmdend;
+extern unsigned int cmdstart;
+extern int cmderror;
+//extern int currentproto;
+//extern proto protos[MAXPROTO];
 
 //prints version, used internally and in main.c
 void versionInfo(void); 
 
 void serviceuser(void);
+
+
 int getint(void);
 int getrepeat(void);
 void consumewhitechars(void);
 void changemode(void);
 int cmdhistory(void);
-int getnumber(int def, int max);
+int getnumber(int def, int max, int x);	
 

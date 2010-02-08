@@ -17,15 +17,20 @@
 #include "uart2io.h"
 #include "binIOhelpers.h"
 
+#include "procmenu.h"		// for the userinteraction subs
+
+
 extern struct _modeConfig modeConfig;
 extern struct _command bpCommand;
+
+/*
 // move into a .h or other .c??? 
 int getnumber(int def, int max); // everything to make the compiler happy *dubbelzucht*
 int getint(void);
 int getrepeat(void);
 void consumewhitechars(void);
 extern int cmderror;
-
+*/
 
 
 struct _UART{
@@ -36,8 +41,6 @@ struct _UART{
 } uartSettings;
 
 static unsigned int UART2speed[]={13332,3332,1666,832,416,207,103,68,34,127};//BRG:300,1200,2400,4800,9600,19200,38400,57600,115200, 31250,
-
-int getnumber(int def, int max); // everything to make the compiler happy *dubbelzucht*
 
 void UARTread(void)
 {	unsigned char c;
@@ -113,30 +116,30 @@ void UARTsetup(void)
 		bpWmessage(MSG_OPT_UART_BAUD); //write text (baud rate)
 		bpWline(" 10. 31250 (MIDI)"); //add midi to the standard list // add to translation??
 		//modeConfig.speed=(bpUserNumberPrompt(2, 10, 1)-1); //get user reply
-		modeConfig.speed=getnumber(1,10)-1; //get user reply
+		modeConfig.speed=getnumber(1,10,0)-1; //get user reply
 		
 		//bpWstring("Data bits and parity:\x0D\x0A 1. 8, NONE *default \x0D\x0A 2. 8, EVEN \x0D\x0A 3. 8, ODD \x0D\x0A 4. 9, NONE \x0D\x0A");
 		bpWline(OUMSG_UART_DATABITS_PARITY); //write text (data bit and parity)
 		//uartSettings.dbp=(bpUserNumberPrompt(1, 4, 1)-1);
-		uartSettings.dbp=getnumber(1,4)-1;
+		uartSettings.dbp=getnumber(1,4,0)-1;
 	
 		//bpWstring("Stop bits:\x0D\x0A 1. 1 *default\x0D\x0A 2. 2 \x0D\x0A");
 		bpWline(OUMSG_UART_STOPBITS); //write text 
 		//uartSettings.sb=(bpUserNumberPrompt(1, 2, 1)-1);
-		uartSettings.sb=getnumber(1,2)-1;
+		uartSettings.sb=getnumber(1,2,0)-1;
 	
 		//string("Receive polarity:\x0D\x0A 1. Idle 1 *default\x0D\x0A 2. Idle 0\x0D\x0A");				
 		bpWline(OUMSG_UART_RXPOLARITY); //write text 
 		//uartSettings.rxp=(bpUserNumberPrompt(1, 2, 1)-1);
-		uartSettings.rxp=getnumber(1,2)-1;
+		uartSettings.rxp=getnumber(1,2,0)-1;
 	
 		bpWmessage(MSG_OPT_OUTPUT_TYPE);			
 		//modeConfig.HiZ=(~(bpUserNumberPrompt(1, 2, 1)-1));
-		modeConfig.HiZ=(~(getnumber(1,2)-1));
+		modeConfig.HiZ=(~(getnumber(1,2,0)-1));
 		//modeConfig.allowlsb=0; //already reset to 0
 	}
 	else
-	{	bpWstring("UART ( ");
+	{	bpWstring("UART (spd dbp sb rxp hiz)=( ");
 		bpWdec(modeConfig.speed); bpSP;
 		bpWdec(uartSettings.dbp); bpSP;
 		bpWdec(uartSettings.sb); bpSP;

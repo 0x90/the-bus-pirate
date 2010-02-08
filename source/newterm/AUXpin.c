@@ -15,6 +15,7 @@
  */
 #include "base.h"
 #include "baseIO.h"
+#include "procmenu.h"
 
 #define AUXPIN_DIR 		BP_AUX_DIR
 #define AUXPIN_RPIN 	BP_AUX_RPIN
@@ -32,6 +33,7 @@ static enum _auxmode
 
 void bpPWM(void){
 	unsigned int PWM_period, PWM_dutycycle, PWM_freq, PWM_div;
+	int done;
 	//unsigned long PWM_div;
 
 	float PWM_pd;
@@ -47,11 +49,34 @@ void bpPWM(void){
 		return;
 	}
 
+	done=0;
+
+	cmdstart++;
+	cmdstart&=CMDLENMSK;
+
+	consumewhitechars();
+	PWM_freq=getint();
+	consumewhitechars();
+	PWM_pd=getint();
+
+	if((PWM_freq>0)&&(PWM_freq<4000)) done++;
+	if((PWM_pd>0)&&(PWM_pd<100)) done++;
+
+
 	//calculate frequency:
-	bpWline(OUMSG_AUX_PWM_NOTE);
-	bpWstring(OUMSG_AUX_PWM_FREQ);
-	//PWM_period=(16000000/bpUserNumberPrompt(5, 0xffff, 50000))-1;
-	PWM_freq=bpUserNumberPrompt(4, 4000, 50);
+	if(done!=2)
+	{	cmderror=0;
+
+		bpWline(OUMSG_AUX_PWM_NOTE);
+		bpWstring(OUMSG_AUX_PWM_FREQ);
+		//PWM_period=(16000000/bpUserNumberPrompt(5, 0xffff, 50000))-1;
+	//	PWM_freq=bpUserNumberPrompt(4, 4000, 50);
+		PWM_freq=getnumber(50, 4000, 0);
+	}
+
+//	bpWstring("result=");
+//	bpWinthex(PWM_freq);
+
 	//choose proper multiplier for whole range
 	bpWstring(OUMSG_AUX_PWM_PRESCALE);
 	if(PWM_freq<4){//use 256 //actual max is 62500hz
@@ -80,8 +105,16 @@ void bpPWM(void){
 	bpWintdec(PWM_period);	
 	bpBR;
 
-	bpWstring(OUMSG_AUX_PWM_DUTY);
-	PWM_pd=bpUserNumberPrompt(2, 99, 50);
+	if(done!=2)
+	{	bpWstring(OUMSG_AUX_PWM_DUTY);
+	//	PWM_pd=bpUserNumberPrompt(2, 99, 50);
+		PWM_pd=getnumber(50,99,0);
+	}
+
+//	bpWstring("result=");
+//	bpWinthex(PWM_pd);
+
+
 	PWM_pd/=100;
 	PWM_dutycycle=PWM_period * PWM_pd;
 	//bpWdec(PWM_dutycycle);

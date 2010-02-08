@@ -18,6 +18,9 @@
 #include "busPirateCore.h"//need access to bpConfig
 #include "binIOhelpers.h"
 
+#include "procmenu.h"		// for the userinteraction subs
+
+
 #define SCL 		BP_CLK
 #define SCL_TRIS 	BP_CLK_DIR     //-- The SCL Direction Register Bit
 #define SDA 		BP_MOSI        //-- The SDA output pin
@@ -60,6 +63,7 @@ void I2C_Sniffer(unsigned char termMode);
 int i2cmode;
 int ackPending;
 
+/*
 extern int getnumber(int def, int max); //linker happy? everybody happy :D
 // move into a .h or other .c??? 
 int getnumber(int def, int max); // everything to make the compiler happy *dubbelzucht*
@@ -67,6 +71,7 @@ int getint(void);
 int getrepeat(void);
 void consumewhitechars(void);
 extern int cmderror;
+*/
 
 void I2Cread(void)
 {	unsigned char c;
@@ -205,20 +210,20 @@ void I2Csetup(void)
 
 #ifdef BP_USE_I2C_HW
 		bpWline(OUMSG_I2C_CON);
-		i2cmode=(getnumber(1,2)-1);
+		i2cmode=(getnumber(1,2,0)-1);
 #else
 		i2cmode=SOFT;
 #endif
 
 		if(i2cmode==SOFT){
 			bpWmessage(MSG_OPT_BB_SPEED);
-			modeConfig.speed=(getnumber(1,3)-1); 
+			modeConfig.speed=(getnumber(1,3,0)-1); 
 		}else{
 			// There is a hardware incompatibility with <B4
 			// See http://forum.microchip.com/tm.aspx?m=271183&mpage=1
 			if(bpConfig.dev_rev<=PIC_REV_A3) bpWline(OUMSG_I2C_REV3_WARN);
 			bpWline(OUMSG_I2C_HWSPEED);
-			modeConfig.speed=(getnumber(1,3)-1);
+			modeConfig.speed=(getnumber(1,3,0)-1);
 		}
 	}
 	else
@@ -226,9 +231,11 @@ void I2Csetup(void)
 		// See http://forum.microchip.com/tm.aspx?m=271183&mpage=1
 		if(bpConfig.dev_rev<=PIC_REV_A3) bpWline(OUMSG_I2C_REV3_WARN);
 
-		bpWstring("I2C ( ");
+		bpWstring("I2C (mod spd)=( ");
 #ifdef BP_USE_I2C_HW
  		bpWdec(i2cmode); bpSP;
+#else
+		bpWdec(0);			// softmode
 #endif 
 		bpWdec(modeConfig.speed); bpSP;
 		bpWline(")\r\n");

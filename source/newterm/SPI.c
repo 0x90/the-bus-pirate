@@ -18,6 +18,9 @@
 #include "base.h"
 #include "binIOhelpers.h"
 
+#include "procmenu.h"		// for the userinteraction subs
+
+
 //#define USE_SPICS //the CS hardware pin on silicone REV 3 doesn't work, optionally enable it here
 
 //direction registers
@@ -59,13 +62,14 @@ struct _SPI{
 
 static unsigned char SPIspeed[]={0b00000,0b11000,0b11100,0b11101};//30,125,250,1000khz; datasheet pg 142
 
-
+/*
 // move into a .h or other .c??? 
 int getnumber(int def, int max); // everything to make the compiler happy *dubbelzucht*
 int getint(void);
 int getrepeat(void);
 void consumewhitechars(void);
 extern int cmderror;
+*/
 
 void SPIstartr(void)
 {	spiSettings.wwr=1;	
@@ -163,29 +167,29 @@ void SPIsetup(void)
 		//bpWstring("Set speed:\x0D\x0A 1. 30KHz\x0D\x0A 2. 125KHz\x0D\x0A 3. 250KHz\x0D\x0A 4. 1MHz\x0D\x0A");
 		bpWline(OUMSG_SPI_SPEED);
 		//modeConfig.speed=(bpUserNumberPrompt(1, 4, 1)-1);
-		modeConfig.speed=getnumber(1,4)-1;
+		modeConfig.speed=getnumber(1,4,0)-1;
 	
 		//bpWstring("Clock polarity:\x0D\x0A 1. Idle low *default\x0D\x0A 2. Idle high\x0D\x0A");
 		bpWmessage(MSG_OPT_CKP);
 		//spiSettings.ckp=(bpUserNumberPrompt(1, 2, 1)-1);
-		spiSettings.ckp=getnumber(1,2)-1;
+		spiSettings.ckp=getnumber(1,2,0)-1;
 	
 		//bpWstring("Output clock edge:\x0D\x0A 1. Idle to active\x0D\x0A 2. Active to idle *default\x0D\x0A");
 		bpWmessage(MSG_OPT_CKE);
 		//spiSettings.cke=(bpUserNumberPrompt(1, 2, 2)-1);
-		spiSettings.cke=getnumber(2,2)-1;
+		spiSettings.cke=getnumber(2,2,0)-1;
 	
 		//bpWstring("Input sample phase:\x0D\x0A 1. Middle *default\x0D\x0A 2. End\x0D\x0A");
 		bpWmessage(MSG_OPT_SMP);
 		//spiSettings.smp=(bpUserNumberPrompt(1, 2, 1)-1);
-		spiSettings.smp=getnumber(1,2)-1;
+		spiSettings.smp=getnumber(1,2,0)-1;
 	
 		bpWmessage(MSG_OPT_OUTPUT_TYPE);
 		//modeConfig.HiZ=(~(bpUserNumberPrompt(1, 2, 1)-1));
-		modeConfig.HiZ=(~(getnumber(1,2)-1));
+		modeConfig.HiZ=(~(getnumber(1,2,0)-1));
 	}
 	else
-	{	bpWstring("SPI ( ");
+	{	bpWstring("SPI (spd ckp ske smp hiz)=( ");
 		bpWdec(modeConfig.speed); bpSP;
 		bpWdec(spiSettings.ckp); bpSP;
 		bpWdec(spiSettings.cke); bpSP;
@@ -218,7 +222,7 @@ void SPImacro(unsigned int macro)
 		case 1:
 			bpWline(OUMSG_SPI_SNIFF_MENU);
 			//c=(bpUserNumberPrompt(1, 3, 1)-1);
-			c=getnumber(1,3)-1;
+			c=getnumber(1,3,0)-1;
 			bpWline(OUMSG_SPI_SNIFF_BEGIN);
 			spiSniffer(c,1);//configure for terminal mode
 			break;

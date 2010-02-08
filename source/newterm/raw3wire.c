@@ -16,6 +16,7 @@
 #include "base.h"
 //#include "raw3wire.h"
 #include "bitbang.h"
+#include "procmenu.h"		// for the userinteraction subs
 
 #define R3WMOSI_TRIS 	BP_MOSI_DIR
 #define R3WCLK_TRIS 	BP_CLK_DIR
@@ -28,15 +29,18 @@
 #define R3WMISO 		BP_MISO 
 #define R3WCS 			BP_CS 
 
+// should this come from an .h?
 extern struct _modeConfig modeConfig;
 extern struct _command bpCommand;
+
+/*
 // move into a .h or other .c??? 
 int getnumber(int def, int max); // everything to make the compiler happy *dubbelzucht*
 int getint(void);
 int getrepeat(void);
 void consumewhitechars(void);
 extern int cmderror;
-
+*/
 
 
 struct _R3W{
@@ -115,10 +119,18 @@ void R3Wsetup(void)
 
 	if(speed==0)
 	{	bpWmessage(MSG_OPT_BB_SPEED);
-		modeConfig.speed=(getnumber(1,3)-1);
+		modeConfig.speed=(getnumber(1,3,0)-1);
 		bpWmessage(MSG_OPT_OUTPUT_TYPE);
-		modeConfig.HiZ=(~(getnumber(1,2)-1));
+		modeConfig.HiZ=(~(getnumber(1,2,0)-1));
 	}
+	else
+	{	bpWstring("R3W (spd hiz)=( ");
+		bpWdec(modeConfig.speed); bpSP;
+		bpWdec(modeConfig.HiZ); bpSP;
+		bpWline(")\r\n");
+	}
+
+
 	modeConfig.allowlsb=1;
 	#ifdef BUSPIRATEV2
 	modeConfig.allowpullup=1;

@@ -18,6 +18,9 @@
 #include "bitbang.h"
 #include "AUXpin.h"
 
+#include "procmenu.h"		// for the userinteraction subs
+
+
 #define R2WCLK_TRIS 	BP_CLK_DIR
 #define R2WCLK 			BP_CLK 
 
@@ -34,13 +37,14 @@ extern struct _command bpCommand;
 void r2wMacro_78133Read(void);
 void r2wMacro_78133Write(void);
 
+/*
 // move into a .h or other .c??? 
 int getnumber(int def, int max); // everything to make the compiler happy *dubbelzucht*
 int getint(void);
 int getrepeat(void);
 void consumewhitechars(void);
 extern int cmderror;
-
+*/
 
 
 void R2Wread(void)
@@ -121,9 +125,15 @@ void R2Wsetup(void)
 	if(speed==0)
 	{	cmderror=0;
 		bpWmessage(MSG_OPT_BB_SPEED);
-		modeConfig.speed=(getnumber(1,3)-1);
+		modeConfig.speed=(getnumber(1,3,0)-1);
 		bpWmessage(MSG_OPT_OUTPUT_TYPE);
-		modeConfig.HiZ=(~(getnumber(1,2)-1));
+		modeConfig.HiZ=(~(getnumber(1,2,0)-1));
+	}
+	else
+	{	bpWstring("R2W (spd hiz)=( ");
+		bpWdec(modeConfig.speed); bpSP;
+		bpWdec(modeConfig.HiZ); bpSP;
+		bpWline(")\r\n");
 	}
 	//writes to the PORTs write to the LATCH
 	R2WCLK=0;			//B8 scl 
