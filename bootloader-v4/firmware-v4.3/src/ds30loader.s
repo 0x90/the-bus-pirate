@@ -147,7 +147,7 @@
 ;		.equ	STARTADDR,	( FLASHSIZE - 2*(PAGESIZE * 2) ) 		/*place bootloader in 2nd last program page*/
 		.equ	STARTADDR,	( FLASHSIZE - (2* (PAGESIZE)) ) 		/*place bootloader in last program page*/
 		.equ	BLCHECKST,  ( STARTADDR - (ROWSIZE) )			/*precalculate the first row write position that would overwrite the bootloader*/
-		.equ	BLVERSION,	0x0402	;bootloader version for Bus Pirate firmware (located at last instruction before flash config words)
+		.equ	BLVERSION,	0x0404	;bootloader version for Bus Pirate firmware (located at last instruction before flash config words)
 ;------------------------------------------------------------------------------
 ; Validate user settings
 ;------------------------------------------------------------------------------
@@ -244,10 +244,11 @@ waitPLL:btss OSCCON, #LOCK
 		;----------------------------------------------------------------------
 		; UART pps config
 		;----------------------------------------------------------------------
+setup:
 		.ifdef BUSPIRATEV2
 			; Backup, these are restored in exit code at end of file
 			; Changes needs to be done in exit, search for xxx
-setup:		mov		RPINR18, PPSTEMP1		;xxx
+			mov		RPINR18, PPSTEMP1		;xxx
 			mov		RPOR2, PPSTEMP2			;xxx
 
 			; Receive, map pin to uart (RP5 on 2/3, RP3 on v1a)
@@ -273,7 +274,7 @@ setup:		mov		RPINR18, PPSTEMP1		;xxx
 		.ifdef BUSPIRATEV1A
 			; Backup, these are restored in exit code at end of file
 			; Changes needs to be done in exit, search for xxx
-setup:		mov		RPINR18, PPSTEMP1		;xxx
+			mov		RPINR18, PPSTEMP1		;xxx
 			mov		RPOR1, PPSTEMP2			;xxx
 
 			; Receive, map pin to uart (RP5 on 2/3, RP3 on v1a)
@@ -301,7 +302,6 @@ setup:		mov		RPINR18, PPSTEMP1		;xxx
 ;------------------------------------------------------------------------------
 		clr		DOERASE
 		
-		
 		;UART
 		mov		#UARTBR, W0 		;set	
 		mov 	W0, UBRG			; baudrate
@@ -315,13 +315,19 @@ setup:		mov		RPINR18, PPSTEMP1		;xxx
 ;------------------------------------------------------------------------------
 		rcall 	Receive
 		sub 	#HELLO, W0			;check
-		bra 	nz, checkexit		; prompt
+		bra 	z, helloOK		; prompt
+
+		SendL   'B'
+		SendL   'L'
+		SendL   '4'
+		SendL   '+'
+   		bra    checkexit
 
 
 ;------------------------------------------------------------------------------
 ; Send device id and firmware version
 ;------------------------------------------------------------------------------
-		SendL 	DEVICEID
+helloOK:SendL 	DEVICEID
 		SendL	VERMAJ
 		SendL	(VERMIN*16 + VERREV)
 		
@@ -547,7 +553,7 @@ notrcv:	dec 	WDEL2, WDEL2
         mov 	#__SP_init, WSTPTR	;reinitialize the Stack Pointer
  		
 checkexit: 
-		btsc  WFWJUMP,#0x00   ; skip next if bit0 is 0 (=not jumped from bp)
+		btss  WFWJUMP,#0x00   ; skip next if bit0 is 1 (= jumped from bp)
  		btss  PORTB,#RB1;if we time out and jumper still attached, go to setup
 		bra   setup  
 		
