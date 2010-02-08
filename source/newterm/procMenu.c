@@ -20,6 +20,8 @@
 #if defined(BUSPIRATEV25) || defined (BUSPIRATEV3)
 	#include "selftest.h"
 #endif
+#include "binIO.h"
+#include "SUMP.h"
 
 extern struct _bpConfig bpConfig;
 extern struct _modeConfig modeConfig;

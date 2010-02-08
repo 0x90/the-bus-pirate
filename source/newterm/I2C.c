@@ -193,7 +193,7 @@ void I2Csetup(void)
 	}
 #endif
 
-	if((speed>0)&&(speed<=3))
+	if((speed>0)&&(speed<=4))
 	{	modeConfig.speed=speed-1;
 	}
 	else
@@ -227,9 +227,6 @@ void I2Csetup(void)
 		if(bpConfig.dev_rev<=PIC_REV_A3) bpWline(OUMSG_I2C_REV3_WARN);
 
 		bpWstring("I2C ( ");
-#ifdef BP_USE_I2C_HW
-		bpWdec(spiSettings.ckp); bpSP;
-#endif
 		bpWdec(modeConfig.speed); bpSP;
 		bpWline(")\r\n");
 
@@ -699,7 +696,7 @@ rawI2C mode:
 # 00000110 - ACK bit
 # 00000111 - NACK bit
 # 0001xxxx – Bulk transfer, send 1-16 bytes (0=1byte!)
-# (0110)000x - Set I2C speed, 1=high (50kHz) 0=low (5kHz) (was 0100)
+# (0110)000x - Set I2C speed, 3 = 400khz 2=100khz 1=50khz 0=5khz
 # (0111)000x - Read speed, (planned)
 # (0100)wxyz – Configure peripherals w=power, x=pullups, y=AUX, z=CS (was 0110)
 # (0101)wxyz – read peripherals (planned, not implemented)
@@ -720,7 +717,7 @@ void binI2C(void){
 
 	modeConfig.HiZ=1;//yes, always hiz (bbio uses this setting, should be changed to a setup variable because stringing the modeconfig struct everyhwere is getting ugly!)
 	modeConfig.lsbEN=0;//just in case!
-	bbSetup(2, 1);//configure the bitbang library for 2-wire, set the speed to high speed (50khz)
+	bbSetup(2, 0xff);//configure the bitbang library for 2-wire, set the speed to default/high
 	binI2CversionString();//reply string
 
 	while(1){
@@ -782,7 +779,7 @@ void binI2C(void){
 				break;
 
 			case 0b0110://set speed 
-				inByte&=(~0b11111110);//clear command portion
+				inByte&=(~0b11111100);//clear command portion
 				bbSetup(2, inByte);//set I2C speed
 				UART1TX(1);
 				break;

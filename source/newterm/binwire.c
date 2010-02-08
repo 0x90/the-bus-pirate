@@ -50,7 +50,7 @@ void binwire(void){
 	//startup in raw2wire mode
 	wires=2;
 	//configure for raw3wire mode
-	bbSetup(2, 1); //setup the bitbang library, must be done before calling bbCS below
+	bbSetup(2, 0xff); //setup the bitbang library, must be done before calling bbCS below
 	//setup pins (pins are input/low when we start)
 	//MOSI output, low
 	//clock output, low
@@ -164,7 +164,7 @@ void binwire(void){
 				break;
 
 			case 0b0110://set speed 
-				inByte&=(~0b11111110);//clear command portion
+				inByte&=(~0b11111100);//clear command portion
 				modeConfig.speed=inByte;
 				bbSetup(wires, modeConfig.speed);
 				bbCS(1);//takes care of custom HiZ settings too

@@ -100,7 +100,7 @@ void R3Wsetup(void)
 	consumewhitechars();
 	output=getint();
 
-	if((speed>0)&&(speed<=3))
+	if((speed>0)&&(speed<=4))
 	{	modeConfig.speed=speed-1;
 	}
 	else	

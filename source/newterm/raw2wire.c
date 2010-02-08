@@ -105,7 +105,7 @@ void R2Wsetup(void)
 	output=getint();
 
 	// check for userinput (and sanitycheck it!!)
-	if((speed>0)&&(speed<=3))
+	if((speed>0)&&(speed<=4))
 	{	modeConfig.speed=speed-1;
 	}
 	else	

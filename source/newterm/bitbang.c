@@ -67,16 +67,21 @@ void bbSetup(unsigned char pins, unsigned char speed){
 	// I2C Bus timing in uS
 	switch(speed){
 		case 0:
+			bitbang.delaySettle = BB_5KHZSPEED_SETTLE;
+			bitbang.delayClock = BB_5KHZSPEED_CLOCK;
+			bitbang.delayHalfClock = BB_5KHZSPEED_HALFCLOCK;
+			break;
+		case 1:
 			bitbang.delaySettle = BB_50KHZSPEED_SETTLE;
 			bitbang.delayClock = BB_50KHZSPEED_CLOCK;
 			bitbang.delayHalfClock = BB_50KHZSPEED_HALFCLOCK;
 			break;
-		case 1:
+		case 2:
 			bitbang.delaySettle = BB_100KHZSPEED_SETTLE;
 			bitbang.delayClock = BB_100KHZSPEED_CLOCK;
 			bitbang.delayHalfClock = BB_100KHZSPEED_HALFCLOCK;
 			break;
-		case 2:
+		default:
 			bitbang.delaySettle = BB_MAXSPEED_SETTLE;
 			bitbang.delayClock = BB_MAXSPEED_CLOCK;
 			bitbang.delayHalfClock = BB_MAXSPEED_HALFCLOCK;
