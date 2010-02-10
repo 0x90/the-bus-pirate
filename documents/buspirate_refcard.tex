@@ -1,39 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% This LaTeX-file generates a reference card for the bus-pirate found at  
-%% dangerousprototypes.com The size is the same as the PCB board of the bus-pirate (V3) 
-%%
-%% Mini-HowTo
-%% 1. Change the colours below to the colours of your individual prober-cable
-%% 2. Execute LaTeX to generate a PDF (either by using your LaTeX IDE or by running
-%%    'latex buspirate_refcard.tex' on the command line
-%% 3. Print the pdf (switch of any scaling functions in your printer settings)
-%% 4. Glue the refcard to a cardboard and either fix it on the rear-side of the
-%%    bus-pirate or on a enclosure if you use one.
-%%
-%% It requires a working LaTeX environment and the LaTeX package pgf/tikz
-%% pgf/tikz is available here:
-%%    http://tug.ctan.org/cgi-bin/ctanPackageInformation.py?id=pgf
-%% or in any actual TeXlive distribution.
-%%
-%% Copyright (C)  2010  Torsten Wagner <tottiwagner@yahoo.de>
-%% Permission is granted to copy, distribute and/or modify this document
-%% under the terms of the GNU Free Documentation License, Version 1.3
-%% or any later version published by the Free Software Foundation;
-%% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
-%% A copy of the license is included in the section entitled "GNU
-%% Free Documentation License".
-%% This document is distributed in the hope that it will be useful,
-%% but WITHOUT ANY WARRANTY; without even the implied warranty of
-%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-%% You should have received a copy of the GNU Free Documentation License
-%% along with this document.  If not, see <http://www.gnu.org/licenses/>.
-%%
-%% Changelog:
-%%
-%% Feb. 04 2010: Initial Release of V1.0 of the buspirate reference card
-%%
-
-
 \documentclass[10pt]{article}
 \usepackage{pgf}     % drawing in the LaTeX way of life
 \usepackage{tikz}    % tikz is not a drawing program
@@ -50,22 +14,18 @@
 %% alternatively use 0-255 values by defining the colours with a capital [RGB] parameter
 %% e.g., \definecolor{CLK}{RGB}{255,127,0}
 %% do not change the given colour names since they correspond to the individual pin
-%% most likely you have simply to switch the given colours below
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Colour definition for the Seeed studio probe cable
-
 \definecolor{MISO}{rgb}{0,0,0}      % Black
-\definecolor{CS}{rgb}{0.9,0.9,0.9} % White (not really)
-\definecolor{MOSI}{rgb}{0.6,0.6,0.6} % Grey
-\definecolor{CLK}{rgb}{0.8,0.4,0.8}  % Violet
-\definecolor{AUX}{rgb}{0,0,1}       % Blue
+\definecolor{CLK}{rgb}{1,0.5,0}     % Orange
+\definecolor{MOSI}{rgb}{1,0,0}      % Red
+\definecolor{CS}{rgb}{0.5,0.1,0.1}  % Brown
+\definecolor{AUX}{rgb}{0.8,0.8,0}   % Yellow (without hurting your eye)
 \definecolor{Vpu}{rgb}{0,0.8,0}     % Green
-\definecolor{ADC}{rgb}{0.8,0.8,0}   % Yellow (without hurting your eye)
-\definecolor{V5}{rgb}{1,0.5,0}     % Orange 
-\definecolor{V33}{rgb}{1,0,0}      % Red
-\definecolor{GND}{rgb}{0.5,0.1,0.1}  % Brown
-
+\definecolor{ADC}{rgb}{0,0,1}       % Blue
+\definecolor{V5}{rgb}{0.8,0.4,0.8}  % Violet
+\definecolor{V33}{rgb}{0.6,0.6,0.6} % Grey
+\definecolor{GND}{rgb}{0.9,0.9,0.9} % White (not really)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Don't go behind this line without any knowledge of LaTeX and PGF/Tikz... you have been warned
@@ -77,21 +37,21 @@
     \sffamily{}\scriptsize
     \tikzstyle{mynode} = [draw=none,fill=none,anchor=center] % define a own style for all this text-nodes
     
-    \matrix[row sep=0.1cm,column sep=0.075cm,anchor=north west] at (0,2.85) % create the first matrix (the data communication pin-codes) similar to a Latex table 
+    \matrix[row sep=0.1cm,column sep=0.075cm,anchor=north west] at (0,2.85) % create the first matrix similar to a Latex table 
     {
-                                                        & \node[mynode] {\textbf{HiZ}}; & \node[mynode] {\textbf{1-Wire}}; & \node[mynode] {\textbf{UART}}; & \node[mynode] {\textbf{I2C}}; & \node[mynode] {\textbf{SPI}}; & \node[mynode] {\textbf{JTAG}};\\
-      \node[mynode,right,color=MOSI] {\textbf{MOSI}};   &                               & \node[mynode]{OWD};              & \node[mynode]{TX};             & \node[mynode]{SDA};           & \node[mynode]{MOSI};          & \node[mynode]{TDI};\\
-      \node[mynode,right,color=CLK] {\textbf{CLK}};     &                               &                                                                   & \node[mynode] {SCL};          & \node[mynode]{CLK};           & \node[mynode]{TCK};\\
-      \node[mynode,right,color=MISO] {\textbf{MISO}};   &                               &                                  & \node[mynode] {RX};            &                               & \node[mynode]{MISO};          & \node[mynode]{TDO};\\
-      \node[mynode,right,color=CS] {\textbf{CS}};       &                               &                                  &                                &                               & \node[mynode]{CS};            & \node[mynode]{TMS};\\
+                                             & \node[mynode] {\textbf{HiZ}}; & \node[mynode] {\textbf{1-Wire}}; & \node[mynode] {\textbf{UART}}; & \node[mynode] {\textbf{I2C}}; & \node[mynode] {\textbf{SPI}}; & \node[mynode] {\textbf{JTAG}};\\
+      \node[mynode,right,color=MISO] {\textbf{MISO}};   &                               & \node[mynode]{OWD};              & \node[mynode]{TX};             & \node[mynode]{SDA};           & \node[mynode]{MOSI};          & \node[mynode]{TDI};\\
+      \node[mynode,right,color=CLK] {\textbf{CLK}};  &                               &                                                                   & \node[mynode] {SCL};          & \node[mynode]{CLK};         & \node[mynode]{TCK};\\
+      \node[mynode,right,color=MOSI] {\textbf{MOSI}};   &                               &                                  & \node[mynode] {RX};            &                               & \node[mynode]{MISO};          & \node[mynode]{TDO};\\
+      \node[mynode,right,color=CS] {\textbf{CS}};    &                               &                                  &                                &                               & \node[mynode]{CS};            & \node[mynode]{TMS};\\
     };
     \matrix[row sep=0cm,column sep=0cm,right,anchor=south west] at (0,0.2) % create the second matrix 
     {
-    \node[mynode,right,color=AUX]{\textbf{AUX}};                     & \node[mynode,right] {Auxiliary I/O, freq. probe, PWM}; \\
-    \node[mynode,right,color=Vpu]{\textbf{Vpu}};                     & \node[mynode,right] {Input pull-up resistors (0-5V)}; \\
-    \node[mynode,right,color=ADC]{\textbf{ADC}};                     & \node[mynode,right] {A/D\,converter,max.\,6V,10bit,500ksps}; \\
+    \node[mynode,right,color=AUX]{\textbf{AUX}};      & \node[mynode,right] {Auxiliary I/O, freq. probe, PWM}; \\
+    \node[mynode,right,color=Vpu]{\textbf{Vpu}};      & \node[mynode,right] {Input pull-up resistors (0-5V)}; \\
+    \node[mynode,right,color=ADC]{\textbf{ADC}};      & \node[mynode,right] {A/D\,converter,max.\,6V,10bit,500ksps}; \\
     \node[mynode,right]{\textbf{{\color{V5}5V},{\color{V33}3.3V}}};  & \node[mynode,right] {Switchable supply, max.\,150mA}; \\
-    \node[mynode,right,color=GND]{\textbf{GND}};                     & \node[mynode,right] {Ground to test circuit}; \\
+    \node[mynode,right,color=GND]{\textbf{GND}};      & \node[mynode,right] {Ground to test circuit}; \\
     };
     \foreach \y in {0,1,2,3,4}  % draw the grid
         \draw[gray] (0,2.65-0.3*\y)--++(5,0);
