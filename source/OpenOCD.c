@@ -222,20 +222,26 @@ static void binOpenOCDPinMode(unsigned char mode) {
 	OOCD_TDI=0;
 	OOCD_CLK=0;
 	OOCD_SRST=0;
+#if defined (BUSPIRATEV3)
 	OOCD_TRST=0;
+#endif
 	// setup open-drain if necessary
 	if (mode == MODE_JTAG_OD) {
 		OOCD_TMS_ODC=1;
 		OOCD_CLK_ODC=1;
 		OOCD_TDI_ODC=1;
 		OOCD_SRST_ODC=1;
+#if defined (BUSPIRATEV3)
 		OOCD_TRST_ODC=1;
+#endif
 	} else {
 		OOCD_TMS_ODC=0;
 		OOCD_CLK_ODC=0;
 		OOCD_TDI_ODC=0;
 		OOCD_SRST_ODC=0;
+#if defined (BUSPIRATEV3)
 		OOCD_TRST_ODC=0;
+#endif
 	}
 	// make pins output
 	if (mode == MODE_JTAG || mode == MODE_JTAG_OD) {
@@ -243,14 +249,18 @@ static void binOpenOCDPinMode(unsigned char mode) {
 		OOCD_TDI_TRIS=0;
 		OOCD_CLK_TRIS=0;
 		OOCD_SRST_TRIS=0;
+#if defined (BUSPIRATEV3)
 		OOCD_TRST_TRIS=0;
+#endif
 		OOCD_TDO_TRIS=1;
 	} else {
 		OOCD_TMS_TRIS=1;
 		OOCD_TDI_TRIS=1;
 		OOCD_CLK_TRIS=1;
 		OOCD_SRST_TRIS=1;
+#if defined (BUSPIRATEV3)
 		OOCD_TRST_TRIS=1;
+#endif
 		OOCD_TDO_TRIS=1;
 	}
 }
@@ -276,11 +286,13 @@ static void binOpenOCDHandleFeature(unsigned char feat, unsigned char action) {
 			}
 			break;
 		case FEATURE_PULLUP:
+#if defined (BUSPIRATEV3)
 			if (action) {
 				BP_PULLUP_ON();
 			} else {
 				BP_PULLUP_OFF();
 			}
+#endif
 			break;
 #if defined (BUSPIRATEV3)
 		case FEATURE_TRST:
