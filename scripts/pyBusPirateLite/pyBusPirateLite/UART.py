@@ -43,8 +43,8 @@ class UARTSpeed:
 	_115200 = 0b1001
 
 class UART(BBIO):
-	def __init__(self):
-		BBIO.__init__(self)
+	def __init__(self, port, speed):
+		BBIO.__init__(self, port, speed)
 
 	def manual_speed_cfg(self, baud):
 		BRG = ((FOSC)/(4*baud))-1
