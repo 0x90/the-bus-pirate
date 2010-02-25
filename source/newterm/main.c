@@ -125,6 +125,8 @@ void Initialize(void){
 	bpConfig.dev_type = bpReadFlash(DEV_ADDR_UPPER, DEV_ADDR_TYPE);
 	bpConfig.dev_rev = bpReadFlash(DEV_ADDR_UPPER, DEV_ADDR_REV);
 
+	bpConfig.quiet=0;		// turn output on (default)
+
 	bpWBR; 	//send a line feed
 
 	versionInfo();//prints hardware and firmware version info (base.c)

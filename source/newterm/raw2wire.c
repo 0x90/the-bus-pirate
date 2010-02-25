@@ -47,8 +47,8 @@ extern int cmderror;
 */
 
 
-void R2Wread(void)
-{	bpWbyte(bbReadByte());
+unsigned int R2Wread(void)
+{	return (bbReadByte());
 }
 
 void R2Wwrite(unsigned int c)
@@ -67,14 +67,14 @@ void R2Wstop(void)
 	bpWmessage(MSG_I2C_STOP);
 }
 
-void R2Wbitr(void)
-{	bpEchoState(bbReadBit());
-	bpWmessage(MSG_BIT_NOWINPUT);
+unsigned int R2Wbitr(void)
+{	return (bbReadBit());
+	//bpWmessage(MSG_BIT_NOWINPUT);
 }
 
-void R2Wbitp(void)
-{	bpEchoState(bbMISO());
-	bpWmessage(MSG_BIT_NOWINPUT);
+unsigned int R2Wbitp(void)
+{	return (bbMISO());
+	//bpWmessage(MSG_BIT_NOWINPUT);
 }
 		
 void R2Wclkl(void)

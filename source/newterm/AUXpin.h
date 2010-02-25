@@ -19,5 +19,5 @@ void bpPWM(void);
 void bpAuxHiZ(void);
 void bpAuxHigh(void);
 void bpAuxLow(void);
-void bpAuxRead(void);
+unsigned int bpAuxRead(void);
 

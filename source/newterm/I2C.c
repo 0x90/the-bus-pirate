@@ -73,7 +73,7 @@ void consumewhitechars(void);
 extern int cmderror;
 */
 
-void I2Cread(void)
+unsigned int I2Cread(void)
 {	unsigned char c;
 	if(ackPending)
 	{	bpSP;
@@ -94,11 +94,11 @@ void I2Cread(void)
 	else
 	{	c=hwi2cread();
 	}
-	bpWbyte(c);
 	ackPending=1;
+	return c;
 }
 
-void I2Cwrite(unsigned int c)
+unsigned int I2Cwrite(unsigned int c)
 {	//unsigned char c;
 	if(ackPending)
 	{	bpSP;
@@ -124,9 +124,11 @@ void I2Cwrite(unsigned int c)
 	bpSP;
 	if(c==0)
 	{	bpWmessage(MSG_ACK);
+		return 0x300;				// bit 9=ack
 	}
 	else 
 	{	bpWmessage(MSG_NACK);	
+		return 0x100;				// bit 9=ack
 	}
 }
 
@@ -235,7 +237,7 @@ void I2Csetup(void)
 #ifdef BP_USE_I2C_HW
  		bpWdec(i2cmode); bpSP;
 #else
-		bpWdec(0);			// softmode
+		bpWdec(0); bpSP;			// softmode
 #endif 
 		bpWdec(modeConfig.speed); bpSP;
 		bpWline(")\r\n");

@@ -198,7 +198,20 @@ void nullfunc1(void)
 {	bpWline("ERROR: command has no effect here");
 	cmderror=1;
 }
-void nullfunc2(unsigned int c)
+
+unsigned int nullfunc2(unsigned int c)
+{	bpWline("ERROR: command has no effect here");
+	cmderror=1;
+	return 0x100;
+}
+
+unsigned int nullfunc3(void)
+{	bpWline("ERROR: command has no effect here");
+	cmderror=1;
+	return 0;
+}
+
+void nullfunc4(unsigned int c)
 {	bpWline("ERROR: command has no effect here");
 	cmderror=1;
 }
@@ -217,15 +230,16 @@ proto protos[MAXPROTO+1] = {
 	nullfunc1,				// stop
 	nullfunc1,				// stopR
 	nullfunc2,				// send
-	nullfunc1,				// read
+	nullfunc3,				// read
 	nullfunc1,				// clkh
 	nullfunc1,				// clkl
 	nullfunc1,				// dath
 	nullfunc1,				// datl
-	nullfunc1,				// dats
+	nullfunc3,				// dats
 	nullfunc1,				// clk
-	nullfunc1,				// bitr
-	nullfunc2,				// macro
+	nullfunc3,				// bitr
+	nullfunc3,				// periodic
+	nullfunc4,				// macro
 	HiZsetup,				// setup
 	HiZcleanup,				// cleanup
 	"HiZ" 					// name
@@ -242,9 +256,10 @@ proto protos[MAXPROTO+1] = {
 	nullfunc1,				// clkl
 	OWdath,					// dath
 	OWdatl,					// datl
-	nullfunc1,				// dats
+	nullfunc3,				// dats
 	OWbitclk,				// clk
 	OWbitr, 				// bitr
+	nullfunc3,				// periodic
 	OWmacro,				// macro
 	OWsetup,				// setup
 	HiZcleanup,				// cleanup
@@ -253,19 +268,20 @@ proto protos[MAXPROTO+1] = {
 #endif
 #ifdef BP_USE_HWUART
 ,
-{	nullfunc1,				// start
-	nullfunc1,				// startR
-	nullfunc1,				// stop
-	nullfunc1,				// stopR
+{	UARTstart,				// start
+	UARTstart,				// startR
+	UARTstop,				// stop
+	UARTstop,				// stopR
 	UARTwrite,				// send
 	UARTread,				// read
 	nullfunc1,				// clkh
 	nullfunc1,				// clkl
 	nullfunc1,				// dath
 	nullfunc1,				// datl
-	nullfunc1,				// dats
+	nullfunc3,				// dats
 	nullfunc1,				// clk
-	nullfunc1,				// bitr
+	nullfunc3,				// bitr
+	UARTperiodic,			// periodic
 	UARTmacro,				// macro
 	UARTsetup,				// setup
 	UARTcleanup,			// cleanup
@@ -284,9 +300,10 @@ proto protos[MAXPROTO+1] = {
 	nullfunc1,				// clkl
 	nullfunc1,				// dath
 	nullfunc1,				// datl
-	nullfunc1,				// dats
+	nullfunc3,				// dats
 	nullfunc1,				// clk
-	nullfunc1,				// bitr
+	nullfunc3,				// bitr
+	nullfunc3,				// periodic
 	I2Cmacro,				// macro
 	I2Csetup,				// setup
 	I2Ccleanup,				// cleanup
@@ -305,9 +322,10 @@ proto protos[MAXPROTO+1] = {
 	nullfunc1,				// clkl
 	nullfunc1,				// dath
 	nullfunc1,				// datl
-	nullfunc1,				// dats
+	nullfunc3,				// dats
 	nullfunc1,				// clk
-	nullfunc1,				// bitr
+	nullfunc3,				// bitr
+	nullfunc3,				// periodic
 	SPImacro,				// macro
 	SPIsetup,				// setup
 	SPIcleanup,				// cleanup
@@ -321,15 +339,16 @@ proto protos[MAXPROTO+1] = {
 	nullfunc1,				// stop
 	nullfunc1,				// stopR
 	nullfunc2,				// send
-	nullfunc1,				// read
+	nullfunc3,				// read
 	nullfunc1,				// clkh
 	nullfunc1,				// clkl
 	nullfunc1,				// dath
 	nullfunc1,				// datl
-	nullfunc1,				// dats
+	nullfunc3,				// dats
 	nullfunc1,				// clk
-	nullfunc1,				// bitr
-	nullfunc2,				// macro
+	nullfunc3,				// bitr
+	nullfunc3,				// periodic
+	nullfunc4,				// macro
 	HiZsetup,				// setup
 	HiZcleanup,				// cleanup
 	"JTAG" 					// name
@@ -350,7 +369,8 @@ proto protos[MAXPROTO+1] = {
 	R2Wbitp,				// dats (=bitpeek)
 	R2Wclk,					// clk
 	R2Wbitr,				// bitr
-	nullfunc2,				// macro
+	nullfunc3,				// periodic
+	R2Wmacro,				// macro
 	R2Wsetup,				// setup
 	HiZcleanup,				// cleanup
 	"2WIRE"					// name
@@ -362,7 +382,7 @@ proto protos[MAXPROTO+1] = {
 	R3Wstartr,				// startR
 	R3Wstop,				// stop
 	R3Wstop,				// stopR
-	R2Wwrite,				// send
+	R3Wwrite,				// send
 	R3Wread,				// read
 	R3Wclkh,				// clkh
 	R3Wclkl,				// clkl
@@ -371,7 +391,8 @@ proto protos[MAXPROTO+1] = {
 	R3Wbitp,				// dats
 	R3Wclk,					// clk
  	R3Wbitr,				// bitr
-	nullfunc2,				// macro
+	nullfunc3,				// periodic
+	nullfunc4,				// macro
 	R3Wsetup,				// setup
 	HiZcleanup,				// cleanup
 	"3WIRE" 					// name
@@ -384,15 +405,16 @@ proto protos[MAXPROTO+1] = {
 	nullfunc1,				// stop
 	nullfunc1,				// stopR
 	nullfunc2,				// send
-	nullfunc1,				// read
+	nullfunc3,				// read
 	nullfunc1,				// clkh
 	nullfunc1,				// clkl
 	nullfunc1,				// dath
 	nullfunc1,				// datl
-	nullfunc1,				// dats
+	nullfunc3,				// dats
 	nullfunc1,				// clk
-	nullfunc1,				// bitr
-	nullfunc2,				// macro
+	nullfunc3,				// bitr
+	nullfunc3,				// periodic
+	nullfunc4,				// macro
 	HiZsetup,				// setup
 	HiZcleanup,				// cleanup
 	"KEYB" 					// name
@@ -405,15 +427,16 @@ proto protos[MAXPROTO+1] = {
 	nullfunc1,				// stop
 	nullfunc1,				// stopR
 	nullfunc2,				// send
-	nullfunc1,				// read
+	nullfunc3,				// read
 	nullfunc1,				// clkh
 	nullfunc1,				// clkl
 	nullfunc1,				// dath
 	nullfunc1,				// datl
-	nullfunc1,				// dats
+	nullfunc3,				// dats
 	nullfunc1,				// clk
-	nullfunc1,				// bitr
-	nullfunc2,				// macro
+	nullfunc3,				// bitr
+	nullfunc3, 				// periodic
+	nullfunc4,				// macro
 	HiZsetup,				// setup
 	HiZcleanup,				// cleanup
 	"MIDI" 					// name
@@ -426,15 +449,16 @@ proto protos[MAXPROTO+1] = {
 	nullfunc1,				// stop
 	nullfunc1,				// stopR
 	nullfunc2,				// send
-	nullfunc1,				// read
+	nullfunc3,				// read
 	nullfunc1,				// clkh
 	nullfunc1,				// clkl
 	nullfunc1,				// dath
 	nullfunc1,				// datl
-	nullfunc1,				// dats
+	nullfunc3,				// dats
 	nullfunc1,				// clk
-	nullfunc1,				// bitr
-	nullfunc2,				// macro
+	nullfunc3,				// bitr
+	nullfunc3, 				// periodic
+	nullfunc4,				// macro
 	HiZsetup,				// setup
 	HiZcleanup,				// cleanup
 	"LIN" 					// name
@@ -447,15 +471,16 @@ proto protos[MAXPROTO+1] = {
 	nullfunc1,				// stop
 	nullfunc1,				// stopR
 	nullfunc2,				// send
-	nullfunc1,				// read
+	nullfunc3,				// read
 	nullfunc1,				// clkh
 	nullfunc1,				// clkl
 	nullfunc1,				// dath
 	nullfunc1,				// datl
-	nullfunc1,				// dats
+	nullfunc3,				// dats
 	nullfunc1,				// clk
-	nullfunc1,				// bitr
-	nullfunc2,				// macro
+	nullfunc3,				// bitr
+	nullfunc3, 				// periodic
+	nullfunc4,				// macro
 	HiZsetup,				// setup
 	HiZcleanup,				// cleanup
 	"CAN" 					// name
@@ -468,15 +493,16 @@ proto protos[MAXPROTO+1] = {
 	nullfunc1,				// stop
 	nullfunc1,				// stopR
 	nullfunc2,				// send
-	nullfunc1,				// read
+	nullfunc3,				// read
 	nullfunc1,				// clkh
 	nullfunc1,				// clkl
 	nullfunc1,				// dath
 	nullfunc1,				// datl
-	nullfunc1,				// dats
+	nullfunc3,				// dats
 	nullfunc1,				// clk
-	nullfunc1,				// bitr
-	nullfunc2,				// macro
+	nullfunc3,				// bitr
+	nullfunc3, 				// periodic
+	nullfunc4,				// macro
 	HiZsetup,				// setup
 	HiZcleanup,				// cleanup
 	"LCD" 					// name

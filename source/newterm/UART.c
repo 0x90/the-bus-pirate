@@ -42,25 +42,28 @@ struct _UART{
 
 static unsigned int UART2speed[]={13332,3332,1666,832,416,207,103,68,34,127};//BRG:300,1200,2400,4800,9600,19200,38400,57600,115200, 31250,
 
-void UARTread(void)
+unsigned int UARTread(void)
 {	unsigned char c;
 	if(UART2RXRdy())
 	{	if(U2STAbits.PERR) bpWstring("-p "); //show any errors
 		if(U2STAbits.FERR) bpWstring("-f ");
 		c=UART2RX();
-		bpWbyte(c);
+
 		if(U2STAbits.OERR)
 		{	bpWstring("*Bytes dropped*");
 			U2STA &= (~0b10); //clear overrun error if exists
-		}	
+		}
+		return c;
 	}
 	else
 	{	bpWline(OUMSG_UART_READ_FAIL);	
 	}
+	return 0;
 }
 
-void UARTwrite(unsigned int c)
+unsigned int UARTwrite(unsigned int c)
 {	UART2TX(c);				//send byte
+	return 0x100;
 }
 
 // todo: read from cmdline for now it is ok
@@ -233,11 +236,47 @@ void UARTmacro(unsigned int macro)
 		default:
 			bpWmessage(MSG_ERROR_MACRO);
 	}
-
-
-
-
 }
+
+
+void UARTstart(void)
+{	U2STA &= (~0b10); //clear overrun error if exists
+	uartSettings.eu=1;//open uart
+	modeConfig.periodicService=1;//start periodic service calls
+	bpWline(OUMSG_UART_LIVE_DISPLAY_ON);
+}
+
+void UARTstop(void)
+{	uartSettings.eu=0;// uart
+	modeConfig.periodicService=0;//start periodic service calls
+	bpWline(OUMSG_UART_LIVE_DISPLAY_OFF);
+}
+
+unsigned int UARTperiodic(void)
+{	unsigned int temp;
+
+	temp=0;
+	while(UART2RXRdy())			//data ready
+	{	if(uartSettings.eu==1)
+		{	bpWBR;
+			bpWmessage(MSG_READ); //bpWstring(OUMSG_UART_READ);	
+			if(U2STAbits.PERR) bpWstring("-p "); //show any errors
+			if(U2STAbits.FERR) bpWstring("-f ");
+			bpWbyte(UART2RX());
+			if(U2STAbits.OERR)
+			{	bpWstring("*Bytes dropped*");
+	 			U2STA &= (~0b10); //clear overrun error if exists
+			}	
+			bpWBR;
+		}else
+		{	UART2RX();//clear the buffer....
+		}
+		temp=1;
+	}
+	return temp;
+}
+
+
 
 
 /*

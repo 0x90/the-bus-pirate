@@ -64,16 +64,17 @@ unsigned char LastDeviceFlag;
 unsigned char crc8;
 
 // implementation new framework other part in buspiratecore.c
-void OWread(void)
-{	bpWbyte(OWReadByte());
+unsigned int OWread(void)
+{	return (OWReadByte());
 }
 
-void OWwrite(unsigned int c)
+unsigned int OWwrite(unsigned int c)
 {	OWWriteByte(c);
+	return 0x100;
 }
 
-void OWbitr(void)
-{	bpEchoState(OWReadBit());
+unsigned int OWbitr(void)
+{	return(OWReadBit());
 }
 
 void OWbitclk(void)

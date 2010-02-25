@@ -18,9 +18,9 @@ void DS1wireProcess(void);
 unsigned char PROBE_CHECKSUM (unsigned char *BYTE, int size_of_BYTE);
 void bin1WIRE(void);
 
-void OWread(void);
-void OWwrite(unsigned int c);
-void OWbitr(void);
+unsigned int OWread(void);
+unsigned int OWwrite(unsigned int c);
+unsigned int OWbitr(void);
 void OWbitclk(void);
 void OWdatl(void);
 void OWdath(void);

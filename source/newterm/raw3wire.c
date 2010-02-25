@@ -48,16 +48,17 @@ struct _R3W{
 } r3wSettings;
 
 
-void R3Wread(void)
-{	bpWbyte(bbReadWriteByte(0xff));
+unsigned int R3Wread(void)
+{	return (bbReadWriteByte(0xff));
 }
 
-void R3Wwrite(unsigned int c)
+unsigned int R3Wwrite(unsigned int c)
 {	c=bbReadWriteByte(c);
 	if(r3wSettings.wwr==1)
-	{	bpSP;
-		bpWmessage(MSG_READ);
-		bpWbyte(c);
+	{	return c;
+	}
+	else
+	{	return 0x100;
 	}
 }
 void R3Wstartr(void)
@@ -75,11 +76,11 @@ void R3Wstop(void)
 	bbCS(1);
 	bpWmessage(MSG_CS_DISABLED);
 }
-void R3Wbitr(void)
-{	bpEchoState(bbReadBit());
+unsigned int R3Wbitr(void)
+{	return (bbReadBit());
 }
-void R3Wbitp(void)
-{	bpEchoState(bbMISO());
+unsigned int R3Wbitp(void)
+{	return (bbMISO());
 }
 void R3Wclk(void)
 {	bbClockTicks(1);
@@ -122,6 +123,7 @@ void R3Wsetup(void)
 		modeConfig.speed=(getnumber(1,3,0)-1);
 		bpWmessage(MSG_OPT_OUTPUT_TYPE);
 		modeConfig.HiZ=(~(getnumber(1,2,0)-1));
+		cmderror=0;
 	}
 	else
 	{	bpWstring("R3W (spd hiz)=( ");

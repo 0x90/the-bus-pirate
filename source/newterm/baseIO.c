@@ -19,7 +19,8 @@
 #include "busPirateCore.h"//need access to bpConfig
 extern struct _bpConfig bpConfig; //holds persistant bus pirate settings (see base.h) need hardware version info
 
-// just to keep the linker happy (for now)
+
+// just to keep the linker happy (for now) jtag and lcd only uses them
 unsigned int bpUserNumberPrompt(unsigned int maxBytes, unsigned int maxValue, unsigned int defValue)
 {	return 0;
 }
@@ -368,7 +369,8 @@ unsigned char UART1RX(void){
 
 //add byte to buffer, pause if full
 //uses PIC 4 byte UART FIFO buffer
-void UART1TX(char c){
+void UART1TX(char c)
+{	if(bpConfig.quiet) return;
 	while(U1STAbits.UTXBF == 1); //if buffer is full, wait
     U1TXREG = c;
 }

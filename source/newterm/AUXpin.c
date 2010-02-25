@@ -248,7 +248,7 @@ void bpAuxLow(void){
 }
 
 // \leaves AUX in high impedence
-void bpAuxRead(void){
+unsigned int bpAuxRead(void){
 	unsigned char c;
 	if(modeConfig.altAUX==0){
 		BP_AUX_DIR=1;//aux input
@@ -261,10 +261,7 @@ void bpAuxRead(void){
 		asm( "nop" );//needs one TCY to get pin direction
 		c=BP_CS;
 	}
-	bpWstring(OUMSG_AUX_INPUT_READ);
-	bpEchoState(c);
-	bpWBR;
-
+	return c;
 }
 
 /*1. Set the PWM period by writing to the selected

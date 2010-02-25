@@ -88,19 +88,19 @@ void SPIstop(void)
 	bpWmessage(MSG_CS_DISABLED);
 }
 
-void SPIread(void)
-{	bpWbyte(spiWriteByte(0xff));
+unsigned int SPIread(void)
+{	return (spiWriteByte(0xff));
 }
 
-void SPIwrite(unsigned int c)
+unsigned int SPIwrite(unsigned int c)
 {	unsigned char r;
 
 	r=spiWriteByte(c);
 	if(spiSettings.wwr==1){
-		bpSP;
-		bpWmessage(MSG_READ);
-		bpWbyte(r);
-		bpBR;
+		return r;
+	}
+	else
+	{	return 0x100;
 	}
 }
 

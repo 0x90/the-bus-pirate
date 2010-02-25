@@ -67,6 +67,7 @@ struct _bpConfig {
 	// Device IDs from the chip
 	unsigned int dev_type;
 	unsigned int dev_rev;
+	unsigned char quiet:1;					// no output 
 };
 
 
@@ -75,15 +76,16 @@ typedef struct _proto {
 	void (*protocol_startR)(void);
 	void (*protocol_stop)(void);
 	void (*protocol_stopR)(void);
-	void (*protocol_send)(unsigned int);
-	void (*protocol_read)(void);
+	unsigned int (*protocol_send)(unsigned int);
+	unsigned int (*protocol_read)(void);
 	void (*protocol_clkh)(void);
 	void (*protocol_clkl)(void);
 	void (*protocol_dath)(void);
 	void (*protocol_datl)(void);
-	void (*protocol_dats)(void);
+	unsigned int (*protocol_dats)(void);
 	void (*protocol_clk)(void);
-	void (*protocol_bitr)(void);
+	unsigned int (*protocol_bitr)(void);
+	unsigned int (*protocol_periodic)(void);
 	void (*protocol_macro)(unsigned int);
 	void (*protocol_setup)(void);
 	void (*protocol_cleanup)(void);
