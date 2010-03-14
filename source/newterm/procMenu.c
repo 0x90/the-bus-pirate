@@ -192,9 +192,27 @@ void serviceuser(void)
 
 	while(1)
 	{	bpWstring(protos[bpConfig.busMode].protocol_name);
+		if(bpConfig.basic)
+		{	bpWstring("(BASIC)");
+		}
 		bpWstring("> ");
 		while(!cmd)
-		{	c=UART1RX();
+		{	while(!UART1RXRdy())		// as long as there is no user input poll periodicservice
+			{	if(modeConfig.periodicService==1)
+				{	if(protos[bpConfig.busMode].protocol_periodic())		// did we print something?
+					{	bpWstring(protos[bpConfig.busMode].protocol_name);
+						bpWstring("> ");
+						if(cmdstart!=cmdend)
+						{	for(temp=cmdstart; temp!=cmdend; temp++)
+							{	UART1TX(cmdbuf[temp]);
+								temp&=CMDLENMSK;
+							}
+						}
+					}
+				}
+			}
+
+			c=UART1RX();
 			switch(c)
 			{	case 0x08:	if(cmdend!=cmdstart)				// backspace pressed, do we have already input??
 							{	cmdend--;
@@ -238,19 +256,6 @@ void serviceuser(void)
 							{	UART1TX(BELL);			// echo beep (buffer overflow)
 								cmdbuf[cmdend]=0x00;
 							}
-							// cvd: Better to use a ISR to service this??
-							if(modeConfig.periodicService==1)
-							{	if(protos[bpConfig.busMode].protocol_periodic())		// did we print something?
-								{	bpWstring(protos[bpConfig.busMode].protocol_name);
-									bpWstring("> ");
-									if(cmdstart!=cmdend)
-									{	for(temp=cmdstart; temp!=cmdend; temp++)
-										{	UART1TX(cmdbuf[temp]);
-											temp&=CMDLENMSK;
-										}
-									}
-								}
-							}
 			}
 		}
 
@@ -275,6 +280,25 @@ void serviceuser(void)
 
 		stop=0;
 		cmderror=0;
+
+		if(bpConfig.basic)
+		{	basiccmdline();
+			bpWline("Ready.");
+			stop=1;
+		}
+
+//		for(i=0; i<CMDBUFLEN; i++)						// print ringbuffer
+//		{	if(cmdbuf[i]) UART1TX(cmdbuf[i]);
+//				else UART1TX('.');
+//		}
+
+//		bpWline("");
+//		bpWstring("cmdstart = ");
+//		bpWinthex(cmdstart);
+//		bpWstring(" cmdend = ");
+//		bpWinthex(cmdend);
+//		bpWline("");
+
 
 		while(!stop)
 		{	c=cmdbuf[cmdstart];
@@ -463,13 +487,11 @@ void serviceuser(void)
 				case '+':	//bpWline("-easter egg");
 							easterEgg();
 							break;
+#ifdef BP_USE_BASIC
 				case 's':	//bpWline("Listing:");
-							list();
+							bpConfig.basic=1;
 							break;
-				case 'S':	//bpWline("output:");
-							interpreter();
-							bpBR;
-							break;
+#endif
 					// command for subsys (i2c, UART, etc)
 				case '(':	//bpWline("-macro");
 							cmdstart++;
@@ -699,8 +721,8 @@ int getrepeat(void)
 }
 
 void consumewhitechars(void)
-{	while((cmdbuf[cmdstart]==0x20)||(cmdbuf[cmdstart]==',')) 
-	{	cmdstart++;		// remove spaces, comma's
+{	while(cmdbuf[cmdstart]==0x20)
+	{	cmdstart++;		// remove spaces
 		cmdstart&=CMDLENMSK;
 	}
 }

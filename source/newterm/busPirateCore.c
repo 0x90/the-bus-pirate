@@ -332,28 +332,6 @@ proto protos[MAXPROTO+1] = {
 	"SPI" 					// name
 }
 #endif
-#ifdef BP_USE_JTAG
-,
-{	nullfunc1,				// start
-	nullfunc1,				// startR
-	nullfunc1,				// stop
-	nullfunc1,				// stopR
-	nullfunc2,				// send
-	nullfunc3,				// read
-	nullfunc1,				// clkh
-	nullfunc1,				// clkl
-	nullfunc1,				// dath
-	nullfunc1,				// datl
-	nullfunc3,				// dats
-	nullfunc1,				// clk
-	nullfunc3,				// bitr
-	nullfunc3,				// periodic
-	nullfunc4,				// macro
-	HiZsetup,				// setup
-	HiZcleanup,				// cleanup
-	"JTAG" 					// name
-}
-#endif
 #ifdef BP_USE_RAW2WIRE
 ,
 {	R2Wstart,				// start
@@ -362,8 +340,8 @@ proto protos[MAXPROTO+1] = {
 	R2Wstop,				// stopR
 	R2Wwrite,				// send
 	R2Wread,				// read
-	R2Wclkl,				// clkh
-	R2Wclkh,				// clkl
+	R2Wclkh,				// clkh
+	R2Wclkl,				// clkl
 	R2Wdath,				// dath
 	R2Wdatl,				// datl
 	R2Wbitp,				// dats (=bitpeek)
@@ -418,72 +396,6 @@ proto protos[MAXPROTO+1] = {
 	HiZsetup,				// setup
 	HiZcleanup,				// cleanup
 	"KEYB" 					// name
-}
-#endif
-#ifdef BP_USE_MIDI
-,
-{	nullfunc1,				// start
-	nullfunc1,				// startR
-	nullfunc1,				// stop
-	nullfunc1,				// stopR
-	nullfunc2,				// send
-	nullfunc3,				// read
-	nullfunc1,				// clkh
-	nullfunc1,				// clkl
-	nullfunc1,				// dath
-	nullfunc1,				// datl
-	nullfunc3,				// dats
-	nullfunc1,				// clk
-	nullfunc3,				// bitr
-	nullfunc3, 				// periodic
-	nullfunc4,				// macro
-	HiZsetup,				// setup
-	HiZcleanup,				// cleanup
-	"MIDI" 					// name
-}
-#endif
-#ifdef BP_USE_LIN
-,
-{	nullfunc1,				// start
-	nullfunc1,				// startR
-	nullfunc1,				// stop
-	nullfunc1,				// stopR
-	nullfunc2,				// send
-	nullfunc3,				// read
-	nullfunc1,				// clkh
-	nullfunc1,				// clkl
-	nullfunc1,				// dath
-	nullfunc1,				// datl
-	nullfunc3,				// dats
-	nullfunc1,				// clk
-	nullfunc3,				// bitr
-	nullfunc3, 				// periodic
-	nullfunc4,				// macro
-	HiZsetup,				// setup
-	HiZcleanup,				// cleanup
-	"LIN" 					// name
-}
-#endif
-#ifdef BP_USE_CAN
-,
-{	nullfunc1,				// start
-	nullfunc1,				// startR
-	nullfunc1,				// stop
-	nullfunc1,				// stopR
-	nullfunc2,				// send
-	nullfunc3,				// read
-	nullfunc1,				// clkh
-	nullfunc1,				// clkl
-	nullfunc1,				// dath
-	nullfunc1,				// datl
-	nullfunc3,				// dats
-	nullfunc1,				// clk
-	nullfunc3,				// bitr
-	nullfunc3, 				// periodic
-	nullfunc4,				// macro
-	HiZsetup,				// setup
-	HiZcleanup,				// cleanup
-	"CAN" 					// name
 }
 #endif
 #ifdef BP_USE_LCD

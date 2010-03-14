@@ -38,23 +38,20 @@
 #define BP_USE_I2C
 //#define BP_USE_I2C_HW
 #define BP_USE_HWSPI //hardware spi
-#define BP_USE_JTAG
 #define BP_USE_RAW2WIRE
 #define BP_USE_RAW3WIRE
 #define BP_USE_PCATKB
-//#define BP_USE_MIDI //merged with UART
-//#define BP_USE_LIN
-//#define BP_USE_CAN
 #define BP_USE_LCD // include HD44780 LCD library
 
-#define MAXPROTO 10	// need to set it manually for now (is there a smart way for this?)
+#define MAXPROTO 9	// need to set it manually for now (is there a smart way for this?)
 
-
+#define BP_USE_BASIC
+// basic subsystem
 // only 1 should be uncommented
-//#define BASICTEST
+#define BASICTEST
 //#define BASICTEST_I2C
 //#define BASICTEST_UART
-#define BASICTEST_R3W
+//#define BASICTEST_R3W
 
 //sets the address in the bootloader to jump to on the bootloader command
 //must be defined in asm

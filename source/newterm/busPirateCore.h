@@ -39,9 +39,6 @@ struct _bpConfig {
 		#ifdef BP_USE_HWSPI
 		   	HWSPI,
 		#endif
-		#ifdef BP_USE_JTAG
-			JTAG,
-		#endif
 		#ifdef BP_USE_RAW2WIRE
 		    RAW2WIRE,
 		#endif
@@ -51,15 +48,6 @@ struct _bpConfig {
 		#ifdef BP_USE_PCATKB
 			PCATKB,	
 		#endif
-		#ifdef BP_USE_MIDI
-			MIDI,
-		#endif
-		#ifdef BP_USE_LIN
-			LIN,
-		#endif
-		#ifdef BP_USE_CAN
-			CAN,
-		#endif
 		#ifdef BP_USE_LCD
 			LCD,
 		#endif
@@ -68,6 +56,7 @@ struct _bpConfig {
 	unsigned int dev_type;
 	unsigned int dev_rev;
 	unsigned char quiet:1;					// no output 
+	unsigned char basic:1;					// basic commandline
 };
 
 

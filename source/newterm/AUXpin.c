@@ -31,6 +31,70 @@ static enum _auxmode
 	} AUXmode=AUX_IO;
 
 
+// ripped :)
+
+int PWMfreq;
+int PWMduty;
+
+void updatePWM(void)
+{	unsigned int PWM_period, PWM_dutycycle, PWM_div;
+	int done;
+
+	//cleanup timers 
+	T2CON=0;		// clear settings
+	T4CON=0;
+	OC5CON =0;
+
+	if(PWMfreq==0)
+	{	AUXPIN_RPOUT = 0;	 //remove output from AUX pin
+		AUXmode=AUX_IO;
+	}
+
+ 	if(PWMfreq<4)
+	{	//use 256 //actual max is 62500hz
+		PWM_div=62;//actually 62500
+		T2CONbits.TCKPS1=1;
+		T2CONbits.TCKPS0=1;
+	}
+	else if(PWMfreq<31)
+	{	//use 64
+		PWM_div=250;
+		T2CONbits.TCKPS1=1;
+		T2CONbits.TCKPS0=0;
+	}
+	else if(PWMfreq<245)
+	{	//use 8
+		PWM_div=2000;
+		T2CONbits.TCKPS1=0;
+		T2CONbits.TCKPS0=1;
+	}
+	else
+	{	//use 1
+		PWM_div=16000;
+		T2CONbits.TCKPS1=0;
+		T2CONbits.TCKPS0=0;
+	}
+	PWM_period=(PWM_div/PWMfreq)-1;
+	PR2	= PWM_period;	
+
+	PWM_dutycycle=(PWM_period*PWMduty)/100;
+	
+
+	//assign pin with PPS
+	AUXPIN_RPOUT = OC5_IO;
+
+	OC5R = PWM_dutycycle;
+	OC5RS = PWM_dutycycle;
+	OC5CON = 0x6;			
+	T2CONbits.TON = 1;	
+
+	AUXmode=AUX_PWM;
+
+}
+
+
+
+
 void bpPWM(void){
 	unsigned int PWM_period, PWM_dutycycle, PWM_freq, PWM_div;
 	int done;

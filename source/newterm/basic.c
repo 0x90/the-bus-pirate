@@ -16,11 +16,13 @@
 
 
 
-
 #include "basic.h"
 #include "base.h"
 #include "AUXpin.h"
 #include "busPirateCore.h"
+#include "procMenu.h"
+#include "bitbang.h"
+
 
 extern struct _bpConfig bpConfig;
 extern struct _modeConfig modeConfig;
@@ -28,19 +30,7 @@ extern struct _command bpCommand;
 extern proto protos[MAXPROTO];
 extern int getnumber(int def, int max, int x);
 
-/*
-// for compiler hapiness
-#define bpBR	bpWline("");
-#define bpSP	UART1TX(' ');
-extern int getnumber(int def, int max, int x);
-extern void bpWstring(char *s);
-extern void bpWinthex(unsigned int c);
-extern void bpWstring(char *s);
-extern void bpWline(char *s);
-extern void UART1TX(char c);
-extern void bpDelayUS(const unsigned char delay);
-*/
-
+#ifdef BP_USE_BASIC
 
 int vars[26];					// var a-z
 int stack[GOSUBMAX];				// max 5 gosubs
@@ -50,7 +40,46 @@ int fors;						// current for
 int gosubs;						// current gosubs
 int datapos;					// read pointer.
 
+const struct token tokens[]=
+{{	STAT_LET,	TOK_LET},
+{	STAT_IF,	TOK_IF},
+{	STAT_THEN,	TOK_THEN},
+{	STAT_ELSE,	TOK_ELSE},
+{	STAT_GOTO, 	TOK_GOTO},
+{	STAT_GOSUB, TOK_GOSUB},
+{	STAT_RETURN, TOK_RETURN},
+{	STAT_REM, 	TOK_REM},
+{	STAT_PRINT, TOK_PRINT},
+{	STAT_INPUT, TOK_INPUT},
+{	STAT_FOR,	TOK_FOR},
+{	STAT_TO,	TOK_TO},
+{	STAT_NEXT,	TOK_NEXT},
+{	STAT_READ,	TOK_READ},
+{	STAT_DATA,	TOK_DATA},
+{	STAT_START,	TOK_START},
+{	STAT_STARTR, TOK_STARTR},
+{	STAT_STOP,	TOK_STOP},
+{	STAT_STOPR, TOK_STOPR},
+{	STAT_SEND,	TOK_SEND},
+{	STAT_RECEIVE, TOK_RECEIVE},
+{	STAT_CLK,	TOK_CLK},
+{	STAT_DAT,	TOK_DAT},
+{	STAT_BITREAD, TOK_BITREAD},
+{	STAT_ADC,	TOK_ADC},
+{	STAT_AUX,	TOK_AUX},
+{	STAT_PSU,	TOK_PSU},
+{	STAT_PULLUP, TOK_PULLUP},
+{	STAT_AUXPIN, TOK_AUXPIN},
+{	STAT_FREQ,	TOK_FREQ},
+{	STAT_DUTY,	TOK_DUTY},
+{	STAT_DELAY,	TOK_DELAY},
+{	STAT_END,	TOK_END}};
 
+
+
+
+
+// insert your favarite basicprogram here:
 unsigned char pgmspace[PGMSIZE]={	// 1kb basic memory
 
 // basic basic test :D
@@ -232,76 +261,7 @@ TOK_LEN+ 1, 1, 134, TOK_END,
 };
 
 
-/*
-// testsubbs:
-// dummy protocol :)
-void protostart(void)
-{	bpWline("START");
-}
-void protostartr(void)
-{	bpWline("START");
-}
-void protostop(void)
-{	bpWline("STOP");
-}
-void protostopr(void)
-{	bpWline("STOPR");
-}
-void protoauxl(void)
-{	bpWline("AUXLOW");
-}
-void protoauxh(void)
-{	bpWline("AUXHI");
-}
-int protogetaux(void)
-{	return 1;
-}
-int protogetdat(void)
-{	return 1;
-}
-void protopsuon(void)
-{	bpWline("PSUON");
-}
-void protopsuoff(void)
-{	bpWline("PSUOFF");
-}
-void protodatl(void)
-{	bpWline("DATLOW");
-}
-void protodath(void)
-{	bpWline("DATHI");
-}
-void protoclkl(void)
-{	bpWline("CLKLOW");
-}
-void protoclkh(void)
-{	bpWline("CLKHI");
-}
-void protoclk(void)
-{	bpWline("CLKPULSE");
-}
-void protopullupon(void)
-{	bpWline("PULLUPON");
-}
-void protopullupoff(void)
-{	bpWline("PULLUOPOFF");
-}
-void protowrite(unsigned int c)
-{	bpWstring("WRITE: ");
-	bpWinthex(c);
-	bpSP;
-}
-unsigned int protoread(void)
-{	bpWline("READ");
-	return 0xAA;
-}
-unsigned int protobitr(void)
-{	bpWline("BITR");
-	return 1;
-}
 
-// end of testsubs
-*/
 
 // basicinterpreter starts here
 
@@ -314,7 +274,7 @@ void handleelse(void)
 	}
 }
 
-unsigned int searchlineno(unsigned int line)
+int searchlineno(unsigned int line)
 {	int i;
 	int len;
 	int lineno;
@@ -325,19 +285,22 @@ unsigned int searchlineno(unsigned int line)
 	//UART1TX('?');
 
 	while(1)
-	{	len=pgmspace[i]-TOK_LEN;
+	{	if(pgmspace[i]<=TOK_LEN)
+		{	return -1;
+		}
+		len=pgmspace[i]-TOK_LEN;
 		lineno=(pgmspace[i+1]<<8)+pgmspace[i+2];
+//		if(i>PGMSIZE)
+//		{	return -1;
+//		}
 		if(line==lineno)
 		{	return i;
 		}
-		if(i>PGMSIZE)
-		{	return -1;
-		}
 		i+=len+3;
-		///bpWintdec(i); bpSP;
+		//bpWintdec(i); bpSP;
 		//bpWintdec(lineno); bpSP;
 	}
-	return 0;
+	return -1;
 }
 
 int getnumvar(void)
@@ -904,6 +867,44 @@ void interpreter(void)
 							}
 						
 							break;
+
+			case TOK_AUXPIN:	pcupdated=1;
+							pc+=4;
+
+							if(assign())
+							{	modeConfig.altAUX=1;
+							}
+							else
+							{	modeConfig.altAUX=1;
+							}
+						
+							break;
+			case TOK_FREQ:	pcupdated=1;
+							pc+=4;
+
+							PWMfreq=assign();
+							if(PWMfreq<0)	PWMfreq=0;
+							if(PWMfreq>4000)	PWMfreq=4000;
+							if(PWMduty<2)	PWMduty=2;
+							if(PWMduty>99)	PWMduty=99;
+
+							updatePWM();
+
+							break;
+			case TOK_DUTY:	pcupdated=1;
+							pc+=4;
+
+							PWMduty=assign();
+							if(PWMfreq<0)	PWMfreq=0;
+							if(PWMfreq>4000)	PWMfreq=4000;
+							if(PWMduty<2)	PWMduty=2;
+							if(PWMduty>99)	PWMduty=99;
+
+							updatePWM();
+						
+							break;
+
+
 			case TOK_DAT:	pcupdated=1;
 							pc+=4;
 
@@ -1006,65 +1007,72 @@ void list(void)
 	while(pgmspace[pc])
 	{	c=pgmspace[pc];
 		switch(c)
-		{	case TOK_LET:	printstat(STAT_LET);
+		{	case TOK_LET:	printstat(tokens[0].statement);
 							break;
-			case TOK_IF:	printstat(STAT_IF);
+			case TOK_IF:	printstat(tokens[1].statement);
 							break;
-			case TOK_THEN:	printstat(STAT_THEN);
+			case TOK_THEN:	printstat(tokens[2].statement);
 							break;
-			case TOK_ELSE:	printstat(STAT_ELSE);
+			case TOK_ELSE:	printstat(tokens[3].statement);
 							break;
-			case TOK_GOTO:	printstat(STAT_GOTO);
+			case TOK_GOTO:	printstat(tokens[4].statement);
 							break;
-			case TOK_GOSUB:	printstat(STAT_GOSUB);
+			case TOK_GOSUB:	printstat(tokens[5].statement);
 							break;
-			case TOK_RETURN:printstat(STAT_RETURN);
+			case TOK_RETURN:printstat(tokens[6].statement);
 							break;
-			case TOK_REM:	printstat(STAT_REM);
+			case TOK_REM:	printstat(tokens[7].statement);
 							break;
-			case TOK_PRINT:	printstat(STAT_PRINT);
+			case TOK_PRINT:	printstat(tokens[8].statement);
 							break;
-			case TOK_INPUT:	printstat(STAT_INPUT);
+			case TOK_INPUT:	printstat(tokens[9].statement);
 							break;
-			case TOK_FOR:	printstat(STAT_FOR);
+			case TOK_FOR:	printstat(tokens[10].statement);
 							break;
-			case TOK_TO:	printstat(STAT_TO);
+			case TOK_TO:	printstat(tokens[11].statement);
 							break;
-			case TOK_NEXT:	printstat(STAT_NEXT);
+			case TOK_NEXT:	printstat(tokens[12].statement);
 							break;
-			case TOK_READ:	printstat(STAT_READ);
+			case TOK_READ:	printstat(tokens[13].statement);
 							break;
-			case TOK_DATA:	printstat(STAT_DATA);
+			case TOK_DATA:	printstat(tokens[14].statement);
 							break;
-			case TOK_START:	printstat(STAT_START);
+			case TOK_START:	printstat(tokens[15].statement);
 							break;
-			case TOK_STARTR:	printstat(STAT_STARTR);
+			case TOK_STARTR:	printstat(tokens[16].statement);
 							break;
-			case TOK_STOP:	printstat(STAT_STOP);
+			case TOK_STOP:	printstat(tokens[17].statement);
 							break;
-			case TOK_STOPR:	printstat(STAT_STOPR);
+			case TOK_STOPR:	printstat(tokens[18].statement);
 							break;
-			case TOK_SEND:	printstat(STAT_SEND);
+			case TOK_SEND:	printstat(tokens[19].statement);
 							break;
-			case TOK_RECEIVE:	printstat(STAT_RECEIVE);
+			case TOK_RECEIVE:	printstat(tokens[20].statement);
 							break;
-			case TOK_CLK:	printstat(STAT_CLK);
+			case TOK_CLK:	printstat(tokens[21].statement);
 							break;
-			case TOK_DAT:	printstat(STAT_DAT);
+			case TOK_DAT:	printstat(tokens[22].statement);
 							break;
-			case TOK_ADC:	printstat(STAT_ADC);
+			case TOK_BITREAD:	printstat(tokens[23].statement);
 							break;
-			case TOK_AUX:	printstat(STAT_AUX);
+			case TOK_ADC:	printstat(tokens[24].statement);
 							break;
-			case TOK_PSU:	printstat(STAT_PSU);
+			case TOK_AUX:	printstat(tokens[25].statement);
 							break;
-			case TOK_PULLUP:	printstat(STAT_PULLUP);
+			case TOK_PSU:	printstat(tokens[26].statement);
 							break;
-			case TOK_DELAY:	printstat(STAT_DELAY);
+			case TOK_PULLUP:	printstat(tokens[27].statement);
 							break;
-			case TOK_BITREAD:	printstat(STAT_BITREAD);
+			case TOK_AUXPIN:	printstat(tokens[28].statement);
 							break;
-			case TOK_END:	printstat(STAT_END);
+			case TOK_FREQ:	printstat(tokens[29].statement);
+							break;
+			case TOK_DUTY:	printstat(tokens[30].statement);
+							break;
+
+			case TOK_DELAY:	printstat(tokens[31].statement);
+							break;
+			case TOK_END:	printstat(tokens[32].statement);
 							break;
 			default:		if(c<TOK_LEN)
 							{	UART1TX(c);
@@ -1085,6 +1093,468 @@ void list(void)
 	bpWline(" bytes.");
 }
 
+int compare(char *p)
+{	int oldstart;
+	
+	oldstart=cmdstart;
+	while(*p)
+	{	if(*p!=cmdbuf[cmdstart])
+		{	cmdstart=oldstart;
+			return 0;
+		}
+		cmdstart++;
+		cmdstart&=CMDLENMSK;
+
+		p++;
+	}
+	return 1;
+}  
+
+unsigned char gettoken(void)
+{	int i;
+
+	for(i=0; i<NUMTOKEN; i++)
+	{	if(compare(tokens[i].statement))
+		{	return tokens[i].tok;
+		}
+	}
+	return 0;
+}
+
+void basiccmdline(void)
+{	int i, j, temp;
+	int pos, end, len, string;
+	unsigned char line[35];
+
+
+	//convert to everyhting to uppercase
+	for(i=cmdstart; i!=cmdend; (i++)&CMDLENMSK)
+	{	if((cmdbuf[i]>='a')&&(cmdbuf[i]<='z')) cmdbuf[i]&=0xDF;
+	}
+
+	i=0;
+	// command or a new line?
+	if((cmdbuf[cmdstart]>='0')&&(cmdbuf[cmdstart]<='9'))
+	{	//bpWline("new line");
+
+		for(i=0; i<35; i++)
+		{	line[i]=0;
+		}
+
+		temp=getint();
+		line[1]=temp>>8;
+		line[2]=temp&0xFF;
+
+		//bpWstring("search for line ");
+		//bpWintdec(temp); bpBR;
+
+		pos=searchlineno(temp);
+		//bpWstring("pos=");
+		//bpWintdec(pos); bpSP;
+		if(pos!=-1)							// if it already exist remove it first
+		{	//bpWstring("replace/remove line @");
+			//bpWintdec(pos); bpBR
+			len=(pgmspace[pos]-TOK_LEN)+3;
+			//bpWstring("pos=");
+			//bpWintdec(pos); bpSP; 
+			for(i=pos; i<PGMSIZE-len; i++)
+			{	pgmspace[i]=pgmspace[i+len];	// move everyhting from pos len bytes down
+			}
+			//bpWstring("i=");
+			//bpWintdec(i); bpBR;
+			for( ; i<PGMSIZE; i++)
+			{	pgmspace[i]=0x00;
+			}
+		}
+
+		i=3;
+		string=0;
+
+		consumewhitechars();
+		while(cmdstart!=cmdend)
+		{	if(!string)
+			{	consumewhitechars();
+			}
+
+			if(!string)
+			{	temp=gettoken();
+			}
+			else
+			{	temp=0;
+			}
+			if(temp)
+			{	line[i]=temp;
+				if(temp==TOK_REM) string=1;			// allow spaces in rem statement
+			}
+			else
+			{	if(cmdbuf[cmdstart]=='"') string^=0x01;
+				line[i]=cmdbuf[cmdstart];
+				cmdstart++;
+				cmdstart&=CMDLENMSK;
+			}
+			i++;
+			if(i>35) 
+			{	bpWline("Too long!");
+				return;
+			}
+		}
+		//bpWstring("i=");
+		//bpWintdec(i); bpSP;
+
+		if(i==3) return;		// no need to insert an empty line
+		if(i==4) return;		// no need to insert an empty line
+ 
+		line[0]=TOK_LEN+(i-4);	
+
+		//UART1TX('[');
+		//for(i=0; i<35; i++)
+		//{	UART1TX(line[i]);
+		//}
+		//UART1TX(']');
+
+		i=0;
+		end=0;
+		pos=0;
+		
+		while(!end)
+		{	if(pgmspace[i]>TOK_LEN)			// valid line
+			{	len=pgmspace[i]-TOK_LEN;
+				//bpWstring("len=");
+				//bpWintdec(len); bpSP;
+
+				if((pgmspace[i+1]<=line[1])&&(pgmspace[i+2]<line[2]))
+				{	pos=i+len+3;
+					//bpWstring("pos=");
+					//bpWintdec(pos); bpSP;
+				}
+				i+=(len+3);
+			}
+			else
+			{	end=i;				// we found the end! YaY!  
+			}
+
+			temp=(pgmspace[i+1]<<8)+pgmspace[i+2];
+			//bpWstring("#");
+			//bpWintdec(temp); bpSP;
+			//bpWstring("i=");
+			//bpWintdec(i); bpSP;
+
+		}
+
+		//bpWstring("pos=");
+		//bpWintdec(pos); bpSP;
+		//bpWstring("end=");
+		//bpWintdec(end);
+		//bpBR;
+
+		temp=(line[0]-TOK_LEN)+3;
+
+		//for(i=end+temp; i>=pos; i--)
+		for(i=end; i>=pos; i--)
+		{	pgmspace[i+temp]=pgmspace[i];		// move every thing from pos temp 
+		}
+		for(i=0; i<temp; i++)					// insert line
+		{	pgmspace[pos+i]=line[i];
+		}
+
+		//cmdstart=cmdend;
+	}
+	else
+	{	if(compare("RUN"))
+		{	interpreter();
+			bpBR;
+		}
+		else if(compare("LIST"))
+		{	list();
+		}
+		else if(compare("EXIT"))
+		{	bpConfig.basic=0;
+		}
+		else if(compare("FORMAT"))
+		{	format();
+		}
+		else if(compare("SAVE"))
+		{	save();
+		}
+		else if(compare("LOAD"))
+		{	load();
+		}
+		else if(compare("DEBUG"))
+		{	for(i=0; i<PGMSIZE; i+=16)
+			{	for(j=0; j<16; j++)
+				{	bpWhex(pgmspace[i+j]); bpSP;
+				}
+			}
+		}
+		else if(compare("NEW"))
+		{	for(i=0; i<PGMSIZE ;i++)
+			{	pgmspace[i]=0;
+			}
+			pgmspace[0]=TOK_LEN+1;
+			pgmspace[1]=0xFF;
+			pgmspace[2]=0xFF;
+			pgmspace[3]=TOK_END;
+		}
+		else
+		{	bpWline("Syntax error");
+		}
+	}
+//	cmdstart=cmdend;
+}
 
 
 
+// i2c eeprom interaction
+// need to incorperate it in bitbang or r2wire!
+// CvD: I stole most off it from bitbang.c/h
+
+#define BASSDA		1
+#define BASSCL		2
+#define BASI2CCLK	100
+
+#define EEP24LC256
+
+#ifdef EEP24LC256
+
+#define I2CADDR		0xA0
+#define EEPROMSIZE	0x8000
+#define EEPROMPAGE	64
+
+#endif
+
+//globals
+int eeprom_lastprog;
+unsigned int eeprom_lastmem;
+
+
+
+void HIZbbL(unsigned int pins, int delay)
+{	IOLAT &=(~pins); //pins to 0
+	IODIR &=(~pins);//direction to output
+	bpDelayUS(delay);//delay	
+}
+void HIZbbH(unsigned int pins, int delay)
+{	IODIR |= pins;//open collector output high
+	bpDelayUS(delay);//delay
+}
+unsigned char HIZbbR(unsigned int pin)
+{	IODIR |= pin; //pin as input
+	Nop();
+	Nop();
+	Nop();
+	if(IOPOR & pin) return 1; else return 0;  //clear all but pin bit and return result
+}
+
+void basi2cstart(void)
+{	HIZbbH((BASSDA|BASSCL), BASI2CCLK);		// both hi
+	HIZbbL(BASSDA, BASI2CCLK);				// data down
+	HIZbbL(BASSCL, BASI2CCLK);				// clk down
+	HIZbbH(BASSDA, BASI2CCLK);				// data up
+}
+
+void basi2cstop(void)
+{	HIZbbL((BASSDA|BASSCL), BASI2CCLK);	
+	HIZbbH(BASSCL, BASI2CCLK);
+	HIZbbH(BASSDA, BASI2CCLK);
+}
+
+unsigned char basi2cread(int ack)
+{	int i;
+	unsigned char c;
+
+	c=0;
+	HIZbbR(BASSDA);
+
+	for(i=0; i<8; i++)
+	{	HIZbbL(BASSCL, BASI2CCLK/5);
+		HIZbbH(BASSCL, BASI2CCLK);
+		c<<=1;
+		c|=HIZbbR(BASSDA);
+
+		HIZbbL(BASSCL, BASI2CCLK);
+	}
+
+	if(ack)
+	{	HIZbbL(BASSDA, BASI2CCLK/5);
+	}
+	HIZbbH(BASSCL, BASI2CCLK);
+	HIZbbL(BASSCL, BASI2CCLK);
+
+	return c;
+}
+
+int basi2cwrite(unsigned char c)
+{	int i;
+	unsigned char mask;
+
+	mask=0x80;
+
+	for(i=0; i<8; i++)
+	{	if(c&mask)
+		{	HIZbbH(BASSDA, BASI2CCLK/5);
+			//bpWstring("W1");
+		}
+		else
+		{	HIZbbL(BASSDA, BASI2CCLK/5);
+			//bpWstring("W0");
+		}
+		HIZbbH(BASSCL, BASI2CCLK);
+		HIZbbL(BASSCL, BASI2CCLK);
+		mask>>=1;
+	}
+
+	HIZbbH(BASSCL, BASI2CCLK);
+	i=HIZbbR(BASSDA);
+	HIZbbL(BASSCL, BASI2CCLK);
+
+	return (i^0x01);
+}
+
+int checkeeprom(void)
+{	// just to be sure
+	basi2cstop();
+	basi2cstop();
+	basi2cstart();
+	if(!basi2cwrite(I2CADDR))
+	{	bpWline("No EEPROM found");
+		return 0;
+	}
+	basi2cwrite(0x00);
+	basi2cwrite(0x00);
+	basi2cstart();
+	if(basi2cread(1)==0x00)					// check for any data
+	{	bpWline("No EEPROM found");			// if 0 prolly no pullup and eeprom (PROLLY!) 
+		return 0;
+	}
+	basi2cstop();
+	return 1;
+}
+
+void format(void)
+{	int i,j;
+
+	basi2cstop();
+	basi2cstart();
+	if(!basi2cwrite(I2CADDR))
+	{	bpWline("No EEPROM found");
+		return;
+	}
+	basi2cstop();
+
+	bpWstring("Erasing");
+	for(i=0; i<EEPROMSIZE; i+=EEPROMPAGE)
+	{	basi2cstart();
+		basi2cwrite(I2CADDR);
+		basi2cwrite((i>>8));
+		basi2cwrite((i&0x0FF));
+		for(j=0; j<EEPROMPAGE; j++)
+		{	basi2cwrite(0xFF);
+		}
+		basi2cstop();
+		UART1TX('.');
+		waiteeprom();
+	}
+	bpWline("done");
+}
+
+void waiteeprom(void)
+{	int wait;
+	wait=1;
+	while(wait)
+	{	basi2cstart();
+		wait=basi2cwrite(I2CADDR);
+		basi2cstop();
+	}
+}
+
+void save(void)
+{	int i,j;
+	int slot;
+
+	consumewhitechars();
+	slot=getint();
+
+	if(slot==0)
+	{	bpWline("Syntax error");
+		return;
+	}
+
+	bpWstring("Saving to slot ");
+	bpWdec(slot);
+	bpBR;
+
+	if(slot>(EEPROMSIZE/PGMSIZE))
+	{	bpWline("Invalid slot");
+		return;
+	}
+
+	if(!checkeeprom())
+	{	return;
+	}
+
+	slot*=PGMSIZE;
+
+	basi2cstop();
+	basi2cwrite(I2CADDR);
+	basi2cwrite(slot>>8);
+	basi2cwrite(slot&0x0FF);
+	basi2cstart();
+	basi2cwrite(I2CADDR+1);
+
+	slot*=EEPROMPAGE; 
+
+	for(i=0; i<PGMSIZE; i+=EEPROMPAGE)		// we assume that pgmsize is dividable by eeprompage
+	{	basi2cstart();
+		basi2cwrite(I2CADDR);
+		basi2cwrite((slot+i)>>8);
+		basi2cwrite((slot+i)&0x0FF);
+		for(j=0; j<EEPROMPAGE; j++)
+		{	basi2cwrite(pgmspace[i+j]);
+		}
+		basi2cstop();
+		UART1TX('.');
+		waiteeprom();
+	}
+}
+
+void load(void)
+{	int i;
+	int slot;
+
+	consumewhitechars();
+	slot=getint();
+
+	if(slot==0)
+	{	bpWline("Syntax error");
+		return;
+	}
+
+	bpWstring("Loading from slot ");
+	bpWdec(slot);
+	bpBR;
+
+	if(slot>(EEPROMSIZE/PGMSIZE))
+	{	bpWline("Invalid slot");
+		return;
+	}
+
+	if(!checkeeprom())
+	{	return;
+	}
+
+	slot*=PGMSIZE;
+
+	basi2cstop();
+	basi2cwrite(I2CADDR);
+	basi2cwrite(slot>>8);
+	basi2cwrite(slot&0x0FF);
+	basi2cstart();
+	basi2cwrite(I2CADDR+1);
+
+	for(i=0; i<PGMSIZE; i++)
+	{	if(!(i%EEPROMPAGE))	UART1TX('.');		// pure estetic
+		pgmspace[i]=basi2cread(1);
+	}
+}
+
+#endif
