@@ -15,7 +15,7 @@
 
 
 // tokens
-#define TOKENS		0X80
+#define TOKENS		0x80
 #define	TOK_LET		0x80
 #define TOK_IF		0x81
 #define TOK_THEN	0x82

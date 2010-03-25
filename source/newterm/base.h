@@ -42,16 +42,19 @@
 #define BP_USE_RAW3WIRE
 #define BP_USE_PCATKB
 #define BP_USE_LCD // include HD44780 LCD library
+#define BP_USE_PIC
 
-#define MAXPROTO 9	// need to set it manually for now (is there a smart way for this?)
+#define MAXPROTO 10	// need to set it manually for now (is there a smart way for this?)
 
 #define BP_USE_BASIC
 // basic subsystem
 // only 1 should be uncommented
-#define BASICTEST
+//#define BASICTEST
 //#define BASICTEST_I2C
 //#define BASICTEST_UART
 //#define BASICTEST_R3W
+#define BASICTEST_PIC10			// program blink a led
+//#define BASICTEST_PIC10_2			// read whole pic
 
 //sets the address in the bootloader to jump to on the bootloader command
 //must be defined in asm
@@ -110,6 +113,7 @@ struct _modeConfig {
 	unsigned char pullupEN:1; 
 	unsigned char HiZ:1;
 	unsigned char vregEN:1;
+	unsigned char int16:1;			// 16 bits output?
 };
 
 struct _command {
@@ -196,7 +200,7 @@ void bpADCCprobe(void);
 
 //print byte c to the user terminal in the format 
 //  specified by the bpConfig.displayMode setting
-void bpWbyte(unsigned char c);
+void bpWbyte(unsigned int c);
 
 //delays used by many libraries
 void bpDelayMS(const unsigned char delay);

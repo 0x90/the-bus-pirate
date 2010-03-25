@@ -102,6 +102,9 @@ char* mode[]  =
 #ifdef BP_USE_LCD
 	#include "HD44780.h"
 #endif
+#ifdef BP_USE_PIC
+	#include "pic.h"
+#endif
 
 extern struct _bpConfig bpConfig;
 extern struct _modeConfig modeConfig;
@@ -418,6 +421,28 @@ proto protos[MAXPROTO+1] = {
 	HiZsetup,				// setup
 	HiZcleanup,				// cleanup
 	"LCD" 					// name
+}
+#endif
+#ifdef BP_USE_PIC
+,
+{	picstart,				// start
+	picstart,				// startR
+	picstop,				// stop
+	picstop,				// stopR
+	picwrite,				// send
+	picread,				// read
+	nullfunc1,				// clkh
+	nullfunc1,				// clkl
+	nullfunc1,				// dath
+	nullfunc1,				// datl
+	nullfunc3,				// dats
+	nullfunc1,				// clk
+	nullfunc3,				// bitr
+	nullfunc3, 				// periodic
+	nullfunc4,				// macro
+	picinit,				// setup
+	piccleanup,				// cleanup
+	"PIC" 					// name
 }
 #endif
 

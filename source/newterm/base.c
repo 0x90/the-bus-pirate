@@ -141,19 +141,23 @@ void InitializeUART1(void){
 
 //print byte c to the user terminal in the format 
 //  specified by the bpConfig.displayMode setting
-void bpWbyte(unsigned char c){
+void bpWbyte(unsigned int c){
 	switch(bpConfig.displayMode){
 		case HEX:
-			bpWhex(c);
+			if(modeConfig.int16) bpWinthex(c); else bpWhex(c);
 			break;
 		case DEC:
-			bpWdec(c);
+			if(modeConfig.int16) bpWintdec(c); else bpWdec(c);
 			break;
 		case BIN:
+			if(modeConfig.int16)
+			{	bpWbin(c); bpSP;
+			}
 			bpWbin(c);
 			break;
 		case RAW:
-			UART1TX(c);
+			UART1TX(c>>8);
+			UART1TX(c&0x0FF);
 			break;
 	}
 }

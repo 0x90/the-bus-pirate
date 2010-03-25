@@ -38,7 +38,6 @@ int PWMduty;
 
 void updatePWM(void)
 {	unsigned int PWM_period, PWM_dutycycle, PWM_div;
-	int done;
 
 	//cleanup timers 
 	T2CON=0;		// clear settings

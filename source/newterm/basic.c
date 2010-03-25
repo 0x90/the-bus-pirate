@@ -257,6 +257,64 @@ TOK_LEN+26, 1, 124, TOK_IF, 'D', '=', '3', TOK_THEN, TOK_PRINT, '"', 'U', 'N', '
 TOK_LEN+ 1, 1, 134, TOK_END,
 #endif
 
+#ifdef BASICTEST_PIC10
+
+TOK_LEN+15, 0, 100, TOK_REM, 'P', 'R', 'O', 'G', 'R', 'A', 'M', ' ', 'P', 'I', 'C', '1', '0', 'F',
+TOK_LEN+ 7, 0, 110, TOK_FOR, 'A', '=', '1', TOK_TO, '2', '4',
+TOK_LEN+ 1, 0, 120, TOK_START,
+TOK_LEN+ 2, 0, 130, TOK_SEND, '2',
+TOK_LEN+ 1, 0, 140, TOK_STOP,
+TOK_LEN+ 2, 0, 150, TOK_READ, 'B',
+TOK_LEN+ 2, 0, 160, TOK_SEND, 'B',
+TOK_LEN+ 1, 0, 170, TOK_START,
+TOK_LEN+ 2, 0, 180, TOK_SEND, '8', 
+TOK_LEN+ 2, 0, 190, TOK_DELAY, '2',
+TOK_LEN+ 3, 0, 200, TOK_SEND, '1', '4',
+TOK_LEN+ 2, 0, 210, TOK_SEND, '6',
+TOK_LEN+ 1, 0, 210, TOK_STOP,
+TOK_LEN+ 2, 0, 220, TOK_NEXT, 'A',
+TOK_LEN+ 1, 0, 230, TOK_START,
+TOK_LEN+ 9, 0, 240, TOK_FOR, 'A', '=', '2', '5', TOK_TO, '5', '1', '2', 
+TOK_LEN+ 2, 0, 250, TOK_SEND, '6',
+TOK_LEN+ 2, 1,   4, TOK_NEXT, 'A',
+TOK_LEN+ 2, 1,  14, TOK_SEND, '2',
+TOK_LEN+ 1, 1,  24, TOK_STOP,
+TOK_LEN+ 2, 1,  34, TOK_READ, 'B',
+TOK_LEN+ 2, 1,  44, TOK_SEND, 'B',
+TOK_LEN+ 1, 1,  54, TOK_START,
+TOK_LEN+ 2, 1,  64, TOK_SEND, '8',
+TOK_LEN+ 2, 1,  74, TOK_DELAY, '2',
+TOK_LEN+ 3, 1,  84, TOK_SEND, '1', '4',
+TOK_LEN+ 1, 1,  94, TOK_STOP,
+TOK_LEN+ 1, 1, 104, TOK_END,
+//TOK_LEN+11, 3, 232, TOK_REM, 'C', 'O', 'N', 'F', 'I', 'G', 'W', 'O', 'R', 'D',
+TOK_LEN+ 5, 3, 232, TOK_DATA, '4', '0', '7', '5',
+//TOK_LEN+ 5, 7, 208, TOK_REM, 'M', 'A', 'I', 'N',
+TOK_LEN+26, 7, 208, TOK_DATA, '3', '7', ',', '1', '0', '2', '9', ',', '2', '5', '7', '3', ',', '3', '3', '2', '2', ',', '4', '9', ',', '3', '3', '2', '7',
+TOK_LEN+26, 7, 218, TOK_DATA, '5', '0', ',', '7', '5', '3', ',', '2', '5', '7', '0', ',', '2', '0', '4', '8', ',', '7', '5', '4', ',', '2', '5', '7', '0',
+TOK_LEN+25, 7, 228, TOK_DATA, '2', '5', '6', '7', ',', '3', '2', '6', '4', ',', '2', ',', '3', '0', '7', '2', ',', '3', '8', ',', '3', '3', '2', '3',
+TOK_LEN+21, 7, 238, TOK_DATA, '6', ',', '3', '0', '7', '6', ',', '4', '2', '2', ',', '2', '3', '0', '7', ',', '2', '5', '7', '9',
+//TOK_LEN+ 7,11, 184, TOK_REM, 'O', 'S', 'C', 'C', 'A', 'L',
+TOK_LEN+ 5,11, 184, TOK_DATA, '3', '0', '9', '6', 
+
+// data statements and rems aren't mixing well!
+#endif
+
+#ifdef BASICTEST_PIC10_2
+
+TOK_LEN+12, 0, 100, TOK_REM, 'D', 'U', 'M', 'P', ' ', 'P', 'I', 'C', '1', '0', 'F',
+TOK_LEN+ 8, 0, 110, TOK_FOR, 'A', '=', '1', TOK_TO, '5', '1', '8',
+TOK_LEN+ 1, 0, 120, TOK_START,
+TOK_LEN+ 2, 0, 130, TOK_SEND, '4',
+TOK_LEN+ 1, 0, 140, TOK_STOP, 
+TOK_LEN+ 7, 0, 150, TOK_PRINT, TOK_RECEIVE, ';', '"', ',', '"', ';', 
+TOK_LEN+ 1, 0, 160, TOK_START, 
+TOK_LEN+ 2, 0, 170, TOK_SEND, '6',
+TOK_LEN+ 2, 0, 180, TOK_NEXT, 'A', 
+TOK_LEN+ 1, 0, 190, TOK_END, 
+#endif
+
+
 0x00,0x00,
 };
 
