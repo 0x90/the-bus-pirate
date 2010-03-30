@@ -32,7 +32,7 @@ pic10, pic12, pic14, pic16 and pic18
 #include "base.h"
 #include "buspiratecore.h"
 #include "procmenu.h"		// for the userinteraction subs
-
+#include "AUXpin.h"
 
 extern struct _bpConfig bpConfig;
 extern struct _modeConfig modeConfig;
@@ -67,12 +67,12 @@ void picinit(void)
 	{	cmderror=0;
 
 		bpWline("Commandmode");
-		bpWline("1. 6b cmd/14b data");
-		bpWline("2. 4b cmd/16b data");
+		bpWline("1. 6b/14b");
+		bpWline("2. 4b/16b");
 	
 		mode=getnumber(1,2,0); 
 
-		bpWline("Delay in ms");
+		bpWline("Delay");
 		delay=getnumber(1,2,0);
 	}
 
@@ -86,7 +86,7 @@ void picinit(void)
 	piccmddelay=delay;
 
 	if(!interactive)
-	{	bpWstring("PIC (mod dly)=(");
+	{	bpWstring("PIC(mod dly)=(");
 		bpWdec(picmode); bpSP;
 		bpWdec(piccmddelay);
 		bpWline(")");
@@ -121,7 +121,7 @@ unsigned int picread(void)
 	unsigned int c;
 
 	if(picmode&PICCMDMSK)
-	{	bpWline("no read in cmd mode!!");
+	{	bpWline("no read");
 		return 0;
 	}
 
@@ -152,7 +152,7 @@ unsigned int picread(void)
 						bbL(CLK, PICSPEED/2);
 						bbL(MOSI, PICSPEED/5);
 						break;
-		default:		bpWline("unknown picmode!!");
+		default:		bpWline("unknown");
 						return 0;
 	}
 
@@ -195,7 +195,7 @@ unsigned int picwrite(unsigned int c)
 								mask<<=1;
 							}
 							break;
-			default:		bpWline("unknown picmode!!");
+			default:		bpWline("unknown");
 							return 0;
 		}
 		bpDelayMS(piccmddelay);
@@ -236,17 +236,147 @@ unsigned int picwrite(unsigned int c)
 								mask<<=1;
 							}
 							break;
-			default:		bpWline("unknown picmode!!");
+			default:		bpWline("unknown");
 							return 0;
 		}
 	}
 	return 0x100; 	// no data to display 
 }
 
-//todo 
+/*
+0000 0000	return to main
+0000 0001	id=PIC1
+0000 0010	6b cmd
+0000 0011	4b cmd
+0000 01xx	xx ms delay
+
+0000 1xxx	unimplemented
+
+0001 0xyz	PWM|VREG|PULLUP
+0001 1xyz   AUX|MISO|CS
+
+01xx xxxx	just send cmd xxxxxxx
+10xx xxxx	send cmd xxxxxxx and next two bytes (14/16 bits)
+11xx xxxx	send cmd xxxxxxx and read two bytes
+
+*/
 
 void binpic(void)
-{	return;
-}
-		
+{	unsigned char cmd;
+	int ok;
+	unsigned int temp;
+
+	bpWstring("PIC1");
+	modeConfig.HiZ=1;				// to allow different Vcc 
+	modeConfig.allowpullup=1;		// pullup is allowed
+	bbL(MOSI|CLK, PICSPEED);		// pull both pins to 0 before applying Vcc and Vpp
+	picmode=PICMODE6;
+	piccmddelay=2;
+
+	while(1)
+	{	cmd=UART1RX();
+
+		switch(cmd&0xC0)
+		{	case 0x00:	ok=1;
+						switch(cmd&0xF0)
+						{	case 0x00:	switch(cmd)
+										{	case 0x00:	return;
+											case 0x01:	bpWstring("PIC1");
+														break;
+											case 0x02:	picmode=PICMODE6;
+														break;
+											case 0x03:	picmode=PICMODE4;
+														break;
+											case 0x04:
+											case 0x05:
+											case 0x06:
+											case 0x07:	piccmddelay=(cmd-0x04);
+														break;
+											default:	ok=0;
+										}
+										break;
+							case 0x10:	if(cmd&0x08)
+										{	if(cmd&0x04)
+											{	bbH(AUX ,5);
+											}
+											else
+											{	bbL(AUX ,5);
+											}
+											if(cmd&0x02)
+											{	bbH(MISO ,5);
+											}
+											else
+											{	bbL(MISO ,5);
+											}
+											if(cmd&0x01)
+											{	bbH(CS ,5);
+											}
+											else
+											{	bbL(CS ,5);
+											}
+										}
+										else
+										{	if(cmd&0x04)	// pwm?
+											{	PWMfreq=100;
+												PWMduty=50;
+												updatePWM();
+											}
+											else
+											{	PWMfreq=0;
+												updatePWM();
+											}
+											if(cmd&0x02)	// vreg on
+											{	BP_VREG_ON();
+												modeConfig.vregEN=1;
+											}
+											else
+											{	BP_VREG_OFF();
+												modeConfig.vregEN=0;
+											}
+											if(cmd&0x01)	// pullup on
+#if defined( BUSPIRATEV0A) || defined( BUSPIRATEV2)
+											{	BP_PULLUP_ON(); 
+												modeConfig.pullupEN=1;
+											}
+											else
+											{	BP_PULLUP_OFF();
+												modeConfig.pullupEN=0;
+											}
+#endif
+										}
+										break;
+							default:	ok=0;
+						}
+						if(ok)
+						{	UART1TX(1);
+						}
+						else
+						{	UART1TX(0);
+						}
+						break;
+			case 0x40:	picmode|=PICCMD;
+						picwrite(cmd&0x3F);
+						picmode&=PICMODEMSK;
+						UART1TX(1);
+						break;
+			case 0x80:	picmode|=PICCMD;
+						picwrite(cmd&0x3F);
+						picmode&=PICMODEMSK;
+						temp=UART1RX();
+						temp<<=8;
+						temp|=UART1RX();
+						picwrite(temp);
+						UART1TX(1);
+						break;
+			case 0xC0:	picmode|=PICCMD;
+						picwrite(cmd&0x3F);
+						picmode&=PICMODEMSK;
+						UART1TX(1);
+						temp=picread();
+						UART1TX(temp>>8);
+						UART1TX(temp&0x0FF);
+						break;
+		}
+	}
+}		
 #endif

@@ -1474,14 +1474,14 @@ int checkeeprom(void)
 	basi2cstop();
 	basi2cstart();
 	if(!basi2cwrite(I2CADDR))
-	{	bpWline("No EEPROM found");
+	{	bpWline("No EEPROM");
 		return 0;
 	}
 	basi2cwrite(0x00);
 	basi2cwrite(0x00);
 	basi2cstart();
 	if(basi2cread(1)==0x00)					// check for any data
-	{	bpWline("No EEPROM found");			// if 0 prolly no pullup and eeprom (PROLLY!) 
+	{	bpWline("No EEPROM");			// if 0 prolly no pullup and eeprom (PROLLY!) 
 		return 0;
 	}
 	basi2cstop();
@@ -1494,7 +1494,7 @@ void format(void)
 	basi2cstop();
 	basi2cstart();
 	if(!basi2cwrite(I2CADDR))
-	{	bpWline("No EEPROM found");
+	{	bpWline("No EEPROM");
 		return;
 	}
 	basi2cstop();

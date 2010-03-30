@@ -47,6 +47,7 @@ void updatePWM(void)
 	if(PWMfreq==0)
 	{	AUXPIN_RPOUT = 0;	 //remove output from AUX pin
 		AUXmode=AUX_IO;
+		return;
 	}
 
  	if(PWMfreq<4)

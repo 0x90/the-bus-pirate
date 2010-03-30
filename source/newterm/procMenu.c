@@ -443,7 +443,7 @@ void serviceuser(void)
 							break;
 				case 'a':	//bpWline("-AUX low");
 							repeat=getrepeat()+1;
-							while(repeat--)	bpAuxLow();
+							while(--repeat)	bpAuxLow();
 							break;
 				case 'A':	//bpWline("-AUX hi");
 							repeat=getrepeat()+1;
