@@ -299,7 +299,6 @@ TOK_LEN+ 5,11, 184, TOK_DATA, '3', '0', '9', '6',
 
 // data statements and rems aren't mixing well!
 #endif
-
 #ifdef BASICTEST_PIC10_2
 
 TOK_LEN+12, 0, 100, TOK_REM, 'D', 'U', 'M', 'P', ' ', 'P', 'I', 'C', '1', '0', 'F',
@@ -1186,8 +1185,10 @@ void basiccmdline(void)
 
 
 	//convert to everyhting to uppercase
-	for(i=cmdstart; i!=cmdend; (i++)&CMDLENMSK)
+	for(i=cmdstart; i!=cmdend; )
 	{	if((cmdbuf[i]>='a')&&(cmdbuf[i]<='z')) cmdbuf[i]&=0xDF;
+		i++;
+		i&=CMDLENMSK;
 	}
 
 	i=0;

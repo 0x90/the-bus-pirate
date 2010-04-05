@@ -40,6 +40,7 @@ void setBaudRate(void); //configure user terminal side UART baud rate
 void statusInfo(void); //display properties of the current bus mode (pullups, vreg, lsb, output type, etc)
 void convert(void); //convert input to HEX/DEC/BIN
 void easterEgg(void);
+int agree(void);
 
 /*
 //check byte c for valid menu commands, 0=no menu commands
@@ -430,16 +431,20 @@ void serviceuser(void)
 							break;
 #endif
 				case '#':	//bpWline("-reset BP");
-							bpWline(OUMSG_PM_RESET);
-							while(U1STAbits.TRMT==0); //wait untill TX finishes
-							asm("RESET");
+							if(agree())
+							{	bpWline(OUMSG_PM_RESET);
+								while(U1STAbits.TRMT==0); //wait untill TX finishes
+								asm("RESET");
+							}
 							break;
 				case '$':	//bpWline("-bootloader jump");
-							bpWline("BOOTLOADER");
-							bpInit();		// turn off nasty things, cleanup first needed?
-							while(U1STAbits.TRMT==0); //wait untill TX finishes
-							asm volatile ("mov #BLJUMPADDRESS, w1 \n" //bootloader location
-										  "goto w1 \n");
+							if(agree())
+							{	bpWline("BOOTLOADER");
+								bpInit();		// turn off nasty things, cleanup first needed?
+								while(U1STAbits.TRMT==0); //wait untill TX finishes
+								asm volatile ("mov #BLJUMPADDRESS, w1 \n" //bootloader location
+											  "goto w1 \n");
+							}
 							break;
 				case 'a':	//bpWline("-AUX low");
 							repeat=getrepeat()+1;
@@ -1198,6 +1203,25 @@ void setBaudRate(void)
 		if(i==0x20)break;
 	}
 }
+
+
+int agree(void)
+{	char c;
+
+	bpWstring("Are you sure? ");
+
+	while(!UART1RXRdy());
+	c=UART1RX();
+	UART1TX(c);
+	bpBR;
+
+	if((c=='y')||(c=='Y'))
+	{	return 1;
+	}
+
+	return 0;
+}
+
 
 /*
 char ee[]={

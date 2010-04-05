@@ -8,6 +8,8 @@
 //these terms become part of the terminal text messaging system
 //one copy can be accessed from anywhere in the code, this saves a bunch of space
 
+#ifdef LANGUAGE_ES_ES
+
 #define MSG_READY_T            "LISTO\x0D\x0A"
 
 #define MSG_READ_T            "LECTURA: "
@@ -225,4 +227,6 @@
 #define HELP_SYNTAX_BITCLK_T        "^ Pulso de reloj"
 #define HELP_SYNTAX_BITREAD_T        "! Leer bit"
 
+
+#endif
 //Please leave one blank line after this comment. If you don't, the compiler gets mad.

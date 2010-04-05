@@ -243,6 +243,44 @@ unsigned int picwrite(unsigned int c)
 	return 0x100; 	// no data to display 
 }
 
+void picmacro(unsigned int macro)
+{	unsigned int temp;
+	int i;
+
+	switch(macro)
+	{	case 0:	bpWline("(1) get devID");
+				break;
+		case 1: switch(picmode&PICMODEMSK)
+				{	case PICMODE6:	bpConfig.quiet=1;				// turn echoing off
+									picstart();
+									picwrite(0);
+									picstop();
+									picwrite(0);				// advance to 0x2006 (devid)
+									picstart();
+									for(i=0; i<6; i++)
+									{	picwrite(6);
+									}
+									picwrite(4);
+									picstop();
+									temp=picread();
+									bpConfig.quiet=0;				// turn echoing on
+									bpWstring("DevID = ");
+									bpWinthex(temp>>5);
+									bpWstring(" Rev = ");
+									bpWhex(temp&0x1f);
+									bpBR;
+									break;
+					case PICMODE4:	
+					default:		bpWline("Not implemented (yet)");
+				}
+				bpWline("Please exit PIC programming mode");
+				break;
+		default:	bpWmessage(MSG_ERROR_MACRO);
+	}
+}
+
+
+
 /*
 0000 0000	return to main
 0000 0001	id=PIC1

@@ -439,7 +439,7 @@ proto protos[MAXPROTO+1] = {
 	nullfunc1,				// clk
 	nullfunc3,				// bitr
 	nullfunc3, 				// periodic
-	nullfunc4,				// macro
+	picmacro,				// macro
 	picinit,				// setup
 	piccleanup,				// cleanup
 	"PIC" 					// name
