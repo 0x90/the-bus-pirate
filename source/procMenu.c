@@ -34,6 +34,8 @@ void setAltAuxPin(void); //configure AUX syntax to control AUX or CS pin
 void setBaudRate(void); //configure user terminal side UART baud rate
 void statusInfo(void); //display properties of the current bus mode (pullups, vreg, lsb, output type, etc)
 void convert(void); //convert input to HEX/DEC/BIN
+void pinDirection(unsigned int pin);
+void pinState(unsigned int pin);
 void easterEgg(void);
 
 //check byte c for valid menu commands, 0=no menu commands
@@ -194,6 +196,23 @@ void versionInfo(void){
 void statusInfo(void){
 	bpWline("*----------*");
 
+	bpWline("Pin:SO|CK|SI|CS|AUX");
+	bpWstring("Dir:");
+	pinDirection(MOSI);
+	pinDirection(CLK);
+	pinDirection(MISO);
+	pinDirection(CS);
+	pinDirection(AUX);
+	bpBR;	
+
+	bpWstring("Inp:");
+	pinState(MOSI);
+	pinState(CLK);
+	pinState(MISO);
+	pinState(CS);
+	pinState(AUX);
+	bpBR;
+
 	#if defined (BUSPIRATEV1A) || defined (BUSPIRATEV2)
 	//vreg status 
 	if(modeConfig.vregEN==1) bpWmessage(MSG_VREG_ON); else bpWmessage(MSG_VREG_OFF);
@@ -224,6 +243,26 @@ void statusInfo(void){
 	}
 
 	bpWline("*----------*");
+
+}
+
+void pinDirection(unsigned int pin){
+
+	if(IODIR & pin){
+		bpWstring("in|");
+	}else{
+		bpWstring("ot|");
+	}
+
+}
+
+void pinState(unsigned int pin){
+
+	if(IOPOR & pin){
+		bpWstring("hi|");
+	}else{
+		bpWstring("lo|");
+	}
 
 }
 
