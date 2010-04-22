@@ -74,18 +74,21 @@ extern int cmderror;
 void SPIstartr(void)
 {	spiSettings.wwr=1;	
 	SPICS=0; 
-	bpWmessage(MSG_CS_ENABLED);
+	///bpWmessage(MSG_CS_ENABLED);
+	BPMSG1159;
 }
 
 void SPIstart(void)
 {	spiSettings.wwr=0;	
 	SPICS=0; 
-	bpWmessage(MSG_CS_ENABLED);
+	//bpWmessage(MSG_CS_ENABLED);
+	BPMSG1159;
 }
 
 void SPIstop(void)
 {	SPICS=1;
-	bpWmessage(MSG_CS_DISABLED);
+	//bpWmessage(MSG_CS_DISABLED);
+	BPMSG1160;
 }
 
 unsigned int SPIread(void)
@@ -165,37 +168,44 @@ void SPIsetup(void)
 	{	cmderror=0;			// reset errorflag because of no cmdlineinput
 
 		//bpWstring("Set speed:\x0D\x0A 1. 30KHz\x0D\x0A 2. 125KHz\x0D\x0A 3. 250KHz\x0D\x0A 4. 1MHz\x0D\x0A");
-		bpWline(OUMSG_SPI_SPEED);
+		//bpWline(OUMSG_SPI_SPEED);
+		BPMSG1187;
 		//modeConfig.speed=(bpUserNumberPrompt(1, 4, 1)-1);
 		modeConfig.speed=getnumber(1,4,0)-1;
 	
 		//bpWstring("Clock polarity:\x0D\x0A 1. Idle low *default\x0D\x0A 2. Idle high\x0D\x0A");
-		bpWmessage(MSG_OPT_CKP);
+		//bpWmessage(MSG_OPT_CKP);
+		BPMSG1188;
 		//spiSettings.ckp=(bpUserNumberPrompt(1, 2, 1)-1);
 		spiSettings.ckp=getnumber(1,2,0)-1;
 	
 		//bpWstring("Output clock edge:\x0D\x0A 1. Idle to active\x0D\x0A 2. Active to idle *default\x0D\x0A");
-		bpWmessage(MSG_OPT_CKE);
+		//bpWmessage(MSG_OPT_CKE);
+		BPMSG1189;
 		//spiSettings.cke=(bpUserNumberPrompt(1, 2, 2)-1);
 		spiSettings.cke=getnumber(2,2,0)-1;
 	
 		//bpWstring("Input sample phase:\x0D\x0A 1. Middle *default\x0D\x0A 2. End\x0D\x0A");
-		bpWmessage(MSG_OPT_SMP);
+		//bpWmessage(MSG_OPT_SMP);
+		BPMSG1190;
 		//spiSettings.smp=(bpUserNumberPrompt(1, 2, 1)-1);
 		spiSettings.smp=getnumber(1,2,0)-1;
 	
-		bpWmessage(MSG_OPT_OUTPUT_TYPE);
+		//bpWmessage(MSG_OPT_OUTPUT_TYPE);
+		BPMSG1142;
 		//modeConfig.HiZ=(~(bpUserNumberPrompt(1, 2, 1)-1));
 		modeConfig.HiZ=(~(getnumber(1,2,0)-1));
 	}
 	else
-	{	bpWstring("SPI (spd ckp ske smp hiz)=( ");
+	{	//bpWstring("SPI (spd ckp ske smp hiz)=( ");
+		BPMSG1191;
 		bpWdec(modeConfig.speed); bpSP;
 		bpWdec(spiSettings.ckp); bpSP;
 		bpWdec(spiSettings.cke); bpSP;
 		bpWdec(spiSettings.smp); bpSP;
 		bpWdec(modeConfig.HiZ); bpSP;
-		bpWline(")\r\n");
+		//bpWline(")\r\n");
+		BPMSG1162;
 	}	
 
 	modeConfig.allowlsb=0;
@@ -217,18 +227,26 @@ void SPImacro(unsigned int macro)
 
 	switch(macro){
 		case 0:
-			bpWline(OUMSG_SPI_MACRO_MENU);
+			//bpWline(OUMSG_SPI_MACRO_MENU);
+			BPMSG1192;
 			break;
 		case 1:
-			bpWline(OUMSG_SPI_SNIFF_MENU);
+			//bpWline(OUMSG_SPI_SNIFF_MENU);
+			BPMSG1193;
 			//c=(bpUserNumberPrompt(1, 3, 1)-1);
 			c=getnumber(1,3,0)-1;
-			bpWline(OUMSG_SPI_SNIFF_BEGIN);
+			//bpWline(OUMSG_SPI_SNIFF_BEGIN);
+			BPMSG1194;
 			spiSniffer(c,1);//configure for terminal mode
 			break;
 		default:
-			bpWmessage(MSG_ERROR_MACRO);
+			//bpWmessage(MSG_ERROR_MACRO);
+			BPMSG1016;
 	}
+}
+
+void SPIpins(void)
+{	BPMSG1225;
 }
 
 /*

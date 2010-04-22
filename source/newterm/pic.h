@@ -43,5 +43,6 @@ unsigned int picwrite(unsigned int c);
 void piccleanup(void);
 void binpic(void);
 void picmacro(unsigned int macro);
+void picpins(void);
 
 

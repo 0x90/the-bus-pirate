@@ -77,7 +77,8 @@ unsigned int I2Cread(void)
 {	unsigned char c;
 	if(ackPending)
 	{	bpSP;
-		bpWmessage(MSG_ACK);
+		//bpWmessage(MSG_ACK);
+		BPMSG1060;
 		bpSP;
 		if(i2cmode==SOFT)
 		{	bbI2Cack();
@@ -102,7 +103,8 @@ unsigned int I2Cwrite(unsigned int c)
 {	//unsigned char c;
 	if(ackPending)
 	{	bpSP;
-		bpWmessage(MSG_ACK);
+		//bpWmessage(MSG_ACK);
+		BPMSG1060;
 		bpSP;
 		if(i2cmode==SOFT)
 		{	bbI2Cack();
@@ -123,18 +125,21 @@ unsigned int I2Cwrite(unsigned int c)
 	}
 	bpSP;
 	if(c==0)
-	{	bpWmessage(MSG_ACK);
+	{	//bpWmessage(MSG_ACK);
+		BPMSG1060;
 		return 0x300;				// bit 9=ack
 	}
 	else 
-	{	bpWmessage(MSG_NACK);	
+	{	//bpWmessage(MSG_NACK);	
+		BPMSG1061;
 		return 0x100;				// bit 9=ack
 	}
 }
 
 void I2Cstart(void)
 {	if(ackPending)
-	{	bpWmessage(MSG_NACK);
+	{	//bpWmessage(MSG_NACK);
+		BPMSG1061;
 		bpBR;//bpWline(OUMSG_I2C_READ_PEND_NACK);
 		if(i2cmode==SOFT)
 		{	bbI2Cnack();
@@ -151,12 +156,14 @@ void I2Cstart(void)
 	else 
 	{	hwi2cstart();
 	}
-	bpWmessage(MSG_I2C_START);
+	//bpWmessage(MSG_I2C_START);
+	BPMSG1062;
 }
 
 void I2Cstop(void)
 {	if(ackPending)
-	{	bpWmessage(MSG_NACK);
+	{	//bpWmessage(MSG_NACK);
+		BPMSG1061;
 		bpBR;//bpWline(OUMSG_I2C_READ_PEND_NACK);
 		if(i2cmode==SOFT)
 		{	bbI2Cnack();
@@ -173,7 +180,8 @@ void I2Cstop(void)
 	else
 	{	hwi2cstop();
 	}
-	bpWmessage(MSG_I2C_STOP);
+	//bpWmessage(MSG_I2C_STOP);
+	BPMSG1063;
 }
 
 void I2Csetup(void)
@@ -211,36 +219,40 @@ void I2Csetup(void)
 	{	cmderror=0;
 
 #ifdef BP_USE_I2C_HW
-		bpWline(OUMSG_I2C_CON);
+		//bpWline(OUMSG_I2C_CON);
+		BPMSG1064;
 		i2cmode=(getnumber(1,2,0)-1);
 #else
 		i2cmode=SOFT;
 #endif
 
 		if(i2cmode==SOFT){
-			bpWmessage(MSG_OPT_BB_SPEED);
+			//bpWmessage(MSG_OPT_BB_SPEED);
+			BPMSG1065;
 			modeConfig.speed=(getnumber(1,3,0)-1); 
 		}else{
 			// There is a hardware incompatibility with <B4
 			// See http://forum.microchip.com/tm.aspx?m=271183&mpage=1
-			if(bpConfig.dev_rev<=PIC_REV_A3) bpWline(OUMSG_I2C_REV3_WARN);
-			bpWline(OUMSG_I2C_HWSPEED);
+			if(bpConfig.dev_rev<=PIC_REV_A3) BPMSG1066;	//bpWline(OUMSG_I2C_REV3_WARN);
+			//bpWline(OUMSG_I2C_HWSPEED);
+			BPMSG1067;
 			modeConfig.speed=(getnumber(1,3,0)-1);
 		}
 	}
 	else
 	{	// There is a hardware incompatibility with <B4
 		// See http://forum.microchip.com/tm.aspx?m=271183&mpage=1
-		if(bpConfig.dev_rev<=PIC_REV_A3) bpWline(OUMSG_I2C_REV3_WARN);
+		if(bpConfig.dev_rev<=PIC_REV_A3) BPMSG1066;	//bpWline(OUMSG_I2C_REV3_WARN);
 
-		bpWstring("I2C (mod spd)=( ");
+		//bpWstring("I2C (mod spd)=( ");
+		BPMSG1068;
 #ifdef BP_USE_I2C_HW
  		bpWdec(i2cmode); bpSP;
 #else
 		bpWdec(0); bpSP;			// softmode
 #endif 
 		bpWdec(modeConfig.speed); bpSP;
-		bpWline(")\r\n");
+		bpWline(")");
 
 		ackPending=0;
 //		I2Cstop();			// this needs to be done after a mode change??
@@ -272,10 +284,12 @@ void I2Cmacro(unsigned int c)
 
 	switch(c)
 	{	case 0://menu
-			bpWline(OUMSG_I2C_MACRO_MENU);// 2. I2C bus sniffer\x0D\x0A");
+			//bpWline(OUMSG_I2C_MACRO_MENU);// 2. I2C bus sniffer\x0D\x0A");
+			BPMSG1069;
 			break;
 		case 1:
-			bpWline(OUMSG_I2C_MACRO_SEARCH);
+			//bpWline(OUMSG_I2C_MACRO_SEARCH);
+			BPMSG1070;
 			for(i=0;i<0x100;i++){
 		
 				if(i2cmode==SOFT){
@@ -314,16 +328,21 @@ void I2Cmacro(unsigned int c)
 		case 2:
 			if(i2cmode==HARD)I2C1CONbits.I2CEN = 0;//disable I2C module
 		
-			bpWline(OUMSG_I2C_MACRO_SNIFFER);	
+			//bpWline(OUMSG_I2C_MACRO_SNIFFER);	
+			BPMSG1071;
 			I2C_Sniffer(1); //set for terminal output
 		
 			if(i2cmode==HARD) hwi2cSetup(); //setup hardware I2C again
 			break;	
 		default:
-			bpWmessage(MSG_ERROR_MACRO);
+			//bpWmessage(MSG_ERROR_MACRO);
+			BPMSG1016;
 	}
 }
 
+void I2Cpins(void)
+{	BPMSG1231;
+}
 
 /*
 //this function links the underlying i2c functions to generic commands that the bus pirate issues

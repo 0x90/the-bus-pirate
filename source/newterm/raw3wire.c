@@ -64,17 +64,20 @@ unsigned int R3Wwrite(unsigned int c)
 void R3Wstartr(void)
 {	r3wSettings.wwr=1;
 	bbCS(0);
-	bpWmessage(MSG_CS_ENABLED);
+	//bpWmessage(MSG_CS_ENABLED);
+	BPMSG1159;
 }
 void R3Wstart(void)
 {	r3wSettings.wwr=0;
 	bbCS(0);
-	bpWmessage(MSG_CS_ENABLED);
+	//bpWmessage(MSG_CS_ENABLED);
+	BPMSG1160;
 }
 void R3Wstop(void)
 {	r3wSettings.wwr=0;
 	bbCS(1);
-	bpWmessage(MSG_CS_DISABLED);
+	//bpWmessage(MSG_CS_DISABLED);
+	BPMSG1160;
 }
 unsigned int R3Wbitr(void)
 {	return (bbReadBit());
@@ -119,17 +122,20 @@ void R3Wsetup(void)
 	}
 
 	if(speed==0)
-	{	bpWmessage(MSG_OPT_BB_SPEED);
+	{	//bpWmessage(MSG_OPT_BB_SPEED);
+		BPMSG1065;
 		modeConfig.speed=(getnumber(1,3,0)-1);
-		bpWmessage(MSG_OPT_OUTPUT_TYPE);
+		//bpWmessage(MSG_OPT_OUTPUT_TYPE);
+		BPMSG1142;
 		modeConfig.HiZ=(~(getnumber(1,2,0)-1));
 		cmderror=0;
 	}
 	else
-	{	bpWstring("R3W (spd hiz)=( ");
+	{	//bpWstring("R3W (spd hiz)=( ");
+		BPMSG1161;
 		bpWdec(modeConfig.speed); bpSP;
 		bpWdec(modeConfig.HiZ); bpSP;
-		bpWline(")\r\n");
+		bpWline(")");
 	}
 
 
@@ -153,7 +159,9 @@ void R3Wsetup(void)
 	bbCS(1);//takes care of custom HiZ settings too
 }
 
-
+void R3Wpins(void)
+{	BPMSG1225;
+}
 
 /*
 void r3wProcess(void){
@@ -168,7 +176,7 @@ void r3wProcess(void){
 			}else{
 				bpWmessage(MSG_READBULK);
 				bpWbyte(bpCommand.repeat);
-				bpWmessage(MSG_READBULK_BYTES);
+ 				bpWmessage(MSG_READBULK_BYTES);
 				for(i=0;i<bpCommand.repeat;i++){	
 					bpWbyte(bbReadWriteByte(0xff));
 					bpSP;

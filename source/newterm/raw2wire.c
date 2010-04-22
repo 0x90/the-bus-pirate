@@ -57,14 +57,18 @@ void R2Wwrite(unsigned int c)
 
 void R2Wstart(void)
 {	bbI2Cstart();
-	bpWstring("(\\-/_\\)");
-	bpWmessage(MSG_I2C_START);
+	//bpWstring("(\\-/_\\)");
+	BPMSG1138;
+	//bpWmessage(MSG_I2C_START);
+	BPMSG1062;
 }
 
 void R2Wstop(void)
 {	bbI2Cstop();
-	bpWstring("(_/-\\)");
-	bpWmessage(MSG_I2C_STOP);
+	//bpWstring("(_/-\\)");
+	BPMSG1140;
+	//bpWmessage(MSG_I2C_STOP);
+	BPMSG1063;
 }
 
 unsigned int R2Wbitr(void)
@@ -124,16 +128,20 @@ void R2Wsetup(void)
 
 	if(speed==0)
 	{	cmderror=0;
-		bpWmessage(MSG_OPT_BB_SPEED);
+		//bpWmessage(MSG_OPT_BB_SPEED);
+		BPMSG1065;
 		modeConfig.speed=(getnumber(1,3,0)-1);
-		bpWmessage(MSG_OPT_OUTPUT_TYPE);
+		//bpWmessage(MSG_OPT_OUTPUT_TYPE);
+		BPMSG1142;
 		modeConfig.HiZ=(~(getnumber(1,2,0)-1));
 	}
 	else
-	{	bpWstring("R2W (spd hiz)=( ");
+	{	//bpWstring("R2W (spd hiz)=( ");
+		BPMSG1143;
 		bpWdec(modeConfig.speed); bpSP;
 		bpWdec(modeConfig.HiZ); bpSP;
-		bpWline(")\r\n");
+		//bpWline(")\r\n");
+		BPMSG1162;
 	}
 	//writes to the PORTs write to the LATCH
 	R2WCLK=0;			//B8 scl 
@@ -145,11 +153,12 @@ void R2Wsetup(void)
 }
 
 
-void R2Wmacro(void)
+void R2Wmacro(unsigned int c)
 {
-	switch(bpCommand.num)
+	switch(c)
 	{	case MENU:
-			bpWstring(OUMSG_R2W_MACRO_MENU);
+			//bpWstring(OUMSG_R2W_MACRO_MENU);
+			BPMSG1144;
 			break;
 		case ISO78133ATR:
 			r2wMacro_78133Write();
@@ -157,8 +166,13 @@ void R2Wmacro(void)
 			r2wMacro_78133Read();
 			break;
 		default:
-			bpWmessage(MSG_ERROR_MACRO);
+			//bpWmessage(MSG_ERROR_MACRO);
+			BPMSG1016;
 	}
+}
+
+void R2Wpins(pins)
+{	BPMSG1231;
 }
 
 /*
@@ -293,8 +307,9 @@ void r2wProcess(void){
 // now uses CS pin instead of AUX pin because 1,2,3 have build in pullups on CS but not AUX
 void r2wMacro_78133Write(void){
 
-	bpWline("ISO 7816-3 ATR (RESET on CS)");
-	bpWline("RESET HIGH, CLOCK TICK, RESET LOW");
+	//bpWline("ISO 7816-3 ATR (RESET on CS)");
+	//bpWline("RESET HIGH, CLOCK TICK, RESET LOW");
+	BPMSG1145;
 	
 	//Reset needs to start low
 	bbCS(0); //bpAuxLow();
@@ -316,6 +331,7 @@ void r2wMacro_78133Read(void){
 	unsigned int i;
 
 	bpWstring("ISO 7816-3 reply (uses current LSB setting): ");
+	BPMSG1146;
 
 	//force LSB fist setting for ISO compliance
 	//c=modeConfig.lsbEN;//store origional setting
@@ -334,22 +350,28 @@ void r2wMacro_78133Read(void){
 	//parse the first two bytes for 7813-3 atr header info
 	//bits8:5 8=serial, 9=3wire, 10=2wire 0xf=RFU
 	//c=(m[0]>>4);
-	bpWstring("Protocol: ");
+	//bpWstring("Protocol: ");
+	BPMSG1147;
 	switch((m[0]>>4)){
 		case 0x08:
-			bpWline("serial");
+			//bpWline("serial");
+			BPMSG1148;
 			break;
 		case 0x09:
-			bpWline("3 wire");
+			//bpWline("3 wire");
+			BPMSG1149;
 			break;
 		case 0x0A:
-			bpWline("2 wire");
+			//bpWline("2 wire");
+			BPMSG1150;
 			break;
 		case 0x0F:
-			bpWline("RFU");
+			//bpWline("RFU");
+			BPMSG1151;
 			break;
 		default:
-			bpWline("unknown");
+			//bpWline("unknown");
+			BPMSG1152;
 			break;
 	}
 
@@ -358,20 +380,26 @@ void r2wMacro_78133Read(void){
 	
 	//bit 8 Supports random read lengths (0=false)
 	bpWstring("Read type: ");
+	BPMSG1153;
 	//c=(m[1]>>7);
 	if((m[1]>>7)==0){
-		bpWline("to end");
+		//bpWline("to end");
+		BPMSG1154;
 	}else{
-		bpWline("variable length");
+		//bpWline("variable length");
+		BPMSG1155;
 	}
 	
 	//bit 7:4 data units (0001=128, 0010 = 256, 0011=512, etc, 1111=RFU)
-	bpWstring("Data units: ");
+	//bpWstring("Data units: ");
+	BPMSG1156;
 	c=((m[1]&(~0b10000111))>>3);
 	if(c==0){
-		bpWstring("no indication");
+		//bpWstring("no indication");
+		BPMSG1157;
 	}else if(c==0b1111){
-		bpWstring("RFU");
+		//bpWstring("RFU");
+		BPMSG1151;
 	}else{
 		i=64;//no 0...
 		for(m[0]=0;m[0]<c;m[0]++)i*=2;//multiply by two each time
@@ -381,6 +409,7 @@ void r2wMacro_78133Read(void){
 	
 	//bit 3:1 length of data units in bits (2^(3:1))
 	bpWstring("Data unit length (bits): ");
+	BPMSG1158;
 	c=(m[1]&(~0b11111000));
 	i=1;
 	for(m[0]=0;m[0]<c;m[0]++)i*=2;//multiply by two each time

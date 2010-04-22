@@ -108,7 +108,8 @@ void bpPWM(void){
 	
 	if(AUXmode==AUX_PWM){ //PWM is on, stop it
 		AUXPIN_RPOUT = 0;	 //remove output from AUX pin
-		bpWline(OUMSG_AUX_PWM_OFF);
+		//bpWline(OUMSG_AUX_PWM_OFF);
+		BPMSG1028;
 		AUXmode=AUX_IO;
 		return;
 	}
@@ -131,8 +132,10 @@ void bpPWM(void){
 	if(done!=2)
 	{	cmderror=0;
 
-		bpWline(OUMSG_AUX_PWM_NOTE);
-		bpWstring(OUMSG_AUX_PWM_FREQ);
+		//bpWline(OUMSG_AUX_PWM_NOTE);
+		BPMSG1029;
+		//bpWstring(OUMSG_AUX_PWM_FREQ);
+		BPMSG1030;
 		//PWM_period=(16000000/bpUserNumberPrompt(5, 0xffff, 50000))-1;
 	//	PWM_freq=bpUserNumberPrompt(4, 4000, 50);
 		PWM_freq=getnumber(50, 4000, 0);
@@ -142,7 +145,8 @@ void bpPWM(void){
 //	bpWinthex(PWM_freq);
 
 	//choose proper multiplier for whole range
-	bpWstring(OUMSG_AUX_PWM_PRESCALE);
+	//bpWstring(OUMSG_AUX_PWM_PRESCALE);
+	BPMSG1031;
 	if(PWM_freq<4){//use 256 //actual max is 62500hz
 		bpWline("256");
 		PWM_div=62;//actually 62500
@@ -165,12 +169,14 @@ void bpPWM(void){
 		T2CONbits.TCKPS0=0;
 	}
 	PWM_period=(PWM_div/PWM_freq)-1;
-	bpWstring("PR2:");
+	//bpWstring("PR2:");
+	BPMSG1032;
 	bpWintdec(PWM_period);	
 	bpBR;
 
 	if(done!=2)
-	{	bpWstring(OUMSG_AUX_PWM_DUTY);
+	{	//bpWstring(OUMSG_AUX_PWM_DUTY);
+		BPMSG1033;
 	//	PWM_pd=bpUserNumberPrompt(2, 99, 50);
 		PWM_pd=getnumber(50,99,0);
 	}
@@ -192,7 +198,8 @@ void bpPWM(void){
 	PR2	= PWM_period;	
 	T2CONbits.TON = 1;	
 
-	bpWline(OUMSG_AUX_PWM_ON);
+	//bpWline(OUMSG_AUX_PWM_ON);
+	BPMSG1034;
 	AUXmode=AUX_PWM;
 
 }
@@ -203,11 +210,13 @@ void bpFreq(void){
 	static unsigned long l;
 
 	if(AUXmode==AUX_PWM){
-		bpWline(OUMSG_AUX_FREQ_PWM);
+		//bpWline(OUMSG_AUX_FREQ_PWM);
+		BPMSG1037;
 		return;
 	}
 
-	bpWstring(OUMSG_AUX_FREQCOUNT);
+	//bpWstring(OUMSG_AUX_FREQCOUNT);
+	BPMSG1038;
 //setup timer
 	T4CON=0;	//make sure the counters are off
 	T2CON=0;	
@@ -282,7 +291,8 @@ void bpAuxHiZ(void){
 	}else{
 		BP_CS_DIR=1;
 	}
-	bpWline(OUMSG_AUX_HIZ);
+	//bpWline(OUMSG_AUX_HIZ);
+	BPMSG1039;
 }
 
 // \leaves AUX to High 
@@ -295,7 +305,8 @@ void bpAuxHigh(void){
 		BP_CS_DIR=0;//aux input
 		BP_CS=1;//aux high
 	}
-	bpWline(OUMSG_AUX_HIGH);
+	//bpWline(OUMSG_AUX_HIGH);
+	BPMSG1040;
 }
 
 // \leaves AUX to ground
@@ -308,7 +319,8 @@ void bpAuxLow(void){
 		BP_CS_DIR=0;//aux output
 		BP_CS=0;//aux low	
 	}
-	bpWline(OUMSG_AUX_LOW);
+	//bpWline(OUMSG_AUX_LOW);
+	BPMSG1041;
 }
 
 // \leaves AUX in high impedence

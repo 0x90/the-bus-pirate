@@ -66,13 +66,15 @@ void picinit(void)
 	if(interactive)
 	{	cmderror=0;
 
-		bpWline("Commandmode");
-		bpWline("1. 6b/14b");
-		bpWline("2. 4b/16b");
+		//bpWline("Commandmode");
+		//bpWline("1. 6b/14b");
+		//bpWline("2. 4b/16b");
+		BPMSG1072;
 	
 		mode=getnumber(1,2,0); 
 
-		bpWline("Delay");
+		//bpWline("Delay");
+		BPMSG1073;
 		delay=getnumber(1,2,0);
 	}
 
@@ -86,7 +88,8 @@ void picinit(void)
 	piccmddelay=delay;
 
 	if(!interactive)
-	{	bpWstring("PIC(mod dly)=(");
+	{	//bpWstring("PIC(mod dly)=(");
+		BPMSG1074;
 		bpWdec(picmode); bpSP;
 		bpWdec(piccmddelay);
 		bpWline(")");
@@ -104,16 +107,18 @@ void piccleanup(void)
 
 void picstart(void)					// switch  to commandmode
 {	picmode|=PICCMD;
-	bpWstring("CMD");
+	//bpWstring("CMD");
+	BPMSG1075;
 	UART1TX(0x30+(picmode&PICMODEMSK));			// display #commandbits 
 	modeConfig.int16=0;
-	bpSP;
+	bpBR;
 }
 
 void picstop(void)					// switch to datamode
 {	picmode&=PICMODEMSK;
 	modeConfig.int16=1;				// data is 14-16 bit
-	bpWline("DTA");
+	//bpWline("DTA");
+	BPMSG1076;
 }
 
 unsigned int picread(void)
@@ -121,7 +126,8 @@ unsigned int picread(void)
 	unsigned int c;
 
 	if(picmode&PICCMDMSK)
-	{	bpWline("no read");
+	{	//bpWline("no read");
+		BPMSG1077;
 		return 0;
 	}
 
@@ -152,7 +158,8 @@ unsigned int picread(void)
 						bbL(CLK, PICSPEED/2);
 						bbL(MOSI, PICSPEED/5);
 						break;
-		default:		bpWline("unknown");
+		default:		bpWline("unknown mode");
+					BPMSG1078;
 						return 0;
 	}
 
@@ -195,7 +202,8 @@ unsigned int picwrite(unsigned int c)
 								mask<<=1;
 							}
 							break;
-			default:		bpWline("unknown");
+			default:		//bpWline("unknown");
+						BPMSG1078;
 							return 0;
 		}
 		bpDelayMS(piccmddelay);
@@ -236,7 +244,8 @@ unsigned int picwrite(unsigned int c)
 								mask<<=1;
 							}
 							break;
-			default:		bpWline("unknown");
+			default:		//bpWline("unknown");
+						BPMSG1078;
 							return 0;
 		}
 	}
@@ -248,7 +257,8 @@ void picmacro(unsigned int macro)
 	int i;
 
 	switch(macro)
-	{	case 0:	bpWline("(1) get devID");
+	{	case 0:	//bpWline("(1) get devID");
+				BPMSG1079;
 				break;
 		case 1: switch(picmode&PICMODEMSK)
 				{	case PICMODE6:	bpConfig.quiet=1;				// turn echoing off
@@ -264,22 +274,29 @@ void picmacro(unsigned int macro)
 									picstop();
 									temp=picread();
 									bpConfig.quiet=0;				// turn echoing on
-									bpWstring("DevID = ");
+									//bpWstring("DevID = ");
+									BPMSG1080;
 									bpWinthex(temp>>5);
-									bpWstring(" Rev = ");
+									//bpWstring(" Rev = ");
+									BPMSG1081;
 									bpWhex(temp&0x1f);
 									bpBR;
 									break;
 					case PICMODE4:	
-					default:		bpWline("Not implemented (yet)");
+					default:		//bpWline("Not implemented (yet)");
+									BPMSG1082;
 				}
-				bpWline("Please exit PIC programming mode");
+				//bpWline("Please exit PIC programming mode");
+				BPMSG1083;
 				break;
-		default:	bpWmessage(MSG_ERROR_MACRO);
+		default:	//bpWmessage(MSG_ERROR_MACRO);
+				BPMSG1016;
 	}
 }
 
-
+void picpins(void)
+{	BPMSG1232;
+}
 
 /*
 0000 0000	return to main

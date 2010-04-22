@@ -1034,11 +1034,14 @@ void interpreter(void)
 	bpConfig.quiet=0; 		// display on 
 
 	if(stop!=NOERROR)
-	{	bpWstring("Error(");
+	{	//bpWstring("Error(");
+		BPMSG1047;
 		bpWintdec(stop);
-		bpWstring(") @line:");
+		//bpWstring(") @line:");
+		BPMSG1048;
 		bpWintdec(lineno);
-		bpWstring(" @pgmspace:");
+		//bpWstring(" @pgmspace:");
+		BPMSG1049;
 		bpWintdec(pc);
 		bpBR;
 	}
@@ -1147,7 +1150,8 @@ void list(void)
 	}
 	bpBR;
 	bpWintdec(pc-1);
-	bpWline(" bytes.");
+	//bpWline(" bytes.");
+	BPMSG1050;
 }
 
 int compare(char *p)
@@ -1253,7 +1257,8 @@ void basiccmdline(void)
 			}
 			i++;
 			if(i>35) 
-			{	bpWline("Too long!");
+			{	//bpWline("Too long!");
+				BPMSG1051;
 				return;
 			}
 		}
@@ -1355,7 +1360,8 @@ void basiccmdline(void)
 			pgmspace[3]=TOK_END;
 		}
 		else
-		{	bpWline("Syntax error");
+		{	//bpWline("Syntax error");
+			BPMSG1052;
 		}
 	}
 //	cmdstart=cmdend;
@@ -1475,7 +1481,8 @@ int checkeeprom(void)
 	basi2cstop();
 	basi2cstart();
 	if(!basi2cwrite(I2CADDR))
-	{	bpWline("No EEPROM");
+	{	//bpWline("No EEPROM");
+		BPMSG1053;
 		return 0;
 	}
 	basi2cwrite(0x00);
@@ -1483,6 +1490,7 @@ int checkeeprom(void)
 	basi2cstart();
 	if(basi2cread(1)==0x00)					// check for any data
 	{	bpWline("No EEPROM");			// if 0 prolly no pullup and eeprom (PROLLY!) 
+		BPMSG1053;
 		return 0;
 	}
 	basi2cstop();
@@ -1495,12 +1503,14 @@ void format(void)
 	basi2cstop();
 	basi2cstart();
 	if(!basi2cwrite(I2CADDR))
-	{	bpWline("No EEPROM");
+	{	//bpWline("No EEPROM");
+		BPMSG1053;
 		return;
 	}
 	basi2cstop();
 
-	bpWstring("Erasing");
+	//bpWstring("Erasing");
+	BPMSG1054;
 	for(i=0; i<EEPROMSIZE; i+=EEPROMPAGE)
 	{	basi2cstart();
 		basi2cwrite(I2CADDR);
@@ -1513,7 +1523,8 @@ void format(void)
 		UART1TX('.');
 		waiteeprom();
 	}
-	bpWline("done");
+	//bpWline("done");
+	BPMSG1055;
 }
 
 void waiteeprom(void)
@@ -1534,16 +1545,19 @@ void save(void)
 	slot=getint();
 
 	if(slot==0)
-	{	bpWline("Syntax error");
+	{	//bpWline("Syntax error");
+		BPMSG1052;
 		return;
 	}
 
-	bpWstring("Saving to slot ");
+	//bpWstring("Saving to slot ");
+	BPMSG1056;
 	bpWdec(slot);
 	bpBR;
 
 	if(slot>(EEPROMSIZE/PGMSIZE))
-	{	bpWline("Invalid slot");
+	{	//bpWline("Invalid slot");
+		BPMSG1057;
 		return;
 	}
 
@@ -1584,16 +1598,19 @@ void load(void)
 	slot=getint();
 
 	if(slot==0)
-	{	bpWline("Syntax error");
+	{	//bpWline("Syntax error");
+		BPMSG1052;
 		return;
 	}
 
-	bpWstring("Loading from slot ");
+	//bpWstring("Loading from slot ");
+	BPMSG1058;
 	bpWdec(slot);
 	bpBR;
 
 	if(slot>(EEPROMSIZE/PGMSIZE))
-	{	bpWline("Invalid slot");
+	{	//bpWline("Invalid slot");
+		BPMSG1057;
 		return;
 	}
 

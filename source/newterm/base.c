@@ -106,18 +106,24 @@ void bpADCprobe(void){
 void bpADCCprobe(void)
 {	unsigned int temp;
 
-	bpWline(OUMSG_PS_ADCC);
-	bpWline(OUMSG_PS_ANY_KEY);
-	bpWstring(OUMSG_PS_ADC_VOLT_PROBE);
+	//bpWline(OUMSG_PS_ADCC);
+	BPMSG1042;
+	//bpWline(OUMSG_PS_ANY_KEY);
+	BPMSG1043;
+	//bpWstring(OUMSG_PS_ADC_VOLT_PROBE);
+	BPMSG1044;
 	bpWvolts(0);						// print dummy (0v)
-	bpWstring(OUMSG_PS_ADC_VOLTS);
+	//bpWstring(OUMSG_PS_ADC_VOLTS);
+	BPMSG1045;
 	while(!UART1RXRdy())				// wait for keypress
 	{	AD1CON1bits.ADON = 1;			// turn ADC ON
 		temp=bpADC(12);
 		AD1CON1bits.ADON = 0;			// turn ADC OFF
 		bpWstring("\x08\x08\x08\x08\x08");	// 5x backspace ( e.g. 5.00V )
+		//BPMSG1046;
 		bpWvolts(temp);					// print measurement
-		bpWstring(OUMSG_PS_ADC_VOLTS);
+		//bpWstring(OUMSG_PS_ADC_VOLTS);
+		BPMSG1045;
 
 		// CvD: wait xx ms??
 	}

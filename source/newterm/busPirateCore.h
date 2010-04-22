@@ -78,6 +78,7 @@ typedef struct _proto {
 	void (*protocol_macro)(unsigned int);
 	void (*protocol_setup)(void);
 	void (*protocol_cleanup)(void);
+	void (*protocol_pins)(void);
 	char protocol_name[8];
 } proto;
 

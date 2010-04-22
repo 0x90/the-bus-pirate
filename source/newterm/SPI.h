@@ -24,6 +24,7 @@ unsigned int SPIwrite(unsigned int c);
 void SPIsetup(void);
 void SPIcleanup(void);
 void SPImacro(unsigned int macro);
+void SPIpins(void);
 
 
 

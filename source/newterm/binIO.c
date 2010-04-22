@@ -109,7 +109,9 @@ void binBB(void){
 				binBBversion(); //say name on return
 			}else if(inByte==7){//goto pic mode
 				binReset();
+#ifdef BP_USE_PIC
 				binpic();
+#endif
 				binReset();
 				binBBversion(); //say name on return
 			}else if(inByte==0b1111){//return to terminal

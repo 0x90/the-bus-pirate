@@ -9,7 +9,7 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
@@ -22,7 +22,7 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
@@ -35,7 +35,7 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
@@ -48,7 +48,7 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
@@ -61,7 +61,7 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
@@ -74,7 +74,7 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
@@ -87,7 +87,7 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
@@ -100,25 +100,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
 DebugOptions=
 [File008]
-Location=D:\the-bus-pirate\trunk\source\newterm\work\pc_at_keyboard.o
-Folder=Intermediary
-DeviceName=PIC24FJ64GA002
-LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
-LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
-LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
-PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
-SuiteArgsString=
-ToolArgsString=-g -Wall -mlarge-code -mlarge-data
-TraceCmdString=
-DebugOptions=
-[File009]
 Location=D:\the-bus-pirate\trunk\source\newterm\work\AUXpin.o
 Folder=Intermediary
 DeviceName=PIC24FJ64GA002
@@ -126,12 +113,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
 DebugOptions=
-[File010]
+[File009]
 Location=D:\the-bus-pirate\trunk\source\newterm\work\busPirateCore.o
 Folder=Intermediary
 DeviceName=PIC24FJ64GA002
@@ -139,12 +126,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
 DebugOptions=
-[File011]
+[File010]
 Location=D:\the-bus-pirate\trunk\source\newterm\work\procMenu.o
 Folder=Intermediary
 DeviceName=PIC24FJ64GA002
@@ -152,12 +139,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
 DebugOptions=
-[File012]
+[File011]
 Location=D:\the-bus-pirate\trunk\source\newterm\work\baseIO.o
 Folder=Intermediary
 DeviceName=PIC24FJ64GA002
@@ -165,12 +152,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
 DebugOptions=
-[File013]
+[File012]
 Location=D:\the-bus-pirate\trunk\source\newterm\work\baseUI.o
 Folder=Intermediary
 DeviceName=PIC24FJ64GA002
@@ -178,12 +165,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
 DebugOptions=
-[File014]
+[File013]
 Location=D:\the-bus-pirate\trunk\source\newterm\work\uart2io.o
 Folder=Intermediary
 DeviceName=PIC24FJ64GA002
@@ -191,12 +178,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
 DebugOptions=
-[File015]
+[File014]
 Location=D:\the-bus-pirate\trunk\source\newterm\work\UART.o
 Folder=Intermediary
 DeviceName=PIC24FJ64GA002
@@ -204,12 +191,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
 DebugOptions=
-[File016]
+[File015]
 Location=D:\the-bus-pirate\trunk\source\newterm\work\selftest.o
 Folder=Intermediary
 DeviceName=PIC24FJ64GA002
@@ -217,12 +204,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
 DebugOptions=
-[File017]
+[File016]
 Location=D:\the-bus-pirate\trunk\source\newterm\work\bitbang.o
 Folder=Intermediary
 DeviceName=PIC24FJ64GA002
@@ -230,12 +217,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
 DebugOptions=
-[File018]
+[File017]
 Location=D:\the-bus-pirate\trunk\source\newterm\work\binIO.o
 Folder=Intermediary
 DeviceName=PIC24FJ64GA002
@@ -243,12 +230,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
 DebugOptions=
-[File019]
+[File018]
 Location=D:\the-bus-pirate\trunk\source\newterm\work\binIOhelpers.o
 Folder=Intermediary
 DeviceName=PIC24FJ64GA002
@@ -256,12 +243,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
 DebugOptions=
-[File020]
+[File019]
 Location=D:\the-bus-pirate\trunk\source\newterm\work\binwire.o
 Folder=Intermediary
 DeviceName=PIC24FJ64GA002
@@ -269,12 +256,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
 DebugOptions=
-[File021]
+[File020]
 Location=D:\the-bus-pirate\trunk\source\newterm\work\SUMP.o
 Folder=Intermediary
 DeviceName=PIC24FJ64GA002
@@ -282,12 +269,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
 DebugOptions=
-[File022]
+[File021]
 Location=D:\the-bus-pirate\trunk\source\newterm\work\basic.o
 Folder=Intermediary
 DeviceName=PIC24FJ64GA002
@@ -295,12 +282,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
 DebugOptions=
-[File023]
+[File022]
 Location=D:\the-bus-pirate\trunk\source\newterm\work\pic.o
 Folder=Intermediary
 DeviceName=PIC24FJ64GA002
@@ -308,12 +295,38 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
 DebugOptions=
+[File023]
+Location=D:\the-bus-pirate\trunk\source\newterm\work\en_US.o
+Folder=Intermediary
+DeviceName=PIC24FJ64GA002
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={DE18EB1A-B46B-486B-B96F-A811A635DFAC}
+LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-as.exe
+PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SuiteArgsString=
+ToolArgsString=-g
+TraceCmdString=
+DebugOptions=
 [File024]
+Location=D:\the-bus-pirate\trunk\source\newterm\work\HD44780.o
+Folder=Intermediary
+DeviceName=PIC24FJ64GA002
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
+LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
+PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SuiteArgsString=
+ToolArgsString=-g -Wall -mlarge-code -mlarge-data
+TraceCmdString=
+DebugOptions=
+[File025]
 Location=D:\the-bus-pirate\trunk\source\newterm\.\output\busPirate.cof
 Folder=Output
 DeviceName=PIC24FJ64GA002
@@ -321,12 +334,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={433C3D55-811D-409D-A6BF-159CF9355B42}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-ld.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
 TraceCmdString=
 DebugOptions=
-[File025]
+[File026]
 Location=D:\the-bus-pirate\trunk\source\newterm\.\output\busPirate.hex
 Folder=Output
 DeviceName=PIC24FJ64GA002
@@ -334,11 +347,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={433C3D55-811D-409D-A6BF-159CF9355B42}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-ld.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|pc_at_keyboard.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
 TraceCmdString=
 DebugOptions=
 [TOOL_LOC_STAMPS]
+tool_loc{DE18EB1A-B46B-486B-B96F-A811A635DFAC}=C:\Program Files\Microchip\MPLAB C30\bin\pic30-as.exe
 tool_loc{069BD372-6CA0-40D4-BF2F-5DC806D05083}=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 tool_loc{433C3D55-811D-409D-A6BF-159CF9355B42}=C:\Program Files\Microchip\MPLAB C30\bin\pic30-ld.exe

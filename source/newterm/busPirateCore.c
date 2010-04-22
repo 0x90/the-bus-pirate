@@ -198,24 +198,28 @@ void bpEchoBusMode(unsigned char m){bpWstring(mode[m]);}
 extern int cmderror;	
 
 void nullfunc1(void)
-{	bpWline("ERROR: command has no effect here");
+{	//bpWline("ERROR: command has no effect here");
+	BPMSG1059;
 	cmderror=1;
 }
 
 unsigned int nullfunc2(unsigned int c)
-{	bpWline("ERROR: command has no effect here");
+{	//bpWline("ERROR: command has no effect here");
+	BPMSG1059;
 	cmderror=1;
 	return 0x100;
 }
 
 unsigned int nullfunc3(void)
-{	bpWline("ERROR: command has no effect here");
+{	//bpWline("ERROR: command has no effect here");
+	BPMSG1059;
 	cmderror=1;
 	return 0;
 }
 
 void nullfunc4(unsigned int c)
-{	bpWline("ERROR: command has no effect here");
+{	//bpWline("ERROR: command has no effect here");
+	BPMSG1059;
 	cmderror=1;
 }
 
@@ -225,6 +229,11 @@ void HiZsetup(void)
 
 void HiZcleanup(void)
 {
+}
+
+void HiZpins(void)
+{	//bpWline("CLK\tMOSI\tCS\MISO");
+	BPMSG1225;
 }
 
 proto protos[MAXPROTO+1] = {
@@ -245,6 +254,7 @@ proto protos[MAXPROTO+1] = {
 	nullfunc4,				// macro
 	HiZsetup,				// setup
 	HiZcleanup,				// cleanup
+	HiZpins,
 	"HiZ" 					// name
 }
 #ifdef BP_USE_1WIRE
@@ -266,6 +276,7 @@ proto protos[MAXPROTO+1] = {
 	OWmacro,				// macro
 	OWsetup,				// setup
 	HiZcleanup,				// cleanup
+	OWpins,
 	"1-WIRE" 				// name
 }
 #endif
@@ -288,6 +299,7 @@ proto protos[MAXPROTO+1] = {
 	UARTmacro,				// macro
 	UARTsetup,				// setup
 	UARTcleanup,			// cleanup
+	UARTpins,
 	"UART" 					// name
 }
 #endif
@@ -310,6 +322,7 @@ proto protos[MAXPROTO+1] = {
 	I2Cmacro,				// macro
 	I2Csetup,				// setup
 	I2Ccleanup,				// cleanup
+	I2Cpins,
 	"I2C" 					// name
 }
 #endif
@@ -332,6 +345,7 @@ proto protos[MAXPROTO+1] = {
 	SPImacro,				// macro
 	SPIsetup,				// setup
 	SPIcleanup,				// cleanup
+	SPIpins,
 	"SPI" 					// name
 }
 #endif
@@ -354,6 +368,7 @@ proto protos[MAXPROTO+1] = {
 	R2Wmacro,				// macro
 	R2Wsetup,				// setup
 	HiZcleanup,				// cleanup
+	R2Wpins,
 	"2WIRE"					// name
 }
 #endif
@@ -376,6 +391,7 @@ proto protos[MAXPROTO+1] = {
 	nullfunc4,				// macro
 	R3Wsetup,				// setup
 	HiZcleanup,				// cleanup
+	R3Wpins,
 	"3WIRE" 					// name
 }
 #endif
@@ -398,17 +414,18 @@ proto protos[MAXPROTO+1] = {
 	nullfunc4,				// macro
 	HiZsetup,				// setup
 	HiZcleanup,				// cleanup
+	HiZpins,
 	"KEYB" 					// name
 }
 #endif
 #ifdef BP_USE_LCD
 ,
-{	nullfunc1,				// start
-	nullfunc1,				// startR
-	nullfunc1,				// stop
-	nullfunc1,				// stopR
-	nullfunc2,				// send
-	nullfunc3,				// read
+{	LCDstart,				// start
+	LCDstart,				// startR
+	LCDstop,				// stop
+	LCDstop,				// stopR
+	LCDwrite,				// send
+	LCDread,				// read
 	nullfunc1,				// clkh
 	nullfunc1,				// clkl
 	nullfunc1,				// dath
@@ -417,9 +434,10 @@ proto protos[MAXPROTO+1] = {
 	nullfunc1,				// clk
 	nullfunc3,				// bitr
 	nullfunc3, 				// periodic
-	nullfunc4,				// macro
-	HiZsetup,				// setup
+	LCDmacro,				// macro
+	LCDsetup,				// setup
 	HiZcleanup,				// cleanup
+	LCDpins,
 	"LCD" 					// name
 }
 #endif
@@ -442,6 +460,7 @@ proto protos[MAXPROTO+1] = {
 	picmacro,				// macro
 	picinit,				// setup
 	piccleanup,				// cleanup
+	picpins,
 	"PIC" 					// name
 }
 #endif

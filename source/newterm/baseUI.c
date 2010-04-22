@@ -15,6 +15,8 @@
  */
 #include "base.h"
 
+
+/*
 //this is an array of terminal text messages for various functions 
 //The idea is to save space, time, and do translations
 //   by consolidating all the terminal text to one place.
@@ -158,4 +160,52 @@ void printHelp(void){
 		bpWstring(help[i]);
 		bpWBR;	
 	}		
+}
+
+*/
+
+
+extern void bpmessages(void);
+
+void bpMsg(unsigned int offset, int length)
+{	int i;
+
+	for(i=offset; i<(offset+length); i++)
+	{	if((i%3)==0)  UART1TX(__builtin_tblrdl((int)&bpmessages+((i/3)<<1))&0x00FF);
+		if((i%3)==1) UART1TX((__builtin_tblrdl((int)&bpmessages+((i/3)<<1))>>8)&0xFF);
+		if((i%3)==2)  UART1TX(__builtin_tblrdh((int)&bpmessages+((i/3)<<1))&0x00FF);
+	}
+
+}
+void bpMsgBR(unsigned int offset, int length)
+{	bpMsg(offset, length);
+	bpBR;
+}
+
+// new printHelp function
+// are separate functioncalls memorywise beter then 1 huge string? time would tell ;)
+
+void printHelp(void)
+{	HLP1000;
+	HLP1001;
+	HLP1002;
+	HLP1003;
+	HLP1004;
+	HLP1005;
+	HLP1006;
+	HLP1007;
+	HLP1008;
+	HLP1009;
+	HLP1010;
+	HLP1011;
+	HLP1012;
+	HLP1013;
+	HLP1014;
+	HLP1015;
+	HLP1016;
+	HLP1017;
+	HLP1018;
+	HLP1019;
+	HLP1020;
+	HLP1021;
 }

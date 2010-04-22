@@ -94,5 +94,7 @@ void bpWmessage(unsigned char s);
 //message text defined in \translations\*-*.h
 void printHelp(void);
 
+void bpMsg(unsigned int offset, int length);
+void bpMsgBR(unsigned int offset, int length);
 
 

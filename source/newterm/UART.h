@@ -24,3 +24,4 @@ void UARTmacro(unsigned int c);
 void UARTstart(void);
 void UARTstop(void);
 unsigned int UARTperiodic(void);
+void UARTpins(void);

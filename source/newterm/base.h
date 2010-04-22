@@ -40,8 +40,8 @@
 #define BP_USE_HWSPI //hardware spi
 #define BP_USE_RAW2WIRE
 #define BP_USE_RAW3WIRE
-#define BP_USE_PCATKB
-//#define BP_USE_LCD // include HD44780 LCD library
+//#define BP_USE_PCATKB
+#define BP_USE_LCD // include HD44780 LCD library
 #define BP_USE_PIC
 
 #define MAXPROTO 9	// need to set it manually for now (is there a smart way for this?)
@@ -67,16 +67,21 @@ asm (".equ BLJUMPADDRESS, 0xABF8");
 //
 //
 //
+
+
 #if defined(LANGUAGE_EN_US)
-	#include "translations\en-US.h"
+	#include "translations\en_US.h"
+/*	my italian and spanish aint that good ;)
 #elif defined(LANGUAGE_IT_IT)
 	#include "translations\it-IT.h"
 //	#include "translations\en-US.h"
 #elif defined(LANGUAGE_ES_ES)
 	#include "translations\es-ES.h"
+*/
 #else
 	#error "No language defined in base.h."
 #endif
+
 
 #if defined(BUSPIRATEV0A)
 	#include "hardwarev0a.h"
