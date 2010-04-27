@@ -129,6 +129,8 @@ void Initialize(void){
 
 	bpWBR; 	//send a line feed
 
+	TBLPAG=0; // we need to be in page 0 (somehow this isn't set)
+
 	versionInfo();//prints hardware and firmware version info (base.c)
 
 //	bpEchoCurrentBusMode(); //print the bus mode

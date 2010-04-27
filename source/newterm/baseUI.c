@@ -167,7 +167,7 @@ void printHelp(void){
 
 extern void bpmessages(void);
 
-void bpMsg(unsigned int offset, int length)
+void bpMsg(int offset, int length)
 {	int i;
 
 	for(i=offset; i<(offset+length); i++)
@@ -177,7 +177,7 @@ void bpMsg(unsigned int offset, int length)
 	}
 
 }
-void bpMsgBR(unsigned int offset, int length)
+void bpMsgBR(int offset, int length)
 {	bpMsg(offset, length);
 	bpBR;
 }

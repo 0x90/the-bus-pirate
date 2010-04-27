@@ -22,6 +22,7 @@
 //     bpWmessage(MSG_READ);
 //The text of the messages is stored in the corresponding member of the UImessages array in baseUI.c 
 //The order of these commands must align with the placement in the UImessages array in baseUI.c 
+/*
 enum {
 	MSG_READY=0,
 
@@ -89,12 +90,12 @@ enum {
 //print text in UImessages[s] array (member s) to the user terminal
 //message text defined in \translations\*-*.h
 void bpWmessage(unsigned char s);
-
+*/
 //print the help info in help[] to the user terminal
 //message text defined in \translations\*-*.h
 void printHelp(void);
 
-void bpMsg(unsigned int offset, int length);
-void bpMsgBR(unsigned int offset, int length);
+void bpMsg(int offset, int length);
+void bpMsgBR(int offset, int length);
 
 

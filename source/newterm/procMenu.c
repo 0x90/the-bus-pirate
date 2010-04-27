@@ -398,7 +398,7 @@ void serviceuser(void)
 							}
 							else
 							{	BP_PULLUP_OFF(); //pseudofunction in hardwarevx.h
-								modeConfig.pullupEN=1;
+								modeConfig.pullupEN=0;
 								//bpWmessage(MSG_OPT_PULLUP_OFF);
 								BPMSG1089;
 							}
@@ -541,20 +541,39 @@ void serviceuser(void)
 							cmdstart++;
 							cmdstart&=CMDLENMSK;
 							sendw=getint();
-							cmdstart++;				// skip )
-							cmdstart&=CMDLENMSK;
-							//bpWdec(sendw);
-							protos[bpConfig.busMode].protocol_macro(sendw);
-							bpBR;
+							consumewhitechars();
+							if(cmdbuf[((cmdstart)&CMDLENMSK)]==')' )
+							{	cmdstart++;				// skip )
+								cmdstart&=CMDLENMSK;
+								//bpWdec(sendw);
+								protos[bpConfig.busMode].protocol_macro(sendw);
+								bpBR;
+							}
+							else
+							{	cmderror=1;
+							}
 							break;
 				case 0x22:	//bpWline("-send string");
-							BPMSG1101;
-							while(cmdbuf[((++cmdstart)&CMDLENMSK)]!=0x22)
-							{	cmdstart&=CMDLENMSK;
-								protos[bpConfig.busMode].protocol_send(cmdbuf[cmdstart]);
-								UART1TX(cmdbuf[cmdstart]);
+							cmderror=1;
+							temp=1;
+
+							while(cmdbuf[((cmdstart+temp)&CMDLENMSK)]!=0x00)
+							{	if(cmdbuf[((cmdstart+temp)&CMDLENMSK)]==0x22) cmderror=0;	// clear error if we found a " before the command ends
+								temp++;
 							}
-							bpBR;
+
+							if(!cmderror)
+							{	BPMSG1101;
+								UART1TX(0x22);
+								while(cmdbuf[((++cmdstart)&CMDLENMSK)]!=0x22)
+								{	cmdstart&=CMDLENMSK;
+									protos[bpConfig.busMode].protocol_send(cmdbuf[cmdstart]);
+									UART1TX(cmdbuf[cmdstart]);
+								}
+								cmdstart&=CMDLENMSK;
+								UART1TX(0x22);
+								bpBR;
+							}
 							break;
 				case '[':	//bpWline("-Start");
 							protos[bpConfig.busMode].protocol_start();
@@ -1098,7 +1117,7 @@ void statusInfo(void){
 	//pullups available, enabled?
 	#if defined (BUSPIRATEV1A) || defined (BUSPIRATEV2)
 	if(modeConfig.allowpullup==1){
-		if(modeConfig.pullupEN==1) BPMSG1090; else BPMSG1089;	//bpWmessage(MSG_OPT_PULLUP_ON); else bpWmessage(MSG_OPT_PULLUP_OFF);
+		if(modeConfig.pullupEN==1) BPMSG1091; else BPMSG1089;	//bpWmessage(MSG_OPT_PULLUP_ON); else bpWmessage(MSG_OPT_PULLUP_OFF);
 	}else{
 		BPMSG1122;	//bpWmessage(MSG_STATUS_PULLUP_NOTALLOWED);
 	}
