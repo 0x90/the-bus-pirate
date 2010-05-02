@@ -123,30 +123,30 @@ void UARTsetup(void)
 		//bpWline(" 10. 31250 (MIDI)"); //add midi to the standard list // add to translation??
 		BPMSG1198;
 		//modeConfig.speed=(bpUserNumberPrompt(2, 10, 1)-1); //get user reply
-		modeConfig.speed=getnumber(1,10,0)-1; //get user reply
+		modeConfig.speed=getnumber(1,1,10,0)-1; //get user reply
 		
 		//bpWstring("Data bits and parity:\x0D\x0A 1. 8, NONE *default \x0D\x0A 2. 8, EVEN \x0D\x0A 3. 8, ODD \x0D\x0A 4. 9, NONE \x0D\x0A");
 		//bpWline(OUMSG_UART_DATABITS_PARITY); //write text (data bit and parity)
 		BPMSG1199;
 		//uartSettings.dbp=(bpUserNumberPrompt(1, 4, 1)-1);
-		uartSettings.dbp=getnumber(1,4,0)-1;
+		uartSettings.dbp=getnumber(1,1,4,0)-1;
 	
 		//bpWstring("Stop bits:\x0D\x0A 1. 1 *default\x0D\x0A 2. 2 \x0D\x0A");
 		//bpWline(OUMSG_UART_STOPBITS); //write text 
 		BPMSG1200;
 		//uartSettings.sb=(bpUserNumberPrompt(1, 2, 1)-1);
-		uartSettings.sb=getnumber(1,2,0)-1;
+		uartSettings.sb=getnumber(1,1,2,0)-1;
 	
 		//string("Receive polarity:\x0D\x0A 1. Idle 1 *default\x0D\x0A 2. Idle 0\x0D\x0A");				
 		//bpWline(OUMSG_UART_RXPOLARITY); //write text 
 		BPMSG1201;
 		//uartSettings.rxp=(bpUserNumberPrompt(1, 2, 1)-1);
-		uartSettings.rxp=getnumber(1,2,0)-1;
+		uartSettings.rxp=getnumber(1,1,2,0)-1;
 	
 		//bpWmessage(MSG_OPT_OUTPUT_TYPE);
 		BPMSG1142;
 		//modeConfig.HiZ=(~(bpUserNumberPrompt(1, 2, 1)-1));
-		modeConfig.HiZ=(~(getnumber(1,2,0)-1));
+		modeConfig.HiZ=(~(getnumber(1,1,2,0)-1));
 		//modeConfig.allowlsb=0; //already reset to 0
 	}
 	else

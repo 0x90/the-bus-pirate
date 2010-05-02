@@ -248,7 +248,7 @@ _bpmessages:
 	.pascii	"i\tVersioninfo/statusinfo\t\t\\\tCLK lo"
 	.pascii	"l/L\tBitorder (MSB/LSB)\t\t^\tCLK tick"
 	.pascii	"m\tChange mode\t\t\t-\tDAT hi"
-	.pascii	"o\tSet outputtype\t\t\t_\tDAT lo"
+	.pascii	"o\tSet output type\t\t\t_\tDAT lo"
 	.pascii	"p/P\tPullup resistors (OFF/ON)\t.\tDAT read"
 	.pascii	"s\tScript engine\t\t\t!\tBit read"
 	.pascii	"v\tDisplay voltages/states\t\t:\tRepeat e.g. r:10"

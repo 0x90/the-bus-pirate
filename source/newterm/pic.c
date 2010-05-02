@@ -71,11 +71,11 @@ void picinit(void)
 		//bpWline("2. 4b/16b");
 		BPMSG1072;
 	
-		mode=getnumber(1,2,0); 
+		mode=getnumber(1,1,2,0); 
 
 		//bpWline("Delay");
 		BPMSG1073;
-		delay=getnumber(1,2,0);
+		delay=getnumber(1,1,2,0);
 	}
 
 	switch(mode)

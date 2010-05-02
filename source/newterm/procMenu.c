@@ -29,6 +29,7 @@ extern struct _modeConfig modeConfig;
 extern struct _command bpCommand;
 extern proto protos[MAXPROTO];
 
+void walkdungeon(void);
 
 void setMode(void); //change protocol/bus mode
 void setDisplayMode(void); //user terminal number display mode dialog (eg HEX, DEC, BIN, RAW)
@@ -841,7 +842,7 @@ void changemode(void)
 		//bpWline("x. exit(without change)");
 		BPMSG1111;
 		cmderror=0;							// error is set because no number found, but it is no error here:S eeeh confusing right?
-		busmode=getnumber(1, MAXPROTO, 1)-1;
+		busmode=getnumber(1, 1, MAXPROTO, 1)-1;
 //		bpWstring("busmode= ");
 //		bpWdec(busmode);
 		if((busmode==-2)||(busmode==-1))
@@ -913,7 +914,7 @@ int cmdhistory(void)
 	//bpWline("x. exit");
 	BPMSG1115;
 
-	j=getnumber(0,i,1);
+	j=getnumber(0, 1, i, 1);
 //	if((j==0)||(j>(i+1)))
 //	{	bpWline("invalid response!");
 //		return 1;
@@ -944,7 +945,7 @@ int cmdhistory(void)
 // 0-max return
 // x=1 exit is enabled (we don't want that in the mode changes ;)
 
-int getnumber(int def, int max, int x)	
+int getnumber(int def, int min, int max, int x)	
 {	char c;
 	char buf[6];									// max 4 digits;
 	int i, j, stop, temp, neg;
@@ -1021,7 +1022,7 @@ again:											// need to do it proper with whiles and ifs..
 			temp+=(buf[j-i]-0x30);
 		}
 
-		if((temp>=0)&&(temp<=max))
+		if((temp>=min)&&(temp<=max))
 		{	if(neg)
 			{	return -temp;
 			}
@@ -1030,7 +1031,7 @@ again:											// need to do it proper with whiles and ifs..
 			}
 		}
 		else
-		{	bpWline("\r\nInvalid choice, try again\r\n");
+		{	//bpWline("\r\nInvalid choice, try again\r\n");
 			BPMSG1211;
 			goto again;
 		}
@@ -1084,6 +1085,9 @@ void versionInfo(void){
 		break;
 	case PIC_REV_B5:
 		bpWstring("B5");
+		break;
+	case PIC_REV_B8:
+		bpWstring("B8");
 		break;
 	default:
 		bpWstring("UNK");
@@ -1249,7 +1253,7 @@ void setDisplayMode(void)
 		//bpWmessage(MSG_OPT_DISPLAYMODE); //show the display mode options message			
 		BPMSG1127;
 		//	bpConfig.displayMode=(bpUserNumberPrompt(1, 4, 1)-1); //get, store user reply
-		bpConfig.displayMode=getnumber(1,4,0); //get, store user reply
+		bpConfig.displayMode=getnumber(1, 1, 4,0); //get, store user reply
 	}
 	//bpWmessage(MSG_OPT_DISPLAYMODESET);//show display mode update text
 	BPMSG1128;
@@ -1364,7 +1368,7 @@ void setBaudRate(void)
 	{	//bpWmessage(MSG_OPT_UART_BAUD); //show stored dialog
 		BPMSG1133;
 	//	bpConfig.termSpeed=(bpUserNumberPrompt(1, 9, 9)-1);
-		bpConfig.termSpeed=getnumber(9,9,0)-1;
+		bpConfig.termSpeed=getnumber(9,1,9,0)-1;
 	}
 
 	//bpWmessage(MSG_OPT_TERMBAUD_ADJUST); //show 'adjust and press space dialog'

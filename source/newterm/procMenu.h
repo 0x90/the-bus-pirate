@@ -60,5 +60,5 @@ int getrepeat(void);
 void consumewhitechars(void);
 void changemode(void);
 int cmdhistory(void);
-int getnumber(int def, int max, int x);	
+int getnumber(int def, int min, int max, int x);	
 

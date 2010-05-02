@@ -53,7 +53,9 @@ void hwi2cwrite(unsigned char c);
 unsigned char hwi2cread(void);
 void binI2CversionString(void);
 
+#ifdef BP_USE_I2C_HW
 static unsigned char I2Cspeed[]={157,37,13};//100,400,1000khz; datasheet pg 145
+#endif
 
 //software functions
 void I2C_Setup(void);
@@ -83,18 +85,22 @@ unsigned int I2Cread(void)
 		if(i2cmode==SOFT)
 		{	bbI2Cack();
 		}
+#ifdef BP_USE_I2C_HW
 		else 
 		{	hwi2csendack(0);//all other reads get an ACK
 		}
+#endif
 		ackPending=0;
 	}
 
 	if(i2cmode==SOFT)
 	{	c=bbReadByte(); 
 	}
+#ifdef BP_USE_I2C_HW
 	else
 	{	c=hwi2cread();
 	}
+#endif
 	ackPending=1;
 	return c;
 }
@@ -109,9 +115,11 @@ unsigned int I2Cwrite(unsigned int c)
 		if(i2cmode==SOFT)
 		{	bbI2Cack();
 		}
+#ifdef BP_USE_I2C_HW
 		else 
 		{	hwi2csendack(0);//all other reads get an ACK
 		}
+#endif
 		ackPending=0;
 	}
 
@@ -119,10 +127,12 @@ unsigned int I2Cwrite(unsigned int c)
 	{	bbWriteByte(c); 
 		c=bbReadBit();
 	}
+#ifdef BP_USE_I2C_HW
 	else
 	{	hwi2cwrite(c);
 		c=hwi2cgetack();
 	}
+#endif
 	bpSP;
 	if(c==0)
 	{	//bpWmessage(MSG_ACK);
@@ -144,18 +154,22 @@ void I2Cstart(void)
 		if(i2cmode==SOFT)
 		{	bbI2Cnack();
 		}
+#ifdef BP_USE_I2C_HW
 		else 
 		{	hwi2csendack(1); //the last read before a stop/start condition gets an NACK
 		}
+#endif
 		ackPending=0;
 	}
 
 	if(i2cmode==SOFT)
 	{	bbI2Cstart();
 	}
+#ifdef BP_USE_I2C_HW
 	else 
 	{	hwi2cstart();
 	}
+#endif
 	//bpWmessage(MSG_I2C_START);
 	BPMSG1062;
 }
@@ -168,18 +182,22 @@ void I2Cstop(void)
 		if(i2cmode==SOFT)
 		{	bbI2Cnack();
 		}
+#ifdef BP_USE_I2C_HW
 		else 
 		{	hwi2csendack(1); //the last read before a stop/start condition gets an NACK
 		}
+#endif
 		ackPending=0;
 	}
 
 	if(i2cmode==SOFT) 
 	{	bbI2Cstop();
 	}
+#ifdef BP_USE_I2C_HW
 	else
 	{	hwi2cstop();
 	}
+#endif
 	//bpWmessage(MSG_I2C_STOP);
 	BPMSG1063;
 }
@@ -221,7 +239,7 @@ void I2Csetup(void)
 #ifdef BP_USE_I2C_HW
 		//bpWline(OUMSG_I2C_CON);
 		BPMSG1064;
-		i2cmode=(getnumber(1,2,0)-1);
+		i2cmode=(getnumber(1,1,2,0)-1);
 #else
 		i2cmode=SOFT;
 #endif
@@ -229,14 +247,14 @@ void I2Csetup(void)
 		if(i2cmode==SOFT){
 			//bpWmessage(MSG_OPT_BB_SPEED);
 			BPMSG1065;
-			modeConfig.speed=(getnumber(1,3,0)-1); 
+			modeConfig.speed=(getnumber(1,1,4,0)-1); 
 		}else{
 			// There is a hardware incompatibility with <B4
 			// See http://forum.microchip.com/tm.aspx?m=271183&mpage=1
 			if(bpConfig.dev_rev<=PIC_REV_A3) BPMSG1066;	//bpWline(OUMSG_I2C_REV3_WARN);
 			//bpWline(OUMSG_I2C_HWSPEED);
 			BPMSG1067;
-			modeConfig.speed=(getnumber(1,3,0)-1);
+			modeConfig.speed=(getnumber(1,1,3,0)-1);
 		}
 	}
 	else
@@ -263,15 +281,18 @@ void I2Csetup(void)
 	modeConfig.allowpullup=1; 
 	//modeConfig.allowlsb=0; //auto cleared on mode change
 
-	if(i2cmode==SOFT){
-		SDA_TRIS=1;
+	if(i2cmode==SOFT)
+	{	SDA_TRIS=1;
 		SCL_TRIS=1;
 		SCL=0;			//B8 scl 
 		SDA=0;			//B9 sda
 		bbSetup(2, modeConfig.speed);//configure the bitbang library for 2-wire, set the speed
-	}else{
-		hwi2cSetup();
 	}
+#ifdef BP_USE_I2C_HW
+	else
+	{	hwi2cSetup();
+	}
+#endif
 }
 
 void I2Ccleanup(void)
@@ -292,16 +313,18 @@ void I2Cmacro(unsigned int c)
 			BPMSG1070;
 			for(i=0;i<0x100;i++){
 		
-				if(i2cmode==SOFT){
-					bbI2Cstart(); //send start
+				if(i2cmode==SOFT)
+				{	bbI2Cstart(); //send start
 					bbWriteByte(i);//send address
 					c=bbReadBit();//look for ack
-				}else{
-					hwi2cstart();
+				}
+#ifdef BP_USE_I2C_HW
+				else
+				{	hwi2cstart();
 			 		hwi2cwrite(i);
 					c=hwi2cgetack();
 				}
-		
+#endif		
 				if(c==0){//0 is ACK
 					bpWbyte(i);
 					bpWchar('('); //bpWstring("(");
@@ -312,16 +335,22 @@ void I2Cmacro(unsigned int c)
 						if(i2cmode==SOFT){
 							bbReadByte();
 							bbI2Cnack(); //bbWriteBit(1);//high bit is NACK
-						}else{
+						}
+#ifdef BP_USE_I2C_HW
+						else{
 							hwi2cread();
 							hwi2csendack(1);//high bit is NACK
 						}
+#endif
 						bpWstring(" R");
 					}
 					bpWstring(")");
 					bpSP;	
 				}
-				if(i2cmode==SOFT) bbI2Cstop(); else hwi2cstop();
+				if(i2cmode==SOFT) bbI2Cstop();
+#ifdef BP_USE_I2C_HW
+					else hwi2cstop();
+#endif
 			}
 			bpWBR;	
 			break;	
@@ -331,8 +360,10 @@ void I2Cmacro(unsigned int c)
 			//bpWline(OUMSG_I2C_MACRO_SNIFFER);	
 			BPMSG1071;
 			I2C_Sniffer(1); //set for terminal output
-		
+
+#ifdef BP_USE_I2C_HW
 			if(i2cmode==HARD) hwi2cSetup(); //setup hardware I2C again
+#endif
 			break;	
 		default:
 			//bpWmessage(MSG_ERROR_MACRO);
@@ -531,6 +562,8 @@ void i2cProcess(void){
 //	HARDWARE I2C BASE FUNCTIONS
 //
 //
+#ifdef BP_USE_I2C_HW
+
 void hwi2cstart(void){
 	// Enable a start condition
 	I2C1CONbits.SEN = 1;
@@ -600,6 +633,7 @@ void hwi2cSetup(void){
 
 }
 
+#endif
 //*******************/
 //
 //

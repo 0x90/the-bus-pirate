@@ -90,36 +90,34 @@ Program Memory  [Origin = 0x200, Length = 0xa5fe]
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x200               0x566           0x819  (2073)
-.const                       0x766               0x3d4           0x5be  (1470)
-.text                        0xb3a              0x646a          0x969f  (38559)
-.dinit                      0x6fa4               0x552           0x7fb  (2043)
-.text                       0x74f6              0x2ad2          0x403b  (16443)
-.isr                        0x9fc8                 0x2             0x3  (3)
+.const                       0x766               0x330           0x4c8  (1224)
+.text                        0xa96              0x8078          0xc0b4  (49332)
+.dinit                      0x8b0e               0x2c8           0x42c  (1068)
+.text                       0x8dd6               0xc2e          0x1245  (4677)
+.isr                        0x9a04                 0x2             0x3  (3)
 
-                     Total program memory used (bytes):         0xecaf  (60591) 95%
+                     Total program memory used (bytes):         0xe409  (58377) 91%
 
 
 Data Memory  [Origin = 0x800, Length = 0x2000]
 
 section                    address      alignment gaps    total length  (dec)
 -------                    -------      --------------    -------------------
-.bss                         0x800                   0          0x1018  (4120)
-.data                       0x1818                   0           0x5b8  (1464)
-.bss                        0x1dd0                   0           0x106  (262)
-.data                       0x1ed6                   0           0x102  (258)
-.bss                        0x1fd8                   0            0xdc  (220)
-.data                       0x20b4                   0            0x28  (40)
-.bss                        0x20dc                   0            0x16  (22)
-.data                       0x20f2                   0            0x12  (18)
-.bss                        0x2104                   0             0xe  (14)
-.data                       0x2112                   0             0xc  (12)
-.bss                        0x211e                   0            0x24  (36)
-.data                       0x2142                   0             0x4  (4)
-.bss                        0x2146                   0            0x14  (20)
-.data                       0x215a                   0             0x2  (2)
-.bss                        0x215c                   0             0x6  (6)
+.bss                         0x800                   0          0x1484  (5252)
+.data                       0x1c84                   0           0x1b8  (440)
+.bss                        0x1e3c                   0           0x106  (262)
+.data                       0x1f42                   0           0x102  (258)
+.bss                        0x2044                   0            0x70  (112)
+.data                       0x20b4                   0            0x6a  (106)
+.bss                        0x211e                   0            0x16  (22)
+.data                       0x2134                   0            0x12  (18)
+.bss                        0x2146                   0             0xe  (14)
+.data                       0x2154                   0             0xc  (12)
+.bss                        0x2160                   0            0x38  (56)
+.data                       0x2198                   0             0x2  (2)
+.bss                        0x219a                   0             0x6  (6)
 
-                        Total data memory used (bytes):         0x1962  (6498) 79%
+                        Total data memory used (bytes):         0x19a0  (6560) 80%
 
 
 Dynamic Memory Usage
@@ -127,9 +125,9 @@ Dynamic Memory Usage
 region                     address                      maximum length  (dec)
 ------                     -------                      ---------------------
 heap                             0                                   0  (0)
-stack                       0x2162                               0x69e  (1694)
+stack                       0x21a0                               0x660  (1632)
 
-                        Maximum dynamic memory (bytes):          0x69e  (1694)
+                        Maximum dynamic memory (bytes):          0x660  (1632)
 
 
 External Symbols in Data Memory (by address):
@@ -138,96 +136,98 @@ External Symbols in Data Memory (by address):
                     0x180c                  _modeConfig
                     0x1810                  _bpCommand
                     0x1816                  _currentByte
-                    0x1818                  _pgmspace
-                    0x1c18                  _protos
-                    0x1dd0                  _cmdbuf
-                    0x1ed0                  _cmdend
-                    0x1ed2                  _cmdstart
-                    0x1ed4                  _cmderror
-                    0x1ed6                  _SearchChar
-                    0x1fea                  _OWroster
-                    0x203b                  _ROM_NO
-                    0x2043                  _LastDiscrepancy
-                    0x2044                  _LastFamilyDiscrepancy
-                    0x2045                  _LastDeviceFlag
-                    0x2046                  _crc8
-                    0x2048                  _vars
-                    0x207c                  _stack
-                    0x2090                  _forloops
-                    0x20a8                  _pc
-                    0x20aa                  _fors
-                    0x20ac                  _gosubs
-                    0x20ae                  _datapos
-                    0x20b0                  _eeprom_lastprog
-                    0x20b2                  _eeprom_lastmem
-                    0x210e                  _PWMfreq
-                    0x2110                  _PWMduty
-                    0x2126                  _i2cmode
-                    0x2128                  _ackPending
-                    0x212a                  _bitbang
-                    0x213a                  _uartSettings
-                    0x2140                  _spiSettings
-                    0x2156                  _picmode
-                    0x2158                  _piccmddelay
-                    0x215a                  _irqFlag
-                    0x215b                  _binmodecnt
-                    0x215c                  _r3wSettings
-                    0x2160                  _HD44780
+                    0x1818                  _vars
+                    0x184c                  _stack
+                    0x1860                  _forloops
+                    0x1878                  _pc
+                    0x187a                  _fors
+                    0x187c                  _gosubs
+                    0x187e                  _datapos
+                    0x1880                  _pgmspace
+                    0x1c80                  _eeprom_lastprog
+                    0x1c82                  _eeprom_lastmem
+                    0x1c84                  _protos
+                    0x1e3c                  _cmdbuf
+                    0x1f3c                  _cmdend
+                    0x1f3e                  _cmdstart
+                    0x1f40                  _cmderror
+                    0x1f42                  _SearchChar
+                    0x2056                  _OWroster
+                    0x20a7                  _ROM_NO
+                    0x20af                  _LastDiscrepancy
+                    0x20b0                  _LastFamilyDiscrepancy
+                    0x20b1                  _LastDeviceFlag
+                    0x20b2                  _crc8
+                    0x20b4                  _tokens
+                    0x2150                  _PWMfreq
+                    0x2152                  _PWMduty
+                    0x2168                  _i2cmode
+                    0x216a                  _ackPending
+                    0x216c                  _bitbang
+                    0x217c                  _uartSettings
+                    0x2182                  _spiSettings
+                    0x2194                  _picmode
+                    0x2196                  _piccmddelay
+                    0x2198                  _irqFlag
+                    0x2199                  _binmodecnt
+                    0x219a                  _r3wSettings
+                    0x219e                  _HD44780
 
 External Symbols in Data Memory (by name):
 
-                    0x2160                  _HD44780
-                    0x2045                  _LastDeviceFlag
-                    0x2043                  _LastDiscrepancy
-                    0x2044                  _LastFamilyDiscrepancy
-                    0x1fea                  _OWroster
-                    0x2110                  _PWMduty
-                    0x210e                  _PWMfreq
-                    0x203b                  _ROM_NO
-                    0x1ed6                  _SearchChar
-                    0x2128                  _ackPending
-                    0x215b                  _binmodecnt
-                    0x212a                  _bitbang
+                    0x219e                  _HD44780
+                    0x20b1                  _LastDeviceFlag
+                    0x20af                  _LastDiscrepancy
+                    0x20b0                  _LastFamilyDiscrepancy
+                    0x2056                  _OWroster
+                    0x2152                  _PWMduty
+                    0x2150                  _PWMfreq
+                    0x20a7                  _ROM_NO
+                    0x1f42                  _SearchChar
+                    0x216a                  _ackPending
+                    0x2199                  _binmodecnt
+                    0x216c                  _bitbang
                     0x1810                  _bpCommand
                     0x0800                  _bpConfig
-                    0x1dd0                  _cmdbuf
-                    0x1ed0                  _cmdend
-                    0x1ed4                  _cmderror
-                    0x1ed2                  _cmdstart
-                    0x2046                  _crc8
+                    0x1e3c                  _cmdbuf
+                    0x1f3c                  _cmdend
+                    0x1f40                  _cmderror
+                    0x1f3e                  _cmdstart
+                    0x20b2                  _crc8
                     0x1816                  _currentByte
-                    0x20ae                  _datapos
-                    0x20b2                  _eeprom_lastmem
-                    0x20b0                  _eeprom_lastprog
-                    0x2090                  _forloops
-                    0x20aa                  _fors
-                    0x20ac                  _gosubs
-                    0x2126                  _i2cmode
-                    0x215a                  _irqFlag
+                    0x187e                  _datapos
+                    0x1c82                  _eeprom_lastmem
+                    0x1c80                  _eeprom_lastprog
+                    0x1860                  _forloops
+                    0x187a                  _fors
+                    0x187c                  _gosubs
+                    0x2168                  _i2cmode
+                    0x2198                  _irqFlag
                     0x180c                  _modeConfig
-                    0x20a8                  _pc
-                    0x1818                  _pgmspace
-                    0x2158                  _piccmddelay
-                    0x2156                  _picmode
-                    0x1c18                  _protos
-                    0x215c                  _r3wSettings
-                    0x2140                  _spiSettings
-                    0x207c                  _stack
-                    0x213a                  _uartSettings
-                    0x2048                  _vars
+                    0x1878                  _pc
+                    0x1880                  _pgmspace
+                    0x2196                  _piccmddelay
+                    0x2194                  _picmode
+                    0x1c84                  _protos
+                    0x219a                  _r3wSettings
+                    0x2182                  _spiSettings
+                    0x184c                  _stack
+                    0x20b4                  _tokens
+                    0x217c                  _uartSettings
+                    0x1818                  _vars
 
 External Symbols in Program Memory (by address):
 
                   0x000200                  __resetPRI
                   0x000222                  __psv_init
-                  0x000232                  __data_init
                   0x000232                  __data_init_standard
+                  0x000232                  __data_init
                   0x0003ec                  ___floatsisf
                   0x000442                  ___gtsf2
                   0x000442                  ___gesf2
-                  0x000446                  ___ltsf2
-                  0x000446                  ___lesf2
                   0x000446                  ___eqsf2
+                  0x000446                  ___lesf2
+                  0x000446                  ___ltsf2
                   0x00044a                  ___divsf3
                   0x0004ce                  ___subsf3
                   0x0004d0                  ___addsf3
@@ -242,387 +242,377 @@ External Symbols in Program Memory (by address):
                   0x00072e                  __fbopExit
                   0x000736                  __fbopReturnNaN
                   0x00073c                  __funpack
-                  0x000812                  _tokens
-                  0x0008d2                  _BYTE_ARRAY
-                  0x000ac7                  _HEXASCII
-                  0x000b3a                  _handleelse
-                  0x000b6a                  _searchlineno
-                  0x000bd2                  _getnumvar
-                  0x000d54                  _assign
-                  0x000e02                  _evaluate
-                  0x000f40                  _interpreter
-                  0x00188a                  _printstat
-                  0x0018a4                  _list
-                  0x001ab4                  _compare
-                  0x001afe                  _gettoken
-                  0x001b3a                  _basiccmdline
-                  0x001ebe                  _HIZbbL
-                  0x001eea                  _HIZbbH
-                  0x001f00                  _HIZbbR
-                  0x001f28                  _basi2cstart
-                  0x001f46                  _basi2cstop
-                  0x001f5e                  _basi2cread
-                  0x001fb8                  _basi2cwrite
-                  0x002016                  _checkeeprom
-                  0x002066                  _format
-                  0x0020d8                  _waiteeprom
-                  0x0020f2                  _save
-                  0x0021c2                  _load
-                  0x002264                  _serviceuser
-                  0x002be0                  _getint
-                  0x002f2a                  _getrepeat
-                  0x002f70                  _consumewhitechars
-                  0x002f94                  _changemode
-                  0x0030a2                  _cmdhistory
-                  0x0031e2                  _getnumber
-                  0x003362                  _versionInfo
-                  0x00343a                  _statusInfo
-                  0x003508                  _pinStates
-                  0x0035e0                  _pinDirection
-                  0x0035fe                  _pinState
-                  0x00361c                  _setDisplayMode
-                  0x003664                  _setBaudRate
-                  0x0036d8                  _agree
-                  0x003718                  _bpmessages
-                  0x0045c6                  _UARTread
-                  0x004626                  _UARTwrite
-                  0x004636                  _UARTsetup
-                  0x0048b6                  _UARTcleanup
-                  0x0048c0                  _UARTmacro
-                  0x0049de                  _UARTstart
-                  0x004a08                  _UARTstop
-                  0x004a2a                  _UARTperiodic
-                  0x004aaa                  _UARTpins
-                  0x004ab8                  _binUARTversionString
-                  0x004ac4                  _binUART
-                  0x004ecc                  _OWread
-                  0x004ed8                  _OWwrite
-                  0x004ee8                  _OWbitr
-                  0x004ef4                  _OWbitclk
-                  0x004f0a                  _OWdatl
-                  0x004f34                  _OWdath
-                  0x004f5e                  _OWsetup
-                  0x004f9c                  _OWmacro
-                  0x00528e                  _OWpins
-                  0x00529c                  _DS1wireReset
-                  0x0052fa                  _DS1wireID
-                  0x005370                  _OWFirst
-                  0x00538c                  _OWNext
-                  0x005396                  _OWSearch
-                  0x005522                  _OWVerify
-                  0x0055de                  _docrc8
-                  0x0055fe                  _bin1WIREversionString
-                  0x00560a                  _bin1WIRE
-                  0x0057b2                  _SPIstartr
-                  0x0057cc                  _SPIstart
-                  0x0057e6                  _SPIstop
-                  0x0057f6                  _SPIread
-                  0x005802                  _SPIwrite
-                  0x005826                  _SPIsetup
-                  0x005a78                  _SPIcleanup
-                  0x005a80                  _SPImacro
-                  0x005ad0                  _SPIpins
-                  0x005ade                  _spiSetup
-                  0x005b86                  _spiDisable
-                  0x005bae                  _spiWriteByte
-                  0x005bca                  _spiSniffer
-                  0x005cb0                  _spiSlaveSetup
-                  0x005d96                  _spiSlaveDisable
-                  0x005dbc                  _binSPIversionString
-                  0x005dc8                  _binSPI
-                  0x00607a                  _I2Cread
-                  0x0060c8                  _I2Cwrite
-                  0x006146                  _I2Cstart
-                  0x00618c                  _I2Cstop
-                  0x0061d2                  _I2Csetup
-                  0x0062ca                  _I2Ccleanup
-                  0x0062dc                  _I2Cmacro
-                  0x0063d4                  _I2Cpins
-                  0x0063e2                  _hwi2cstart
-                  0x0063f2                  _hwi2cstop
-                  0x006402                  _hwi2cgetack
-                  0x006410                  _hwi2csendack
-                  0x006436                  _hwi2cwrite
-                  0x00644a                  _hwi2cread
-                  0x006460                  _hwi2cSetup
-                  0x006486                  _I2C_SnifferSetup
-                  0x0064fa                  _I2C_Sniffer
-                  0x0066b8                  _binI2CversionString
-                  0x0066c4                  _binI2C
-                  0x006864                  _picinit
-                  0x006942                  _piccleanup
-                  0x006952                  _picstart
-                  0x006984                  _picstop
-                  0x0069a4                  _picread
-                  0x006ab0                  _picwrite
-                  0x006c92                  _picmacro
-                  0x006d3a                  _picpins
-                  0x006d48                  _binpic
-                  0x0074f6                  _binBBversion
-                  0x007502                  _binBB
-                  0x0076c2                  _getRXbyte
-                  0x0076d4                  _binReset
-                  0x0076e2                  _binBBpindirectionset
-                  0x007802                  _binBBpinset
-                  0x00794e                  _binSelfTest
-                  0x0079ca                  _LCDread
-                  0x0079de                  _LCDwrite
-                  0x0079f8                  _LCDstart
-                  0x007a10                  _LCDstop
-                  0x007a28                  _LCDsetup
-                  0x007af6                  _LCDmacro
-                  0x007c4a                  _LCDpins
-                  0x007c58                  _HD44780_Init
-                  0x007c94                  _HD44780_Reset
-                  0x007cd4                  _HD44780_WriteByte
-                  0x007cf2                  _HD44780_ReadByte
-                  0x007d0a                  _HD44780_WriteNibble
-                  0x007d3e                  _HD44780_ReadNibble
-                  0x007d90                  _HD44780_I2Cread
-                  0x007dca                  _HD44780_I2Cwrite
-                  0x007e00                  _HD44780_I2Cerror
-                  0x007e0e                  _bpUserNumberPrompt
-                  0x007e1c                  _bpGetUserInput
-                  0x007e2a                  _bpEchoState
-                  0x007e38                  _bpWstring
-                  0x007e64                  _bpWline
-                  0x007e98                  _bpWbin
-                  0x007ed2                  _bpWlongdec
-                  0x007f5e                  _bpWintdec
-                  0x007fbc                  _bpWdec
-                  0x00801e                  _bpWhex
-                  0x008048                  _bpWhexBuf
-                  0x008076                  _bpWinthex
-                  0x0080c0                  _bpWvolts
-                  0x008162                  _UART1RXRdy
-                  0x00816e                  _UART1RX
-                  0x008180                  _UART1TX
-                  0x00819c                  _UARTbufSetup
-                  0x0081aa                  _UARTbuf
-                  0x0081da                  _UARTbufService
-                  0x00820c                  _bpReadFlash
-                  0x008226                  _updatePWM
-                  0x0082c8                  _bpPWM
-                  0x008484                  _bpFreq
-                  0x0085a6                  _bpAuxHiZ
-                  0x0085c4                  _bpAuxHigh
-                  0x0085e6                  _bpAuxLow
-                  0x008608                  _bpAuxRead
-                  0x00863c                  _bbSetup
-                  0x0086ca                  _bbI2Cstart
-                  0x0086f0                  _bbI2Cstop
-                  0x008716                  _bbReadWriteByte
-                  0x0087ac                  _bbWriteByte
-                  0x008812                  _bbReadByte
-                  0x008874                  _bbReadBit
-                  0x008896                  _bbWriteBit
-                  0x0088b8                  _bbClockTicks
-                  0x0088de                  _bbMOSI
-                  0x0088f0                  _bbCLK
-                  0x008902                  _bbCS
-                  0x008914                  _bbMISO
-                  0x008920                  _bbH
-                  0x008956                  _bbL
-                  0x008982                  _bbPins
-                  0x0089e0                  _bbR
-                  0x008a08                  _R2Wread
-                  0x008a14                  _R2Wwrite
-                  0x008a22                  _R2Wstart
-                  0x008a3c                  _R2Wstop
-                  0x008a56                  _R2Wbitr
-                  0x008a62                  _R2Wbitp
-                  0x008a6e                  _R2Wclkl
-                  0x008a7a                  _R2Wclkh
-                  0x008a86                  _R2Wclk
-                  0x008a92                  _R2Wdatl
-                  0x008a9e                  _R2Wdath
-                  0x008aaa                  _R2Wsetup
-                  0x008bae                  _R2Wmacro
-                  0x008be6                  _R2Wpins
-                  0x008bf6                  _r2wMacro_78133Write
-                  0x008c22                  _r2wMacro_78133Read
-                  0x008db0                  _SUMP
-                  0x008dde                  _SUMPreset
-                  0x008e1a                  _SUMPlogicCommand
-                  0x009040                  _SUMPlogicService
-                  0x0090c2                  _binrawversionString
-                  0x0090ce                  _binwire
-                  0x00939e                  _selfTest
-                  0x009570                  _bpADCPinTest
-                  0x0095b2                  _bpBusPinsTest
-                  0x009604                  _bpTest
-                  0x009630                  _clearModeConfig
-                  0x00968c                  _bpInit
-                  0x0096cc                  _bpADC
-                  0x0096e6                  _bpADCprobe
-                  0x0096f8                  _bpADCCprobe
-                  0x009756                  _InitializeUART1
-                  0x00977c                  _bpWbyte
-                  0x009802                  _bpDelayMS
-                  0x009834                  _bpDelayUS
-                  0x009870                  _R3Wread
-                  0x00987e                  _R3Wwrite
-                  0x0098a6                  _R3Wstartr
-                  0x0098c4                  _R3Wstart
-                  0x0098e2                  _R3Wstop
-                  0x009900                  _R3Wbitr
-                  0x00990c                  _R3Wbitp
-                  0x009918                  _R3Wclk
-                  0x009924                  _R3Wclkh
-                  0x009930                  _R3Wclkl
-                  0x00993c                  _R3Wdath
-                  0x009948                  _R3Wdatl
-                  0x009954                  _R3Wsetup
-                  0x009a64                  _R3Wpins
-                  0x009a72                  _OWReset
-                  0x009af8                  _OWWriteByte
-                  0x009b56                  _OWWriteBit
-                  0x009b90                  _OWReadByte
-                  0x009bf6                  _OWReadBit
-                  0x009c2e                  _PROBE_CHECKSUM
-                  0x009c66                  _bpMsg
-                  0x009cf0                  _bpMsgBR
-                  0x009d06                  _printHelp
-                  0x009d90                  _UART2Setup
-                  0x009e14                  _UART2Enable
-                  0x009e20                  _UART2Disable
-                  0x009e3c                  _UART2TX
-                  0x009e50                  _UART2RX
-                  0x009e62                  _UART2RXRdy
-                  0x009e6e                  _binIOperipheralset
-                  0x009ef0                  _main
-                  0x009efe                  _Initialize
-                  0x009f5e                  _nullfunc1
-                  0x009f70                  _nullfunc2
-                  0x009f86                  _nullfunc3
-                  0x009f9a                  _nullfunc4
-                  0x009fae                  _HiZsetup
-                  0x009fb4                  _HiZcleanup
-                  0x009fba                  _HiZpins
-                  0x009fc8                  __DefaultInterrupt
+                  0x000766                  _BYTE_ARRAY
+                  0x000a23                  _HEXASCII
+                  0x000a96                  _handleelse
+                  0x000ac6                  _searchlineno
+                  0x000b2e                  _getnumvar
+                  0x000ca6                  _assign
+                  0x000d54                  _evaluate
+                  0x000e92                  _interpreter
+                  0x001780                  _printstat
+                  0x00179a                  _list
+                  0x001846                  _compare
+                  0x001890                  _gettoken
+                  0x0018c8                  _basiccmdline
+                  0x001c4c                  _HIZbbL
+                  0x001c78                  _HIZbbH
+                  0x001c8e                  _HIZbbR
+                  0x001cb6                  _basi2cstart
+                  0x001cd4                  _basi2cstop
+                  0x001cec                  _basi2cread
+                  0x001d46                  _basi2cwrite
+                  0x001da4                  _checkeeprom
+                  0x001df4                  _format
+                  0x001e66                  _waiteeprom
+                  0x001e80                  _save
+                  0x001f50                  _load
+                  0x001ff2                  _serviceuser
+                  0x00296e                  _getint
+                  0x002cb8                  _getrepeat
+                  0x002cfe                  _consumewhitechars
+                  0x002d22                  _changemode
+                  0x002e32                  _cmdhistory
+                  0x002f74                  _getnumber
+                  0x0030f2                  _versionInfo
+                  0x0031e4                  _statusInfo
+                  0x0032b2                  _pinStates
+                  0x00338a                  _pinDirection
+                  0x0033a8                  _pinState
+                  0x0033c6                  _setDisplayMode
+                  0x003410                  _setBaudRate
+                  0x003486                  _agree
+                  0x0034c6                  _bpmessages
+                  0x004374                  _UARTread
+                  0x0043d4                  _UARTwrite
+                  0x0043e4                  _UARTsetup
+                  0x00466e                  _UARTcleanup
+                  0x004678                  _UARTmacro
+                  0x004796                  _UARTstart
+                  0x0047c0                  _UARTstop
+                  0x0047e2                  _UARTperiodic
+                  0x004862                  _UARTpins
+                  0x004870                  _binUARTversionString
+                  0x00487c                  _binUART
+                  0x004c84                  _OWread
+                  0x004c90                  _OWwrite
+                  0x004ca0                  _OWbitr
+                  0x004cac                  _OWbitclk
+                  0x004cc2                  _OWdatl
+                  0x004cec                  _OWdath
+                  0x004d16                  _OWsetup
+                  0x004d54                  _OWmacro
+                  0x005046                  _OWpins
+                  0x005054                  _DS1wireReset
+                  0x0050b2                  _DS1wireID
+                  0x005128                  _OWFirst
+                  0x005144                  _OWNext
+                  0x00514e                  _OWSearch
+                  0x0052da                  _OWVerify
+                  0x005396                  _docrc8
+                  0x0053b6                  _bin1WIREversionString
+                  0x0053c2                  _bin1WIRE
+                  0x00556a                  _SPIstartr
+                  0x005584                  _SPIstart
+                  0x00559e                  _SPIstop
+                  0x0055ae                  _SPIread
+                  0x0055ba                  _SPIwrite
+                  0x0055de                  _SPIsetup
+                  0x00583a                  _SPIcleanup
+                  0x005842                  _SPImacro
+                  0x005894                  _SPIpins
+                  0x0058a2                  _spiSetup
+                  0x00594a                  _spiDisable
+                  0x005972                  _spiWriteByte
+                  0x00598e                  _spiSniffer
+                  0x005a74                  _spiSlaveSetup
+                  0x005b5a                  _spiSlaveDisable
+                  0x005b80                  _binSPIversionString
+                  0x005b8c                  _binSPI
+                  0x005e3e                  _picinit
+                  0x005f20                  _piccleanup
+                  0x005f30                  _picstart
+                  0x005f62                  _picstop
+                  0x005f82                  _picread
+                  0x00608e                  _picwrite
+                  0x006270                  _picmacro
+                  0x006318                  _picpins
+                  0x006326                  _binpic
+                  0x006582                  _I2Cread
+                  0x0065c4                  _I2Cwrite
+                  0x006630                  _I2Cstart
+                  0x00666c                  _I2Cstop
+                  0x0066a8                  _I2Csetup
+                  0x0067a0                  _I2Ccleanup
+                  0x0067b2                  _I2Cmacro
+                  0x006888                  _I2Cpins
+                  0x006896                  _I2C_SnifferSetup
+                  0x00690a                  _I2C_Sniffer
+                  0x006ac8                  _binI2CversionString
+                  0x006ad4                  _binI2C
+                  0x006c74                  _binBBversion
+                  0x006c80                  _binBB
+                  0x006e40                  _getRXbyte
+                  0x006e52                  _binReset
+                  0x006e60                  _binBBpindirectionset
+                  0x006f80                  _binBBpinset
+                  0x0070cc                  _binSelfTest
+                  0x007148                  _LCDread
+                  0x00715c                  _LCDwrite
+                  0x007176                  _LCDstart
+                  0x00718e                  _LCDstop
+                  0x0071a6                  _LCDsetup
+                  0x007278                  _LCDmacro
+                  0x0073ce                  _LCDpins
+                  0x0073dc                  _HD44780_Init
+                  0x007418                  _HD44780_Reset
+                  0x007458                  _HD44780_WriteByte
+                  0x007476                  _HD44780_ReadByte
+                  0x00748e                  _HD44780_WriteNibble
+                  0x0074c2                  _HD44780_ReadNibble
+                  0x007514                  _HD44780_I2Cread
+                  0x00754e                  _HD44780_I2Cwrite
+                  0x007584                  _HD44780_I2Cerror
+                  0x007592                  _updatePWM
+                  0x007634                  _bpPWM
+                  0x0077f4                  _bpFreq
+                  0x007916                  _bpAuxHiZ
+                  0x007934                  _bpAuxHigh
+                  0x007956                  _bpAuxLow
+                  0x007978                  _bpAuxRead
+                  0x0079ac                  _bpEchoState
+                  0x0079ba                  _bpWstring
+                  0x0079e6                  _bpWline
+                  0x007a1a                  _bpWbin
+                  0x007a54                  _bpWlongdec
+                  0x007ae0                  _bpWintdec
+                  0x007b3e                  _bpWdec
+                  0x007ba0                  _bpWhex
+                  0x007bca                  _bpWhexBuf
+                  0x007bf8                  _bpWinthex
+                  0x007c42                  _bpWvolts
+                  0x007ce4                  _UART1RXRdy
+                  0x007cf0                  _UART1RX
+                  0x007d02                  _UART1TX
+                  0x007d1e                  _UARTbufSetup
+                  0x007d2c                  _UARTbuf
+                  0x007d5c                  _UARTbufService
+                  0x007d8e                  _bpReadFlash
+                  0x007da8                  _bbSetup
+                  0x007e36                  _bbI2Cstart
+                  0x007e5c                  _bbI2Cstop
+                  0x007e82                  _bbReadWriteByte
+                  0x007f18                  _bbWriteByte
+                  0x007f7e                  _bbReadByte
+                  0x007fe0                  _bbReadBit
+                  0x008002                  _bbWriteBit
+                  0x008024                  _bbClockTicks
+                  0x00804a                  _bbMOSI
+                  0x00805c                  _bbCLK
+                  0x00806e                  _bbCS
+                  0x008080                  _bbMISO
+                  0x00808c                  _bbH
+                  0x0080c2                  _bbL
+                  0x0080ee                  _bbPins
+                  0x00814c                  _bbR
+                  0x008174                  _R2Wread
+                  0x008180                  _R2Wwrite
+                  0x00818e                  _R2Wstart
+                  0x0081a8                  _R2Wstop
+                  0x0081c2                  _R2Wbitr
+                  0x0081ce                  _R2Wbitp
+                  0x0081da                  _R2Wclkl
+                  0x0081e6                  _R2Wclkh
+                  0x0081f2                  _R2Wclk
+                  0x0081fe                  _R2Wdatl
+                  0x00820a                  _R2Wdath
+                  0x008216                  _R2Wsetup
+                  0x00831e                  _R2Wmacro
+                  0x008356                  _R2Wpins
+                  0x008366                  _r2wMacro_78133Write
+                  0x008392                  _r2wMacro_78133Read
+                  0x008520                  _SUMP
+                  0x00854e                  _SUMPreset
+                  0x00858a                  _SUMPlogicCommand
+                  0x0087b0                  _SUMPlogicService
+                  0x008832                  _binrawversionString
+                  0x00883e                  _binwire
+                  0x008dd6                  _selfTest
+                  0x008fa8                  _bpADCPinTest
+                  0x008fea                  _bpBusPinsTest
+                  0x00903c                  _bpTest
+                  0x009068                  _clearModeConfig
+                  0x0090c4                  _bpInit
+                  0x009104                  _bpADC
+                  0x00911e                  _bpADCprobe
+                  0x009130                  _bpADCCprobe
+                  0x00918e                  _InitializeUART1
+                  0x0091b4                  _bpWbyte
+                  0x00923a                  _bpDelayMS
+                  0x00926c                  _bpDelayUS
+                  0x0092a8                  _R3Wread
+                  0x0092b6                  _R3Wwrite
+                  0x0092de                  _R3Wstartr
+                  0x0092fc                  _R3Wstart
+                  0x00931a                  _R3Wstop
+                  0x009338                  _R3Wbitr
+                  0x009344                  _R3Wbitp
+                  0x009350                  _R3Wclk
+                  0x00935c                  _R3Wclkh
+                  0x009368                  _R3Wclkl
+                  0x009374                  _R3Wdath
+                  0x009380                  _R3Wdatl
+                  0x00938c                  _R3Wsetup
+                  0x0094a0                  _R3Wpins
+                  0x0094ae                  _OWReset
+                  0x009534                  _OWWriteByte
+                  0x009592                  _OWWriteBit
+                  0x0095cc                  _OWReadByte
+                  0x009632                  _OWReadBit
+                  0x00966a                  _PROBE_CHECKSUM
+                  0x0096a2                  _bpMsg
+                  0x00972c                  _bpMsgBR
+                  0x009742                  _printHelp
+                  0x0097cc                  _UART2Setup
+                  0x009850                  _UART2Enable
+                  0x00985c                  _UART2Disable
+                  0x009878                  _UART2TX
+                  0x00988c                  _UART2RX
+                  0x00989e                  _UART2RXRdy
+                  0x0098aa                  _binIOperipheralset
+                  0x00992c                  _main
+                  0x00993a                  _Initialize
+                  0x00999a                  _nullfunc1
+                  0x0099ac                  _nullfunc2
+                  0x0099c2                  _nullfunc3
+                  0x0099d6                  _nullfunc4
+                  0x0099ea                  _HiZsetup
+                  0x0099f0                  _HiZcleanup
+                  0x0099f6                  _HiZpins
+                  0x009a04                  __DefaultInterrupt
 
 External Symbols in Program Memory (by name):
 
-                  0x0008d2                  _BYTE_ARRAY
-                  0x0052fa                  _DS1wireID
-                  0x00529c                  _DS1wireReset
-                  0x007e00                  _HD44780_I2Cerror
-                  0x007d90                  _HD44780_I2Cread
-                  0x007dca                  _HD44780_I2Cwrite
-                  0x007c58                  _HD44780_Init
-                  0x007cf2                  _HD44780_ReadByte
-                  0x007d3e                  _HD44780_ReadNibble
-                  0x007c94                  _HD44780_Reset
-                  0x007cd4                  _HD44780_WriteByte
-                  0x007d0a                  _HD44780_WriteNibble
-                  0x000ac7                  _HEXASCII
-                  0x001eea                  _HIZbbH
-                  0x001ebe                  _HIZbbL
-                  0x001f00                  _HIZbbR
-                  0x009fb4                  _HiZcleanup
-                  0x009fba                  _HiZpins
-                  0x009fae                  _HiZsetup
-                  0x0064fa                  _I2C_Sniffer
-                  0x006486                  _I2C_SnifferSetup
-                  0x0062ca                  _I2Ccleanup
-                  0x0062dc                  _I2Cmacro
-                  0x0063d4                  _I2Cpins
-                  0x00607a                  _I2Cread
-                  0x0061d2                  _I2Csetup
-                  0x006146                  _I2Cstart
-                  0x00618c                  _I2Cstop
-                  0x0060c8                  _I2Cwrite
-                  0x009efe                  _Initialize
-                  0x009756                  _InitializeUART1
-                  0x007af6                  _LCDmacro
-                  0x007c4a                  _LCDpins
-                  0x0079ca                  _LCDread
-                  0x007a28                  _LCDsetup
-                  0x0079f8                  _LCDstart
-                  0x007a10                  _LCDstop
-                  0x0079de                  _LCDwrite
-                  0x005370                  _OWFirst
-                  0x00538c                  _OWNext
-                  0x009bf6                  _OWReadBit
-                  0x009b90                  _OWReadByte
-                  0x009a72                  _OWReset
-                  0x005396                  _OWSearch
-                  0x005522                  _OWVerify
-                  0x009b56                  _OWWriteBit
-                  0x009af8                  _OWWriteByte
-                  0x004ef4                  _OWbitclk
-                  0x004ee8                  _OWbitr
-                  0x004f34                  _OWdath
-                  0x004f0a                  _OWdatl
-                  0x004f9c                  _OWmacro
-                  0x00528e                  _OWpins
-                  0x004ecc                  _OWread
-                  0x004f5e                  _OWsetup
-                  0x004ed8                  _OWwrite
-                  0x009c2e                  _PROBE_CHECKSUM
-                  0x008a62                  _R2Wbitp
-                  0x008a56                  _R2Wbitr
-                  0x008a86                  _R2Wclk
-                  0x008a7a                  _R2Wclkh
-                  0x008a6e                  _R2Wclkl
-                  0x008a9e                  _R2Wdath
-                  0x008a92                  _R2Wdatl
-                  0x008bae                  _R2Wmacro
-                  0x008be6                  _R2Wpins
-                  0x008a08                  _R2Wread
-                  0x008aaa                  _R2Wsetup
-                  0x008a22                  _R2Wstart
-                  0x008a3c                  _R2Wstop
-                  0x008a14                  _R2Wwrite
-                  0x00990c                  _R3Wbitp
-                  0x009900                  _R3Wbitr
-                  0x009918                  _R3Wclk
-                  0x009924                  _R3Wclkh
-                  0x009930                  _R3Wclkl
-                  0x00993c                  _R3Wdath
-                  0x009948                  _R3Wdatl
-                  0x009a64                  _R3Wpins
-                  0x009870                  _R3Wread
-                  0x009954                  _R3Wsetup
-                  0x0098c4                  _R3Wstart
-                  0x0098a6                  _R3Wstartr
-                  0x0098e2                  _R3Wstop
-                  0x00987e                  _R3Wwrite
-                  0x005a78                  _SPIcleanup
-                  0x005a80                  _SPImacro
-                  0x005ad0                  _SPIpins
-                  0x0057f6                  _SPIread
-                  0x005826                  _SPIsetup
-                  0x0057cc                  _SPIstart
-                  0x0057b2                  _SPIstartr
-                  0x0057e6                  _SPIstop
-                  0x005802                  _SPIwrite
-                  0x008db0                  _SUMP
-                  0x008e1a                  _SUMPlogicCommand
-                  0x009040                  _SUMPlogicService
-                  0x008dde                  _SUMPreset
-                  0x00816e                  _UART1RX
-                  0x008162                  _UART1RXRdy
-                  0x008180                  _UART1TX
-                  0x009e20                  _UART2Disable
-                  0x009e14                  _UART2Enable
-                  0x009e50                  _UART2RX
-                  0x009e62                  _UART2RXRdy
-                  0x009d90                  _UART2Setup
-                  0x009e3c                  _UART2TX
-                  0x0081aa                  _UARTbuf
-                  0x0081da                  _UARTbufService
-                  0x00819c                  _UARTbufSetup
-                  0x0048b6                  _UARTcleanup
-                  0x0048c0                  _UARTmacro
-                  0x004a2a                  _UARTperiodic
-                  0x004aaa                  _UARTpins
-                  0x0045c6                  _UARTread
-                  0x004636                  _UARTsetup
-                  0x0049de                  _UARTstart
-                  0x004a08                  _UARTstop
-                  0x004626                  _UARTwrite
-                  0x009fc8                  __DefaultInterrupt
+                  0x000766                  _BYTE_ARRAY
+                  0x0050b2                  _DS1wireID
+                  0x005054                  _DS1wireReset
+                  0x007584                  _HD44780_I2Cerror
+                  0x007514                  _HD44780_I2Cread
+                  0x00754e                  _HD44780_I2Cwrite
+                  0x0073dc                  _HD44780_Init
+                  0x007476                  _HD44780_ReadByte
+                  0x0074c2                  _HD44780_ReadNibble
+                  0x007418                  _HD44780_Reset
+                  0x007458                  _HD44780_WriteByte
+                  0x00748e                  _HD44780_WriteNibble
+                  0x000a23                  _HEXASCII
+                  0x001c78                  _HIZbbH
+                  0x001c4c                  _HIZbbL
+                  0x001c8e                  _HIZbbR
+                  0x0099f0                  _HiZcleanup
+                  0x0099f6                  _HiZpins
+                  0x0099ea                  _HiZsetup
+                  0x00690a                  _I2C_Sniffer
+                  0x006896                  _I2C_SnifferSetup
+                  0x0067a0                  _I2Ccleanup
+                  0x0067b2                  _I2Cmacro
+                  0x006888                  _I2Cpins
+                  0x006582                  _I2Cread
+                  0x0066a8                  _I2Csetup
+                  0x006630                  _I2Cstart
+                  0x00666c                  _I2Cstop
+                  0x0065c4                  _I2Cwrite
+                  0x00993a                  _Initialize
+                  0x00918e                  _InitializeUART1
+                  0x007278                  _LCDmacro
+                  0x0073ce                  _LCDpins
+                  0x007148                  _LCDread
+                  0x0071a6                  _LCDsetup
+                  0x007176                  _LCDstart
+                  0x00718e                  _LCDstop
+                  0x00715c                  _LCDwrite
+                  0x005128                  _OWFirst
+                  0x005144                  _OWNext
+                  0x009632                  _OWReadBit
+                  0x0095cc                  _OWReadByte
+                  0x0094ae                  _OWReset
+                  0x00514e                  _OWSearch
+                  0x0052da                  _OWVerify
+                  0x009592                  _OWWriteBit
+                  0x009534                  _OWWriteByte
+                  0x004cac                  _OWbitclk
+                  0x004ca0                  _OWbitr
+                  0x004cec                  _OWdath
+                  0x004cc2                  _OWdatl
+                  0x004d54                  _OWmacro
+                  0x005046                  _OWpins
+                  0x004c84                  _OWread
+                  0x004d16                  _OWsetup
+                  0x004c90                  _OWwrite
+                  0x00966a                  _PROBE_CHECKSUM
+                  0x0081ce                  _R2Wbitp
+                  0x0081c2                  _R2Wbitr
+                  0x0081f2                  _R2Wclk
+                  0x0081e6                  _R2Wclkh
+                  0x0081da                  _R2Wclkl
+                  0x00820a                  _R2Wdath
+                  0x0081fe                  _R2Wdatl
+                  0x00831e                  _R2Wmacro
+                  0x008356                  _R2Wpins
+                  0x008174                  _R2Wread
+                  0x008216                  _R2Wsetup
+                  0x00818e                  _R2Wstart
+                  0x0081a8                  _R2Wstop
+                  0x008180                  _R2Wwrite
+                  0x009344                  _R3Wbitp
+                  0x009338                  _R3Wbitr
+                  0x009350                  _R3Wclk
+                  0x00935c                  _R3Wclkh
+                  0x009368                  _R3Wclkl
+                  0x009374                  _R3Wdath
+                  0x009380                  _R3Wdatl
+                  0x0094a0                  _R3Wpins
+                  0x0092a8                  _R3Wread
+                  0x00938c                  _R3Wsetup
+                  0x0092fc                  _R3Wstart
+                  0x0092de                  _R3Wstartr
+                  0x00931a                  _R3Wstop
+                  0x0092b6                  _R3Wwrite
+                  0x00583a                  _SPIcleanup
+                  0x005842                  _SPImacro
+                  0x005894                  _SPIpins
+                  0x0055ae                  _SPIread
+                  0x0055de                  _SPIsetup
+                  0x005584                  _SPIstart
+                  0x00556a                  _SPIstartr
+                  0x00559e                  _SPIstop
+                  0x0055ba                  _SPIwrite
+                  0x008520                  _SUMP
+                  0x00858a                  _SUMPlogicCommand
+                  0x0087b0                  _SUMPlogicService
+                  0x00854e                  _SUMPreset
+                  0x007cf0                  _UART1RX
+                  0x007ce4                  _UART1RXRdy
+                  0x007d02                  _UART1TX
+                  0x00985c                  _UART2Disable
+                  0x009850                  _UART2Enable
+                  0x00988c                  _UART2RX
+                  0x00989e                  _UART2RXRdy
+                  0x0097cc                  _UART2Setup
+                  0x009878                  _UART2TX
+                  0x007d2c                  _UARTbuf
+                  0x007d5c                  _UARTbufService
+                  0x007d1e                  _UARTbufSetup
+                  0x00466e                  _UARTcleanup
+                  0x004678                  _UARTmacro
+                  0x0047e2                  _UARTperiodic
+                  0x004862                  _UARTpins
+                  0x004374                  _UARTread
+                  0x0043e4                  _UARTsetup
+                  0x004796                  _UARTstart
+                  0x0047c0                  _UARTstop
+                  0x0043d4                  _UARTwrite
+                  0x009a04                  __DefaultInterrupt
                   0x0004d0                  ___addsf3
                   0x00044a                  ___divsf3
                   0x000446                  ___eqsf2
@@ -647,144 +637,134 @@ External Symbols in Program Memory (by name):
                   0x00070c                  __funpack2
                   0x000222                  __psv_init
                   0x000200                  __resetPRI
-                  0x0036d8                  _agree
-                  0x000d54                  _assign
-                  0x001f5e                  _basi2cread
-                  0x001f28                  _basi2cstart
-                  0x001f46                  _basi2cstop
-                  0x001fb8                  _basi2cwrite
-                  0x001b3a                  _basiccmdline
-                  0x0088f0                  _bbCLK
-                  0x008902                  _bbCS
-                  0x0088b8                  _bbClockTicks
-                  0x008920                  _bbH
-                  0x0086ca                  _bbI2Cstart
-                  0x0086f0                  _bbI2Cstop
-                  0x008956                  _bbL
-                  0x008914                  _bbMISO
-                  0x0088de                  _bbMOSI
-                  0x008982                  _bbPins
-                  0x0089e0                  _bbR
-                  0x008874                  _bbReadBit
-                  0x008812                  _bbReadByte
-                  0x008716                  _bbReadWriteByte
-                  0x00863c                  _bbSetup
-                  0x008896                  _bbWriteBit
-                  0x0087ac                  _bbWriteByte
-                  0x00560a                  _bin1WIRE
-                  0x0055fe                  _bin1WIREversionString
-                  0x007502                  _binBB
-                  0x0076e2                  _binBBpindirectionset
-                  0x007802                  _binBBpinset
-                  0x0074f6                  _binBBversion
-                  0x0066c4                  _binI2C
-                  0x0066b8                  _binI2CversionString
-                  0x009e6e                  _binIOperipheralset
-                  0x0076d4                  _binReset
-                  0x005dc8                  _binSPI
-                  0x005dbc                  _binSPIversionString
-                  0x00794e                  _binSelfTest
-                  0x004ac4                  _binUART
-                  0x004ab8                  _binUARTversionString
-                  0x006d48                  _binpic
-                  0x0090c2                  _binrawversionString
-                  0x0090ce                  _binwire
-                  0x0096cc                  _bpADC
-                  0x0096f8                  _bpADCCprobe
-                  0x009570                  _bpADCPinTest
-                  0x0096e6                  _bpADCprobe
-                  0x0085a6                  _bpAuxHiZ
-                  0x0085c4                  _bpAuxHigh
-                  0x0085e6                  _bpAuxLow
-                  0x008608                  _bpAuxRead
-                  0x0095b2                  _bpBusPinsTest
-                  0x009802                  _bpDelayMS
-                  0x009834                  _bpDelayUS
-                  0x007e2a                  _bpEchoState
-                  0x008484                  _bpFreq
-                  0x007e1c                  _bpGetUserInput
-                  0x00968c                  _bpInit
-                  0x009c66                  _bpMsg
-                  0x009cf0                  _bpMsgBR
-                  0x0082c8                  _bpPWM
-                  0x00820c                  _bpReadFlash
-                  0x009604                  _bpTest
-                  0x007e0e                  _bpUserNumberPrompt
-                  0x007e98                  _bpWbin
-                  0x00977c                  _bpWbyte
-                  0x007fbc                  _bpWdec
-                  0x00801e                  _bpWhex
-                  0x008048                  _bpWhexBuf
-                  0x007f5e                  _bpWintdec
-                  0x008076                  _bpWinthex
-                  0x007e64                  _bpWline
-                  0x007ed2                  _bpWlongdec
-                  0x007e38                  _bpWstring
-                  0x0080c0                  _bpWvolts
-                  0x003718                  _bpmessages
-                  0x002f94                  _changemode
-                  0x002016                  _checkeeprom
-                  0x009630                  _clearModeConfig
-                  0x0030a2                  _cmdhistory
-                  0x001ab4                  _compare
-                  0x002f70                  _consumewhitechars
-                  0x0055de                  _docrc8
-                  0x000e02                  _evaluate
-                  0x002066                  _format
-                  0x0076c2                  _getRXbyte
-                  0x002be0                  _getint
-                  0x0031e2                  _getnumber
-                  0x000bd2                  _getnumvar
-                  0x002f2a                  _getrepeat
-                  0x001afe                  _gettoken
-                  0x000b3a                  _handleelse
-                  0x006460                  _hwi2cSetup
-                  0x006402                  _hwi2cgetack
-                  0x00644a                  _hwi2cread
-                  0x006410                  _hwi2csendack
-                  0x0063e2                  _hwi2cstart
-                  0x0063f2                  _hwi2cstop
-                  0x006436                  _hwi2cwrite
-                  0x000f40                  _interpreter
-                  0x0018a4                  _list
-                  0x0021c2                  _load
-                  0x009ef0                  _main
-                  0x009f5e                  _nullfunc1
-                  0x009f70                  _nullfunc2
-                  0x009f86                  _nullfunc3
-                  0x009f9a                  _nullfunc4
-                  0x006942                  _piccleanup
-                  0x006864                  _picinit
-                  0x006c92                  _picmacro
-                  0x006d3a                  _picpins
-                  0x0069a4                  _picread
-                  0x006952                  _picstart
-                  0x006984                  _picstop
-                  0x006ab0                  _picwrite
-                  0x0035e0                  _pinDirection
-                  0x0035fe                  _pinState
-                  0x003508                  _pinStates
-                  0x009d06                  _printHelp
-                  0x00188a                  _printstat
-                  0x008c22                  _r2wMacro_78133Read
-                  0x008bf6                  _r2wMacro_78133Write
-                  0x0020f2                  _save
-                  0x000b6a                  _searchlineno
-                  0x00939e                  _selfTest
-                  0x002264                  _serviceuser
-                  0x003664                  _setBaudRate
-                  0x00361c                  _setDisplayMode
-                  0x005b86                  _spiDisable
-                  0x005ade                  _spiSetup
-                  0x005d96                  _spiSlaveDisable
-                  0x005cb0                  _spiSlaveSetup
-                  0x005bca                  _spiSniffer
-                  0x005bae                  _spiWriteByte
-                  0x00343a                  _statusInfo
-                  0x000812                  _tokens
-                  0x008226                  _updatePWM
-                  0x003362                  _versionInfo
-                  0x0020d8                  _waiteeprom
+                  0x003486                  _agree
+                  0x000ca6                  _assign
+                  0x001cec                  _basi2cread
+                  0x001cb6                  _basi2cstart
+                  0x001cd4                  _basi2cstop
+                  0x001d46                  _basi2cwrite
+                  0x0018c8                  _basiccmdline
+                  0x00805c                  _bbCLK
+                  0x00806e                  _bbCS
+                  0x008024                  _bbClockTicks
+                  0x00808c                  _bbH
+                  0x007e36                  _bbI2Cstart
+                  0x007e5c                  _bbI2Cstop
+                  0x0080c2                  _bbL
+                  0x008080                  _bbMISO
+                  0x00804a                  _bbMOSI
+                  0x0080ee                  _bbPins
+                  0x00814c                  _bbR
+                  0x007fe0                  _bbReadBit
+                  0x007f7e                  _bbReadByte
+                  0x007e82                  _bbReadWriteByte
+                  0x007da8                  _bbSetup
+                  0x008002                  _bbWriteBit
+                  0x007f18                  _bbWriteByte
+                  0x0053c2                  _bin1WIRE
+                  0x0053b6                  _bin1WIREversionString
+                  0x006c80                  _binBB
+                  0x006e60                  _binBBpindirectionset
+                  0x006f80                  _binBBpinset
+                  0x006c74                  _binBBversion
+                  0x006ad4                  _binI2C
+                  0x006ac8                  _binI2CversionString
+                  0x0098aa                  _binIOperipheralset
+                  0x006e52                  _binReset
+                  0x005b8c                  _binSPI
+                  0x005b80                  _binSPIversionString
+                  0x0070cc                  _binSelfTest
+                  0x00487c                  _binUART
+                  0x004870                  _binUARTversionString
+                  0x006326                  _binpic
+                  0x008832                  _binrawversionString
+                  0x00883e                  _binwire
+                  0x009104                  _bpADC
+                  0x009130                  _bpADCCprobe
+                  0x008fa8                  _bpADCPinTest
+                  0x00911e                  _bpADCprobe
+                  0x007916                  _bpAuxHiZ
+                  0x007934                  _bpAuxHigh
+                  0x007956                  _bpAuxLow
+                  0x007978                  _bpAuxRead
+                  0x008fea                  _bpBusPinsTest
+                  0x00923a                  _bpDelayMS
+                  0x00926c                  _bpDelayUS
+                  0x0079ac                  _bpEchoState
+                  0x0077f4                  _bpFreq
+                  0x0090c4                  _bpInit
+                  0x0096a2                  _bpMsg
+                  0x00972c                  _bpMsgBR
+                  0x007634                  _bpPWM
+                  0x007d8e                  _bpReadFlash
+                  0x00903c                  _bpTest
+                  0x007a1a                  _bpWbin
+                  0x0091b4                  _bpWbyte
+                  0x007b3e                  _bpWdec
+                  0x007ba0                  _bpWhex
+                  0x007bca                  _bpWhexBuf
+                  0x007ae0                  _bpWintdec
+                  0x007bf8                  _bpWinthex
+                  0x0079e6                  _bpWline
+                  0x007a54                  _bpWlongdec
+                  0x0079ba                  _bpWstring
+                  0x007c42                  _bpWvolts
+                  0x0034c6                  _bpmessages
+                  0x002d22                  _changemode
+                  0x001da4                  _checkeeprom
+                  0x009068                  _clearModeConfig
+                  0x002e32                  _cmdhistory
+                  0x001846                  _compare
+                  0x002cfe                  _consumewhitechars
+                  0x005396                  _docrc8
+                  0x000d54                  _evaluate
+                  0x001df4                  _format
+                  0x006e40                  _getRXbyte
+                  0x00296e                  _getint
+                  0x002f74                  _getnumber
+                  0x000b2e                  _getnumvar
+                  0x002cb8                  _getrepeat
+                  0x001890                  _gettoken
+                  0x000a96                  _handleelse
+                  0x000e92                  _interpreter
+                  0x00179a                  _list
+                  0x001f50                  _load
+                  0x00992c                  _main
+                  0x00999a                  _nullfunc1
+                  0x0099ac                  _nullfunc2
+                  0x0099c2                  _nullfunc3
+                  0x0099d6                  _nullfunc4
+                  0x005f20                  _piccleanup
+                  0x005e3e                  _picinit
+                  0x006270                  _picmacro
+                  0x006318                  _picpins
+                  0x005f82                  _picread
+                  0x005f30                  _picstart
+                  0x005f62                  _picstop
+                  0x00608e                  _picwrite
+                  0x00338a                  _pinDirection
+                  0x0033a8                  _pinState
+                  0x0032b2                  _pinStates
+                  0x009742                  _printHelp
+                  0x001780                  _printstat
+                  0x008392                  _r2wMacro_78133Read
+                  0x008366                  _r2wMacro_78133Write
+                  0x001e80                  _save
+                  0x000ac6                  _searchlineno
+                  0x008dd6                  _selfTest
+                  0x001ff2                  _serviceuser
+                  0x003410                  _setBaudRate
+                  0x0033c6                  _setDisplayMode
+                  0x00594a                  _spiDisable
+                  0x0058a2                  _spiSetup
+                  0x005b5a                  _spiSlaveDisable
+                  0x005a74                  _spiSlaveSetup
+                  0x00598e                  _spiSniffer
+                  0x005972                  _spiWriteByte
+                  0x0031e4                  _statusInfo
+                  0x007592                  _updatePWM
+                  0x0030f2                  _versionInfo
+                  0x001e66                  _waiteeprom
 
 Memory Configuration
 
@@ -934,260 +914,260 @@ __CONFIG1
  *(.debug_aranges)
 
 .ivt              0x000004         0xfc
-                  0x000004          0x4 LONG 0x9fc8 DEFINED (__ReservedTrap0)?<code 339> (__ReservedTrap0):<code 339> (__DefaultInterrupt)
-                  0x000006          0x4 LONG 0x9fc8 DEFINED (__OscillatorFail)?<code 339> (__OscillatorFail):<code 339> (__DefaultInterrupt)
-                  0x000008          0x4 LONG 0x9fc8 DEFINED (__AddressError)?<code 339> (__AddressError):<code 339> (__DefaultInterrupt)
-                  0x00000a          0x4 LONG 0x9fc8 DEFINED (__StackError)?<code 339> (__StackError):<code 339> (__DefaultInterrupt)
-                  0x00000c          0x4 LONG 0x9fc8 DEFINED (__MathError)?<code 339> (__MathError):<code 339> (__DefaultInterrupt)
-                  0x00000e          0x4 LONG 0x9fc8 DEFINED (__ReservedTrap5)?<code 339> (__ReservedTrap5):<code 339> (__DefaultInterrupt)
-                  0x000010          0x4 LONG 0x9fc8 DEFINED (__ReservedTrap6)?<code 339> (__ReservedTrap6):<code 339> (__DefaultInterrupt)
-                  0x000012          0x4 LONG 0x9fc8 DEFINED (__ReservedTrap7)?<code 339> (__ReservedTrap7):<code 339> (__DefaultInterrupt)
-                  0x000014          0x4 LONG 0x9fc8 DEFINED (__INT0Interrupt)?<code 339> (__INT0Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000016          0x4 LONG 0x9fc8 DEFINED (__IC1Interrupt)?<code 339> (__IC1Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000018          0x4 LONG 0x9fc8 DEFINED (__OC1Interrupt)?<code 339> (__OC1Interrupt):<code 339> (__DefaultInterrupt)
-                  0x00001a          0x4 LONG 0x9fc8 DEFINED (__T1Interrupt)?<code 339> (__T1Interrupt):<code 339> (__DefaultInterrupt)
-                  0x00001c          0x4 LONG 0x9fc8 DEFINED (__Interrupt4)?<code 339> (__Interrupt4):<code 339> (__DefaultInterrupt)
-                  0x00001e          0x4 LONG 0x9fc8 DEFINED (__IC2Interrupt)?<code 339> (__IC2Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000020          0x4 LONG 0x9fc8 DEFINED (__OC2Interrupt)?<code 339> (__OC2Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000022          0x4 LONG 0x9fc8 DEFINED (__T2Interrupt)?<code 339> (__T2Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000024          0x4 LONG 0x9fc8 DEFINED (__T3Interrupt)?<code 339> (__T3Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000026          0x4 LONG 0x9fc8 DEFINED (__SPI1ErrInterrupt)?<code 339> (__SPI1ErrInterrupt):<code 339> (__DefaultInterrupt)
-                  0x000028          0x4 LONG 0x9fc8 DEFINED (__SPI1Interrupt)?<code 339> (__SPI1Interrupt):<code 339> (__DefaultInterrupt)
-                  0x00002a          0x4 LONG 0x9fc8 DEFINED (__U1RXInterrupt)?<code 339> (__U1RXInterrupt):<code 339> (__DefaultInterrupt)
-                  0x00002c          0x4 LONG 0x9fc8 DEFINED (__U1TXInterrupt)?<code 339> (__U1TXInterrupt):<code 339> (__DefaultInterrupt)
-                  0x00002e          0x4 LONG 0x9fc8 DEFINED (__ADC1Interrupt)?<code 339> (__ADC1Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000030          0x4 LONG 0x9fc8 DEFINED (__Interrupt14)?<code 339> (__Interrupt14):<code 339> (__DefaultInterrupt)
-                  0x000032          0x4 LONG 0x9fc8 DEFINED (__Interrupt15)?<code 339> (__Interrupt15):<code 339> (__DefaultInterrupt)
-                  0x000034          0x4 LONG 0x9fc8 DEFINED (__SI2C1Interrupt)?<code 339> (__SI2C1Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000036          0x4 LONG 0x9fc8 DEFINED (__MI2C1Interrupt)?<code 339> (__MI2C1Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000038          0x4 LONG 0x9fc8 DEFINED (__CompInterrupt)?<code 339> (__CompInterrupt):<code 339> (__DefaultInterrupt)
-                  0x00003a          0x4 LONG 0x9fc8 DEFINED (__CNInterrupt)?<code 339> (__CNInterrupt):<code 339> (__DefaultInterrupt)
-                  0x00003c          0x4 LONG 0x9fc8 DEFINED (__INT1Interrupt)?<code 339> (__INT1Interrupt):<code 339> (__DefaultInterrupt)
-                  0x00003e          0x4 LONG 0x9fc8 DEFINED (__Interrupt21)?<code 339> (__Interrupt21):<code 339> (__DefaultInterrupt)
-                  0x000040          0x4 LONG 0x9fc8 DEFINED (__Interrupt22)?<code 339> (__Interrupt22):<code 339> (__DefaultInterrupt)
-                  0x000042          0x4 LONG 0x9fc8 DEFINED (__Interrupt23)?<code 339> (__Interrupt23):<code 339> (__DefaultInterrupt)
-                  0x000044          0x4 LONG 0x9fc8 DEFINED (__Interrupt24)?<code 339> (__Interrupt24):<code 339> (__DefaultInterrupt)
-                  0x000046          0x4 LONG 0x9fc8 DEFINED (__OC3Interrupt)?<code 339> (__OC3Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000048          0x4 LONG 0x9fc8 DEFINED (__OC4Interrupt)?<code 339> (__OC4Interrupt):<code 339> (__DefaultInterrupt)
-                  0x00004a          0x4 LONG 0x9fc8 DEFINED (__T4Interrupt)?<code 339> (__T4Interrupt):<code 339> (__DefaultInterrupt)
-                  0x00004c          0x4 LONG 0x9fc8 DEFINED (__T5Interrupt)?<code 339> (__T5Interrupt):<code 339> (__DefaultInterrupt)
-                  0x00004e          0x4 LONG 0x9fc8 DEFINED (__INT2Interrupt)?<code 339> (__INT2Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000050          0x4 LONG 0x9fc8 DEFINED (__U2RXInterrupt)?<code 339> (__U2RXInterrupt):<code 339> (__DefaultInterrupt)
-                  0x000052          0x4 LONG 0x9fc8 DEFINED (__U2TXInterrupt)?<code 339> (__U2TXInterrupt):<code 339> (__DefaultInterrupt)
-                  0x000054          0x4 LONG 0x9fc8 DEFINED (__SPI2ErrInterrupt)?<code 339> (__SPI2ErrInterrupt):<code 339> (__DefaultInterrupt)
-                  0x000056          0x4 LONG 0x9fc8 DEFINED (__SPI2Interrupt)?<code 339> (__SPI2Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000058          0x4 LONG 0x9fc8 DEFINED (__Interrupt34)?<code 339> (__Interrupt34):<code 339> (__DefaultInterrupt)
-                  0x00005a          0x4 LONG 0x9fc8 DEFINED (__Interrupt35)?<code 339> (__Interrupt35):<code 339> (__DefaultInterrupt)
-                  0x00005c          0x4 LONG 0x9fc8 DEFINED (__Interrupt36)?<code 339> (__Interrupt36):<code 339> (__DefaultInterrupt)
-                  0x00005e          0x4 LONG 0x9fc8 DEFINED (__IC3Interrupt)?<code 339> (__IC3Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000060          0x4 LONG 0x9fc8 DEFINED (__IC4Interrupt)?<code 339> (__IC4Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000062          0x4 LONG 0x9fc8 DEFINED (__IC5Interrupt)?<code 339> (__IC5Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000064          0x4 LONG 0x9fc8 DEFINED (__Interrupt40)?<code 339> (__Interrupt40):<code 339> (__DefaultInterrupt)
-                  0x000066          0x4 LONG 0x9fc8 DEFINED (__OC5Interrupt)?<code 339> (__OC5Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000068          0x4 LONG 0x9fc8 DEFINED (__Interrupt42)?<code 339> (__Interrupt42):<code 339> (__DefaultInterrupt)
-                  0x00006a          0x4 LONG 0x9fc8 DEFINED (__Interrupt43)?<code 339> (__Interrupt43):<code 339> (__DefaultInterrupt)
-                  0x00006c          0x4 LONG 0x9fc8 DEFINED (__Interrupt44)?<code 339> (__Interrupt44):<code 339> (__DefaultInterrupt)
-                  0x00006e          0x4 LONG 0x9fc8 DEFINED (__PMPInterrupt)?<code 339> (__PMPInterrupt):<code 339> (__DefaultInterrupt)
-                  0x000070          0x4 LONG 0x9fc8 DEFINED (__Interrupt46)?<code 339> (__Interrupt46):<code 339> (__DefaultInterrupt)
-                  0x000072          0x4 LONG 0x9fc8 DEFINED (__Interrupt47)?<code 339> (__Interrupt47):<code 339> (__DefaultInterrupt)
-                  0x000074          0x4 LONG 0x9fc8 DEFINED (__Interrupt48)?<code 339> (__Interrupt48):<code 339> (__DefaultInterrupt)
-                  0x000076          0x4 LONG 0x9fc8 DEFINED (__SI2C2Interrupt)?<code 339> (__SI2C2Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000078          0x4 LONG 0x9fc8 DEFINED (__MI2C2Interrupt)?<code 339> (__MI2C2Interrupt):<code 339> (__DefaultInterrupt)
-                  0x00007a          0x4 LONG 0x9fc8 DEFINED (__Interrupt51)?<code 339> (__Interrupt51):<code 339> (__DefaultInterrupt)
-                  0x00007c          0x4 LONG 0x9fc8 DEFINED (__Interrupt52)?<code 339> (__Interrupt52):<code 339> (__DefaultInterrupt)
-                  0x00007e          0x4 LONG 0x9fc8 DEFINED (__Interrupt53)?<code 339> (__Interrupt53):<code 339> (__DefaultInterrupt)
-                  0x000080          0x4 LONG 0x9fc8 DEFINED (__Interrupt54)?<code 339> (__Interrupt54):<code 339> (__DefaultInterrupt)
-                  0x000082          0x4 LONG 0x9fc8 DEFINED (__Interrupt55)?<code 339> (__Interrupt55):<code 339> (__DefaultInterrupt)
-                  0x000084          0x4 LONG 0x9fc8 DEFINED (__Interrupt56)?<code 339> (__Interrupt56):<code 339> (__DefaultInterrupt)
-                  0x000086          0x4 LONG 0x9fc8 DEFINED (__Interrupt57)?<code 339> (__Interrupt57):<code 339> (__DefaultInterrupt)
-                  0x000088          0x4 LONG 0x9fc8 DEFINED (__Interrupt58)?<code 339> (__Interrupt58):<code 339> (__DefaultInterrupt)
-                  0x00008a          0x4 LONG 0x9fc8 DEFINED (__Interrupt59)?<code 339> (__Interrupt59):<code 339> (__DefaultInterrupt)
-                  0x00008c          0x4 LONG 0x9fc8 DEFINED (__Interrupt60)?<code 339> (__Interrupt60):<code 339> (__DefaultInterrupt)
-                  0x00008e          0x4 LONG 0x9fc8 DEFINED (__Interrupt61)?<code 339> (__Interrupt61):<code 339> (__DefaultInterrupt)
-                  0x000090          0x4 LONG 0x9fc8 DEFINED (__RTCCInterrupt)?<code 339> (__RTCCInterrupt):<code 339> (__DefaultInterrupt)
-                  0x000092          0x4 LONG 0x9fc8 DEFINED (__Interrupt63)?<code 339> (__Interrupt63):<code 339> (__DefaultInterrupt)
-                  0x000094          0x4 LONG 0x9fc8 DEFINED (__Interrupt64)?<code 339> (__Interrupt64):<code 339> (__DefaultInterrupt)
-                  0x000096          0x4 LONG 0x9fc8 DEFINED (__U1ErrInterrupt)?<code 339> (__U1ErrInterrupt):<code 339> (__DefaultInterrupt)
-                  0x000098          0x4 LONG 0x9fc8 DEFINED (__U2ErrInterrupt)?<code 339> (__U2ErrInterrupt):<code 339> (__DefaultInterrupt)
-                  0x00009a          0x4 LONG 0x9fc8 DEFINED (__CRCInterrupt)?<code 339> (__CRCInterrupt):<code 339> (__DefaultInterrupt)
-                  0x00009c          0x4 LONG 0x9fc8 DEFINED (__Interrupt68)?<code 339> (__Interrupt68):<code 339> (__DefaultInterrupt)
-                  0x00009e          0x4 LONG 0x9fc8 DEFINED (__Interrupt69)?<code 339> (__Interrupt69):<code 339> (__DefaultInterrupt)
-                  0x0000a0          0x4 LONG 0x9fc8 DEFINED (__Interrupt70)?<code 339> (__Interrupt70):<code 339> (__DefaultInterrupt)
-                  0x0000a2          0x4 LONG 0x9fc8 DEFINED (__Interrupt71)?<code 339> (__Interrupt71):<code 339> (__DefaultInterrupt)
-                  0x0000a4          0x4 LONG 0x9fc8 DEFINED (__LVDInterrupt)?<code 339> (__LVDInterrupt):<code 339> (__DefaultInterrupt)
-                  0x0000a6          0x4 LONG 0x9fc8 DEFINED (__Interrupt73)?<code 339> (__Interrupt73):<code 339> (__DefaultInterrupt)
-                  0x0000a8          0x4 LONG 0x9fc8 DEFINED (__Interrupt74)?<code 339> (__Interrupt74):<code 339> (__DefaultInterrupt)
-                  0x0000aa          0x4 LONG 0x9fc8 DEFINED (__Interrupt75)?<code 339> (__Interrupt75):<code 339> (__DefaultInterrupt)
-                  0x0000ac          0x4 LONG 0x9fc8 DEFINED (__Interrupt76)?<code 339> (__Interrupt76):<code 339> (__DefaultInterrupt)
-                  0x0000ae          0x4 LONG 0x9fc8 DEFINED (__Interrupt77)?<code 339> (__Interrupt77):<code 339> (__DefaultInterrupt)
-                  0x0000b0          0x4 LONG 0x9fc8 DEFINED (__Interrupt78)?<code 339> (__Interrupt78):<code 339> (__DefaultInterrupt)
-                  0x0000b2          0x4 LONG 0x9fc8 DEFINED (__Interrupt79)?<code 339> (__Interrupt79):<code 339> (__DefaultInterrupt)
-                  0x0000b4          0x4 LONG 0x9fc8 DEFINED (__Interrupt80)?<code 339> (__Interrupt80):<code 339> (__DefaultInterrupt)
-                  0x0000b6          0x4 LONG 0x9fc8 DEFINED (__Interrupt81)?<code 339> (__Interrupt81):<code 339> (__DefaultInterrupt)
-                  0x0000b8          0x4 LONG 0x9fc8 DEFINED (__Interrupt82)?<code 339> (__Interrupt82):<code 339> (__DefaultInterrupt)
-                  0x0000ba          0x4 LONG 0x9fc8 DEFINED (__Interrupt83)?<code 339> (__Interrupt83):<code 339> (__DefaultInterrupt)
-                  0x0000bc          0x4 LONG 0x9fc8 DEFINED (__Interrupt84)?<code 339> (__Interrupt84):<code 339> (__DefaultInterrupt)
-                  0x0000be          0x4 LONG 0x9fc8 DEFINED (__Interrupt85)?<code 339> (__Interrupt85):<code 339> (__DefaultInterrupt)
-                  0x0000c0          0x4 LONG 0x9fc8 DEFINED (__Interrupt86)?<code 339> (__Interrupt86):<code 339> (__DefaultInterrupt)
-                  0x0000c2          0x4 LONG 0x9fc8 DEFINED (__Interrupt87)?<code 339> (__Interrupt87):<code 339> (__DefaultInterrupt)
-                  0x0000c4          0x4 LONG 0x9fc8 DEFINED (__Interrupt88)?<code 339> (__Interrupt88):<code 339> (__DefaultInterrupt)
-                  0x0000c6          0x4 LONG 0x9fc8 DEFINED (__Interrupt89)?<code 339> (__Interrupt89):<code 339> (__DefaultInterrupt)
-                  0x0000c8          0x4 LONG 0x9fc8 DEFINED (__Interrupt90)?<code 339> (__Interrupt90):<code 339> (__DefaultInterrupt)
-                  0x0000ca          0x4 LONG 0x9fc8 DEFINED (__Interrupt91)?<code 339> (__Interrupt91):<code 339> (__DefaultInterrupt)
-                  0x0000cc          0x4 LONG 0x9fc8 DEFINED (__Interrupt92)?<code 339> (__Interrupt92):<code 339> (__DefaultInterrupt)
-                  0x0000ce          0x4 LONG 0x9fc8 DEFINED (__Interrupt93)?<code 339> (__Interrupt93):<code 339> (__DefaultInterrupt)
-                  0x0000d0          0x4 LONG 0x9fc8 DEFINED (__Interrupt94)?<code 339> (__Interrupt94):<code 339> (__DefaultInterrupt)
-                  0x0000d2          0x4 LONG 0x9fc8 DEFINED (__Interrupt95)?<code 339> (__Interrupt95):<code 339> (__DefaultInterrupt)
-                  0x0000d4          0x4 LONG 0x9fc8 DEFINED (__Interrupt96)?<code 339> (__Interrupt96):<code 339> (__DefaultInterrupt)
-                  0x0000d6          0x4 LONG 0x9fc8 DEFINED (__Interrupt97)?<code 339> (__Interrupt97):<code 339> (__DefaultInterrupt)
-                  0x0000d8          0x4 LONG 0x9fc8 DEFINED (__Interrupt98)?<code 339> (__Interrupt98):<code 339> (__DefaultInterrupt)
-                  0x0000da          0x4 LONG 0x9fc8 DEFINED (__Interrupt99)?<code 339> (__Interrupt99):<code 339> (__DefaultInterrupt)
-                  0x0000dc          0x4 LONG 0x9fc8 DEFINED (__Interrupt100)?<code 339> (__Interrupt100):<code 339> (__DefaultInterrupt)
-                  0x0000de          0x4 LONG 0x9fc8 DEFINED (__Interrupt101)?<code 339> (__Interrupt101):<code 339> (__DefaultInterrupt)
-                  0x0000e0          0x4 LONG 0x9fc8 DEFINED (__Interrupt102)?<code 339> (__Interrupt102):<code 339> (__DefaultInterrupt)
-                  0x0000e2          0x4 LONG 0x9fc8 DEFINED (__Interrupt103)?<code 339> (__Interrupt103):<code 339> (__DefaultInterrupt)
-                  0x0000e4          0x4 LONG 0x9fc8 DEFINED (__Interrupt104)?<code 339> (__Interrupt104):<code 339> (__DefaultInterrupt)
-                  0x0000e6          0x4 LONG 0x9fc8 DEFINED (__Interrupt105)?<code 339> (__Interrupt105):<code 339> (__DefaultInterrupt)
-                  0x0000e8          0x4 LONG 0x9fc8 DEFINED (__Interrupt106)?<code 339> (__Interrupt106):<code 339> (__DefaultInterrupt)
-                  0x0000ea          0x4 LONG 0x9fc8 DEFINED (__Interrupt107)?<code 339> (__Interrupt107):<code 339> (__DefaultInterrupt)
-                  0x0000ec          0x4 LONG 0x9fc8 DEFINED (__Interrupt108)?<code 339> (__Interrupt108):<code 339> (__DefaultInterrupt)
-                  0x0000ee          0x4 LONG 0x9fc8 DEFINED (__Interrupt109)?<code 339> (__Interrupt109):<code 339> (__DefaultInterrupt)
-                  0x0000f0          0x4 LONG 0x9fc8 DEFINED (__Interrupt110)?<code 339> (__Interrupt110):<code 339> (__DefaultInterrupt)
-                  0x0000f2          0x4 LONG 0x9fc8 DEFINED (__Interrupt111)?<code 339> (__Interrupt111):<code 339> (__DefaultInterrupt)
-                  0x0000f4          0x4 LONG 0x9fc8 DEFINED (__Interrupt112)?<code 339> (__Interrupt112):<code 339> (__DefaultInterrupt)
-                  0x0000f6          0x4 LONG 0x9fc8 DEFINED (__Interrupt113)?<code 339> (__Interrupt113):<code 339> (__DefaultInterrupt)
-                  0x0000f8          0x4 LONG 0x9fc8 DEFINED (__Interrupt114)?<code 339> (__Interrupt114):<code 339> (__DefaultInterrupt)
-                  0x0000fa          0x4 LONG 0x9fc8 DEFINED (__Interrupt115)?<code 339> (__Interrupt115):<code 339> (__DefaultInterrupt)
-                  0x0000fc          0x4 LONG 0x9fc8 DEFINED (__Interrupt116)?<code 339> (__Interrupt116):<code 339> (__DefaultInterrupt)
-                  0x0000fe          0x4 LONG 0x9fc8 DEFINED (__Interrupt117)?<code 339> (__Interrupt117):<code 339> (__DefaultInterrupt)
+                  0x000004          0x4 LONG 0x9a04 DEFINED (__ReservedTrap0)?<code 339> (__ReservedTrap0):<code 339> (__DefaultInterrupt)
+                  0x000006          0x4 LONG 0x9a04 DEFINED (__OscillatorFail)?<code 339> (__OscillatorFail):<code 339> (__DefaultInterrupt)
+                  0x000008          0x4 LONG 0x9a04 DEFINED (__AddressError)?<code 339> (__AddressError):<code 339> (__DefaultInterrupt)
+                  0x00000a          0x4 LONG 0x9a04 DEFINED (__StackError)?<code 339> (__StackError):<code 339> (__DefaultInterrupt)
+                  0x00000c          0x4 LONG 0x9a04 DEFINED (__MathError)?<code 339> (__MathError):<code 339> (__DefaultInterrupt)
+                  0x00000e          0x4 LONG 0x9a04 DEFINED (__ReservedTrap5)?<code 339> (__ReservedTrap5):<code 339> (__DefaultInterrupt)
+                  0x000010          0x4 LONG 0x9a04 DEFINED (__ReservedTrap6)?<code 339> (__ReservedTrap6):<code 339> (__DefaultInterrupt)
+                  0x000012          0x4 LONG 0x9a04 DEFINED (__ReservedTrap7)?<code 339> (__ReservedTrap7):<code 339> (__DefaultInterrupt)
+                  0x000014          0x4 LONG 0x9a04 DEFINED (__INT0Interrupt)?<code 339> (__INT0Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000016          0x4 LONG 0x9a04 DEFINED (__IC1Interrupt)?<code 339> (__IC1Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000018          0x4 LONG 0x9a04 DEFINED (__OC1Interrupt)?<code 339> (__OC1Interrupt):<code 339> (__DefaultInterrupt)
+                  0x00001a          0x4 LONG 0x9a04 DEFINED (__T1Interrupt)?<code 339> (__T1Interrupt):<code 339> (__DefaultInterrupt)
+                  0x00001c          0x4 LONG 0x9a04 DEFINED (__Interrupt4)?<code 339> (__Interrupt4):<code 339> (__DefaultInterrupt)
+                  0x00001e          0x4 LONG 0x9a04 DEFINED (__IC2Interrupt)?<code 339> (__IC2Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000020          0x4 LONG 0x9a04 DEFINED (__OC2Interrupt)?<code 339> (__OC2Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000022          0x4 LONG 0x9a04 DEFINED (__T2Interrupt)?<code 339> (__T2Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000024          0x4 LONG 0x9a04 DEFINED (__T3Interrupt)?<code 339> (__T3Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000026          0x4 LONG 0x9a04 DEFINED (__SPI1ErrInterrupt)?<code 339> (__SPI1ErrInterrupt):<code 339> (__DefaultInterrupt)
+                  0x000028          0x4 LONG 0x9a04 DEFINED (__SPI1Interrupt)?<code 339> (__SPI1Interrupt):<code 339> (__DefaultInterrupt)
+                  0x00002a          0x4 LONG 0x9a04 DEFINED (__U1RXInterrupt)?<code 339> (__U1RXInterrupt):<code 339> (__DefaultInterrupt)
+                  0x00002c          0x4 LONG 0x9a04 DEFINED (__U1TXInterrupt)?<code 339> (__U1TXInterrupt):<code 339> (__DefaultInterrupt)
+                  0x00002e          0x4 LONG 0x9a04 DEFINED (__ADC1Interrupt)?<code 339> (__ADC1Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000030          0x4 LONG 0x9a04 DEFINED (__Interrupt14)?<code 339> (__Interrupt14):<code 339> (__DefaultInterrupt)
+                  0x000032          0x4 LONG 0x9a04 DEFINED (__Interrupt15)?<code 339> (__Interrupt15):<code 339> (__DefaultInterrupt)
+                  0x000034          0x4 LONG 0x9a04 DEFINED (__SI2C1Interrupt)?<code 339> (__SI2C1Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000036          0x4 LONG 0x9a04 DEFINED (__MI2C1Interrupt)?<code 339> (__MI2C1Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000038          0x4 LONG 0x9a04 DEFINED (__CompInterrupt)?<code 339> (__CompInterrupt):<code 339> (__DefaultInterrupt)
+                  0x00003a          0x4 LONG 0x9a04 DEFINED (__CNInterrupt)?<code 339> (__CNInterrupt):<code 339> (__DefaultInterrupt)
+                  0x00003c          0x4 LONG 0x9a04 DEFINED (__INT1Interrupt)?<code 339> (__INT1Interrupt):<code 339> (__DefaultInterrupt)
+                  0x00003e          0x4 LONG 0x9a04 DEFINED (__Interrupt21)?<code 339> (__Interrupt21):<code 339> (__DefaultInterrupt)
+                  0x000040          0x4 LONG 0x9a04 DEFINED (__Interrupt22)?<code 339> (__Interrupt22):<code 339> (__DefaultInterrupt)
+                  0x000042          0x4 LONG 0x9a04 DEFINED (__Interrupt23)?<code 339> (__Interrupt23):<code 339> (__DefaultInterrupt)
+                  0x000044          0x4 LONG 0x9a04 DEFINED (__Interrupt24)?<code 339> (__Interrupt24):<code 339> (__DefaultInterrupt)
+                  0x000046          0x4 LONG 0x9a04 DEFINED (__OC3Interrupt)?<code 339> (__OC3Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000048          0x4 LONG 0x9a04 DEFINED (__OC4Interrupt)?<code 339> (__OC4Interrupt):<code 339> (__DefaultInterrupt)
+                  0x00004a          0x4 LONG 0x9a04 DEFINED (__T4Interrupt)?<code 339> (__T4Interrupt):<code 339> (__DefaultInterrupt)
+                  0x00004c          0x4 LONG 0x9a04 DEFINED (__T5Interrupt)?<code 339> (__T5Interrupt):<code 339> (__DefaultInterrupt)
+                  0x00004e          0x4 LONG 0x9a04 DEFINED (__INT2Interrupt)?<code 339> (__INT2Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000050          0x4 LONG 0x9a04 DEFINED (__U2RXInterrupt)?<code 339> (__U2RXInterrupt):<code 339> (__DefaultInterrupt)
+                  0x000052          0x4 LONG 0x9a04 DEFINED (__U2TXInterrupt)?<code 339> (__U2TXInterrupt):<code 339> (__DefaultInterrupt)
+                  0x000054          0x4 LONG 0x9a04 DEFINED (__SPI2ErrInterrupt)?<code 339> (__SPI2ErrInterrupt):<code 339> (__DefaultInterrupt)
+                  0x000056          0x4 LONG 0x9a04 DEFINED (__SPI2Interrupt)?<code 339> (__SPI2Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000058          0x4 LONG 0x9a04 DEFINED (__Interrupt34)?<code 339> (__Interrupt34):<code 339> (__DefaultInterrupt)
+                  0x00005a          0x4 LONG 0x9a04 DEFINED (__Interrupt35)?<code 339> (__Interrupt35):<code 339> (__DefaultInterrupt)
+                  0x00005c          0x4 LONG 0x9a04 DEFINED (__Interrupt36)?<code 339> (__Interrupt36):<code 339> (__DefaultInterrupt)
+                  0x00005e          0x4 LONG 0x9a04 DEFINED (__IC3Interrupt)?<code 339> (__IC3Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000060          0x4 LONG 0x9a04 DEFINED (__IC4Interrupt)?<code 339> (__IC4Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000062          0x4 LONG 0x9a04 DEFINED (__IC5Interrupt)?<code 339> (__IC5Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000064          0x4 LONG 0x9a04 DEFINED (__Interrupt40)?<code 339> (__Interrupt40):<code 339> (__DefaultInterrupt)
+                  0x000066          0x4 LONG 0x9a04 DEFINED (__OC5Interrupt)?<code 339> (__OC5Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000068          0x4 LONG 0x9a04 DEFINED (__Interrupt42)?<code 339> (__Interrupt42):<code 339> (__DefaultInterrupt)
+                  0x00006a          0x4 LONG 0x9a04 DEFINED (__Interrupt43)?<code 339> (__Interrupt43):<code 339> (__DefaultInterrupt)
+                  0x00006c          0x4 LONG 0x9a04 DEFINED (__Interrupt44)?<code 339> (__Interrupt44):<code 339> (__DefaultInterrupt)
+                  0x00006e          0x4 LONG 0x9a04 DEFINED (__PMPInterrupt)?<code 339> (__PMPInterrupt):<code 339> (__DefaultInterrupt)
+                  0x000070          0x4 LONG 0x9a04 DEFINED (__Interrupt46)?<code 339> (__Interrupt46):<code 339> (__DefaultInterrupt)
+                  0x000072          0x4 LONG 0x9a04 DEFINED (__Interrupt47)?<code 339> (__Interrupt47):<code 339> (__DefaultInterrupt)
+                  0x000074          0x4 LONG 0x9a04 DEFINED (__Interrupt48)?<code 339> (__Interrupt48):<code 339> (__DefaultInterrupt)
+                  0x000076          0x4 LONG 0x9a04 DEFINED (__SI2C2Interrupt)?<code 339> (__SI2C2Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000078          0x4 LONG 0x9a04 DEFINED (__MI2C2Interrupt)?<code 339> (__MI2C2Interrupt):<code 339> (__DefaultInterrupt)
+                  0x00007a          0x4 LONG 0x9a04 DEFINED (__Interrupt51)?<code 339> (__Interrupt51):<code 339> (__DefaultInterrupt)
+                  0x00007c          0x4 LONG 0x9a04 DEFINED (__Interrupt52)?<code 339> (__Interrupt52):<code 339> (__DefaultInterrupt)
+                  0x00007e          0x4 LONG 0x9a04 DEFINED (__Interrupt53)?<code 339> (__Interrupt53):<code 339> (__DefaultInterrupt)
+                  0x000080          0x4 LONG 0x9a04 DEFINED (__Interrupt54)?<code 339> (__Interrupt54):<code 339> (__DefaultInterrupt)
+                  0x000082          0x4 LONG 0x9a04 DEFINED (__Interrupt55)?<code 339> (__Interrupt55):<code 339> (__DefaultInterrupt)
+                  0x000084          0x4 LONG 0x9a04 DEFINED (__Interrupt56)?<code 339> (__Interrupt56):<code 339> (__DefaultInterrupt)
+                  0x000086          0x4 LONG 0x9a04 DEFINED (__Interrupt57)?<code 339> (__Interrupt57):<code 339> (__DefaultInterrupt)
+                  0x000088          0x4 LONG 0x9a04 DEFINED (__Interrupt58)?<code 339> (__Interrupt58):<code 339> (__DefaultInterrupt)
+                  0x00008a          0x4 LONG 0x9a04 DEFINED (__Interrupt59)?<code 339> (__Interrupt59):<code 339> (__DefaultInterrupt)
+                  0x00008c          0x4 LONG 0x9a04 DEFINED (__Interrupt60)?<code 339> (__Interrupt60):<code 339> (__DefaultInterrupt)
+                  0x00008e          0x4 LONG 0x9a04 DEFINED (__Interrupt61)?<code 339> (__Interrupt61):<code 339> (__DefaultInterrupt)
+                  0x000090          0x4 LONG 0x9a04 DEFINED (__RTCCInterrupt)?<code 339> (__RTCCInterrupt):<code 339> (__DefaultInterrupt)
+                  0x000092          0x4 LONG 0x9a04 DEFINED (__Interrupt63)?<code 339> (__Interrupt63):<code 339> (__DefaultInterrupt)
+                  0x000094          0x4 LONG 0x9a04 DEFINED (__Interrupt64)?<code 339> (__Interrupt64):<code 339> (__DefaultInterrupt)
+                  0x000096          0x4 LONG 0x9a04 DEFINED (__U1ErrInterrupt)?<code 339> (__U1ErrInterrupt):<code 339> (__DefaultInterrupt)
+                  0x000098          0x4 LONG 0x9a04 DEFINED (__U2ErrInterrupt)?<code 339> (__U2ErrInterrupt):<code 339> (__DefaultInterrupt)
+                  0x00009a          0x4 LONG 0x9a04 DEFINED (__CRCInterrupt)?<code 339> (__CRCInterrupt):<code 339> (__DefaultInterrupt)
+                  0x00009c          0x4 LONG 0x9a04 DEFINED (__Interrupt68)?<code 339> (__Interrupt68):<code 339> (__DefaultInterrupt)
+                  0x00009e          0x4 LONG 0x9a04 DEFINED (__Interrupt69)?<code 339> (__Interrupt69):<code 339> (__DefaultInterrupt)
+                  0x0000a0          0x4 LONG 0x9a04 DEFINED (__Interrupt70)?<code 339> (__Interrupt70):<code 339> (__DefaultInterrupt)
+                  0x0000a2          0x4 LONG 0x9a04 DEFINED (__Interrupt71)?<code 339> (__Interrupt71):<code 339> (__DefaultInterrupt)
+                  0x0000a4          0x4 LONG 0x9a04 DEFINED (__LVDInterrupt)?<code 339> (__LVDInterrupt):<code 339> (__DefaultInterrupt)
+                  0x0000a6          0x4 LONG 0x9a04 DEFINED (__Interrupt73)?<code 339> (__Interrupt73):<code 339> (__DefaultInterrupt)
+                  0x0000a8          0x4 LONG 0x9a04 DEFINED (__Interrupt74)?<code 339> (__Interrupt74):<code 339> (__DefaultInterrupt)
+                  0x0000aa          0x4 LONG 0x9a04 DEFINED (__Interrupt75)?<code 339> (__Interrupt75):<code 339> (__DefaultInterrupt)
+                  0x0000ac          0x4 LONG 0x9a04 DEFINED (__Interrupt76)?<code 339> (__Interrupt76):<code 339> (__DefaultInterrupt)
+                  0x0000ae          0x4 LONG 0x9a04 DEFINED (__Interrupt77)?<code 339> (__Interrupt77):<code 339> (__DefaultInterrupt)
+                  0x0000b0          0x4 LONG 0x9a04 DEFINED (__Interrupt78)?<code 339> (__Interrupt78):<code 339> (__DefaultInterrupt)
+                  0x0000b2          0x4 LONG 0x9a04 DEFINED (__Interrupt79)?<code 339> (__Interrupt79):<code 339> (__DefaultInterrupt)
+                  0x0000b4          0x4 LONG 0x9a04 DEFINED (__Interrupt80)?<code 339> (__Interrupt80):<code 339> (__DefaultInterrupt)
+                  0x0000b6          0x4 LONG 0x9a04 DEFINED (__Interrupt81)?<code 339> (__Interrupt81):<code 339> (__DefaultInterrupt)
+                  0x0000b8          0x4 LONG 0x9a04 DEFINED (__Interrupt82)?<code 339> (__Interrupt82):<code 339> (__DefaultInterrupt)
+                  0x0000ba          0x4 LONG 0x9a04 DEFINED (__Interrupt83)?<code 339> (__Interrupt83):<code 339> (__DefaultInterrupt)
+                  0x0000bc          0x4 LONG 0x9a04 DEFINED (__Interrupt84)?<code 339> (__Interrupt84):<code 339> (__DefaultInterrupt)
+                  0x0000be          0x4 LONG 0x9a04 DEFINED (__Interrupt85)?<code 339> (__Interrupt85):<code 339> (__DefaultInterrupt)
+                  0x0000c0          0x4 LONG 0x9a04 DEFINED (__Interrupt86)?<code 339> (__Interrupt86):<code 339> (__DefaultInterrupt)
+                  0x0000c2          0x4 LONG 0x9a04 DEFINED (__Interrupt87)?<code 339> (__Interrupt87):<code 339> (__DefaultInterrupt)
+                  0x0000c4          0x4 LONG 0x9a04 DEFINED (__Interrupt88)?<code 339> (__Interrupt88):<code 339> (__DefaultInterrupt)
+                  0x0000c6          0x4 LONG 0x9a04 DEFINED (__Interrupt89)?<code 339> (__Interrupt89):<code 339> (__DefaultInterrupt)
+                  0x0000c8          0x4 LONG 0x9a04 DEFINED (__Interrupt90)?<code 339> (__Interrupt90):<code 339> (__DefaultInterrupt)
+                  0x0000ca          0x4 LONG 0x9a04 DEFINED (__Interrupt91)?<code 339> (__Interrupt91):<code 339> (__DefaultInterrupt)
+                  0x0000cc          0x4 LONG 0x9a04 DEFINED (__Interrupt92)?<code 339> (__Interrupt92):<code 339> (__DefaultInterrupt)
+                  0x0000ce          0x4 LONG 0x9a04 DEFINED (__Interrupt93)?<code 339> (__Interrupt93):<code 339> (__DefaultInterrupt)
+                  0x0000d0          0x4 LONG 0x9a04 DEFINED (__Interrupt94)?<code 339> (__Interrupt94):<code 339> (__DefaultInterrupt)
+                  0x0000d2          0x4 LONG 0x9a04 DEFINED (__Interrupt95)?<code 339> (__Interrupt95):<code 339> (__DefaultInterrupt)
+                  0x0000d4          0x4 LONG 0x9a04 DEFINED (__Interrupt96)?<code 339> (__Interrupt96):<code 339> (__DefaultInterrupt)
+                  0x0000d6          0x4 LONG 0x9a04 DEFINED (__Interrupt97)?<code 339> (__Interrupt97):<code 339> (__DefaultInterrupt)
+                  0x0000d8          0x4 LONG 0x9a04 DEFINED (__Interrupt98)?<code 339> (__Interrupt98):<code 339> (__DefaultInterrupt)
+                  0x0000da          0x4 LONG 0x9a04 DEFINED (__Interrupt99)?<code 339> (__Interrupt99):<code 339> (__DefaultInterrupt)
+                  0x0000dc          0x4 LONG 0x9a04 DEFINED (__Interrupt100)?<code 339> (__Interrupt100):<code 339> (__DefaultInterrupt)
+                  0x0000de          0x4 LONG 0x9a04 DEFINED (__Interrupt101)?<code 339> (__Interrupt101):<code 339> (__DefaultInterrupt)
+                  0x0000e0          0x4 LONG 0x9a04 DEFINED (__Interrupt102)?<code 339> (__Interrupt102):<code 339> (__DefaultInterrupt)
+                  0x0000e2          0x4 LONG 0x9a04 DEFINED (__Interrupt103)?<code 339> (__Interrupt103):<code 339> (__DefaultInterrupt)
+                  0x0000e4          0x4 LONG 0x9a04 DEFINED (__Interrupt104)?<code 339> (__Interrupt104):<code 339> (__DefaultInterrupt)
+                  0x0000e6          0x4 LONG 0x9a04 DEFINED (__Interrupt105)?<code 339> (__Interrupt105):<code 339> (__DefaultInterrupt)
+                  0x0000e8          0x4 LONG 0x9a04 DEFINED (__Interrupt106)?<code 339> (__Interrupt106):<code 339> (__DefaultInterrupt)
+                  0x0000ea          0x4 LONG 0x9a04 DEFINED (__Interrupt107)?<code 339> (__Interrupt107):<code 339> (__DefaultInterrupt)
+                  0x0000ec          0x4 LONG 0x9a04 DEFINED (__Interrupt108)?<code 339> (__Interrupt108):<code 339> (__DefaultInterrupt)
+                  0x0000ee          0x4 LONG 0x9a04 DEFINED (__Interrupt109)?<code 339> (__Interrupt109):<code 339> (__DefaultInterrupt)
+                  0x0000f0          0x4 LONG 0x9a04 DEFINED (__Interrupt110)?<code 339> (__Interrupt110):<code 339> (__DefaultInterrupt)
+                  0x0000f2          0x4 LONG 0x9a04 DEFINED (__Interrupt111)?<code 339> (__Interrupt111):<code 339> (__DefaultInterrupt)
+                  0x0000f4          0x4 LONG 0x9a04 DEFINED (__Interrupt112)?<code 339> (__Interrupt112):<code 339> (__DefaultInterrupt)
+                  0x0000f6          0x4 LONG 0x9a04 DEFINED (__Interrupt113)?<code 339> (__Interrupt113):<code 339> (__DefaultInterrupt)
+                  0x0000f8          0x4 LONG 0x9a04 DEFINED (__Interrupt114)?<code 339> (__Interrupt114):<code 339> (__DefaultInterrupt)
+                  0x0000fa          0x4 LONG 0x9a04 DEFINED (__Interrupt115)?<code 339> (__Interrupt115):<code 339> (__DefaultInterrupt)
+                  0x0000fc          0x4 LONG 0x9a04 DEFINED (__Interrupt116)?<code 339> (__Interrupt116):<code 339> (__DefaultInterrupt)
+                  0x0000fe          0x4 LONG 0x9a04 DEFINED (__Interrupt117)?<code 339> (__Interrupt117):<code 339> (__DefaultInterrupt)
 
 .aivt             0x000104         0xfc
-                  0x000104          0x4 LONG 0x9fc8 DEFINED (__AltReservedTrap0)?<code 339> (__AltReservedTrap0):DEFINED (__ReservedTrap0)?<code 339> (__ReservedTrap0):<code 339> (__DefaultInterrupt)
-                  0x000106          0x4 LONG 0x9fc8 DEFINED (__AltOscillatorFail)?<code 339> (__AltOscillatorFail):DEFINED (__OscillatorFail)?<code 339> (__OscillatorFail):<code 339> (__DefaultInterrupt)
-                  0x000108          0x4 LONG 0x9fc8 DEFINED (__AltAddressError)?<code 339> (__AltAddressError):DEFINED (__AddressError)?<code 339> (__AddressError):<code 339> (__DefaultInterrupt)
-                  0x00010a          0x4 LONG 0x9fc8 DEFINED (__AltStackError)?<code 339> (__AltStackError):DEFINED (__StackError)?<code 339> (__StackError):<code 339> (__DefaultInterrupt)
-                  0x00010c          0x4 LONG 0x9fc8 DEFINED (__AltMathError)?<code 339> (__AltMathError):DEFINED (__MathError)?<code 339> (__MathError):<code 339> (__DefaultInterrupt)
-                  0x00010e          0x4 LONG 0x9fc8 DEFINED (__AltReservedTrap5)?<code 339> (__AltReservedTrap5):DEFINED (__ReservedTrap5)?<code 339> (__ReservedTrap5):<code 339> (__DefaultInterrupt)
-                  0x000110          0x4 LONG 0x9fc8 DEFINED (__AltReservedTrap6)?<code 339> (__AltReservedTrap6):DEFINED (__ReservedTrap6)?<code 339> (__ReservedTrap6):<code 339> (__DefaultInterrupt)
-                  0x000112          0x4 LONG 0x9fc8 DEFINED (__AltReservedTrap7)?<code 339> (__AltReservedTrap7):DEFINED (__ReservedTrap7)?<code 339> (__ReservedTrap7):<code 339> (__DefaultInterrupt)
-                  0x000114          0x4 LONG 0x9fc8 DEFINED (__AltINT0Interrupt)?<code 339> (__AltINT0Interrupt):DEFINED (__INT0Interrupt)?<code 339> (__INT0Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000116          0x4 LONG 0x9fc8 DEFINED (__AltIC1Interrupt)?<code 339> (__AltIC1Interrupt):DEFINED (__IC1Interrupt)?<code 339> (__IC1Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000118          0x4 LONG 0x9fc8 DEFINED (__AltOC1Interrupt)?<code 339> (__AltOC1Interrupt):DEFINED (__OC1Interrupt)?<code 339> (__OC1Interrupt):<code 339> (__DefaultInterrupt)
-                  0x00011a          0x4 LONG 0x9fc8 DEFINED (__AltT1Interrupt)?<code 339> (__AltT1Interrupt):DEFINED (__T1Interrupt)?<code 339> (__T1Interrupt):<code 339> (__DefaultInterrupt)
-                  0x00011c          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt4)?<code 339> (__AltInterrupt4):DEFINED (__Interrupt4)?<code 339> (__Interrupt4):<code 339> (__DefaultInterrupt)
-                  0x00011e          0x4 LONG 0x9fc8 DEFINED (__AltIC2Interrupt)?<code 339> (__AltIC2Interrupt):DEFINED (__IC2Interrupt)?<code 339> (__IC2Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000120          0x4 LONG 0x9fc8 DEFINED (__AltOC2Interrupt)?<code 339> (__AltOC2Interrupt):DEFINED (__OC2Interrupt)?<code 339> (__OC2Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000122          0x4 LONG 0x9fc8 DEFINED (__AltT2Interrupt)?<code 339> (__AltT2Interrupt):DEFINED (__T2Interrupt)?<code 339> (__T2Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000124          0x4 LONG 0x9fc8 DEFINED (__AltT3Interrupt)?<code 339> (__AltT3Interrupt):DEFINED (__T3Interrupt)?<code 339> (__T3Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000126          0x4 LONG 0x9fc8 DEFINED (__AltSPI1ErrInterrupt)?<code 339> (__AltSPI1ErrInterrupt):DEFINED (__SPI1ErrInterrupt)?<code 339> (__SPI1ErrInterrupt):<code 339> (__DefaultInterrupt)
-                  0x000128          0x4 LONG 0x9fc8 DEFINED (__AltSPI1Interrupt)?<code 339> (__AltSPI1Interrupt):DEFINED (__SPI1Interrupt)?<code 339> (__SPI1Interrupt):<code 339> (__DefaultInterrupt)
-                  0x00012a          0x4 LONG 0x9fc8 DEFINED (__AltU1RXInterrupt)?<code 339> (__AltU1RXInterrupt):DEFINED (__U1RXInterrupt)?<code 339> (__U1RXInterrupt):<code 339> (__DefaultInterrupt)
-                  0x00012c          0x4 LONG 0x9fc8 DEFINED (__AltU1TXInterrupt)?<code 339> (__AltU1TXInterrupt):DEFINED (__U1TXInterrupt)?<code 339> (__U1TXInterrupt):<code 339> (__DefaultInterrupt)
-                  0x00012e          0x4 LONG 0x9fc8 DEFINED (__AltADC1Interrupt)?<code 339> (__AltADC1Interrupt):DEFINED (__ADC1Interrupt)?<code 339> (__ADC1Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000130          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt14)?<code 339> (__AltInterrupt14):DEFINED (__Interrupt14)?<code 339> (__Interrupt14):<code 339> (__DefaultInterrupt)
-                  0x000132          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt15)?<code 339> (__AltInterrupt15):DEFINED (__Interrupt15)?<code 339> (__Interrupt15):<code 339> (__DefaultInterrupt)
-                  0x000134          0x4 LONG 0x9fc8 DEFINED (__AltSI2C1Interrupt)?<code 339> (__AltSI2C1Interrupt):DEFINED (__SI2C1Interrupt)?<code 339> (__SI2C1Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000136          0x4 LONG 0x9fc8 DEFINED (__AltMI2C1Interrupt)?<code 339> (__AltMI2C1Interrupt):DEFINED (__MI2C1Interrupt)?<code 339> (__MI2C1Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000138          0x4 LONG 0x9fc8 DEFINED (__AltCompInterrupt)?<code 339> (__AltCompInterrupt):DEFINED (__CompInterrupt)?<code 339> (__CompInterrupt):<code 339> (__DefaultInterrupt)
-                  0x00013a          0x4 LONG 0x9fc8 DEFINED (__AltCNInterrupt)?<code 339> (__AltCNInterrupt):DEFINED (__CNInterrupt)?<code 339> (__CNInterrupt):<code 339> (__DefaultInterrupt)
-                  0x00013c          0x4 LONG 0x9fc8 DEFINED (__AltINT1Interrupt)?<code 339> (__AltINT1Interrupt):DEFINED (__INT1Interrupt)?<code 339> (__INT1Interrupt):<code 339> (__DefaultInterrupt)
-                  0x00013e          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt21)?<code 339> (__AltInterrupt21):DEFINED (__Interrupt21)?<code 339> (__Interrupt21):<code 339> (__DefaultInterrupt)
-                  0x000140          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt22)?<code 339> (__AltInterrupt22):DEFINED (__Interrupt22)?<code 339> (__Interrupt22):<code 339> (__DefaultInterrupt)
-                  0x000142          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt23)?<code 339> (__AltInterrupt23):DEFINED (__Interrupt23)?<code 339> (__Interrupt23):<code 339> (__DefaultInterrupt)
-                  0x000144          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt24)?<code 339> (__AltInterrupt24):DEFINED (__Interrupt24)?<code 339> (__Interrupt24):<code 339> (__DefaultInterrupt)
-                  0x000146          0x4 LONG 0x9fc8 DEFINED (__AltOC3Interrupt)?<code 339> (__AltOC3Interrupt):DEFINED (__OC3Interrupt)?<code 339> (__OC3Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000148          0x4 LONG 0x9fc8 DEFINED (__AltOC4Interrupt)?<code 339> (__AltOC4Interrupt):DEFINED (__OC4Interrupt)?<code 339> (__OC4Interrupt):<code 339> (__DefaultInterrupt)
-                  0x00014a          0x4 LONG 0x9fc8 DEFINED (__AltT4Interrupt)?<code 339> (__AltT4Interrupt):DEFINED (__T4Interrupt)?<code 339> (__T4Interrupt):<code 339> (__DefaultInterrupt)
-                  0x00014c          0x4 LONG 0x9fc8 DEFINED (__AltT5Interrupt)?<code 339> (__AltT5Interrupt):DEFINED (__T5Interrupt)?<code 339> (__T5Interrupt):<code 339> (__DefaultInterrupt)
-                  0x00014e          0x4 LONG 0x9fc8 DEFINED (__AltINT2Interrupt)?<code 339> (__AltINT2Interrupt):DEFINED (__INT2Interrupt)?<code 339> (__INT2Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000150          0x4 LONG 0x9fc8 DEFINED (__AltU2RXInterrupt)?<code 339> (__AltU2RXInterrupt):DEFINED (__U2RXInterrupt)?<code 339> (__U2RXInterrupt):<code 339> (__DefaultInterrupt)
-                  0x000152          0x4 LONG 0x9fc8 DEFINED (__AltU2TXInterrupt)?<code 339> (__AltU2TXInterrupt):DEFINED (__U2TXInterrupt)?<code 339> (__U2TXInterrupt):<code 339> (__DefaultInterrupt)
-                  0x000154          0x4 LONG 0x9fc8 DEFINED (__AltSPI2ErrInterrupt)?<code 339> (__AltSPI2ErrInterrupt):DEFINED (__SPI2ErrInterrupt)?<code 339> (__SPI2ErrInterrupt):<code 339> (__DefaultInterrupt)
-                  0x000156          0x4 LONG 0x9fc8 DEFINED (__AltSPI2Interrupt)?<code 339> (__AltSPI2Interrupt):DEFINED (__SPI2Interrupt)?<code 339> (__SPI2Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000158          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt34)?<code 339> (__AltInterrupt34):DEFINED (__Interrupt34)?<code 339> (__Interrupt34):<code 339> (__DefaultInterrupt)
-                  0x00015a          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt35)?<code 339> (__AltInterrupt35):DEFINED (__Interrupt35)?<code 339> (__Interrupt35):<code 339> (__DefaultInterrupt)
-                  0x00015c          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt36)?<code 339> (__AltInterrupt36):DEFINED (__Interrupt36)?<code 339> (__Interrupt36):<code 339> (__DefaultInterrupt)
-                  0x00015e          0x4 LONG 0x9fc8 DEFINED (__AltIC3Interrupt)?<code 339> (__AltIC3Interrupt):DEFINED (__IC3Interrupt)?<code 339> (__IC3Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000160          0x4 LONG 0x9fc8 DEFINED (__AltIC4Interrupt)?<code 339> (__AltIC4Interrupt):DEFINED (__IC4Interrupt)?<code 339> (__IC4Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000162          0x4 LONG 0x9fc8 DEFINED (__AltIC5Interrupt)?<code 339> (__AltIC5Interrupt):DEFINED (__IC5Interrupt)?<code 339> (__IC5Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000164          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt40)?<code 339> (__AltInterrupt40):DEFINED (__Interrupt40)?<code 339> (__Interrupt40):<code 339> (__DefaultInterrupt)
-                  0x000166          0x4 LONG 0x9fc8 DEFINED (__AltOC5Interrupt)?<code 339> (__AltOC5Interrupt):DEFINED (__OC5Interrupt)?<code 339> (__OC5Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000168          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt42)?<code 339> (__AltInterrupt42):DEFINED (__Interrupt42)?<code 339> (__Interrupt42):<code 339> (__DefaultInterrupt)
-                  0x00016a          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt43)?<code 339> (__AltInterrupt43):DEFINED (__Interrupt43)?<code 339> (__Interrupt43):<code 339> (__DefaultInterrupt)
-                  0x00016c          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt44)?<code 339> (__AltInterrupt44):DEFINED (__Interrupt44)?<code 339> (__Interrupt44):<code 339> (__DefaultInterrupt)
-                  0x00016e          0x4 LONG 0x9fc8 DEFINED (__AltPMPInterrupt)?<code 339> (__AltPMPInterrupt):DEFINED (__PMPInterrupt)?<code 339> (__PMPInterrupt):<code 339> (__DefaultInterrupt)
-                  0x000170          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt46)?<code 339> (__AltInterrupt46):DEFINED (__Interrupt46)?<code 339> (__Interrupt46):<code 339> (__DefaultInterrupt)
-                  0x000172          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt47)?<code 339> (__AltInterrupt47):DEFINED (__Interrupt47)?<code 339> (__Interrupt47):<code 339> (__DefaultInterrupt)
-                  0x000174          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt48)?<code 339> (__AltInterrupt48):DEFINED (__Interrupt48)?<code 339> (__Interrupt48):<code 339> (__DefaultInterrupt)
-                  0x000176          0x4 LONG 0x9fc8 DEFINED (__AltSI2C2Interrupt)?<code 339> (__AltSI2C2Interrupt):DEFINED (__SI2C2Interrupt)?<code 339> (__SI2C2Interrupt):<code 339> (__DefaultInterrupt)
-                  0x000178          0x4 LONG 0x9fc8 DEFINED (__AltMI2C2Interrupt)?<code 339> (__AltMI2C2Interrupt):DEFINED (__MI2C2Interrupt)?<code 339> (__MI2C2Interrupt):<code 339> (__DefaultInterrupt)
-                  0x00017a          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt51)?<code 339> (__AltInterrupt51):DEFINED (__Interrupt51)?<code 339> (__Interrupt51):<code 339> (__DefaultInterrupt)
-                  0x00017c          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt52)?<code 339> (__AltInterrupt52):DEFINED (__Interrupt52)?<code 339> (__Interrupt52):<code 339> (__DefaultInterrupt)
-                  0x00017e          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt53)?<code 339> (__AltInterrupt53):DEFINED (__Interrupt53)?<code 339> (__Interrupt53):<code 339> (__DefaultInterrupt)
-                  0x000180          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt54)?<code 339> (__AltInterrupt54):DEFINED (__Interrupt54)?<code 339> (__Interrupt54):<code 339> (__DefaultInterrupt)
-                  0x000182          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt55)?<code 339> (__AltInterrupt55):DEFINED (__Interrupt55)?<code 339> (__Interrupt55):<code 339> (__DefaultInterrupt)
-                  0x000184          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt56)?<code 339> (__AltInterrupt56):DEFINED (__Interrupt56)?<code 339> (__Interrupt56):<code 339> (__DefaultInterrupt)
-                  0x000186          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt57)?<code 339> (__AltInterrupt57):DEFINED (__Interrupt57)?<code 339> (__Interrupt57):<code 339> (__DefaultInterrupt)
-                  0x000188          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt58)?<code 339> (__AltInterrupt58):DEFINED (__Interrupt58)?<code 339> (__Interrupt58):<code 339> (__DefaultInterrupt)
-                  0x00018a          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt59)?<code 339> (__AltInterrupt59):DEFINED (__Interrupt59)?<code 339> (__Interrupt59):<code 339> (__DefaultInterrupt)
-                  0x00018c          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt60)?<code 339> (__AltInterrupt60):DEFINED (__Interrupt60)?<code 339> (__Interrupt60):<code 339> (__DefaultInterrupt)
-                  0x00018e          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt61)?<code 339> (__AltInterrupt61):DEFINED (__Interrupt61)?<code 339> (__Interrupt61):<code 339> (__DefaultInterrupt)
-                  0x000190          0x4 LONG 0x9fc8 DEFINED (__AltRTCCInterrupt)?<code 339> (__AltRTCCInterrupt):DEFINED (__RTCCInterrupt)?<code 339> (__RTCCInterrupt):<code 339> (__DefaultInterrupt)
-                  0x000192          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt63)?<code 339> (__AltInterrupt63):DEFINED (__Interrupt63)?<code 339> (__Interrupt63):<code 339> (__DefaultInterrupt)
-                  0x000194          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt64)?<code 339> (__AltInterrupt64):DEFINED (__Interrupt64)?<code 339> (__Interrupt64):<code 339> (__DefaultInterrupt)
-                  0x000196          0x4 LONG 0x9fc8 DEFINED (__AltU1ErrInterrupt)?<code 339> (__AltU1ErrInterrupt):DEFINED (__U1ErrInterrupt)?<code 339> (__U1ErrInterrupt):<code 339> (__DefaultInterrupt)
-                  0x000198          0x4 LONG 0x9fc8 DEFINED (__AltU2ErrInterrupt)?<code 339> (__AltU2ErrInterrupt):DEFINED (__U2ErrInterrupt)?<code 339> (__U2ErrInterrupt):<code 339> (__DefaultInterrupt)
-                  0x00019a          0x4 LONG 0x9fc8 DEFINED (__AltCRCInterrupt)?<code 339> (__AltCRCInterrupt):DEFINED (__CRCInterrupt)?<code 339> (__CRCInterrupt):<code 339> (__DefaultInterrupt)
-                  0x00019c          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt68)?<code 339> (__AltInterrupt68):DEFINED (__Interrupt68)?<code 339> (__Interrupt68):<code 339> (__DefaultInterrupt)
-                  0x00019e          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt69)?<code 339> (__AltInterrupt69):DEFINED (__Interrupt69)?<code 339> (__Interrupt69):<code 339> (__DefaultInterrupt)
-                  0x0001a0          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt70)?<code 339> (__AltInterrupt70):DEFINED (__Interrupt70)?<code 339> (__Interrupt70):<code 339> (__DefaultInterrupt)
-                  0x0001a2          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt71)?<code 339> (__AltInterrupt71):DEFINED (__Interrupt71)?<code 339> (__Interrupt71):<code 339> (__DefaultInterrupt)
-                  0x0001a4          0x4 LONG 0x9fc8 DEFINED (__AltLVDInterrupt)?<code 339> (__AltLVDInterrupt):DEFINED (__LVDInterrupt)?<code 339> (__LVDInterrupt):<code 339> (__DefaultInterrupt)
-                  0x0001a6          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt73)?<code 339> (__AltInterrupt73):DEFINED (__Interrupt73)?<code 339> (__Interrupt73):<code 339> (__DefaultInterrupt)
-                  0x0001a8          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt74)?<code 339> (__AltInterrupt74):DEFINED (__Interrupt74)?<code 339> (__Interrupt74):<code 339> (__DefaultInterrupt)
-                  0x0001aa          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt75)?<code 339> (__AltInterrupt75):DEFINED (__Interrupt75)?<code 339> (__Interrupt75):<code 339> (__DefaultInterrupt)
-                  0x0001ac          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt76)?<code 339> (__AltInterrupt76):DEFINED (__Interrupt76)?<code 339> (__Interrupt76):<code 339> (__DefaultInterrupt)
-                  0x0001ae          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt77)?<code 339> (__AltInterrupt77):DEFINED (__Interrupt77)?<code 339> (__Interrupt77):<code 339> (__DefaultInterrupt)
-                  0x0001b0          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt78)?<code 339> (__AltInterrupt78):DEFINED (__Interrupt78)?<code 339> (__Interrupt78):<code 339> (__DefaultInterrupt)
-                  0x0001b2          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt79)?<code 339> (__AltInterrupt79):DEFINED (__Interrupt79)?<code 339> (__Interrupt79):<code 339> (__DefaultInterrupt)
-                  0x0001b4          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt80)?<code 339> (__AltInterrupt80):DEFINED (__Interrupt80)?<code 339> (__Interrupt80):<code 339> (__DefaultInterrupt)
-                  0x0001b6          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt81)?<code 339> (__AltInterrupt81):DEFINED (__Interrupt81)?<code 339> (__Interrupt81):<code 339> (__DefaultInterrupt)
-                  0x0001b8          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt82)?<code 339> (__AltInterrupt82):DEFINED (__Interrupt82)?<code 339> (__Interrupt82):<code 339> (__DefaultInterrupt)
-                  0x0001ba          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt83)?<code 339> (__AltInterrupt83):DEFINED (__Interrupt83)?<code 339> (__Interrupt83):<code 339> (__DefaultInterrupt)
-                  0x0001bc          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt84)?<code 339> (__AltInterrupt84):DEFINED (__Interrupt84)?<code 339> (__Interrupt84):<code 339> (__DefaultInterrupt)
-                  0x0001be          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt85)?<code 339> (__AltInterrupt85):DEFINED (__Interrupt85)?<code 339> (__Interrupt85):<code 339> (__DefaultInterrupt)
-                  0x0001c0          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt86)?<code 339> (__AltInterrupt86):DEFINED (__Interrupt86)?<code 339> (__Interrupt86):<code 339> (__DefaultInterrupt)
-                  0x0001c2          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt87)?<code 339> (__AltInterrupt87):DEFINED (__Interrupt87)?<code 339> (__Interrupt87):<code 339> (__DefaultInterrupt)
-                  0x0001c4          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt88)?<code 339> (__AltInterrupt88):DEFINED (__Interrupt88)?<code 339> (__Interrupt88):<code 339> (__DefaultInterrupt)
-                  0x0001c6          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt89)?<code 339> (__AltInterrupt89):DEFINED (__Interrupt89)?<code 339> (__Interrupt89):<code 339> (__DefaultInterrupt)
-                  0x0001c8          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt90)?<code 339> (__AltInterrupt90):DEFINED (__Interrupt90)?<code 339> (__Interrupt90):<code 339> (__DefaultInterrupt)
-                  0x0001ca          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt91)?<code 339> (__AltInterrupt91):DEFINED (__Interrupt91)?<code 339> (__Interrupt91):<code 339> (__DefaultInterrupt)
-                  0x0001cc          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt92)?<code 339> (__AltInterrupt92):DEFINED (__Interrupt92)?<code 339> (__Interrupt92):<code 339> (__DefaultInterrupt)
-                  0x0001ce          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt93)?<code 339> (__AltInterrupt93):DEFINED (__Interrupt93)?<code 339> (__Interrupt93):<code 339> (__DefaultInterrupt)
-                  0x0001d0          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt94)?<code 339> (__AltInterrupt94):DEFINED (__Interrupt94)?<code 339> (__Interrupt94):<code 339> (__DefaultInterrupt)
-                  0x0001d2          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt95)?<code 339> (__AltInterrupt95):DEFINED (__Interrupt95)?<code 339> (__Interrupt95):<code 339> (__DefaultInterrupt)
-                  0x0001d4          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt96)?<code 339> (__AltInterrupt96):DEFINED (__Interrupt96)?<code 339> (__Interrupt96):<code 339> (__DefaultInterrupt)
-                  0x0001d6          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt97)?<code 339> (__AltInterrupt97):DEFINED (__Interrupt97)?<code 339> (__Interrupt97):<code 339> (__DefaultInterrupt)
-                  0x0001d8          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt98)?<code 339> (__AltInterrupt98):DEFINED (__Interrupt98)?<code 339> (__Interrupt98):<code 339> (__DefaultInterrupt)
-                  0x0001da          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt99)?<code 339> (__AltInterrupt99):DEFINED (__Interrupt99)?<code 339> (__Interrupt99):<code 339> (__DefaultInterrupt)
-                  0x0001dc          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt100)?<code 339> (__AltInterrupt100):DEFINED (__Interrupt100)?<code 339> (__Interrupt100):<code 339> (__DefaultInterrupt)
-                  0x0001de          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt101)?<code 339> (__AltInterrupt101):DEFINED (__Interrupt101)?<code 339> (__Interrupt101):<code 339> (__DefaultInterrupt)
-                  0x0001e0          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt102)?<code 339> (__AltInterrupt102):DEFINED (__Interrupt102)?<code 339> (__Interrupt102):<code 339> (__DefaultInterrupt)
-                  0x0001e2          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt103)?<code 339> (__AltInterrupt103):DEFINED (__Interrupt103)?<code 339> (__Interrupt103):<code 339> (__DefaultInterrupt)
-                  0x0001e4          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt104)?<code 339> (__AltInterrupt104):DEFINED (__Interrupt104)?<code 339> (__Interrupt104):<code 339> (__DefaultInterrupt)
-                  0x0001e6          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt105)?<code 339> (__AltInterrupt105):DEFINED (__Interrupt105)?<code 339> (__Interrupt105):<code 339> (__DefaultInterrupt)
-                  0x0001e8          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt106)?<code 339> (__AltInterrupt106):DEFINED (__Interrupt106)?<code 339> (__Interrupt106):<code 339> (__DefaultInterrupt)
-                  0x0001ea          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt107)?<code 339> (__AltInterrupt107):DEFINED (__Interrupt107)?<code 339> (__Interrupt107):<code 339> (__DefaultInterrupt)
-                  0x0001ec          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt108)?<code 339> (__AltInterrupt108):DEFINED (__Interrupt108)?<code 339> (__Interrupt108):<code 339> (__DefaultInterrupt)
-                  0x0001ee          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt109)?<code 339> (__AltInterrupt109):DEFINED (__Interrupt109)?<code 339> (__Interrupt109):<code 339> (__DefaultInterrupt)
-                  0x0001f0          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt110)?<code 339> (__AltInterrupt110):DEFINED (__Interrupt110)?<code 339> (__Interrupt110):<code 339> (__DefaultInterrupt)
-                  0x0001f2          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt111)?<code 339> (__AltInterrupt111):DEFINED (__Interrupt111)?<code 339> (__Interrupt111):<code 339> (__DefaultInterrupt)
-                  0x0001f4          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt112)?<code 339> (__AltInterrupt112):DEFINED (__Interrupt112)?<code 339> (__Interrupt112):<code 339> (__DefaultInterrupt)
-                  0x0001f6          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt113)?<code 339> (__AltInterrupt113):DEFINED (__Interrupt113)?<code 339> (__Interrupt113):<code 339> (__DefaultInterrupt)
-                  0x0001f8          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt114)?<code 339> (__AltInterrupt114):DEFINED (__Interrupt114)?<code 339> (__Interrupt114):<code 339> (__DefaultInterrupt)
-                  0x0001fa          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt115)?<code 339> (__AltInterrupt115):DEFINED (__Interrupt115)?<code 339> (__Interrupt115):<code 339> (__DefaultInterrupt)
-                  0x0001fc          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt116)?<code 339> (__AltInterrupt116):DEFINED (__Interrupt116)?<code 339> (__Interrupt116):<code 339> (__DefaultInterrupt)
-                  0x0001fe          0x4 LONG 0x9fc8 DEFINED (__AltInterrupt117)?<code 339> (__AltInterrupt117):DEFINED (__Interrupt117)?<code 339> (__Interrupt117):<code 339> (__DefaultInterrupt)
+                  0x000104          0x4 LONG 0x9a04 DEFINED (__AltReservedTrap0)?<code 339> (__AltReservedTrap0):DEFINED (__ReservedTrap0)?<code 339> (__ReservedTrap0):<code 339> (__DefaultInterrupt)
+                  0x000106          0x4 LONG 0x9a04 DEFINED (__AltOscillatorFail)?<code 339> (__AltOscillatorFail):DEFINED (__OscillatorFail)?<code 339> (__OscillatorFail):<code 339> (__DefaultInterrupt)
+                  0x000108          0x4 LONG 0x9a04 DEFINED (__AltAddressError)?<code 339> (__AltAddressError):DEFINED (__AddressError)?<code 339> (__AddressError):<code 339> (__DefaultInterrupt)
+                  0x00010a          0x4 LONG 0x9a04 DEFINED (__AltStackError)?<code 339> (__AltStackError):DEFINED (__StackError)?<code 339> (__StackError):<code 339> (__DefaultInterrupt)
+                  0x00010c          0x4 LONG 0x9a04 DEFINED (__AltMathError)?<code 339> (__AltMathError):DEFINED (__MathError)?<code 339> (__MathError):<code 339> (__DefaultInterrupt)
+                  0x00010e          0x4 LONG 0x9a04 DEFINED (__AltReservedTrap5)?<code 339> (__AltReservedTrap5):DEFINED (__ReservedTrap5)?<code 339> (__ReservedTrap5):<code 339> (__DefaultInterrupt)
+                  0x000110          0x4 LONG 0x9a04 DEFINED (__AltReservedTrap6)?<code 339> (__AltReservedTrap6):DEFINED (__ReservedTrap6)?<code 339> (__ReservedTrap6):<code 339> (__DefaultInterrupt)
+                  0x000112          0x4 LONG 0x9a04 DEFINED (__AltReservedTrap7)?<code 339> (__AltReservedTrap7):DEFINED (__ReservedTrap7)?<code 339> (__ReservedTrap7):<code 339> (__DefaultInterrupt)
+                  0x000114          0x4 LONG 0x9a04 DEFINED (__AltINT0Interrupt)?<code 339> (__AltINT0Interrupt):DEFINED (__INT0Interrupt)?<code 339> (__INT0Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000116          0x4 LONG 0x9a04 DEFINED (__AltIC1Interrupt)?<code 339> (__AltIC1Interrupt):DEFINED (__IC1Interrupt)?<code 339> (__IC1Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000118          0x4 LONG 0x9a04 DEFINED (__AltOC1Interrupt)?<code 339> (__AltOC1Interrupt):DEFINED (__OC1Interrupt)?<code 339> (__OC1Interrupt):<code 339> (__DefaultInterrupt)
+                  0x00011a          0x4 LONG 0x9a04 DEFINED (__AltT1Interrupt)?<code 339> (__AltT1Interrupt):DEFINED (__T1Interrupt)?<code 339> (__T1Interrupt):<code 339> (__DefaultInterrupt)
+                  0x00011c          0x4 LONG 0x9a04 DEFINED (__AltInterrupt4)?<code 339> (__AltInterrupt4):DEFINED (__Interrupt4)?<code 339> (__Interrupt4):<code 339> (__DefaultInterrupt)
+                  0x00011e          0x4 LONG 0x9a04 DEFINED (__AltIC2Interrupt)?<code 339> (__AltIC2Interrupt):DEFINED (__IC2Interrupt)?<code 339> (__IC2Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000120          0x4 LONG 0x9a04 DEFINED (__AltOC2Interrupt)?<code 339> (__AltOC2Interrupt):DEFINED (__OC2Interrupt)?<code 339> (__OC2Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000122          0x4 LONG 0x9a04 DEFINED (__AltT2Interrupt)?<code 339> (__AltT2Interrupt):DEFINED (__T2Interrupt)?<code 339> (__T2Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000124          0x4 LONG 0x9a04 DEFINED (__AltT3Interrupt)?<code 339> (__AltT3Interrupt):DEFINED (__T3Interrupt)?<code 339> (__T3Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000126          0x4 LONG 0x9a04 DEFINED (__AltSPI1ErrInterrupt)?<code 339> (__AltSPI1ErrInterrupt):DEFINED (__SPI1ErrInterrupt)?<code 339> (__SPI1ErrInterrupt):<code 339> (__DefaultInterrupt)
+                  0x000128          0x4 LONG 0x9a04 DEFINED (__AltSPI1Interrupt)?<code 339> (__AltSPI1Interrupt):DEFINED (__SPI1Interrupt)?<code 339> (__SPI1Interrupt):<code 339> (__DefaultInterrupt)
+                  0x00012a          0x4 LONG 0x9a04 DEFINED (__AltU1RXInterrupt)?<code 339> (__AltU1RXInterrupt):DEFINED (__U1RXInterrupt)?<code 339> (__U1RXInterrupt):<code 339> (__DefaultInterrupt)
+                  0x00012c          0x4 LONG 0x9a04 DEFINED (__AltU1TXInterrupt)?<code 339> (__AltU1TXInterrupt):DEFINED (__U1TXInterrupt)?<code 339> (__U1TXInterrupt):<code 339> (__DefaultInterrupt)
+                  0x00012e          0x4 LONG 0x9a04 DEFINED (__AltADC1Interrupt)?<code 339> (__AltADC1Interrupt):DEFINED (__ADC1Interrupt)?<code 339> (__ADC1Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000130          0x4 LONG 0x9a04 DEFINED (__AltInterrupt14)?<code 339> (__AltInterrupt14):DEFINED (__Interrupt14)?<code 339> (__Interrupt14):<code 339> (__DefaultInterrupt)
+                  0x000132          0x4 LONG 0x9a04 DEFINED (__AltInterrupt15)?<code 339> (__AltInterrupt15):DEFINED (__Interrupt15)?<code 339> (__Interrupt15):<code 339> (__DefaultInterrupt)
+                  0x000134          0x4 LONG 0x9a04 DEFINED (__AltSI2C1Interrupt)?<code 339> (__AltSI2C1Interrupt):DEFINED (__SI2C1Interrupt)?<code 339> (__SI2C1Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000136          0x4 LONG 0x9a04 DEFINED (__AltMI2C1Interrupt)?<code 339> (__AltMI2C1Interrupt):DEFINED (__MI2C1Interrupt)?<code 339> (__MI2C1Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000138          0x4 LONG 0x9a04 DEFINED (__AltCompInterrupt)?<code 339> (__AltCompInterrupt):DEFINED (__CompInterrupt)?<code 339> (__CompInterrupt):<code 339> (__DefaultInterrupt)
+                  0x00013a          0x4 LONG 0x9a04 DEFINED (__AltCNInterrupt)?<code 339> (__AltCNInterrupt):DEFINED (__CNInterrupt)?<code 339> (__CNInterrupt):<code 339> (__DefaultInterrupt)
+                  0x00013c          0x4 LONG 0x9a04 DEFINED (__AltINT1Interrupt)?<code 339> (__AltINT1Interrupt):DEFINED (__INT1Interrupt)?<code 339> (__INT1Interrupt):<code 339> (__DefaultInterrupt)
+                  0x00013e          0x4 LONG 0x9a04 DEFINED (__AltInterrupt21)?<code 339> (__AltInterrupt21):DEFINED (__Interrupt21)?<code 339> (__Interrupt21):<code 339> (__DefaultInterrupt)
+                  0x000140          0x4 LONG 0x9a04 DEFINED (__AltInterrupt22)?<code 339> (__AltInterrupt22):DEFINED (__Interrupt22)?<code 339> (__Interrupt22):<code 339> (__DefaultInterrupt)
+                  0x000142          0x4 LONG 0x9a04 DEFINED (__AltInterrupt23)?<code 339> (__AltInterrupt23):DEFINED (__Interrupt23)?<code 339> (__Interrupt23):<code 339> (__DefaultInterrupt)
+                  0x000144          0x4 LONG 0x9a04 DEFINED (__AltInterrupt24)?<code 339> (__AltInterrupt24):DEFINED (__Interrupt24)?<code 339> (__Interrupt24):<code 339> (__DefaultInterrupt)
+                  0x000146          0x4 LONG 0x9a04 DEFINED (__AltOC3Interrupt)?<code 339> (__AltOC3Interrupt):DEFINED (__OC3Interrupt)?<code 339> (__OC3Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000148          0x4 LONG 0x9a04 DEFINED (__AltOC4Interrupt)?<code 339> (__AltOC4Interrupt):DEFINED (__OC4Interrupt)?<code 339> (__OC4Interrupt):<code 339> (__DefaultInterrupt)
+                  0x00014a          0x4 LONG 0x9a04 DEFINED (__AltT4Interrupt)?<code 339> (__AltT4Interrupt):DEFINED (__T4Interrupt)?<code 339> (__T4Interrupt):<code 339> (__DefaultInterrupt)
+                  0x00014c          0x4 LONG 0x9a04 DEFINED (__AltT5Interrupt)?<code 339> (__AltT5Interrupt):DEFINED (__T5Interrupt)?<code 339> (__T5Interrupt):<code 339> (__DefaultInterrupt)
+                  0x00014e          0x4 LONG 0x9a04 DEFINED (__AltINT2Interrupt)?<code 339> (__AltINT2Interrupt):DEFINED (__INT2Interrupt)?<code 339> (__INT2Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000150          0x4 LONG 0x9a04 DEFINED (__AltU2RXInterrupt)?<code 339> (__AltU2RXInterrupt):DEFINED (__U2RXInterrupt)?<code 339> (__U2RXInterrupt):<code 339> (__DefaultInterrupt)
+                  0x000152          0x4 LONG 0x9a04 DEFINED (__AltU2TXInterrupt)?<code 339> (__AltU2TXInterrupt):DEFINED (__U2TXInterrupt)?<code 339> (__U2TXInterrupt):<code 339> (__DefaultInterrupt)
+                  0x000154          0x4 LONG 0x9a04 DEFINED (__AltSPI2ErrInterrupt)?<code 339> (__AltSPI2ErrInterrupt):DEFINED (__SPI2ErrInterrupt)?<code 339> (__SPI2ErrInterrupt):<code 339> (__DefaultInterrupt)
+                  0x000156          0x4 LONG 0x9a04 DEFINED (__AltSPI2Interrupt)?<code 339> (__AltSPI2Interrupt):DEFINED (__SPI2Interrupt)?<code 339> (__SPI2Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000158          0x4 LONG 0x9a04 DEFINED (__AltInterrupt34)?<code 339> (__AltInterrupt34):DEFINED (__Interrupt34)?<code 339> (__Interrupt34):<code 339> (__DefaultInterrupt)
+                  0x00015a          0x4 LONG 0x9a04 DEFINED (__AltInterrupt35)?<code 339> (__AltInterrupt35):DEFINED (__Interrupt35)?<code 339> (__Interrupt35):<code 339> (__DefaultInterrupt)
+                  0x00015c          0x4 LONG 0x9a04 DEFINED (__AltInterrupt36)?<code 339> (__AltInterrupt36):DEFINED (__Interrupt36)?<code 339> (__Interrupt36):<code 339> (__DefaultInterrupt)
+                  0x00015e          0x4 LONG 0x9a04 DEFINED (__AltIC3Interrupt)?<code 339> (__AltIC3Interrupt):DEFINED (__IC3Interrupt)?<code 339> (__IC3Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000160          0x4 LONG 0x9a04 DEFINED (__AltIC4Interrupt)?<code 339> (__AltIC4Interrupt):DEFINED (__IC4Interrupt)?<code 339> (__IC4Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000162          0x4 LONG 0x9a04 DEFINED (__AltIC5Interrupt)?<code 339> (__AltIC5Interrupt):DEFINED (__IC5Interrupt)?<code 339> (__IC5Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000164          0x4 LONG 0x9a04 DEFINED (__AltInterrupt40)?<code 339> (__AltInterrupt40):DEFINED (__Interrupt40)?<code 339> (__Interrupt40):<code 339> (__DefaultInterrupt)
+                  0x000166          0x4 LONG 0x9a04 DEFINED (__AltOC5Interrupt)?<code 339> (__AltOC5Interrupt):DEFINED (__OC5Interrupt)?<code 339> (__OC5Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000168          0x4 LONG 0x9a04 DEFINED (__AltInterrupt42)?<code 339> (__AltInterrupt42):DEFINED (__Interrupt42)?<code 339> (__Interrupt42):<code 339> (__DefaultInterrupt)
+                  0x00016a          0x4 LONG 0x9a04 DEFINED (__AltInterrupt43)?<code 339> (__AltInterrupt43):DEFINED (__Interrupt43)?<code 339> (__Interrupt43):<code 339> (__DefaultInterrupt)
+                  0x00016c          0x4 LONG 0x9a04 DEFINED (__AltInterrupt44)?<code 339> (__AltInterrupt44):DEFINED (__Interrupt44)?<code 339> (__Interrupt44):<code 339> (__DefaultInterrupt)
+                  0x00016e          0x4 LONG 0x9a04 DEFINED (__AltPMPInterrupt)?<code 339> (__AltPMPInterrupt):DEFINED (__PMPInterrupt)?<code 339> (__PMPInterrupt):<code 339> (__DefaultInterrupt)
+                  0x000170          0x4 LONG 0x9a04 DEFINED (__AltInterrupt46)?<code 339> (__AltInterrupt46):DEFINED (__Interrupt46)?<code 339> (__Interrupt46):<code 339> (__DefaultInterrupt)
+                  0x000172          0x4 LONG 0x9a04 DEFINED (__AltInterrupt47)?<code 339> (__AltInterrupt47):DEFINED (__Interrupt47)?<code 339> (__Interrupt47):<code 339> (__DefaultInterrupt)
+                  0x000174          0x4 LONG 0x9a04 DEFINED (__AltInterrupt48)?<code 339> (__AltInterrupt48):DEFINED (__Interrupt48)?<code 339> (__Interrupt48):<code 339> (__DefaultInterrupt)
+                  0x000176          0x4 LONG 0x9a04 DEFINED (__AltSI2C2Interrupt)?<code 339> (__AltSI2C2Interrupt):DEFINED (__SI2C2Interrupt)?<code 339> (__SI2C2Interrupt):<code 339> (__DefaultInterrupt)
+                  0x000178          0x4 LONG 0x9a04 DEFINED (__AltMI2C2Interrupt)?<code 339> (__AltMI2C2Interrupt):DEFINED (__MI2C2Interrupt)?<code 339> (__MI2C2Interrupt):<code 339> (__DefaultInterrupt)
+                  0x00017a          0x4 LONG 0x9a04 DEFINED (__AltInterrupt51)?<code 339> (__AltInterrupt51):DEFINED (__Interrupt51)?<code 339> (__Interrupt51):<code 339> (__DefaultInterrupt)
+                  0x00017c          0x4 LONG 0x9a04 DEFINED (__AltInterrupt52)?<code 339> (__AltInterrupt52):DEFINED (__Interrupt52)?<code 339> (__Interrupt52):<code 339> (__DefaultInterrupt)
+                  0x00017e          0x4 LONG 0x9a04 DEFINED (__AltInterrupt53)?<code 339> (__AltInterrupt53):DEFINED (__Interrupt53)?<code 339> (__Interrupt53):<code 339> (__DefaultInterrupt)
+                  0x000180          0x4 LONG 0x9a04 DEFINED (__AltInterrupt54)?<code 339> (__AltInterrupt54):DEFINED (__Interrupt54)?<code 339> (__Interrupt54):<code 339> (__DefaultInterrupt)
+                  0x000182          0x4 LONG 0x9a04 DEFINED (__AltInterrupt55)?<code 339> (__AltInterrupt55):DEFINED (__Interrupt55)?<code 339> (__Interrupt55):<code 339> (__DefaultInterrupt)
+                  0x000184          0x4 LONG 0x9a04 DEFINED (__AltInterrupt56)?<code 339> (__AltInterrupt56):DEFINED (__Interrupt56)?<code 339> (__Interrupt56):<code 339> (__DefaultInterrupt)
+                  0x000186          0x4 LONG 0x9a04 DEFINED (__AltInterrupt57)?<code 339> (__AltInterrupt57):DEFINED (__Interrupt57)?<code 339> (__Interrupt57):<code 339> (__DefaultInterrupt)
+                  0x000188          0x4 LONG 0x9a04 DEFINED (__AltInterrupt58)?<code 339> (__AltInterrupt58):DEFINED (__Interrupt58)?<code 339> (__Interrupt58):<code 339> (__DefaultInterrupt)
+                  0x00018a          0x4 LONG 0x9a04 DEFINED (__AltInterrupt59)?<code 339> (__AltInterrupt59):DEFINED (__Interrupt59)?<code 339> (__Interrupt59):<code 339> (__DefaultInterrupt)
+                  0x00018c          0x4 LONG 0x9a04 DEFINED (__AltInterrupt60)?<code 339> (__AltInterrupt60):DEFINED (__Interrupt60)?<code 339> (__Interrupt60):<code 339> (__DefaultInterrupt)
+                  0x00018e          0x4 LONG 0x9a04 DEFINED (__AltInterrupt61)?<code 339> (__AltInterrupt61):DEFINED (__Interrupt61)?<code 339> (__Interrupt61):<code 339> (__DefaultInterrupt)
+                  0x000190          0x4 LONG 0x9a04 DEFINED (__AltRTCCInterrupt)?<code 339> (__AltRTCCInterrupt):DEFINED (__RTCCInterrupt)?<code 339> (__RTCCInterrupt):<code 339> (__DefaultInterrupt)
+                  0x000192          0x4 LONG 0x9a04 DEFINED (__AltInterrupt63)?<code 339> (__AltInterrupt63):DEFINED (__Interrupt63)?<code 339> (__Interrupt63):<code 339> (__DefaultInterrupt)
+                  0x000194          0x4 LONG 0x9a04 DEFINED (__AltInterrupt64)?<code 339> (__AltInterrupt64):DEFINED (__Interrupt64)?<code 339> (__Interrupt64):<code 339> (__DefaultInterrupt)
+                  0x000196          0x4 LONG 0x9a04 DEFINED (__AltU1ErrInterrupt)?<code 339> (__AltU1ErrInterrupt):DEFINED (__U1ErrInterrupt)?<code 339> (__U1ErrInterrupt):<code 339> (__DefaultInterrupt)
+                  0x000198          0x4 LONG 0x9a04 DEFINED (__AltU2ErrInterrupt)?<code 339> (__AltU2ErrInterrupt):DEFINED (__U2ErrInterrupt)?<code 339> (__U2ErrInterrupt):<code 339> (__DefaultInterrupt)
+                  0x00019a          0x4 LONG 0x9a04 DEFINED (__AltCRCInterrupt)?<code 339> (__AltCRCInterrupt):DEFINED (__CRCInterrupt)?<code 339> (__CRCInterrupt):<code 339> (__DefaultInterrupt)
+                  0x00019c          0x4 LONG 0x9a04 DEFINED (__AltInterrupt68)?<code 339> (__AltInterrupt68):DEFINED (__Interrupt68)?<code 339> (__Interrupt68):<code 339> (__DefaultInterrupt)
+                  0x00019e          0x4 LONG 0x9a04 DEFINED (__AltInterrupt69)?<code 339> (__AltInterrupt69):DEFINED (__Interrupt69)?<code 339> (__Interrupt69):<code 339> (__DefaultInterrupt)
+                  0x0001a0          0x4 LONG 0x9a04 DEFINED (__AltInterrupt70)?<code 339> (__AltInterrupt70):DEFINED (__Interrupt70)?<code 339> (__Interrupt70):<code 339> (__DefaultInterrupt)
+                  0x0001a2          0x4 LONG 0x9a04 DEFINED (__AltInterrupt71)?<code 339> (__AltInterrupt71):DEFINED (__Interrupt71)?<code 339> (__Interrupt71):<code 339> (__DefaultInterrupt)
+                  0x0001a4          0x4 LONG 0x9a04 DEFINED (__AltLVDInterrupt)?<code 339> (__AltLVDInterrupt):DEFINED (__LVDInterrupt)?<code 339> (__LVDInterrupt):<code 339> (__DefaultInterrupt)
+                  0x0001a6          0x4 LONG 0x9a04 DEFINED (__AltInterrupt73)?<code 339> (__AltInterrupt73):DEFINED (__Interrupt73)?<code 339> (__Interrupt73):<code 339> (__DefaultInterrupt)
+                  0x0001a8          0x4 LONG 0x9a04 DEFINED (__AltInterrupt74)?<code 339> (__AltInterrupt74):DEFINED (__Interrupt74)?<code 339> (__Interrupt74):<code 339> (__DefaultInterrupt)
+                  0x0001aa          0x4 LONG 0x9a04 DEFINED (__AltInterrupt75)?<code 339> (__AltInterrupt75):DEFINED (__Interrupt75)?<code 339> (__Interrupt75):<code 339> (__DefaultInterrupt)
+                  0x0001ac          0x4 LONG 0x9a04 DEFINED (__AltInterrupt76)?<code 339> (__AltInterrupt76):DEFINED (__Interrupt76)?<code 339> (__Interrupt76):<code 339> (__DefaultInterrupt)
+                  0x0001ae          0x4 LONG 0x9a04 DEFINED (__AltInterrupt77)?<code 339> (__AltInterrupt77):DEFINED (__Interrupt77)?<code 339> (__Interrupt77):<code 339> (__DefaultInterrupt)
+                  0x0001b0          0x4 LONG 0x9a04 DEFINED (__AltInterrupt78)?<code 339> (__AltInterrupt78):DEFINED (__Interrupt78)?<code 339> (__Interrupt78):<code 339> (__DefaultInterrupt)
+                  0x0001b2          0x4 LONG 0x9a04 DEFINED (__AltInterrupt79)?<code 339> (__AltInterrupt79):DEFINED (__Interrupt79)?<code 339> (__Interrupt79):<code 339> (__DefaultInterrupt)
+                  0x0001b4          0x4 LONG 0x9a04 DEFINED (__AltInterrupt80)?<code 339> (__AltInterrupt80):DEFINED (__Interrupt80)?<code 339> (__Interrupt80):<code 339> (__DefaultInterrupt)
+                  0x0001b6          0x4 LONG 0x9a04 DEFINED (__AltInterrupt81)?<code 339> (__AltInterrupt81):DEFINED (__Interrupt81)?<code 339> (__Interrupt81):<code 339> (__DefaultInterrupt)
+                  0x0001b8          0x4 LONG 0x9a04 DEFINED (__AltInterrupt82)?<code 339> (__AltInterrupt82):DEFINED (__Interrupt82)?<code 339> (__Interrupt82):<code 339> (__DefaultInterrupt)
+                  0x0001ba          0x4 LONG 0x9a04 DEFINED (__AltInterrupt83)?<code 339> (__AltInterrupt83):DEFINED (__Interrupt83)?<code 339> (__Interrupt83):<code 339> (__DefaultInterrupt)
+                  0x0001bc          0x4 LONG 0x9a04 DEFINED (__AltInterrupt84)?<code 339> (__AltInterrupt84):DEFINED (__Interrupt84)?<code 339> (__Interrupt84):<code 339> (__DefaultInterrupt)
+                  0x0001be          0x4 LONG 0x9a04 DEFINED (__AltInterrupt85)?<code 339> (__AltInterrupt85):DEFINED (__Interrupt85)?<code 339> (__Interrupt85):<code 339> (__DefaultInterrupt)
+                  0x0001c0          0x4 LONG 0x9a04 DEFINED (__AltInterrupt86)?<code 339> (__AltInterrupt86):DEFINED (__Interrupt86)?<code 339> (__Interrupt86):<code 339> (__DefaultInterrupt)
+                  0x0001c2          0x4 LONG 0x9a04 DEFINED (__AltInterrupt87)?<code 339> (__AltInterrupt87):DEFINED (__Interrupt87)?<code 339> (__Interrupt87):<code 339> (__DefaultInterrupt)
+                  0x0001c4          0x4 LONG 0x9a04 DEFINED (__AltInterrupt88)?<code 339> (__AltInterrupt88):DEFINED (__Interrupt88)?<code 339> (__Interrupt88):<code 339> (__DefaultInterrupt)
+                  0x0001c6          0x4 LONG 0x9a04 DEFINED (__AltInterrupt89)?<code 339> (__AltInterrupt89):DEFINED (__Interrupt89)?<code 339> (__Interrupt89):<code 339> (__DefaultInterrupt)
+                  0x0001c8          0x4 LONG 0x9a04 DEFINED (__AltInterrupt90)?<code 339> (__AltInterrupt90):DEFINED (__Interrupt90)?<code 339> (__Interrupt90):<code 339> (__DefaultInterrupt)
+                  0x0001ca          0x4 LONG 0x9a04 DEFINED (__AltInterrupt91)?<code 339> (__AltInterrupt91):DEFINED (__Interrupt91)?<code 339> (__Interrupt91):<code 339> (__DefaultInterrupt)
+                  0x0001cc          0x4 LONG 0x9a04 DEFINED (__AltInterrupt92)?<code 339> (__AltInterrupt92):DEFINED (__Interrupt92)?<code 339> (__Interrupt92):<code 339> (__DefaultInterrupt)
+                  0x0001ce          0x4 LONG 0x9a04 DEFINED (__AltInterrupt93)?<code 339> (__AltInterrupt93):DEFINED (__Interrupt93)?<code 339> (__Interrupt93):<code 339> (__DefaultInterrupt)
+                  0x0001d0          0x4 LONG 0x9a04 DEFINED (__AltInterrupt94)?<code 339> (__AltInterrupt94):DEFINED (__Interrupt94)?<code 339> (__Interrupt94):<code 339> (__DefaultInterrupt)
+                  0x0001d2          0x4 LONG 0x9a04 DEFINED (__AltInterrupt95)?<code 339> (__AltInterrupt95):DEFINED (__Interrupt95)?<code 339> (__Interrupt95):<code 339> (__DefaultInterrupt)
+                  0x0001d4          0x4 LONG 0x9a04 DEFINED (__AltInterrupt96)?<code 339> (__AltInterrupt96):DEFINED (__Interrupt96)?<code 339> (__Interrupt96):<code 339> (__DefaultInterrupt)
+                  0x0001d6          0x4 LONG 0x9a04 DEFINED (__AltInterrupt97)?<code 339> (__AltInterrupt97):DEFINED (__Interrupt97)?<code 339> (__Interrupt97):<code 339> (__DefaultInterrupt)
+                  0x0001d8          0x4 LONG 0x9a04 DEFINED (__AltInterrupt98)?<code 339> (__AltInterrupt98):DEFINED (__Interrupt98)?<code 339> (__Interrupt98):<code 339> (__DefaultInterrupt)
+                  0x0001da          0x4 LONG 0x9a04 DEFINED (__AltInterrupt99)?<code 339> (__AltInterrupt99):DEFINED (__Interrupt99)?<code 339> (__Interrupt99):<code 339> (__DefaultInterrupt)
+                  0x0001dc          0x4 LONG 0x9a04 DEFINED (__AltInterrupt100)?<code 339> (__AltInterrupt100):DEFINED (__Interrupt100)?<code 339> (__Interrupt100):<code 339> (__DefaultInterrupt)
+                  0x0001de          0x4 LONG 0x9a04 DEFINED (__AltInterrupt101)?<code 339> (__AltInterrupt101):DEFINED (__Interrupt101)?<code 339> (__Interrupt101):<code 339> (__DefaultInterrupt)
+                  0x0001e0          0x4 LONG 0x9a04 DEFINED (__AltInterrupt102)?<code 339> (__AltInterrupt102):DEFINED (__Interrupt102)?<code 339> (__Interrupt102):<code 339> (__DefaultInterrupt)
+                  0x0001e2          0x4 LONG 0x9a04 DEFINED (__AltInterrupt103)?<code 339> (__AltInterrupt103):DEFINED (__Interrupt103)?<code 339> (__Interrupt103):<code 339> (__DefaultInterrupt)
+                  0x0001e4          0x4 LONG 0x9a04 DEFINED (__AltInterrupt104)?<code 339> (__AltInterrupt104):DEFINED (__Interrupt104)?<code 339> (__Interrupt104):<code 339> (__DefaultInterrupt)
+                  0x0001e6          0x4 LONG 0x9a04 DEFINED (__AltInterrupt105)?<code 339> (__AltInterrupt105):DEFINED (__Interrupt105)?<code 339> (__Interrupt105):<code 339> (__DefaultInterrupt)
+                  0x0001e8          0x4 LONG 0x9a04 DEFINED (__AltInterrupt106)?<code 339> (__AltInterrupt106):DEFINED (__Interrupt106)?<code 339> (__Interrupt106):<code 339> (__DefaultInterrupt)
+                  0x0001ea          0x4 LONG 0x9a04 DEFINED (__AltInterrupt107)?<code 339> (__AltInterrupt107):DEFINED (__Interrupt107)?<code 339> (__Interrupt107):<code 339> (__DefaultInterrupt)
+                  0x0001ec          0x4 LONG 0x9a04 DEFINED (__AltInterrupt108)?<code 339> (__AltInterrupt108):DEFINED (__Interrupt108)?<code 339> (__Interrupt108):<code 339> (__DefaultInterrupt)
+                  0x0001ee          0x4 LONG 0x9a04 DEFINED (__AltInterrupt109)?<code 339> (__AltInterrupt109):DEFINED (__Interrupt109)?<code 339> (__Interrupt109):<code 339> (__DefaultInterrupt)
+                  0x0001f0          0x4 LONG 0x9a04 DEFINED (__AltInterrupt110)?<code 339> (__AltInterrupt110):DEFINED (__Interrupt110)?<code 339> (__Interrupt110):<code 339> (__DefaultInterrupt)
+                  0x0001f2          0x4 LONG 0x9a04 DEFINED (__AltInterrupt111)?<code 339> (__AltInterrupt111):DEFINED (__Interrupt111)?<code 339> (__Interrupt111):<code 339> (__DefaultInterrupt)
+                  0x0001f4          0x4 LONG 0x9a04 DEFINED (__AltInterrupt112)?<code 339> (__AltInterrupt112):DEFINED (__Interrupt112)?<code 339> (__Interrupt112):<code 339> (__DefaultInterrupt)
+                  0x0001f6          0x4 LONG 0x9a04 DEFINED (__AltInterrupt113)?<code 339> (__AltInterrupt113):DEFINED (__Interrupt113)?<code 339> (__Interrupt113):<code 339> (__DefaultInterrupt)
+                  0x0001f8          0x4 LONG 0x9a04 DEFINED (__AltInterrupt114)?<code 339> (__AltInterrupt114):DEFINED (__Interrupt114)?<code 339> (__Interrupt114):<code 339> (__DefaultInterrupt)
+                  0x0001fa          0x4 LONG 0x9a04 DEFINED (__AltInterrupt115)?<code 339> (__AltInterrupt115):DEFINED (__Interrupt115)?<code 339> (__Interrupt115):<code 339> (__DefaultInterrupt)
+                  0x0001fc          0x4 LONG 0x9a04 DEFINED (__AltInterrupt116)?<code 339> (__AltInterrupt116):DEFINED (__Interrupt116)?<code 339> (__Interrupt116):<code 339> (__DefaultInterrupt)
+                  0x0001fe          0x4 LONG 0x9a04 DEFINED (__AltInterrupt117)?<code 339> (__AltInterrupt117):DEFINED (__Interrupt117)?<code 339> (__Interrupt117):<code 339> (__DefaultInterrupt)
                     0x0000                  WREG0 = 0x0
                     0x0000                  _WREG0 = 0x0
                     0x0002                  WREG1 = 0x2
@@ -1857,410 +1837,396 @@ __c30_signature
  __c30_signature
                   0x0000ea          0x6 c:/program files/microchip/mplab c30/bin/bin/../../lib\libm-coff.a(funpack.o)
 
-.bss                0x0800       0x1018
+.bss                0x0800       0x1484
  .bss               0x0800       0x1018 work\main.o
                     0x0800                  bpConfig
                     0x180c                  modeConfig
                     0x1810                  bpCommand
                     0x1816                  currentByte
+ .bss               0x1818        0x46c work\basic.o
+                    0x1818                  vars
+                    0x184c                  stack
+                    0x1860                  forloops
+                    0x1878                  pc
+                    0x187a                  fors
+                    0x187c                  gosubs
+                    0x187e                  datapos
+                    0x1880                  pgmspace
+                    0x1c80                  eeprom_lastprog
+                    0x1c82                  eeprom_lastmem
 
-.data               0x1818        0x5b8
- .data              0x1818        0x400 work\basic.o
-                    0x1818                  pgmspace
- .data              0x1c18        0x1b8 work\busPirateCore.o
-                    0x1c18                  protos
+.data               0x1c84        0x1b8
+ .data              0x1c84        0x1b8 work\busPirateCore.o
+                    0x1c84                  protos
 
-.bss                0x1dd0        0x106
- .bss               0x1dd0        0x106 work\procMenu.o
-                    0x1dd0                  cmdbuf
-                    0x1ed0                  cmdend
-                    0x1ed2                  cmdstart
-                    0x1ed4                  cmderror
+.bss                0x1e3c        0x106
+ .bss               0x1e3c        0x106 work\procMenu.o
+                    0x1e3c                  cmdbuf
+                    0x1f3c                  cmdend
+                    0x1f3e                  cmdstart
+                    0x1f40                  cmderror
 
-.data               0x1ed6        0x102
- .data              0x1ed6        0x102 work\1wire.o
-                    0x1ed6                  SearchChar
+.data               0x1f42        0x102
+ .data              0x1f42        0x102 work\1wire.o
+                    0x1f42                  SearchChar
 
-.bss                0x1fd8         0xdc
- .bss               0x1fd8         0x70 work\1wire.o
-                    0x1fea                  OWroster
-                    0x203b                  ROM_NO
-                    0x2043                  LastDiscrepancy
-                    0x2044                  LastFamilyDiscrepancy
-                    0x2045                  LastDeviceFlag
-                    0x2046                  crc8
- .bss               0x2048         0x6c work\basic.o
-                    0x2048                  vars
-                    0x207c                  stack
-                    0x2090                  forloops
-                    0x20a8                  pc
-                    0x20aa                  fors
-                    0x20ac                  gosubs
-                    0x20ae                  datapos
-                    0x20b0                  eeprom_lastprog
-                    0x20b2                  eeprom_lastmem
+.bss                0x2044         0x70
+ .bss               0x2044         0x70 work\1wire.o
+                    0x2056                  OWroster
+                    0x20a7                  ROM_NO
+                    0x20af                  LastDiscrepancy
+                    0x20b0                  LastFamilyDiscrepancy
+                    0x20b1                  LastDeviceFlag
+                    0x20b2                  crc8
 
-.data               0x20b4         0x28
- .data              0x20b4         0x28 work\UART.o
+.data               0x20b4         0x6a
+ .data              0x20b4         0x42 work\basic.o
+                    0x20b4                  tokens
+ .data              0x20f6         0x28 work\UART.o
 
-.bss                0x20dc         0x16
- .bss               0x20dc         0x16 work\SUMP.o
+.bss                0x211e         0x16
+ .bss               0x211e         0x16 work\SUMP.o
 
-.data               0x20f2         0x12
- .data              0x20f2         0x12 work\base.o
+.data               0x2134         0x12
+ .data              0x2134         0x12 work\base.o
 
-.bss                0x2104          0xe
- .bss               0x2104          0xe work\AUXpin.o
-                    0x210e                  PWMfreq
-                    0x2110                  PWMduty
+.bss                0x2146          0xe
+ .bss               0x2146          0xe work\AUXpin.o
+                    0x2150                  PWMfreq
+                    0x2152                  PWMduty
 
-.data               0x2112          0xc
- .data              0x2112          0xc work\SPI.o
+.data               0x2154          0xc
+ .data              0x2154          0xc work\SPI.o
 
-.bss                0x211e         0x24
- .bss               0x211e          0xc work\I2C.o
-                    0x2126                  i2cmode
-                    0x2128                  ackPending
- .bss               0x212a          0xa work\bitbang.o
-                    0x212a                  bitbang
- .bss               0x2134          0x8 work\UART.o
-                    0x213a                  uartSettings
- .bss               0x213c          0x6 work\SPI.o
-                    0x2140                  spiSettings
+.bss                0x2160         0x38
+ .bss               0x2160          0xc work\I2C.o
+                    0x2168                  i2cmode
+                    0x216a                  ackPending
+ .bss               0x216c          0xa work\bitbang.o
+                    0x216c                  bitbang
+ .bss               0x2176          0x8 work\UART.o
+                    0x217c                  uartSettings
+ .bss               0x217e          0x6 work\SPI.o
+                    0x2182                  spiSettings
+ .bss               0x2184          0x4 work\m_1wire_213.o
+ .bss               0x2188          0x4 work\baseIO.o
+ .bss               0x218c          0x4 work\binIO.o
+ .bss               0x2190          0x4 work\binwire.o
+ .bss               0x2194          0x4 work\pic.o
+                    0x2194                  picmode
+                    0x2196                  piccmddelay
 
-.data               0x2142          0x4
- .data              0x2142          0x4 work\I2C.o
+.data               0x2198          0x2
+ .data              0x2198          0x2 work\main.o
+                    0x2198                  irqFlag
+                    0x2199                  binmodecnt
 
-.bss                0x2146         0x14
- .bss               0x2146          0x4 work\m_1wire_213.o
- .bss               0x214a          0x4 work\baseIO.o
- .bss               0x214e          0x4 work\binIO.o
- .bss               0x2152          0x4 work\binwire.o
- .bss               0x2156          0x4 work\pic.o
-                    0x2156                  picmode
-                    0x2158                  piccmddelay
+.bss                0x219a          0x6
+ .bss               0x219a          0x2 work\raw3wire.o
+                    0x219a                  r3wSettings
+ .bss               0x219c          0x2 work\selftest.o
+ .bss               0x219e          0x2 work\HD44780.o
+                    0x219e                  HD44780
 
-.data               0x215a          0x2
- .data              0x215a          0x2 work\main.o
-                    0x215a                  irqFlag
-                    0x215b                  binmodecnt
+.const              0x8766        0x330 load address 0x000766  
+ .const             0x8766        0x100 work\m_1wire_213.o
+                    0x8766                  BYTE_ARRAY
+ .const             0x8866         0xe8 work\basic.o
+ .const             0x894e         0x60 work\procMenu.o
+ .const             0x89ae         0x56 work\raw2wire.o
+ .const             0x8a04         0x1c work\AUXpin.o
+ .const             0x8a20         0x16 work\baseIO.o
+                    0x8a23                  HEXASCII
+ .const             0x8a36         0x16 work\pic.o
+ .const             0x8a4c         0x10 work\1wire.o
+ .const             0x8a5c          0xe work\I2C.o
+ .const             0x8a6a          0x8 work\base.o
+ .const             0x8a72          0x6 work\SPI.o
+ .const             0x8a78          0x6 work\UART.o
+ .const             0x8a7e          0x6 work\binIO.o
+ .const             0x8a84          0x6 work\binwire.o
+ .const             0x8a8a          0x6 work\SUMP.o
+ .const             0x8a90          0x2 work\main.o
+ .const             0x8a92          0x2 work\raw3wire.o
+ .const             0x8a94          0x2 work\baseUI.o
 
-.bss                0x215c          0x6
- .bss               0x215c          0x2 work\raw3wire.o
-                    0x215c                  r3wSettings
- .bss               0x215e          0x2 work\selftest.o
- .bss               0x2160          0x2 work\HD44780.o
-                    0x2160                  HD44780
+.text             0x000a96       0x8078
+ .text            0x000a96       0x155c work\basic.o
+                  0x000a96                  handleelse
+                  0x000ac6                  searchlineno
+                  0x000b2e                  getnumvar
+                  0x000ca6                  assign
+                  0x000d54                  evaluate
+                  0x000e92                  interpreter
+                  0x001780                  printstat
+                  0x00179a                  list
+                  0x001846                  compare
+                  0x001890                  gettoken
+                  0x0018c8                  basiccmdline
+                  0x001c4c                  HIZbbL
+                  0x001c78                  HIZbbH
+                  0x001c8e                  HIZbbR
+                  0x001cb6                  basi2cstart
+                  0x001cd4                  basi2cstop
+                  0x001cec                  basi2cread
+                  0x001d46                  basi2cwrite
+                  0x001da4                  checkeeprom
+                  0x001df4                  format
+                  0x001e66                  waiteeprom
+                  0x001e80                  save
+                  0x001f50                  load
+ .text            0x001ff2       0x14d4 work\procMenu.o
+                  0x001ff2                  serviceuser
+                  0x00296e                  getint
+                  0x002cb8                  getrepeat
+                  0x002cfe                  consumewhitechars
+                  0x002d22                  changemode
+                  0x002e32                  cmdhistory
+                  0x002f74                  getnumber
+                  0x0030f2                  versionInfo
+                  0x0031e4                  statusInfo
+                  0x0032b2                  pinStates
+                  0x00338a                  pinDirection
+                  0x0033a8                  pinState
+                  0x0033c6                  setDisplayMode
+                  0x003410                  setBaudRate
+                  0x003486                  agree
+ .text            0x0034c6        0xeae work\en_US.o
+                  0x0034c6                  bpmessages
+ .text            0x004374        0x910 work\UART.o
+                  0x004374                  UARTread
+                  0x0043d4                  UARTwrite
+                  0x0043e4                  UARTsetup
+                  0x00466e                  UARTcleanup
+                  0x004678                  UARTmacro
+                  0x004796                  UARTstart
+                  0x0047c0                  UARTstop
+                  0x0047e2                  UARTperiodic
+                  0x004862                  UARTpins
+                  0x004870                  binUARTversionString
+                  0x00487c                  binUART
+ .text            0x004c84        0x8e6 work\1wire.o
+                  0x004c84                  OWread
+                  0x004c90                  OWwrite
+                  0x004ca0                  OWbitr
+                  0x004cac                  OWbitclk
+                  0x004cc2                  OWdatl
+                  0x004cec                  OWdath
+                  0x004d16                  OWsetup
+                  0x004d54                  OWmacro
+                  0x005046                  OWpins
+                  0x005054                  DS1wireReset
+                  0x0050b2                  DS1wireID
+                  0x005128                  OWFirst
+                  0x005144                  OWNext
+                  0x00514e                  OWSearch
+                  0x0052da                  OWVerify
+                  0x005396                  docrc8
+                  0x0053b6                  bin1WIREversionString
+                  0x0053c2                  bin1WIRE
+ .text            0x00556a        0x8d4 work\SPI.o
+                  0x00556a                  SPIstartr
+                  0x005584                  SPIstart
+                  0x00559e                  SPIstop
+                  0x0055ae                  SPIread
+                  0x0055ba                  SPIwrite
+                  0x0055de                  SPIsetup
+                  0x00583a                  SPIcleanup
+                  0x005842                  SPImacro
+                  0x005894                  SPIpins
+                  0x0058a2                  spiSetup
+                  0x00594a                  spiDisable
+                  0x005972                  spiWriteByte
+                  0x00598e                  spiSniffer
+                  0x005a74                  spiSlaveSetup
+                  0x005b5a                  spiSlaveDisable
+                  0x005b80                  binSPIversionString
+                  0x005b8c                  binSPI
+ .text            0x005e3e        0x744 work\pic.o
+                  0x005e3e                  picinit
+                  0x005f20                  piccleanup
+                  0x005f30                  picstart
+                  0x005f62                  picstop
+                  0x005f82                  picread
+                  0x00608e                  picwrite
+                  0x006270                  picmacro
+                  0x006318                  picpins
+                  0x006326                  binpic
+ .text            0x006582        0x6f2 work\I2C.o
+                  0x006582                  I2Cread
+                  0x0065c4                  I2Cwrite
+                  0x006630                  I2Cstart
+                  0x00666c                  I2Cstop
+                  0x0066a8                  I2Csetup
+                  0x0067a0                  I2Ccleanup
+                  0x0067b2                  I2Cmacro
+                  0x006888                  I2Cpins
+                  0x006896                  I2C_SnifferSetup
+                  0x00690a                  I2C_Sniffer
+                  0x006ac8                  binI2CversionString
+                  0x006ad4                  binI2C
+ .text            0x006c74        0x4d4 work\binIO.o
+                  0x006c74                  binBBversion
+                  0x006c80                  binBB
+                  0x006e40                  getRXbyte
+                  0x006e52                  binReset
+                  0x006e60                  binBBpindirectionset
+                  0x006f80                  binBBpinset
+                  0x0070cc                  binSelfTest
+ .text            0x007148        0x44a work\HD44780.o
+                  0x007148                  LCDread
+                  0x00715c                  LCDwrite
+                  0x007176                  LCDstart
+                  0x00718e                  LCDstop
+                  0x0071a6                  LCDsetup
+                  0x007278                  LCDmacro
+                  0x0073ce                  LCDpins
+                  0x0073dc                  HD44780_Init
+                  0x007418                  HD44780_Reset
+                  0x007458                  HD44780_WriteByte
+                  0x007476                  HD44780_ReadByte
+                  0x00748e                  HD44780_WriteNibble
+                  0x0074c2                  HD44780_ReadNibble
+                  0x007514                  HD44780_I2Cread
+                  0x00754e                  HD44780_I2Cwrite
+                  0x007584                  HD44780_I2Cerror
+ .text            0x007592        0x41a work\AUXpin.o
+                  0x007592                  updatePWM
+                  0x007634                  bpPWM
+                  0x0077f4                  bpFreq
+                  0x007916                  bpAuxHiZ
+                  0x007934                  bpAuxHigh
+                  0x007956                  bpAuxLow
+                  0x007978                  bpAuxRead
+ .text            0x0079ac        0x3fc work\baseIO.o
+                  0x0079ac                  bpEchoState
+                  0x0079ba                  bpWstring
+                  0x0079e6                  bpWline
+                  0x007a1a                  bpWbin
+                  0x007a54                  bpWlongdec
+                  0x007ae0                  bpWintdec
+                  0x007b3e                  bpWdec
+                  0x007ba0                  bpWhex
+                  0x007bca                  bpWhexBuf
+                  0x007bf8                  bpWinthex
+                  0x007c42                  bpWvolts
+                  0x007ce4                  UART1RXRdy
+                  0x007cf0                  UART1RX
+                  0x007d02                  UART1TX
+                  0x007d1e                  UARTbufSetup
+                  0x007d2c                  UARTbuf
+                  0x007d5c                  UARTbufService
+                  0x007d8e                  bpReadFlash
+ .text            0x007da8        0x3cc work\bitbang.o
+                  0x007da8                  bbSetup
+                  0x007e36                  bbI2Cstart
+                  0x007e5c                  bbI2Cstop
+                  0x007e82                  bbReadWriteByte
+                  0x007f18                  bbWriteByte
+                  0x007f7e                  bbReadByte
+                  0x007fe0                  bbReadBit
+                  0x008002                  bbWriteBit
+                  0x008024                  bbClockTicks
+                  0x00804a                  bbMOSI
+                  0x00805c                  bbCLK
+                  0x00806e                  bbCS
+                  0x008080                  bbMISO
+                  0x00808c                  bbH
+                  0x0080c2                  bbL
+                  0x0080ee                  bbPins
+                  0x00814c                  bbR
+ .text            0x008174        0x3ac work\raw2wire.o
+                  0x008174                  R2Wread
+                  0x008180                  R2Wwrite
+                  0x00818e                  R2Wstart
+                  0x0081a8                  R2Wstop
+                  0x0081c2                  R2Wbitr
+                  0x0081ce                  R2Wbitp
+                  0x0081da                  R2Wclkl
+                  0x0081e6                  R2Wclkh
+                  0x0081f2                  R2Wclk
+                  0x0081fe                  R2Wdatl
+                  0x00820a                  R2Wdath
+                  0x008216                  R2Wsetup
+                  0x00831e                  R2Wmacro
+                  0x008356                  R2Wpins
+                  0x008366                  r2wMacro_78133Write
+                  0x008392                  r2wMacro_78133Read
+ .text            0x008520        0x312 work\SUMP.o
+                  0x008520                  SUMP
+                  0x00854e                  SUMPreset
+                  0x00858a                  SUMPlogicCommand
+                  0x0087b0                  SUMPlogicService
+ .text            0x008832        0x2dc work\binwire.o
+                  0x008832                  binrawversionString
+                  0x00883e                  binwire
 
-.const              0x8766        0x3d4 load address 0x000766  
- .const             0x8766        0x16c work\basic.o
-                    0x8812                  tokens
- .const             0x88d2        0x100 work\m_1wire_213.o
-                    0x88d2                  BYTE_ARRAY
- .const             0x89d2         0x80 work\procMenu.o
- .const             0x8a52         0x56 work\raw2wire.o
- .const             0x8aa8         0x1c work\AUXpin.o
- .const             0x8ac4         0x16 work\baseIO.o
-                    0x8ac7                  HEXASCII
- .const             0x8ada         0x16 work\pic.o
- .const             0x8af0         0x10 work\1wire.o
- .const             0x8b00          0xe work\I2C.o
- .const             0x8b0e          0x8 work\base.o
- .const             0x8b16          0x6 work\SPI.o
- .const             0x8b1c          0x6 work\UART.o
- .const             0x8b22          0x6 work\binIO.o
- .const             0x8b28          0x6 work\binwire.o
- .const             0x8b2e          0x6 work\SUMP.o
- .const             0x8b34          0x2 work\main.o
- .const             0x8b36          0x2 work\raw3wire.o
- .const             0x8b38          0x2 work\baseUI.o
+.dinit            0x008b0e        0x2c8
+ .dinit           0x008b0e        0x2c8 data_init
 
-.text             0x000b3a       0x646a
- .text            0x000b3a       0x172a work\basic.o
-                  0x000b3a                  handleelse
-                  0x000b6a                  searchlineno
-                  0x000bd2                  getnumvar
-                  0x000d54                  assign
-                  0x000e02                  evaluate
-                  0x000f40                  interpreter
-                  0x00188a                  printstat
-                  0x0018a4                  list
-                  0x001ab4                  compare
-                  0x001afe                  gettoken
-                  0x001b3a                  basiccmdline
-                  0x001ebe                  HIZbbL
-                  0x001eea                  HIZbbH
-                  0x001f00                  HIZbbR
-                  0x001f28                  basi2cstart
-                  0x001f46                  basi2cstop
-                  0x001f5e                  basi2cread
-                  0x001fb8                  basi2cwrite
-                  0x002016                  checkeeprom
-                  0x002066                  format
-                  0x0020d8                  waiteeprom
-                  0x0020f2                  save
-                  0x0021c2                  load
- .text            0x002264       0x14b4 work\procMenu.o
-                  0x002264                  serviceuser
-                  0x002be0                  getint
-                  0x002f2a                  getrepeat
-                  0x002f70                  consumewhitechars
-                  0x002f94                  changemode
-                  0x0030a2                  cmdhistory
-                  0x0031e2                  getnumber
-                  0x003362                  versionInfo
-                  0x00343a                  statusInfo
-                  0x003508                  pinStates
-                  0x0035e0                  pinDirection
-                  0x0035fe                  pinState
-                  0x00361c                  setDisplayMode
-                  0x003664                  setBaudRate
-                  0x0036d8                  agree
- .text            0x003718        0xeae work\en_US.o
-                  0x003718                  bpmessages
- .text            0x0045c6        0x906 work\UART.o
-                  0x0045c6                  UARTread
-                  0x004626                  UARTwrite
-                  0x004636                  UARTsetup
-                  0x0048b6                  UARTcleanup
-                  0x0048c0                  UARTmacro
-                  0x0049de                  UARTstart
-                  0x004a08                  UARTstop
-                  0x004a2a                  UARTperiodic
-                  0x004aaa                  UARTpins
-                  0x004ab8                  binUARTversionString
-                  0x004ac4                  binUART
- .text            0x004ecc        0x8e6 work\1wire.o
-                  0x004ecc                  OWread
-                  0x004ed8                  OWwrite
-                  0x004ee8                  OWbitr
-                  0x004ef4                  OWbitclk
-                  0x004f0a                  OWdatl
-                  0x004f34                  OWdath
-                  0x004f5e                  OWsetup
-                  0x004f9c                  OWmacro
-                  0x00528e                  OWpins
-                  0x00529c                  DS1wireReset
-                  0x0052fa                  DS1wireID
-                  0x005370                  OWFirst
-                  0x00538c                  OWNext
-                  0x005396                  OWSearch
-                  0x005522                  OWVerify
-                  0x0055de                  docrc8
-                  0x0055fe                  bin1WIREversionString
-                  0x00560a                  bin1WIRE
- .text            0x0057b2        0x8c8 work\SPI.o
-                  0x0057b2                  SPIstartr
-                  0x0057cc                  SPIstart
-                  0x0057e6                  SPIstop
-                  0x0057f6                  SPIread
-                  0x005802                  SPIwrite
-                  0x005826                  SPIsetup
-                  0x005a78                  SPIcleanup
-                  0x005a80                  SPImacro
-                  0x005ad0                  SPIpins
-                  0x005ade                  spiSetup
-                  0x005b86                  spiDisable
-                  0x005bae                  spiWriteByte
-                  0x005bca                  spiSniffer
-                  0x005cb0                  spiSlaveSetup
-                  0x005d96                  spiSlaveDisable
-                  0x005dbc                  binSPIversionString
-                  0x005dc8                  binSPI
- .text            0x00607a        0x7ea work\I2C.o
-                  0x00607a                  I2Cread
-                  0x0060c8                  I2Cwrite
-                  0x006146                  I2Cstart
-                  0x00618c                  I2Cstop
-                  0x0061d2                  I2Csetup
-                  0x0062ca                  I2Ccleanup
-                  0x0062dc                  I2Cmacro
-                  0x0063d4                  I2Cpins
-                  0x0063e2                  hwi2cstart
-                  0x0063f2                  hwi2cstop
-                  0x006402                  hwi2cgetack
-                  0x006410                  hwi2csendack
-                  0x006436                  hwi2cwrite
-                  0x00644a                  hwi2cread
-                  0x006460                  hwi2cSetup
-                  0x006486                  I2C_SnifferSetup
-                  0x0064fa                  I2C_Sniffer
-                  0x0066b8                  binI2CversionString
-                  0x0066c4                  binI2C
- .text            0x006864        0x740 work\pic.o
-                  0x006864                  picinit
-                  0x006942                  piccleanup
-                  0x006952                  picstart
-                  0x006984                  picstop
-                  0x0069a4                  picread
-                  0x006ab0                  picwrite
-                  0x006c92                  picmacro
-                  0x006d3a                  picpins
-                  0x006d48                  binpic
+.text             0x008dd6        0xc2e
+ .text            0x008dd6        0x292 work\selftest.o
+                  0x008dd6                  selfTest
+                  0x008fa8                  bpADCPinTest
+                  0x008fea                  bpBusPinsTest
+                  0x00903c                  bpTest
+ .text            0x009068        0x240 work\base.o
+                  0x009068                  clearModeConfig
+                  0x0090c4                  bpInit
+                  0x009104                  bpADC
+                  0x00911e                  bpADCprobe
+                  0x009130                  bpADCCprobe
+                  0x00918e                  InitializeUART1
+                  0x0091b4                  bpWbyte
+                  0x00923a                  bpDelayMS
+                  0x00926c                  bpDelayUS
+ .text            0x0092a8        0x206 work\raw3wire.o
+                  0x0092a8                  R3Wread
+                  0x0092b6                  R3Wwrite
+                  0x0092de                  R3Wstartr
+                  0x0092fc                  R3Wstart
+                  0x00931a                  R3Wstop
+                  0x009338                  R3Wbitr
+                  0x009344                  R3Wbitp
+                  0x009350                  R3Wclk
+                  0x00935c                  R3Wclkh
+                  0x009368                  R3Wclkl
+                  0x009374                  R3Wdath
+                  0x009380                  R3Wdatl
+                  0x00938c                  R3Wsetup
+                  0x0094a0                  R3Wpins
+ .text            0x0094ae        0x1f4 work\m_1wire_213.o
+                  0x0094ae                  OWReset
+                  0x009534                  OWWriteByte
+                  0x009592                  OWWriteBit
+                  0x0095cc                  OWReadByte
+                  0x009632                  OWReadBit
+                  0x00966a                  PROBE_CHECKSUM
+ .text            0x0096a2        0x12a work\baseUI.o
+                  0x0096a2                  bpMsg
+                  0x00972c                  bpMsgBR
+                  0x009742                  printHelp
+ .text            0x0097cc         0xde work\uart2io.o
+                  0x0097cc                  UART2Setup
+                  0x009850                  UART2Enable
+                  0x00985c                  UART2Disable
+                  0x009878                  UART2TX
+                  0x00988c                  UART2RX
+                  0x00989e                  UART2RXRdy
+ .text            0x0098aa         0x82 work\binIOhelpers.o
+                  0x0098aa                  binIOperipheralset
+ .text            0x00992c         0x6e work\main.o
+                  0x00992c                  main
+                  0x00993a                  Initialize
+ .text            0x00999a         0x6a work\busPirateCore.o
+                  0x00999a                  nullfunc1
+                  0x0099ac                  nullfunc2
+                  0x0099c2                  nullfunc3
+                  0x0099d6                  nullfunc4
+                  0x0099ea                  HiZsetup
+                  0x0099f0                  HiZcleanup
+                  0x0099f6                  HiZpins
 
-.dinit            0x006fa4        0x552
- .dinit           0x006fa4        0x552 data_init
-
-.text             0x0074f6       0x2ad2
- .text            0x0074f6        0x4d4 work\binIO.o
-                  0x0074f6                  binBBversion
-                  0x007502                  binBB
-                  0x0076c2                  getRXbyte
-                  0x0076d4                  binReset
-                  0x0076e2                  binBBpindirectionset
-                  0x007802                  binBBpinset
-                  0x00794e                  binSelfTest
- .text            0x0079ca        0x444 work\HD44780.o
-                  0x0079ca                  LCDread
-                  0x0079de                  LCDwrite
-                  0x0079f8                  LCDstart
-                  0x007a10                  LCDstop
-                  0x007a28                  LCDsetup
-                  0x007af6                  LCDmacro
-                  0x007c4a                  LCDpins
-                  0x007c58                  HD44780_Init
-                  0x007c94                  HD44780_Reset
-                  0x007cd4                  HD44780_WriteByte
-                  0x007cf2                  HD44780_ReadByte
-                  0x007d0a                  HD44780_WriteNibble
-                  0x007d3e                  HD44780_ReadNibble
-                  0x007d90                  HD44780_I2Cread
-                  0x007dca                  HD44780_I2Cwrite
-                  0x007e00                  HD44780_I2Cerror
- .text            0x007e0e        0x418 work\baseIO.o
-                  0x007e0e                  bpUserNumberPrompt
-                  0x007e1c                  bpGetUserInput
-                  0x007e2a                  bpEchoState
-                  0x007e38                  bpWstring
-                  0x007e64                  bpWline
-                  0x007e98                  bpWbin
-                  0x007ed2                  bpWlongdec
-                  0x007f5e                  bpWintdec
-                  0x007fbc                  bpWdec
-                  0x00801e                  bpWhex
-                  0x008048                  bpWhexBuf
-                  0x008076                  bpWinthex
-                  0x0080c0                  bpWvolts
-                  0x008162                  UART1RXRdy
-                  0x00816e                  UART1RX
-                  0x008180                  UART1TX
-                  0x00819c                  UARTbufSetup
-                  0x0081aa                  UARTbuf
-                  0x0081da                  UARTbufService
-                  0x00820c                  bpReadFlash
- .text            0x008226        0x416 work\AUXpin.o
-                  0x008226                  updatePWM
-                  0x0082c8                  bpPWM
-                  0x008484                  bpFreq
-                  0x0085a6                  bpAuxHiZ
-                  0x0085c4                  bpAuxHigh
-                  0x0085e6                  bpAuxLow
-                  0x008608                  bpAuxRead
- .text            0x00863c        0x3cc work\bitbang.o
-                  0x00863c                  bbSetup
-                  0x0086ca                  bbI2Cstart
-                  0x0086f0                  bbI2Cstop
-                  0x008716                  bbReadWriteByte
-                  0x0087ac                  bbWriteByte
-                  0x008812                  bbReadByte
-                  0x008874                  bbReadBit
-                  0x008896                  bbWriteBit
-                  0x0088b8                  bbClockTicks
-                  0x0088de                  bbMOSI
-                  0x0088f0                  bbCLK
-                  0x008902                  bbCS
-                  0x008914                  bbMISO
-                  0x008920                  bbH
-                  0x008956                  bbL
-                  0x008982                  bbPins
-                  0x0089e0                  bbR
- .text            0x008a08        0x3a8 work\raw2wire.o
-                  0x008a08                  R2Wread
-                  0x008a14                  R2Wwrite
-                  0x008a22                  R2Wstart
-                  0x008a3c                  R2Wstop
-                  0x008a56                  R2Wbitr
-                  0x008a62                  R2Wbitp
-                  0x008a6e                  R2Wclkl
-                  0x008a7a                  R2Wclkh
-                  0x008a86                  R2Wclk
-                  0x008a92                  R2Wdatl
-                  0x008a9e                  R2Wdath
-                  0x008aaa                  R2Wsetup
-                  0x008bae                  R2Wmacro
-                  0x008be6                  R2Wpins
-                  0x008bf6                  r2wMacro_78133Write
-                  0x008c22                  r2wMacro_78133Read
- .text            0x008db0        0x312 work\SUMP.o
-                  0x008db0                  SUMP
-                  0x008dde                  SUMPreset
-                  0x008e1a                  SUMPlogicCommand
-                  0x009040                  SUMPlogicService
- .text            0x0090c2        0x2dc work\binwire.o
-                  0x0090c2                  binrawversionString
-                  0x0090ce                  binwire
- .text            0x00939e        0x292 work\selftest.o
-                  0x00939e                  selfTest
-                  0x009570                  bpADCPinTest
-                  0x0095b2                  bpBusPinsTest
-                  0x009604                  bpTest
- .text            0x009630        0x240 work\base.o
-                  0x009630                  clearModeConfig
-                  0x00968c                  bpInit
-                  0x0096cc                  bpADC
-                  0x0096e6                  bpADCprobe
-                  0x0096f8                  bpADCCprobe
-                  0x009756                  InitializeUART1
-                  0x00977c                  bpWbyte
-                  0x009802                  bpDelayMS
-                  0x009834                  bpDelayUS
- .text            0x009870        0x202 work\raw3wire.o
-                  0x009870                  R3Wread
-                  0x00987e                  R3Wwrite
-                  0x0098a6                  R3Wstartr
-                  0x0098c4                  R3Wstart
-                  0x0098e2                  R3Wstop
-                  0x009900                  R3Wbitr
-                  0x00990c                  R3Wbitp
-                  0x009918                  R3Wclk
-                  0x009924                  R3Wclkh
-                  0x009930                  R3Wclkl
-                  0x00993c                  R3Wdath
-                  0x009948                  R3Wdatl
-                  0x009954                  R3Wsetup
-                  0x009a64                  R3Wpins
- .text            0x009a72        0x1f4 work\m_1wire_213.o
-                  0x009a72                  OWReset
-                  0x009af8                  OWWriteByte
-                  0x009b56                  OWWriteBit
-                  0x009b90                  OWReadByte
-                  0x009bf6                  OWReadBit
-                  0x009c2e                  PROBE_CHECKSUM
- .text            0x009c66        0x12a work\baseUI.o
-                  0x009c66                  bpMsg
-                  0x009cf0                  bpMsgBR
-                  0x009d06                  printHelp
- .text            0x009d90         0xde work\uart2io.o
-                  0x009d90                  UART2Setup
-                  0x009e14                  UART2Enable
-                  0x009e20                  UART2Disable
-                  0x009e3c                  UART2TX
-                  0x009e50                  UART2RX
-                  0x009e62                  UART2RXRdy
- .text            0x009e6e         0x82 work\binIOhelpers.o
-                  0x009e6e                  binIOperipheralset
- .text            0x009ef0         0x6e work\main.o
-                  0x009ef0                  main
-                  0x009efe                  Initialize
- .text            0x009f5e         0x6a work\busPirateCore.o
-                  0x009f5e                  nullfunc1
-                  0x009f70                  nullfunc2
-                  0x009f86                  nullfunc3
-                  0x009f9a                  nullfunc4
-                  0x009fae                  HiZsetup
-                  0x009fb4                  HiZcleanup
-                  0x009fba                  HiZpins
-
-.isr              0x009fc8          0x2
- .isr             0x009fc8          0x2 default_isr
-                  0x009fc8                  _DefaultInterrupt
+.isr              0x009a04          0x2
+ .isr             0x009a04          0x2 default_isr
+                  0x009a04                  _DefaultInterrupt

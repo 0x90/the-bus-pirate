@@ -171,30 +171,30 @@ void SPIsetup(void)
 		//bpWline(OUMSG_SPI_SPEED);
 		BPMSG1187;
 		//modeConfig.speed=(bpUserNumberPrompt(1, 4, 1)-1);
-		modeConfig.speed=getnumber(1,4,0)-1;
+		modeConfig.speed=getnumber(1,1,4,0)-1;
 	
 		//bpWstring("Clock polarity:\x0D\x0A 1. Idle low *default\x0D\x0A 2. Idle high\x0D\x0A");
 		//bpWmessage(MSG_OPT_CKP);
 		BPMSG1188;
 		//spiSettings.ckp=(bpUserNumberPrompt(1, 2, 1)-1);
-		spiSettings.ckp=getnumber(1,2,0)-1;
+		spiSettings.ckp=getnumber(1,1,2,0)-1;
 	
 		//bpWstring("Output clock edge:\x0D\x0A 1. Idle to active\x0D\x0A 2. Active to idle *default\x0D\x0A");
 		//bpWmessage(MSG_OPT_CKE);
 		BPMSG1189;
 		//spiSettings.cke=(bpUserNumberPrompt(1, 2, 2)-1);
-		spiSettings.cke=getnumber(2,2,0)-1;
+		spiSettings.cke=getnumber(2,1,2,0)-1;
 	
 		//bpWstring("Input sample phase:\x0D\x0A 1. Middle *default\x0D\x0A 2. End\x0D\x0A");
 		//bpWmessage(MSG_OPT_SMP);
 		BPMSG1190;
 		//spiSettings.smp=(bpUserNumberPrompt(1, 2, 1)-1);
-		spiSettings.smp=getnumber(1,2,0)-1;
+		spiSettings.smp=getnumber(1,1,2,0)-1;
 	
 		//bpWmessage(MSG_OPT_OUTPUT_TYPE);
 		BPMSG1142;
 		//modeConfig.HiZ=(~(bpUserNumberPrompt(1, 2, 1)-1));
-		modeConfig.HiZ=(~(getnumber(1,2,0)-1));
+		modeConfig.HiZ=(~(getnumber(1,1,2,0)-1));
 	}
 	else
 	{	//bpWstring("SPI (spd ckp ske smp hiz)=( ");
@@ -234,7 +234,7 @@ void SPImacro(unsigned int macro)
 			//bpWline(OUMSG_SPI_SNIFF_MENU);
 			BPMSG1193;
 			//c=(bpUserNumberPrompt(1, 3, 1)-1);
-			c=getnumber(1,3,0)-1;
+			c=getnumber(1,1,3,0)-1;
 			//bpWline(OUMSG_SPI_SNIFF_BEGIN);
 			BPMSG1194;
 			spiSniffer(c,1);//configure for terminal mode

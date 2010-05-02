@@ -26,7 +26,7 @@
 
 //#define BUSPIRATE_POST //used to switch POST on and off
 
-#define BP_FIRMWARE_STRING "Firmware v4.2 (newterm-basic) "
+#define BP_FIRMWARE_STRING "Firmware v5.0-pre1 (r351)"
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
@@ -46,15 +46,16 @@
 
 #define MAXPROTO 9	// need to set it manually for now (is there a smart way for this?)
 
-#define BP_USE_BASIC
-// basic subsystem
+#define BP_USE_BASIC   // basic subsystem
+
+
 // only 1 should be uncommented
 //#define BASICTEST
 //#define BASICTEST_I2C
 //#define BASICTEST_UART
 //#define BASICTEST_R3W
 //#define BASICTEST_PIC10			// program blink a led
-#define BASICTEST_PIC10_2			// read whole pic
+//#define BASICTEST_PIC10_2			// read whole pic
 
 //sets the address in the bootloader to jump to on the bootloader command
 //must be defined in asm
@@ -137,6 +138,7 @@ struct _command {
 //write a byte to the bus, with optional read where applicable.
 //read a byte from the bus
 
+/*
 enum{
 	CMD_READ,
 	CMD_WRITE,
@@ -144,7 +146,7 @@ enum{
 	CMD_START, //write only [
 	CMD_STARTR,//with reads {
 	CMD_STOP,
-	CMD_MACRO,
+	CMD_MACRO, */
 /**************************************
 *
 *	RAW BUS OPERATION COMMANDS
@@ -155,7 +157,7 @@ enum{
 //set data output to desired state
 //set clock output to desired state
 //send clock ticks
-	CMD_BIT_READ,
+/*	CMD_BIT_READ,
 	CMD_BIT_PEEK,
 	CMD_BIT_CLK,
 	CMD_BIT_CLKH,
@@ -163,14 +165,14 @@ enum{
 	CMD_BIT_DATH,
 	CMD_BIT_DATL,
 	CMD_ERROR_MACRO,
-	CMD_ERROR_MODE,
+	CMD_ERROR_MODE, */
 
 /**************************************
 *
 *	GLOBAL COMMANDS
 *
 *****************************************/
-	CMD_AUXH,
+/*	CMD_AUXH,
 	CMD_AUXL,
 	CMD_AUXIN,
 	CMD_DELAY,
@@ -189,7 +191,7 @@ enum{
 	CMD_ENDOFSYNTAX, //command to signal end of syntax to library
 };
 
-
+*/
 
 //reset all peripherals before configuring a new bus protocol
 void bpInit(void); 

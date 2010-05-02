@@ -124,10 +124,10 @@ void R3Wsetup(void)
 	if(speed==0)
 	{	//bpWmessage(MSG_OPT_BB_SPEED);
 		BPMSG1065;
-		modeConfig.speed=(getnumber(1,3,0)-1);
+		modeConfig.speed=(getnumber(1,1,4,0)-1);
 		//bpWmessage(MSG_OPT_OUTPUT_TYPE);
 		BPMSG1142;
-		modeConfig.HiZ=(~(getnumber(1,2,0)-1));
+		modeConfig.HiZ=(~(getnumber(1,1,2,0)-1));
 		cmderror=0;
 	}
 	else

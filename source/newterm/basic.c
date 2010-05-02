@@ -28,7 +28,6 @@ extern struct _bpConfig bpConfig;
 extern struct _modeConfig modeConfig;
 extern struct _command bpCommand;
 extern proto protos[MAXPROTO];
-extern int getnumber(int def, int max, int x);
 
 #ifdef BP_USE_BASIC
 
@@ -40,47 +39,48 @@ int fors;						// current for
 int gosubs;						// current gosubs
 int datapos;					// read pointer.
 
-const struct token tokens[]=
-{{	STAT_LET,	TOK_LET},
-{	STAT_IF,	TOK_IF},
-{	STAT_THEN,	TOK_THEN},
-{	STAT_ELSE,	TOK_ELSE},
-{	STAT_GOTO, 	TOK_GOTO},
-{	STAT_GOSUB, TOK_GOSUB},
-{	STAT_RETURN, TOK_RETURN},
-{	STAT_REM, 	TOK_REM},
-{	STAT_PRINT, TOK_PRINT},
-{	STAT_INPUT, TOK_INPUT},
-{	STAT_FOR,	TOK_FOR},
-{	STAT_TO,	TOK_TO},
-{	STAT_NEXT,	TOK_NEXT},
-{	STAT_READ,	TOK_READ},
-{	STAT_DATA,	TOK_DATA},
-{	STAT_START,	TOK_START},
-{	STAT_STARTR, TOK_STARTR},
-{	STAT_STOP,	TOK_STOP},
-{	STAT_STOPR, TOK_STOPR},
-{	STAT_SEND,	TOK_SEND},
-{	STAT_RECEIVE, TOK_RECEIVE},
-{	STAT_CLK,	TOK_CLK},
-{	STAT_DAT,	TOK_DAT},
-{	STAT_BITREAD, TOK_BITREAD},
-{	STAT_ADC,	TOK_ADC},
-{	STAT_AUX,	TOK_AUX},
-{	STAT_PSU,	TOK_PSU},
-{	STAT_PULLUP, TOK_PULLUP},
-{	STAT_AUXPIN, TOK_AUXPIN},
-{	STAT_FREQ,	TOK_FREQ},
-{	STAT_DUTY,	TOK_DUTY},
-{	STAT_DELAY,	TOK_DELAY},
-{	STAT_END,	TOK_END}};
 
+char *tokens[]=
+{	STAT_LET,
+	STAT_IF,
+	STAT_THEN,
+	STAT_ELSE,
+	STAT_GOTO,
+	STAT_GOSUB,
+	STAT_RETURN,
+	STAT_REM,
+	STAT_PRINT,
+	STAT_INPUT,
+	STAT_FOR,
+	STAT_TO,
+	STAT_NEXT,
+	STAT_READ,
+	STAT_DATA,
+	STAT_START,
+	STAT_STARTR,
+	STAT_STOP,
+	STAT_STOPR,
+	STAT_SEND,
+	STAT_RECEIVE,
+	STAT_CLK,
+	STAT_DAT,
+	STAT_BITREAD,
+	STAT_ADC,
+	STAT_AUX,
+	STAT_PSU,
+	STAT_PULLUP,
+	STAT_AUXPIN,
+	STAT_FREQ,
+	STAT_DUTY,
+	STAT_DELAY,
+	STAT_END
+};
 
 
 
 
 // insert your favarite basicprogram here:
-unsigned char pgmspace[PGMSIZE]={	// 1kb basic memory
+unsigned char pgmspace[PGMSIZE]; /*={	// 1kb basic memory
 
 // basic basic test :D
 #ifdef BASICTEST
@@ -316,7 +316,7 @@ TOK_LEN+ 1, 0, 190, TOK_END,
 
 0x00,0x00,
 };
-
+*/
 
 
 
@@ -731,7 +731,7 @@ void interpreter(void)
 							{	stop=SYNTAXERROR;
 							}
 	
-							vars[pgmspace[pc]-'A']=getnumber(0, 0x7FFF, 0);
+							vars[pgmspace[pc]-'A']=getnumber(0, 0, 0x7FFF, 0);
 							pc++;
 							handleelse();
 							bpConfig.quiet=1;
@@ -1066,85 +1066,21 @@ void list(void)
 
 	while(pgmspace[pc])
 	{	c=pgmspace[pc];
-		switch(c)
-		{	case TOK_LET:	printstat(tokens[0].statement);
-							break;
-			case TOK_IF:	printstat(tokens[1].statement);
-							break;
-			case TOK_THEN:	printstat(tokens[2].statement);
-							break;
-			case TOK_ELSE:	printstat(tokens[3].statement);
-							break;
-			case TOK_GOTO:	printstat(tokens[4].statement);
-							break;
-			case TOK_GOSUB:	printstat(tokens[5].statement);
-							break;
-			case TOK_RETURN:printstat(tokens[6].statement);
-							break;
-			case TOK_REM:	printstat(tokens[7].statement);
-							break;
-			case TOK_PRINT:	printstat(tokens[8].statement);
-							break;
-			case TOK_INPUT:	printstat(tokens[9].statement);
-							break;
-			case TOK_FOR:	printstat(tokens[10].statement);
-							break;
-			case TOK_TO:	printstat(tokens[11].statement);
-							break;
-			case TOK_NEXT:	printstat(tokens[12].statement);
-							break;
-			case TOK_READ:	printstat(tokens[13].statement);
-							break;
-			case TOK_DATA:	printstat(tokens[14].statement);
-							break;
-			case TOK_START:	printstat(tokens[15].statement);
-							break;
-			case TOK_STARTR:	printstat(tokens[16].statement);
-							break;
-			case TOK_STOP:	printstat(tokens[17].statement);
-							break;
-			case TOK_STOPR:	printstat(tokens[18].statement);
-							break;
-			case TOK_SEND:	printstat(tokens[19].statement);
-							break;
-			case TOK_RECEIVE:	printstat(tokens[20].statement);
-							break;
-			case TOK_CLK:	printstat(tokens[21].statement);
-							break;
-			case TOK_DAT:	printstat(tokens[22].statement);
-							break;
-			case TOK_BITREAD:	printstat(tokens[23].statement);
-							break;
-			case TOK_ADC:	printstat(tokens[24].statement);
-							break;
-			case TOK_AUX:	printstat(tokens[25].statement);
-							break;
-			case TOK_PSU:	printstat(tokens[26].statement);
-							break;
-			case TOK_PULLUP:	printstat(tokens[27].statement);
-							break;
-			case TOK_AUXPIN:	printstat(tokens[28].statement);
-							break;
-			case TOK_FREQ:	printstat(tokens[29].statement);
-							break;
-			case TOK_DUTY:	printstat(tokens[30].statement);
-							break;
-
-			case TOK_DELAY:	printstat(tokens[31].statement);
-							break;
-			case TOK_END:	printstat(tokens[32].statement);
-							break;
-			default:		if(c<TOK_LEN)
-							{	UART1TX(c);
-							}
-							else
-							{	bpBR;
-								//bpWintdec(pc); bpSP;
-								lineno=(pgmspace[pc+1]<<8)+pgmspace[pc+2];
-								pc+=2;
-								bpWintdec(lineno);
-								bpSP;
-							}
+		if(c<TOK_LET)
+		{	UART1TX(c);
+		}
+		else if(c>TOK_LEN)
+		{	bpBR;
+			//bpWintdec(pc); bpSP;
+			lineno=(pgmspace[pc+1]<<8)+pgmspace[pc+2];
+			pc+=2;
+			bpWintdec(lineno);
+			bpSP;
+		}
+		else
+		{	bpSP;
+			bpWstring(tokens[c-TOKENS]);
+			bpSP;
 		}
 		pc++;
 	}
@@ -1175,8 +1111,8 @@ unsigned char gettoken(void)
 {	int i;
 
 	for(i=0; i<NUMTOKEN; i++)
-	{	if(compare(tokens[i].statement))
-		{	return tokens[i].tok;
+	{	if(compare(tokens[i]))
+		{	return TOKENS+i;
 		}
 	}
 	return 0;

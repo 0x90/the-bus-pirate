@@ -299,11 +299,11 @@ void LCDsetup(void)
 		//bpWline(OUMSG_LCD_SETUP_ADAPTER);
 		BPMSG1217;
 		//c=bpUserNumberPrompt(1, 1, 1);
-		getnumber(1,1,0);		// schiet mij maar in een kapotje :S
+		getnumber(1,1,1,0);		// schiet mij maar in een kapotje :S
 	
 		// address of expander?
 		BPMSG1215;
-		HD44780.PCF8574=getnumber(0x40, 255, 0);
+		HD44780.PCF8574=getnumber(0x40,0, 255, 0);
 	}
 	else
 	{	BPMSG1218;
@@ -359,7 +359,7 @@ void LCDmacro(unsigned int c)
 			{	//bpWline(OUMSG_LCD_MACRO_INIT_DISPLAYLINES);
 				BPMSG1220;
 				//c=bpUserNumberPrompt(1, 2, 2);
-				input=getnumber(2, 2, 0);
+				input=getnumber(2,1,2, 0);
 				if(input==1) HD44780_Init(DISPLAYLINES1); else HD44780_Init(DISPLAYLINES2);
 				//bpWline(OUMSG_LCD_MACRO_INIT);
 			}

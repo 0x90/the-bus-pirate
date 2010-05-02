@@ -31,26 +31,26 @@
 #define TOK_NEXT	0x8C
 #define TOK_READ	0x8D
 #define TOK_DATA	0x8E
-#define TOK_START	0x90
-#define TOK_STARTR	0x91
-#define TOK_STOP	0x92
-#define TOK_STOPR	0x93
-#define TOK_SEND	0x94
-#define TOK_RECEIVE	0x95
-#define TOK_CLK		0x96
-#define TOK_DAT		0x97
-#define TOK_BITREAD	0x98
-#define TOK_ADC		0xA0
-#define TOK_AUX		0xA1
-#define TOK_PSU		0xA2
-#define TOK_PULLUP	0xA3
-#define TOK_DELAY	0xA4
+#define TOK_START	0x8F
+#define TOK_STARTR	0x90
+#define TOK_STOP	0x91
+#define TOK_STOPR	0x92
+#define TOK_SEND	0x93
+#define TOK_RECEIVE	0x94
+#define TOK_CLK		0x95
+#define TOK_DAT		0x96
+#define TOK_BITREAD	0x97
+#define TOK_ADC		0x98
+#define TOK_AUX		0x99
+#define TOK_PSU		0x9A
+#define TOK_PULLUP	0x9B
+#define TOK_DELAY	0x9C
 
-#define TOK_AUXPIN	0xA5
-#define TOK_FREQ	0xA6
-#define TOK_DUTY	0xA7
+#define TOK_AUXPIN	0x9D
+#define TOK_FREQ	0x9E
+#define TOK_DUTY	0x9F
 
-#define TOK_END		0xCF
+#define TOK_END		0xA0
 #define TOK_LEN		0xE0
 
 #define NUMTOKEN	33

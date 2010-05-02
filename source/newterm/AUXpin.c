@@ -138,7 +138,7 @@ void bpPWM(void){
 		BPMSG1030;
 		//PWM_period=(16000000/bpUserNumberPrompt(5, 0xffff, 50000))-1;
 	//	PWM_freq=bpUserNumberPrompt(4, 4000, 50);
-		PWM_freq=getnumber(50, 4000, 0);
+		PWM_freq=getnumber(50,4, 4000, 0);
 	}
 
 //	bpWstring("result=");
@@ -178,7 +178,7 @@ void bpPWM(void){
 	{	//bpWstring(OUMSG_AUX_PWM_DUTY);
 		BPMSG1033;
 	//	PWM_pd=bpUserNumberPrompt(2, 99, 50);
-		PWM_pd=getnumber(50,99,0);
+		PWM_pd=getnumber(50,2,99,0);
 	}
 
 //	bpWstring("result=");

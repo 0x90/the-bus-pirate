@@ -19,7 +19,7 @@
 #include "busPirateCore.h"//need access to bpConfig
 extern struct _bpConfig bpConfig; //holds persistant bus pirate settings (see base.h) need hardware version info
 
-
+/*
 // just to keep the linker happy (for now) jtag and lcd only uses them
 unsigned int bpUserNumberPrompt(unsigned int maxBytes, unsigned int maxValue, unsigned int defValue)
 {	return 0;
@@ -28,7 +28,7 @@ unsigned int bpGetUserInput(unsigned int *currentByte, unsigned int maxBytes, un
 {	return 0;
 }
 
-
+*/
 
 /*
 
