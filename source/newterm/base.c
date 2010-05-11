@@ -169,9 +169,11 @@ void bpWbyte(unsigned int c){
 }
 
 //delay in MS
-void bpDelayMS(const unsigned char delay){
-	volatile unsigned int i;
-	volatile unsigned char c;
+//void bpDelayMS(const unsigned char delay)
+void bpDelayMS(int delay)
+{	int i, c;
+//	volatile unsigned int i;
+//	volatile unsigned char c;
 	
 	for(c=0;c<delay;c++){
 		for(i=0;i<4;i++) bpDelayUS(250);
@@ -180,9 +182,10 @@ void bpDelayMS(const unsigned char delay){
 }
 
 //delay in US
-void bpDelayUS(const unsigned char delay)
+//void bpDelayUS(const unsigned char delay)
+void bpDelayUS(int delay)
 {
-	volatile unsigned char i;
+	int i;
 	
 	for(i=0;i<delay;i++){//@32MHz = 16MIPS, 16I/uS
 		asm( "nop" );

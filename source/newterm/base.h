@@ -26,7 +26,7 @@
 
 //#define BUSPIRATE_POST //used to switch POST on and off
 
-#define BP_FIRMWARE_STRING "Firmware v5.0-pre1 (r351)"
+#define BP_FIRMWARE_STRING "Firmware v5.0-pre2 (r352)"
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
@@ -210,6 +210,8 @@ void bpADCCprobe(void);
 void bpWbyte(unsigned int c);
 
 //delays used by many libraries
-void bpDelayMS(const unsigned char delay);
-void bpDelayUS(const unsigned char delay);
+//void bpDelayMS(const unsigned char delay);
+//void bpDelayUS(const unsigned char delay);
+void bpDelayMS(int delay);
+void bpDelayUS(int delay);
 #endif

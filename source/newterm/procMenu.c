@@ -176,6 +176,12 @@ int cmderror;
 
 //int currentproto;	// port to the other way :)
 
+#define USRMACROS	5
+#define USRMACROLEN	32
+
+char usrmacros[USRMACROS][USRMACROLEN];
+int usrmacro;
+
 
 void serviceuser(void)
 {	int cmd, stop;
@@ -195,6 +201,13 @@ void serviceuser(void)
 	cmderror=0;							// we don;t want to start with error do we?
 	binmodecnt=0;
 
+	for(repeat=0; repeat<USRMACROS;repeat++)
+	{	for(temp=0; temp<32; temp++)
+		{	usrmacros[repeat][temp]=0;
+		}
+	}
+	usrmacro=0;
+
 	while(1)
 	{	bpWstring(protos[bpConfig.busMode].protocol_name);
 		if(bpConfig.basic)
@@ -203,7 +216,20 @@ void serviceuser(void)
 		}
 		bpWstring("> ");
 		while(!cmd)
-		{	while(!UART1RXRdy())		// as long as there is no user input poll periodicservice
+		{	if(usrmacro)
+			{	usrmacro--;
+				temp=0;
+				while(usrmacros[usrmacro][temp])
+				{	cmdbuf[cmdend]=usrmacros[usrmacro][temp];
+					UART1TX(usrmacros[usrmacro][temp]);
+					cmdend++;
+					temp++;
+					cmdend&=CMDLENMSK;
+				} 
+				usrmacro=0;
+			}
+
+			while(!UART1RXRdy())		// as long as there is no user input poll periodicservice
 			{	if(modeConfig.periodicService==1)
 				{	if(protos[bpConfig.busMode].protocol_periodic())		// did we print something?
 					{	bpWstring(protos[bpConfig.busMode].protocol_name);
@@ -518,14 +544,14 @@ void serviceuser(void)
 							repeat=getrepeat();
 							//bpWstring(OUMSG_PS_DELAY);
 							BPMSG1099;
-							bpWdec(repeat);
+							bpWintdec(repeat);
 							//bpWline(OUMSG_PS_DELAY_US);
 							BPMSG1100;
 							bpDelayUS(repeat);
 							break;
 				case '%':	repeat=getrepeat();
 							BPMSG1099;
-							bpWdec(repeat);
+							bpWintdec(repeat);
 							BPMSG1212;
 							bpDelayMS(repeat);
 							break;
@@ -537,6 +563,56 @@ void serviceuser(void)
 							bpConfig.basic=1;
 							break;
 #endif
+				case '<':	cmderror=1;
+							temp=1;
+
+							while(cmdbuf[((cmdstart+temp)&CMDLENMSK)]!=0x00)
+							{	if(cmdbuf[((cmdstart+temp)&CMDLENMSK)]=='>') cmderror=0;	// clear error if we found a > before the command ends
+								temp++;
+							}
+							if(!cmderror)
+							{	cmdstart++;
+								cmdstart&=CMDLENMSK;
+								temp=getint();
+								if(cmdbuf[((cmdstart)&CMDLENMSK)]=='=')	// assignment
+								{	if((temp>0)&&(temp<=USRMACROS))
+									{	cmdstart++;
+										cmdstart&=CMDLENMSK;
+										temp--;
+										repeat=0;
+										while(cmdbuf[cmdstart]!='>')
+										{	usrmacros[temp][repeat]=cmdbuf[cmdstart];
+											repeat++;
+											cmdstart++;
+											cmdstart&=CMDLENMSK;
+										}
+									}
+									else
+									{	cmderror=1;
+									}
+								}
+								else
+								{	if(temp==0)
+									{	for(repeat=0; repeat<USRMACROS; repeat++)
+										{	bpWdec(repeat+1);
+											bpWstring(". <");
+											bpWstring(usrmacros[repeat]);
+											bpWline(">");
+										}
+									}
+									else if((temp>0)&&(temp<=USRMACROS))
+									{	//bpWstring("execute : ");
+										BPMSG1236;
+										bpWdec(temp-1);
+										bpBR;
+										usrmacro=temp;
+									}
+									else
+									{	cmderror=1;
+									}
+								}
+							}
+							break;
 					// command for subsys (i2c, UART, etc)
 				case '(':	//bpWline("-macro");
 							cmdstart++;
