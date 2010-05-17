@@ -100,12 +100,14 @@ class BBIO:
 		return 1
 
 	def raw_cfg_pins(self, config):
-		self.port.write(0x40 | config)
+		self.port.write(chr(0x40 | config))
 		self.timeout(0.1)
+		return self.response(1)
 
 	def raw_set_pins(self, pins):
-		self.port.write(0x80 | config)
+		self.port.write(chr(0x80 | config))
 		self.timeout(0.1)
+		return self.response(1)
 
 	def timeout(self, timeout=0.1):
 		select.select([], [], [], timeout)
@@ -162,7 +164,7 @@ class BBIO:
 		self.port.write(chr(0x10 | (byte_count-1)))
 		self.timeout(0.1)
 		for i in range(byte_count):
-			self.port.write(chr(byte_string[i]))
+			self.port.write(byte_string[i])
 			self.timeout(0.1)
 		data = self.response(byte_count+2, True)
 		return data[1:]
