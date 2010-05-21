@@ -155,7 +155,7 @@ unsigned int bpGetRepeatVal(unsigned int totalBytes, unsigned int *currentByte, 
 //CMD statements are defined and enumerated in base.h
 unsigned char ASCII2CMD(unsigned char ASCIIcommand){
 	//process as a number...
-	if(ASCIIcommand>0x2F && ASCIIcommand<0x40) return CMD_WRITE;
+	if(ASCIIcommand>0x2F && ASCIIcommand<0x3A) return CMD_WRITE;
 	
 	switch(ASCIIcommand){
 		case 'A': return CMD_AUXH;
