@@ -13,10 +13,10 @@ def main():
     
     parser = OptionParser()
     
-    parser.add_option("-s", "--size", dest="size", help="size of the memory chip.", type="int")
+    parser.add_option("-c", "--capacity", dest="capacity", help="size of the memory chip.", type="int")
     parser.add_option("-o", "--org", dest="org", help="specify the memory organization mode (8 or 16).", type="int")
     parser.add_option("-a", "--addr", dest="addr", help="set the starting offset of the read or write procedure.", type="int", default=0)
-    parser.add_option("-c", "--count", dest="count", help="the number of data elements to read or write.", type="int", default=0)
+    parser.add_option("-n", "--number", dest="n", help="the number of data elements to read or write.", type="int", default=0)
     parser.add_option("-f", "--file", dest="file", help="the input or output file.", metavar="FILE")
     parser.add_option("-r", "--read", dest="action", help="read the memory chip.", default="read")
     parser.add_option("-w", "--write", dest="action", help="write to the memory chip.")
@@ -26,7 +26,7 @@ def main():
     
     (options,args) = parser.parse_args()
     
-    if (not options.size) or (not options.org) or (not options.file):
+    if (not options.capacity) or (not options.org) or (not options.file):
         parser.print_help()
         exit()      
     
@@ -46,7 +46,7 @@ def main():
     # Now we have raw-wire mode enabled, so first configure peripherals
     # (Power, PullUps, AUX, CS)
     
-    if not rw.raw_cfg_pins( PinCfg.POWER ):
+    if not rw.raw_cfg_pins( PinCfg.POWER | PinCfg.CS ):
         print "Error enabling the internal voltage regulators."
         
     # Configure the raw-wire mode
@@ -68,9 +68,10 @@ def main():
         
     # How many elements to read or write?
     
-    N = options.size / options.org
-    
-    N += options.more
+    if options.n != 0:
+        N = options.n + options.more
+    else:
+        N = options.capacity / options.org + options.more
     
     # Opcodes for microwire memory devices
     #
@@ -78,42 +79,22 @@ def main():
     #Instruction SB Code        x8         x16          x8          x16     Comments
     #   READ     1   10     A8 – A0     A7 – A0                             Reads data stored in memory, at specified address
     #   EWEN     1   00    11XXXXXXX    11XXXXXX                            Write enable must precede all programming modes
+    #
+    # ....
+    #
 
     if options.action == "read":
         # Enable the Chip select signal
         rw.CS_High()
     
-        # Send the start bit and the opcode
-        rw.data_high()
-        rw.clk_tick()
-    
-        # the opcode, ad data is high we don't send it again
-        rw.clk_tick()
-    
-        rw.data_low()
-        rw.clk_tick()
-    
-        # now the address to read
-        
-        # if we are reading bytes we will need an extra bit (yes I know, it depends of the memory size but first I will test with 4K ones)
-        if options.org == 8:
-            if options.addr and 0x100:
-                rw.data_high()
-            else:
-                rw.data_low()
-                
-            rw.clk_tick()
+        rw.bulk_trans(1,"\x06")
             
         rw.bulk_trans(1,"\x00")
-    
-        # ignore the  dummy 0 on the data out
-        
-        rw.clk_tick()
         
         # and read the items
         
         if options.verbose:
-            print "Reading %d bits in %d elements of %d bits" % (options.size, N, options.org)
+            print "Reading %d elements of %d bits" % (N, options.org)
         
         if options.org == 8:
             for i in range(0,N):
@@ -138,6 +119,8 @@ def main():
                     print "%02X" % (ord(byte),) ,
         
         f.close()
+        
+        rw.CS_Low()
         
         print "Done."
     

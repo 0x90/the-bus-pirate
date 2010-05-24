@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-python -u ./MicroWire.py -s 4096 -o 16 -f output.dat -v
+python -u ./MicroWire.py -s 4096 -o 8 -f output.dat -v -c 8
