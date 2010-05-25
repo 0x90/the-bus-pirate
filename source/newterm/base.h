@@ -26,7 +26,7 @@
 
 //#define BUSPIRATE_POST //used to switch POST on and off
 
-#define BP_FIRMWARE_STRING "Firmware v5.0-pre2 (r352)"
+#define BP_FIRMWARE_STRING "Firmware v5.0-pre2 (r356)"
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT

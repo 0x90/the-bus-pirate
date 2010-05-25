@@ -111,7 +111,8 @@ void bpPWM(void){
 		//bpWline(OUMSG_AUX_PWM_OFF);
 		BPMSG1028;
 		AUXmode=AUX_IO;
-		return;
+
+		if(cmdbuf[((cmdstart+1)&CMDLENMSK)]==0x00)  return; // return if no arguments to function
 	}
 
 	done=0;

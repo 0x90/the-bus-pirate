@@ -73,6 +73,7 @@ char *tokens[]=
 	STAT_FREQ,
 	STAT_DUTY,
 	STAT_DELAY,
+	STAT_MACRO,
 	STAT_END
 };
 
@@ -871,6 +872,7 @@ void interpreter(void)
 							pc+=4;
 		
 							protos[bpConfig.busMode].protocol_start();
+							handleelse();
 							//protostart();
 							break;
 			case TOK_STARTR:	pcupdated=1;
@@ -878,23 +880,27 @@ void interpreter(void)
 		
 							protos[bpConfig.busMode].protocol_startR();
 							//protostartr();
+							handleelse();
 							break;
 			case TOK_STOP:	pcupdated=1;
 							pc+=4;
 		
 							protos[bpConfig.busMode].protocol_stop();
 							//protostop();
+							handleelse();
 							break;
 			case TOK_STOPR:	pcupdated=1;
 							pc+=4;
 		
 							protos[bpConfig.busMode].protocol_stopR();
 							//protostopr();
+							handleelse();
 							break;
 			case TOK_SEND:	pcupdated=1;
 							pc+=4;
 							//protowrite(getnumvar());
 							protos[bpConfig.busMode].protocol_send((int)assign());
+							handleelse();
 							break;
 			case TOK_AUX:	pcupdated=1;
 							pc+=4;
@@ -907,6 +913,7 @@ void interpreter(void)
 							{	//protoauxl();
 								bpAuxLow();
 							}
+							handleelse();
 							
 							break;
 			case TOK_PSU:	pcupdated=1;
@@ -922,6 +929,7 @@ void interpreter(void)
 								BP_VREG_OFF();
 								modeConfig.vregEN=0;
 							}
+							handleelse();
 						
 							break;
 
@@ -934,6 +942,7 @@ void interpreter(void)
 							else
 							{	modeConfig.altAUX=1;
 							}
+							handleelse();
 						
 							break;
 			case TOK_FREQ:	pcupdated=1;
@@ -946,6 +955,7 @@ void interpreter(void)
 							if(PWMduty>99)	PWMduty=99;
 
 							updatePWM();
+							handleelse();
 
 							break;
 			case TOK_DUTY:	pcupdated=1;
@@ -958,6 +968,7 @@ void interpreter(void)
 							if(PWMduty>99)	PWMduty=99;
 
 							updatePWM();
+							handleelse();
 						
 							break;
 
@@ -973,6 +984,7 @@ void interpreter(void)
 							{	//protodatl();
 								protos[bpConfig.busMode].protocol_datl();
 							}
+							handleelse();
 						
 							break;
 			case TOK_CLK:	pcupdated=1;
@@ -989,6 +1001,7 @@ void interpreter(void)
 										protos[bpConfig.busMode].protocol_clk();
 										break;
 							}
+							handleelse();
 						
 							break;
 			case TOK_PULLUP:	pcupdated=1;
@@ -1009,13 +1022,21 @@ void interpreter(void)
 #else
 							pc+=len-1; 	// fail silently
 #endif							
+							handleelse();
+
 							break;
 			case TOK_DELAY:	pcupdated=1;
 							pc+=4;
-						temp=assign();
-						bpWstring("Delay ");
-						bpWintdec(temp); bpBR;
+							temp=assign();
 							bpDelayMS(temp);
+							handleelse();
+
+							break;
+			case TOK_MACRO:	pcupdated=1;
+							pc+=4;
+							temp=assign();
+							protos[bpConfig.busMode].protocol_macro(temp);
+							handleelse();
 							break;
 			case TOK_END:	//bpWstring(STAT_END);
 							stop=1; 

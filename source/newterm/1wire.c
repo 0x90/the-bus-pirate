@@ -465,7 +465,8 @@ void DS1wireReset(void){
 	BPMSG1017;	
 	if(c==0){
 		//bpWline(OUMSG_1W_RESET_OK);			
-		BPMSG1018;
+		//BPMSG1018; //remove?
+		BPMSG1185;
 	}else{
 		//bpWstring(OUMSG_1W_RESET_ERROR);
 		BPMSG1019;

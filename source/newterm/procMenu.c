@@ -30,6 +30,7 @@ extern struct _command bpCommand;
 extern proto protos[MAXPROTO];
 
 void walkdungeon(void);
+void walkdungeon(void) {}
 
 void setMode(void); //change protocol/bus mode
 void setDisplayMode(void); //user terminal number display mode dialog (eg HEX, DEC, BIN, RAW)
@@ -570,6 +571,7 @@ void serviceuser(void)
 							{	if(cmdbuf[((cmdstart+temp)&CMDLENMSK)]=='>') cmderror=0;	// clear error if we found a > before the command ends
 								temp++;
 							}
+							if(temp>=(USRMACROLEN+3)) cmderror=1; // too long (avoid overflows)
 							if(!cmderror)
 							{	cmdstart++;
 								cmdstart&=CMDLENMSK;
@@ -579,6 +581,9 @@ void serviceuser(void)
 									{	cmdstart++;
 										cmdstart&=CMDLENMSK;
 										temp--;
+										for(repeat=0; repeat<USRMACROLEN; repeat++)
+										{	usrmacros[temp][repeat]=0;
+										}
 										repeat=0;
 										while(cmdbuf[cmdstart]!='>')
 										{	usrmacros[temp][repeat]=cmdbuf[cmdstart];
@@ -602,8 +607,8 @@ void serviceuser(void)
 									}
 									else if((temp>0)&&(temp<=USRMACROS))
 									{	//bpWstring("execute : ");
-										BPMSG1236;
-										bpWdec(temp-1);
+										//BPMSG1236;
+										//bpWdec(temp-1);
 										bpBR;
 										usrmacro=temp;
 									}
@@ -620,8 +625,8 @@ void serviceuser(void)
 							sendw=getint();
 							consumewhitechars();
 							if(cmdbuf[((cmdstart)&CMDLENMSK)]==')' )
-							{	cmdstart++;				// skip )
-								cmdstart&=CMDLENMSK;
+							{	//cmdstart++;				// skip )
+								//cmdstart&=CMDLENMSK;
 								//bpWdec(sendw);
 								protos[bpConfig.busMode].protocol_macro(sendw);
 								bpBR;

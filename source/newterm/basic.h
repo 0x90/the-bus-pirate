@@ -50,7 +50,8 @@
 #define TOK_FREQ	0x9E
 #define TOK_DUTY	0x9F
 
-#define TOK_END		0xA0
+#define TOK_MACRO	0xA0
+#define TOK_END		0xA1
 #define TOK_LEN		0xE0
 
 #define NUMTOKEN	33
@@ -91,7 +92,7 @@
 #define STAT_AUXPIN	"AUXPIN"
 #define STAT_FREQ	"FREQ"
 #define STAT_DUTY	"DUTY"
-
+#define STAT_MACRO	"MACRO"
 
 // runtime vars
 #define PGMSIZE		1024
