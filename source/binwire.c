@@ -33,6 +33,9 @@ void binrawversionString(void);
 	* 00001101 - Data high
     * 0001xxxx – Bulk transfer, send 1-16 bytes (0=1byte!)
     * 0010xxxx - Bulk clock ticks, send 1-16 ticks
+# 0011xxxx - Bulk bits, send 1-8 bits of the next byte (0=1bit!)
+# 0101xxxx - Bulk read, read 1-16bytes (0=1byte!)
+
     * 0100wxyz – Configure peripherals, w=power, x=pullups, y=AUX, z=CS
     * 0110000x – Set speed
     * 1000wxyz – Config, w=output type, x=3wire, y=lsb, z=n/a
@@ -157,6 +160,26 @@ void binwire(void){
 				bbClockTicks(inByte);
 				UART1TX(1);//send 1/OK		
 				break;
+
+			case 0b0011: //# 0011xxxx - Bulk bits, send 1-8 bits of the next byte (0=1bit!)
+				inByte&=(~0b11110000); //clear command portion
+				inByte++; //increment by 1, 0=1byte
+				UART1TX(1);//send 1/OK		
+				while(U1STAbits.URXDA == 0);//wait for a byte
+				rawCommand=U1RXREG; //get byte, reuse rawCommand variable
+				for(i=0;i<inByte;i++){
+					if(rawCommand & 0b10000000){//send 1
+						bbWriteBit(1); //send bit
+					}else{ //send 0
+						bbWriteBit(0); //send bit
+					}
+					rawCommand=rawCommand<<1; //pop the MSB off
+				}
+				UART1TX(1);
+				break;
+
+			//case 0b0101: //# 0101xxxx - Bulk read, read 1-16bytes (0=1byte!)
+			
 
 			case 0b0100: //configure peripherals w=power, x=pullups, y=AUX, z=CS
 				binIOperipheralset(inByte);
