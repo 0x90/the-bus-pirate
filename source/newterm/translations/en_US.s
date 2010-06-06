@@ -244,17 +244,16 @@ _bpmessages:
 	.pascii	"b\tSet baudrate\t\t\t123"
 	.pascii	"c/C\tAUX assignment (aux/CS)\t\t0x123"
 	.pascii	"d/D\tMeasure ADC (once/CONT.)\t0b110\tSend value"
-	.pascii	"g\tGenerate frequency/PWM\t\tr\tRead"
-	.pascii	"h\tCommandhistory\t\t\t/\tCLK hi"
-	.pascii	"i\tVersioninfo/statusinfo\t\t\\\tCLK lo"
-	.pascii	"l/L\tBitorder (msb/LSB)\t\t^\tCLK tick"
-	.pascii	"m\tChange mode\t\t\t-\tDAT hi"
-	.pascii	"o\tSet output type\t\t\t_\tDAT lo"
-	.pascii	"p/P\tPullup resistors (off/ON)\t.\tDAT read"
-	.pascii	"s\tScript engine\t\t\t!\tBit read"
-	.pascii	"v\tDisplay voltages/states\t\t:\tRepeat e.g. r:10"
-	.pascii	"w/W\tPSU (off/ON)\t\t<x>/<x= >/<0>\tUsermacro x/assign x/list all"
-
-
+	.pascii	"f\tMeasure frequency\t\tr\tRead"
+	.pascii	"g\tGenerate frequency/PWM\t\t/\tCLK hi"
+	.pascii	"h\tCommandhistory\t\t\t\\\tCLK lo"
+	.pascii	"i\tVersioninfo/statusinfo\t\t^\tCLK tick"
+	.pascii	"l/L\tBitorder (msb/LSB)\t\t-\tDAT hi"
+	.pascii	"m\tChange mode\t\t\t_\tDAT lo"
+	.pascii	"o\tSet output type\t\t\t.\tDAT read"
+	.pascii	"p/P\tPullup resistors (off/ON)\t!\tBit read"
+	.pascii	"s\tScript engine\t\t\t:\tRepeat e.g. r:10"
+	.pascii	"v\tShow volts/states\t<x>/<x= >/<0>\tUsermacro x/assign x/list all"
+	.pascii	"w/W\tPSU (off/ON)"
 
 #endif

@@ -139,7 +139,7 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c|eetext.s|ee.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
@@ -308,7 +308,7 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={DE18EB1A-B46B-486B-B96F-A811A635DFAC}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-as.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c|eetext.s|ee.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-g
 TraceCmdString=
@@ -327,32 +327,6 @@ ToolArgsString=-g -Wall -mlarge-code -mlarge-data
 TraceCmdString=
 DebugOptions=
 [File025]
-Location=D:\the-bus-pirate\trunk\source\newterm\work\eetext.o
-Folder=Intermediary
-DeviceName=PIC24FJ64GA002
-LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
-LanguageToolID={DE18EB1A-B46B-486B-B96F-A811A635DFAC}
-LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-as.exe
-PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c|eetext.s|ee.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
-SuiteArgsString=
-ToolArgsString=-g
-TraceCmdString=
-DebugOptions=
-[File026]
-Location=D:\the-bus-pirate\trunk\source\newterm\work\ee.o
-Folder=Intermediary
-DeviceName=PIC24FJ64GA002
-LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
-LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
-LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-gcc.exe
-PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c|eetext.s|ee.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
-SuiteArgsString=
-ToolArgsString=-g -Wall -mlarge-code -mlarge-data
-TraceCmdString=
-DebugOptions=
-[File027]
 Location=D:\the-bus-pirate\trunk\source\newterm\.\output\busPirate.cof
 Folder=Output
 DeviceName=PIC24FJ64GA002
@@ -360,12 +334,12 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={433C3D55-811D-409D-A6BF-159CF9355B42}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-ld.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c|eetext.s|ee.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
 TraceCmdString=
 DebugOptions=
-[File028]
+[File026]
 Location=D:\the-bus-pirate\trunk\source\newterm\.\output\busPirate.hex
 Folder=Output
 DeviceName=PIC24FJ64GA002
@@ -373,7 +347,7 @@ LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 LanguageToolID={433C3D55-811D-409D-A6BF-159CF9355B42}
 LanguageToolLocation=C:\Program Files\Microchip\MPLAB C30\bin\pic30-ld.exe
 PPAD=$(BINDIR)|.\output||$(TMPDIR)|.\work||$(AINDIR)||$(INCDIR)||$(LIBDIR)|C:\Program Files\Microchip\MPLAB C30\lib||$(LKRDIR)||
-SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c|eetext.s|ee.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
+SOLK=<src>|main.c|raw2wire.c|raw3wire.c|SPI.c|base.c|I2C.c|m_1wire_213.c|1wire.c|AUXpin.c|busPirateCore.c|procMenu.c|baseIO.c|baseUI.c|uart2io.c|UART.c|selftest.c|bitbang.c|binIO.c|binIOhelpers.c|binwire.c|SUMP.c|basic.c|pic.c|translations\en_US.s|HD44780.c||<obj>||<lib>||<lkr>|p24FJ64GA002.gld||
 SuiteArgsString=
 ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
 TraceCmdString=

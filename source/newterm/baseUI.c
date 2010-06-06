@@ -208,4 +208,5 @@ void printHelp(void)
 	HLP1019;
 	HLP1020;
 	HLP1021;
+	HLP1022;
 }
