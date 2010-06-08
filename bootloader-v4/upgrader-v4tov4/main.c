@@ -47,17 +47,6 @@ void  bpWintdec(unsigned int i);
 _CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
 _CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //turn off junk we don't need
 
-/*
-	Store delay timeout value & user reset vector at start of user space
-
-	Value of userReset should be the start of actual program code since 
-	these variables will be stored in the same area.
-
-	some heritage from the old bootloader
-*/
-unsigned int userReset  __attribute__ ((space(prog),section(".init"))) = 0xC04 ;
-unsigned char timeout  __attribute__ ((space(prog),section(".init"))) = 0x00 ;
-
 
 // it all happens from here
 int main(void)
@@ -103,7 +92,7 @@ int main(void)
 	Ferase(FWLOCATION);
 	bpWline(" done");
 
-	// write 8 rows (8*64=512 'words')
+	// write 8 rows from firmware array in firmware.h (8*64=512 'words')
 	bpWstring("Writing row ");
 	for(i=0; i<8; i++)
 	{	UART1TX(0x30+i);
@@ -164,7 +153,7 @@ unsigned char checkChar(unsigned char c){
 
 void usermessage(void){
 	bpWline("");
-	bpWline("Universal DS30 Loader installer v0.3 (C)hris 2010");
+	bpWline("Universal DS30 Loader installer v0.4 (C)hris 2010");
 	bpWline("");
 	bpWline("Released under Creative Commons null license.");
 	#ifdef __DEBUG
