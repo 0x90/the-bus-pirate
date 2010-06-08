@@ -21,49 +21,7 @@
 #include "base.h"
 #include "busPirateCore.h"
 
-/*
-//be sure mode entries line up with the _bpConfig.busMode list in busPirateCore.h
-char* mode[]  = 
-   {
-       "HiZ",
-#ifdef BP_USE_1WIRE
-       "1-WIRE",
-#endif
-#ifdef BP_USE_HWUART
-		"UART",
-#endif
-#ifdef BP_USE_I2C
-       "I2C",
-#endif
-#ifdef BP_USE_HWSPI
-       "SPI",
-#endif
-#ifdef BP_USE_JTAG
-		"JTAG",
-#endif
-#ifdef BP_USE_RAW2WIRE
-       "RAW2WIRE",
-#endif
-#ifdef BP_USE_RAW3WIRE
-       "RAW3WIRE",
-#endif
-#ifdef BP_USE_PCATKB
-		"PC KEYBOARD",
-#endif
-#ifdef BP_USE_MIDI
-		"MIDI",
-#endif
-#ifdef BP_USE_LIN
-		"LIN",
-#endif
-#ifdef BP_USE_CAN
-		"CAN",
-#endif
-#ifdef BP_USE_LCD
-		"LCD",
-#endif
-   };
-*/
+
 //include functions needed for protocol libraries
 //add new libraries here
 #ifdef BP_USE_1WIRE
@@ -108,93 +66,6 @@ char* mode[]  =
 
 extern struct _bpConfig bpConfig;
 extern struct _modeConfig modeConfig;
-
-/*
-//send command to correct protocol library for processing
-//switch based on bpConfig.busMode variable
-void bpProcess(void){
-	switch(bpConfig.busMode){
-	#ifdef BP_USE_1WIRE
-		case DS1WIRE:
-			DS1wireProcess();
-			break;
-	#endif
-	#ifdef BP_USE_HWUART
-		case HWUART:
-			uartProcess();
-			break;
-	#endif
-	#ifdef BP_USE_I2C
-		case I2C:
-			i2cProcess();
-			break;
-	#endif
-	#ifdef BP_USE_HWSPI
-		case HWSPI:
-			spiProcess();
-			break;
-	#endif
-	#ifdef BP_USE_JTAG
-		case JTAG:
-			jtagProcess();
-			break;
-	#endif
-	#ifdef BP_USE_RAW2WIRE
-		case RAW2WIRE:
-			r2wProcess();
-			break;
-	#endif
-	#ifdef BP_USE_RAW3WIRE
-		case RAW3WIRE:
-			r3wProcess();
-			break;
-	#endif
-	#ifdef BP_USE_PCATKB
-		case PCATKB:
-			kbProcess();	
-			break;
-	#endif
-	#ifdef BP_USE_MIDI
-		case MIDI:
-			midiProcess();	
-			break;
-	#endif
-	#ifdef BP_USE_LIN
-		case LIN:
-			linProcess();		
-			break;
-	#endif
-	#ifdef BP_USE_CAN
-		case CAN:
-			canProcess();	
-			break;
-	#endif
-	#ifdef BP_USE_LCD
-		case LCD:
-			HD44780Process();	
-			break;
-	#endif
-		default: //error
-			BP_LEDMODE=0;//turn off MODE LED, error/no mode (Hi-Z)
-			break;
-	}
-}
-
-
-//the number of bus modes available
-//used to navigate the protocol list array, 
-//done here because mode array isn't availble to other functions
-unsigned char bpNumBusModes(void){return (sizeof(mode)/2);}
-
-//echo the name of the current bus mode to the user terminal
-//used to show user prompt
-void bpEchoCurrentBusMode(void){bpWstring(mode[bpConfig.busMode]);}
-
-//echo the name of the bus mode in the name array at position m to the user terminal
-//used for listing available bus modes
-void bpEchoBusMode(unsigned char m){bpWstring(mode[m]);}
-*/
-
 extern int cmderror;	
 
 void nullfunc1(void)

@@ -47,127 +47,6 @@ void pinStates(void);
 //void easterEgg(void);
 int agree(void);
 
-/*
-//check byte c for valid menu commands, 0=no menu commands
-unsigned char checkMenuCommand(unsigned char c){
-
-	if((c>0x60) && (c<0x7b)){c-=0x20;}//change lowercase to uppercase
-	switch(c){//check for command codes
-		case MENU_BUSMODE://set protocol
-			setMode();
-			break;
-		case MENU_DISPLAYMODE://set output format
-			setDisplayMode();
-			break;	
-		case MENU_PULLUPS: //pullups
-			#if defined( BUSPIRATEV0A) || defined( BUSPIRATEV2)
-				//don't allow pullups on some modules. also: V0a limitation of 2 resistors
-				if(modeConfig.allowpullup==0){bpWmessage(MSG_ERROR_MODE);break;}//is it allowed?
-				setPullups();
-			#elif defined(BUSPIRATEV1A)
-				bpWline(OUMSG_PM_1A_P_DEPRECATED);
-			#endif
-			break;
-		#if defined( BUSPIRATEV1A) || defined (BUSPIRATEV2)
-		case MENU_VMONITOR://take voltage reading
-			measureSupplyVoltages();
-			break;
-		#endif
-		case MENU_BITORDER://config sig bit first
-			setBitOrder();
-			break;
-		case MENU_HELP: //show help
-			printHelp(); //moved to baseUI.c for easy translation
-			break;
-		case MENU_FREQMEASURE://measure frequency on AUX pin
-			bpFreq();
-			break;
-		case MENU_FREQGENERATE://generate frequency on AUX pin
-			bpPWM();
-			break;
-		case MENU_VERSIONINFO://display version info
-			versionInfo();//display hardware and firmware version string
-			if(bpConfig.busMode!=HIZ){			
-				statusInfo();
-			} */
-			/*if(bpConfig.busMode==HIZ){			
-				//enable timer 1 with interrupts, 
-				//service with function in main.c.
-				IEC0bits.T1IE = 1;
-				IFS0bits.T1IF = 0;
-				PR1 = 0xFFFF;
-				T1CON = 0x8010;
-			}*/
-/*			break;
-		case MENU_AUXPIN://change aA@ to control AUX or CS/TMS
-			//don't allow changes in HiZ mode
-			if(bpConfig.busMode==HIZ){bpWmessage(MSG_ERROR_MODE);break;}//are we in a mode?
-			setAltAuxPin();
-			break;
-		case MENU_BAUDRATE://configure the PC side speed
-			setBaudRate();
-			break;
-		case MENU_RESET:
-			bpWline(OUMSG_PM_RESET);
-			while(U1STAbits.TRMT==0); //wait untill TX finishes
-			asm("RESET");
-			break;
-		case '+':
-			easterEgg();
-			break;
-		case '=':
-			convert();
-			break;
-		case '$': //jump to bootloader
-			bpWline("BOOTLOADER");
-			bpInit();		// turn off nasty things, cleanup first needed?
-			while(U1STAbits.TRMT==0); //wait untill TX finishes
-			asm volatile ("mov #BLJUMPADDRESS, w1 \n" //bootloader location
-						  "goto w1 \n");
-			break;
-#if defined(BUSPIRATEV25) || defined (BUSPIRATEV3)
-		case '~':
-			if(bpConfig.busMode==HIZ){			
-				selfTest(1,1);//self test, showprogress in terminal
-			}else{
-				bpWline(OUMSG_PM_SELFTEST_HIZ);
-			}
-			break;
-#endif
-		default:
-			return 0;//no commands
-	}
-	return 1;
-}
-
-//
-//
-// 	HELPER FUNCTIONS FOR MENU OPTIONS
-//
-//
-
-//convert HEX/DEC/BIN
-//uses usernumber prompt, which doesn't allow 0 as a reply
-//converting 0 is left as an exercize for the user
-//of you can refer to the handy table below
-// HEX  DEC  BIN
-// 0x00 0     0b00000000
-void convert(void){
-	unsigned char c;
-	bpWstring(OUMSG_PM_CONVERT);
-	c=bpUserNumberPrompt(10, 0xff, 1);//10 bytes max to get binary number, 0xff max value, 1 default
-	bpWhex(c);
-	bpBR;
-	bpWdec(c);
-	bpBR;
-	bpWbin(c);	
-	bpBR;
-}
-
-*/
-
-// new method starts here
-
 //global vars    move to bpconfig structure?
 char cmdbuf[CMDBUFLEN];
 unsigned int cmdend;
@@ -1026,7 +905,7 @@ int cmdhistory(void)
 // 0-max return
 // x=1 exit is enabled (we don't want that in the mode changes ;)
 
-int getnumber(int def, int min, int max, int x)	
+int getnumber(int def, int min, int max, int x)	//default, minimum, maximum, show exit option
 {	char c;
 	char buf[6];									// max 4 digits;
 	int i, j, stop, temp, neg;
@@ -1140,15 +1019,6 @@ void versionInfo(void){
 	bpWdec(i);
 	bpWline("");
 
-	//bpWstring("CFG1:");
-	BPMSG1136;
-	bpWinthex(bpReadFlash(CFG_ADDR_UPPER, CFG_ADDR_1));
-	//bpWstring(" CFG2:");
-	BPMSG1137;
-	bpWinthex(bpReadFlash(CFG_ADDR_UPPER, CFG_ADDR_2));
-	bpBR;
-
-
 	//bpWstring("DEVID:");
 	BPMSG1117;
 	bpWinthex(bpConfig.dev_type);
@@ -1181,6 +1051,15 @@ void versionInfo(void){
 
 //display properties of the current bus mode (pullups, vreg, lsb, output type, etc)
 void statusInfo(void){
+
+	//bpWstring("CFG1:");
+	BPMSG1136;
+	bpWinthex(bpReadFlash(CFG_ADDR_UPPER, CFG_ADDR_1));
+	//bpWstring(" CFG2:");
+	BPMSG1137;
+	bpWinthex(bpReadFlash(CFG_ADDR_UPPER, CFG_ADDR_2));
+	bpBR;
+
 	//bpWline("*----------*");
 	BPMSG1119;
 
@@ -1285,37 +1164,6 @@ void pinState(unsigned int pin){
 
 }
 
-/*
-//change protocol/bus mode
-//cleans from previous mode and initializes new mode
-void setMode(void){
-	unsigned char i,j;
-	
-	bpCommand.cmd=CMD_CLEANUP;
-	bpProcess();//deactivate anything from the last module			
-	bpInit();//clean up
-	j=bpNumBusModes();
-	for(i=0; i<j; i++){	
-		bpWdec(i+1);
-		bpWstring(". ");
-		bpEchoBusMode(i);//ends line
-		bpWBR;
-	}
-
-	bpConfig.busMode=(bpUserNumberPrompt(2, j, 1)-1);
-
-	bpWmessage(MSG_OPT_MODESET);
-
-	bpCommand.cmd=CMD_PRESETUP;
-	bpProcess();
-
-	BP_LEDMODE=1;//light MODE LED
-
-	bpCommand.cmd=CMD_SETUP;
-	bpProcess(); 	//use settings....
-}
-*/
-
 //user terminal number display mode dialog (eg HEX, DEC, BIN, RAW)
 void setDisplayMode(void)
 {	int mode;
@@ -1339,98 +1187,6 @@ void setDisplayMode(void)
 	//bpWmessage(MSG_OPT_DISPLAYMODESET);//show display mode update text
 	BPMSG1128;
 }
-
-/*
-//pullup resistor dialog
-#ifndef BUSPIRATEV1A
-void setPullups(void){
-
-	//warn if using pullups with non-hiz pin settings
-	if(modeConfig.HiZ==0){bpWmessage(MSG_ERROR_NOTHIZPIN);}
-
-	bpWmessage(MSG_OPT_PULLUP);	//show pullup menu	
-	modeConfig.pullupEN=(bpUserNumberPrompt(1, 2, 1)-1); //get user reply		
-	if(modeConfig.pullupEN==0){ //pullup OFF
-		BP_PULLUP_OFF(); //pseudofunction in hardwarevx.h
-		bpWmessage(MSG_OPT_PULLUP_OFF);
-	}else{//pullup ON
-		BP_PULLUP_ON();
-		bpWmessage(MSG_OPT_PULLUP_ON);
-	}
-}
-#endif
-
-*/
-
-//display supply voltage measurements for 3.3, 5, and vpullup
-#ifndef BUSPIRATEV0A
-/*
-void measureSupplyVoltages(void){
-	unsigned int a;
-
-	AD1CON1bits.ADON = 1; // turn ADC ON
-
-	//bpWmessage(MSG_OPT_VMONITOR);
-	BPMSG1129;
-
-	//set the pin to measure, 5 volts....
-	a=bpADC(9);
-	//bpWstring("5V: ");
-	BPMSG1130;
-	bpWvolts(a);
-
-	a=bpADC(10);
-	//bpWstring(" | 3.3V: ");
-	BPMSG1131;
-	bpWvolts(a);
-
-	a=bpADC(11);
-	//bpWstring(" | VPULLUP: ");
-	BPMSG1132;
-	bpWvolts(a);
-
-	bpWline(" |");
-	AD1CON1bits.ADON = 0; // turn ADC OFF
-}
-
-*/
-#endif
-
-/*
-//LSB/MSB menu for modes that allow it
-void setBitOrder(void){
-	
-	//check if this is a valid option in the current mode
-	if(modeConfig.allowlsb==0)'
-	{	bpWmessage(MSG_ERROR_MODE); 
-		return;
-	}
-
-	bpWmessage(MSG_OPT_BITORDER); //show stored dialog (see baseUI.c/h)				
-
-	modeConfig.lsbEN=(bpUserNumberPrompt(1, 2, 1)-1); //get reply
-	
-	if(modeConfig.lsbEN==0){ //show stored message
-		bpWmessage(MSG_OPT_BITORDER_MSB);	
-	}else{
-		bpWmessage(MSG_OPT_BITORDER_LSB);
-	}
-}
-*/
-/*
-//configure AUX syntax to control AUX or CS pin
-void setAltAuxPin(void){
-
-	bpWmessage(MSG_OPT_AUXPIN);	//show stored dialog (see baseUI.c/h)			
-	modeConfig.altAUX=(bpUserNumberPrompt(1, 2, 1)-1);
-	
-	if(modeConfig.altAUX==0){
-		bpWmessage(MSG_OPT_AUXPIN_AUX);
-	}else{
-		bpWmessage(MSG_OPT_AUXPIN_CS);
-	}
-}
-*/
 
 //configure user terminal side UART baud rate
 void setBaudRate(void)
@@ -1483,22 +1239,3 @@ int agree(void)
 	return 0;
 }
 
-
-/*
-char ee[]={
-0x20, 0x20, 0x5F, 0x20, 0x20, 0x20, 0x5F, 0x20, 0x20, 0x20, 0x20, 0x20, 0x5F, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x5F, 0x5F, 0x5F, 0x5F, 0x20, 0x20, 0x20, 0x5F, 0x20, 0x20, 0x5F, 0x5F, 0x20, 0x20, 0x20, 0x20, 0x20, 0x5F, 0x5F, 0x20, 0x20, 0x5F, 0x5F, 0x20, 0x20, 0x55, 0x20, 0x5F, 0x5F, 0x5F, 0x5F, 0x5F, 0x20, 0x75, 0x20, 0x0D, 0x0A, 0x20, 0x7C, 0x27, 0x7C, 0x20, 0x7C, 0x27, 0x7C, 0x55, 0x20, 0x20, 0x2F, 0x22, 0x5C, 0x20, 0x20, 0x75, 0x55, 0x20, 0x2F, 0x22, 0x5F, 0x5F, 0x5F, 0x7C, 0x20, 0x7C, 0x22, 0x7C, 0x2F, 0x20, 0x2F, 0x20, 0x20, 0x20, 0x55, 0x7C, 0x27, 0x20, 0x5C, 0x2F, 0x20, 0x27, 0x7C, 0x75, 0x5C, 0x7C, 0x20, 0x5F, 0x5F, 0x5F, 0x22, 0x7C, 0x2F, 0x20, 0x0D, 0x0A, 0x2F, 0x7C, 0x20, 0x7C, 0x5F, 0x7C, 0x20, 0x7C, 0x5C, 0x5C, 0x2F, 0x20, 0x5F, 0x20, 0x5C, 0x2F, 0x20, 0x5C, 0x7C, 0x20, 0x7C, 0x20, 0x75, 0x20, 0x20, 0x20, 0x7C, 0x20, 0x27, 0x20, 0x2F, 0x20, 0x20, 0x20, 0x20, 0x5C, 0x7C, 0x20, 0x7C, 0x5C, 0x2F, 0x7C, 0x20, 0x7C, 0x2F, 0x20, 0x7C, 0x20, 0x20, 0x5F, 0x7C, 0x22, 0x20, 0x20, 0x20, 0x0D, 
-0x0A, 0x55, 0x7C, 0x20, 0x20, 0x5F, 0x20, 0x20, 0x7C, 0x75, 0x2F, 0x20, 0x5F, 0x5F, 0x5F, 0x20, 0x5C, 0x20, 0x20, 0x7C, 0x20, 0x7C, 0x2F, 0x5F, 0x5F, 0x55, 0x2F, 0x7C, 0x20, 0x2E, 0x20, 0x5C, 0x5C, 0x75, 0x20, 0x20, 0x20, 0x7C, 0x20, 0x7C, 0x20, 0x20, 0x7C, 0x20, 0x7C, 0x20, 0x20, 0x7C, 0x20, 0x7C, 0x5F, 0x5F, 0x5F, 0x20, 0x20, 0x20, 0x0D, 0x0A, 0x20, 0x7C, 0x5F, 0x7C, 0x20, 0x7C, 0x5F, 0x7C, 0x2F, 0x5F, 0x2F, 0x20, 0x20, 0x20, 0x5C, 0x5F, 0x5C, 0x20, 0x20, 0x5C, 0x5F, 0x5F, 0x5F, 0x5F, 0x7C, 0x20, 0x7C, 0x5F, 0x7C, 0x5C, 0x5F, 0x5C, 0x20, 0x20, 0x20, 0x20, 0x7C, 0x5F, 0x7C, 0x20, 0x20, 0x7C, 0x5F, 0x7C, 0x20, 0x20, 0x7C, 0x5F, 0x5F, 0x5F, 0x5F, 0x5F, 0x7C, 0x20, 0x20, 0x0D, 0x0A, 0x20, 0x2F, 0x2F, 0x20, 0x20, 0x20, 0x5C, 0x5C, 0x20, 0x5C, 0x5C, 0x20, 0x20, 0x20, 0x20, 0x3E, 0x3E, 0x20, 0x5F, 0x2F, 0x2F, 0x20, 0x5C, 0x5C, 0x2C, 0x2D, 0x2C, 0x3E, 0x3E, 0x20, 0x5C, 0x5C, 0x2C, 0x2D, 0x2E, 0x3C, 0x3C, 0x2C, 0x2D, 0x2C, 0x2C, 0x2D, 0x2E, 0x20, 0x20, 0x20, 0x3C, 0x3C, 0x20, 0x20, 0x20, 0x3E, 0x3E, 0x20, 0x20, 
-0x0D, 0x0A, 0x28, 0x5F, 0x22, 0x29, 0x20, 0x28, 0x22, 0x5F, 0x29, 0x5F, 0x5F, 0x29, 0x20, 0x20, 0x28, 0x5F, 0x5F, 0x29, 0x5F, 0x5F, 0x29, 0x28, 0x5F, 0x5F, 0x29, 0x5C, 0x2E, 0x29, 0x20, 0x20, 0x20, 0x28, 0x5F, 0x2F, 0x20, 0x20, 0x28, 0x2E, 0x2F, 0x20, 0x20, 0x5C, 0x2E, 0x29, 0x20, 0x28, 0x5F, 0x5F, 0x29, 0x20, 0x28, 0x5F, 0x5F, 0x29, 0x20, 
-};
-*/
-/*
-void easterEgg(void){
-	bpWstring("CFG1:");
-	bpWinthex(bpReadFlash(CFG_ADDR_UPPER, CFG_ADDR_1));
-	bpWstring(" CFG2:");
-	bpWinthex(bpReadFlash(CFG_ADDR_UPPER, CFG_ADDR_2));
-	bpBR;
-//	bpWstring(ee);
-	bpWBR;
-}
-*/

@@ -123,7 +123,7 @@ void bbI2Cstop(void){
 	bbH(MOSI, bitbang.delayClock);
 
 	//return clock low, importatnt for raw2wire smartcard
-	bbL(CLK, bitbang.delayClock);
+	//bbL(CLK, bitbang.delayClock);
 }
 
 //

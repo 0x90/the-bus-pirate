@@ -30,7 +30,7 @@ BPMSG1026;1;"DS2431 1K EEPROM"
 BPMSG1027;0;"Unknown device"
 //auxpin
 BPMSG1028;1;"PWM disabled"
-BPMSG1029;1;"1KHz-4,000KHz frequency generator/PWM (beta)"
+BPMSG1029;1;"1KHz-4,000KHz PWM/frequency generator"
 BPMSG1030;0;"Frequency in KHz "
 BPMSG1031;0;"Prescale:"
 BPMSG1032;0;"PR2:"
@@ -154,10 +154,10 @@ BPMSG1135;0;"Are you sure? "
 BPMSG1136;0;"CFG1:"
 BPMSG1137;0;" CFG2:"
 //raw2wire.c
-BPMSG1138;0;"(\\-/_\\)"
+BPMSG1138;0;"(\\-/_\\-)"
 //1062
 //BPMSG1139MSG_I2C_START
-BPMSG1140;0;"(_/-\\)"
+BPMSG1140;0;"(\\_/-)"
 //1063
 //BPMSG1141MSG_I2C_STOP
 BPMSG1142;1;"Select output type:\r\n 1. Open drain (H=Hi-Z, L=GND)\r\n 2. Normal (H=3.3V, L=GND)"

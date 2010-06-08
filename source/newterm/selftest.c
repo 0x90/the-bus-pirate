@@ -176,13 +176,6 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 }
 
 void bpADCPinTest(unsigned char a, unsigned int lval, unsigned int hval){
-/*	unsigned int b;
-	bpPOSTWstring("(");
-	b=bpADC(a);
-	if(display) bpWvolts(b); //only if display active
-	bpPOSTWstring(")");
-	bpTest(((b>lval)&&(b<hval)),1);
-*/
 	unsigned int b;
 	UART1TX('(');
 	b=bpADC(a);
@@ -218,15 +211,5 @@ void bpTest(unsigned char p, unsigned char d){
 		errors++;
 	}
 }
-
-/* obsolete
-void bpPOSTWline(char *s){
-	if(display) bpWline(s);
-}
-
-void bpPOSTWstring(char *s){
-	if(display) bpWstring(s);
-}
-*/
 
 #endif

@@ -303,7 +303,7 @@ void r2wProcess(void){
 
 //ISO 7813-3 Answer to reset macro for smartcards
 // syntax: a0%255@^a
-// forces LSB format for easy use
+// **depricated, some cards are MSB first** forces LSB format for easy use
 // now uses CS pin instead of AUX pin because 1,2,3 have build in pullups on CS but not AUX
 void r2wMacro_78133Write(void){
 
@@ -332,10 +332,6 @@ void r2wMacro_78133Read(void){
 
 	bpWstring("ISO 7816-3 reply (uses current LSB setting): ");
 	BPMSG1146;
-
-	//force LSB fist setting for ISO compliance
-	//c=modeConfig.lsbEN;//store origional setting
-	//modeConfig.lsbEN=1;
 
 	//read and display ISO 7813-3 bytes
 	for(i=0; i<4; i++){
