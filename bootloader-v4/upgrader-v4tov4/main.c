@@ -130,6 +130,11 @@ int main(void)
 	bpWline("Success!");
 	bpWline("Upload new firmware with the ds30 Loader app to complete the upgrade.");
 
+	while(U1STAbits.TRMT==0); //wait untill TX finishes
+	//jump straight into new bootloader
+	asm volatile ("mov #BLJUMPADDRESS, w1 \n" //bootloader location
+			  	  "goto w1 \n");
+
 	while(1)
 	{	BP_LEDMODE=1;						// we want some attention!
 		bpDelayMS(250);

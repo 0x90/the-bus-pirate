@@ -21,6 +21,11 @@
 	#define FWLOCATION	0x9000 
 #endif
 
+//this is the jump to bootloader address. 
+//at end of upgrade the program will jump straight to the new bootloader
+//this must be defined in asm
+asm (".equ BLJUMPADDRESS, 0xABF8");
+
 //define the location in the firmware array where the version is stored
 //used to tell the user what version they're upgrading to
 #define FWBLVERLOC_MAJ		1529		// location where version number (major) is stored
