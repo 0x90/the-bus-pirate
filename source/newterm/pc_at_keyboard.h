@@ -14,5 +14,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-void kbProcess(void);
+void KEYBsetup(void);
+unsigned int KEYBread(void);
+unsigned int KEYBwrite(unsigned int c);
+void KEYBmacro(unsigned int c);
+
+
 

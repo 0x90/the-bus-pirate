@@ -272,8 +272,8 @@ proto protos[MAXPROTO+1] = {
 	nullfunc1,				// startR
 	nullfunc1,				// stop
 	nullfunc1,				// stopR
-	nullfunc2,				// send
-	nullfunc3,				// read
+	KEYBwrite,				// send
+	KEYBread,				// read
 	nullfunc1,				// clkh
 	nullfunc1,				// clkl
 	nullfunc1,				// dath
@@ -282,8 +282,8 @@ proto protos[MAXPROTO+1] = {
 	nullfunc1,				// clk
 	nullfunc3,				// bitr
 	nullfunc3,				// periodic
-	nullfunc4,				// macro
-	HiZsetup,				// setup
+	KEYBmacro,				// macro
+	KEYBsetup,				// setup
 	HiZcleanup,				// cleanup
 	HiZpins,
 	"KEYB" 					// name

@@ -43,104 +43,91 @@ struct _kbframe{
 	unsigned char parityerror:1;
 } kbScancode;
 
-void kbProcess(void){
-	static unsigned char c;
-	static unsigned int i;
 
-	switch(bpCommand.cmd){
-		case CMD_PRESETUP:
-			//modeConfig.allowpullup=0; //keyboard provides own pullups
-			modeConfig.HiZ=1;//yes, always HiZ
-			break;
-		case CMD_SETUP:
-			kbSetup();
-			bpWmessage(MSG_READY);
-			break;
-		case CMD_CLEANUP:		
-			break;
-		case CMD_READ:
-			if(bpCommand.repeat==1){
-				bpWmessage(MSG_READ);
-				kbScancodeResults(kbReadByte());
-			}else{
-				bpWmessage(MSG_READBULK);	
-				bpWbyte(bpCommand.repeat);
-				bpWmessage(MSG_READBULK_BYTES);
-				for(i=0;i<bpCommand.repeat;i++){	
-					kbScancodeResults(kbReadByte());
-					bpSP;
-				}
-			}
-			bpWBR;
-			break;
-		case CMD_WRITE:
-			bpWmessage(MSG_WRITE);	
-			bpWbyte(bpCommand.num);//write value to term
-			c=kbWriteByte(bpCommand.num);//send to bus
-			if(c==0){//ack bit
-				bpWmessage(MSG_ACK);
-			}else if (c==1){
-				bpWmessage(MSG_NACK);
-			}else{
-				bpWstring(OUMSG_KB_TIMEOUT);
-			}
-			bpWBR;
-			break;
-		case CMD_MACRO:
-			switch(bpCommand.num){
-				case 0:
-					bpWline(OUMSG_KB_MACRO_MENU);
-					break;
-				case 1:
-					bpWline(OUMSG_KB__MACRO_LIVE);
-					while(1){
-						if(kbReadByte()==0){
-							bpWbyte(kbScancode.code);
-							bpSP;
-						}
-						if(U1STAbits.URXDA == 1){//any key pressed, exit
-							c=U1RXREG;
-							bpBR;
-							break;
-						}						
-					}
-					break;
-				default:
-					bpWmessage(MSG_ERROR_MACRO);
-			}
-			break;
-		case CMD_ENDOFSYNTAX: break;
-		default:
-			bpWmessage(MSG_ERROR_MODE);
-	}
-
+void KEYBsetup(void)
+{	modeConfig.HiZ=1;//yes, always HiZ
+	kbSetup();
 }
 
-void kbScancodeResults(unsigned char c){
-	switch(c){
-		case 0:
-			bpWbyte(kbScancode.code);
-			bpSP;		
+unsigned int KEYBread(void)
+{	kbScancodeResults(kbReadByte());
+	return kbScancode.code;
+}
+
+unsigned int KEYBwrite(unsigned int c)
+{	unsigned char temp;
+
+	temp=kbWriteByte(c);//send to bus
+	if(temp==0) //ack bit
+	{	//bpWmessage(MSG_ACK);
+		BPMSG1060;
+	}
+	else if (temp==1)
+	{	//bpWmessage(MSG_NACK);
+		BPMSG1061;
+	}
+	else
+	{	//bpWstring(OUMSG_KB_TIMEOUT);
+		BPMSG1237;
+	}
+	return 0x100;
+}
+
+void KEYBmacro(unsigned int c)
+{	switch(c)
+	{	case 0:	//bpWline(OUMSG_KB_MACRO_MENU);
+				BPMSG1238;
+				break;
+		case 1:	//bpWline(OUMSG_KB__MACRO_LIVE);
+				BPMSG1239;
+				while(1)
+				{	if(kbReadByte()==0)
+					{	bpWbyte(kbScancode.code);
+						bpSP;
+					}
+					if(U1STAbits.URXDA == 1) //any key pressed, exit
+					{	c=U1RXREG;
+						bpBR;
+						break;
+					}						
+				}
+				break;
+		default: BPMSG1016;
+	}
+}
+
+void kbScancodeResults(unsigned char c)
+{	switch(c)
+	{	case 0:		// all ok
+			//bpWbyte(kbScancode.code);
+			//bpSP;		
 			break;
 		case 1:
-			bpWstring(OUMSG_KB_ERROR_STARTBIT);				
+			//bpWstring(OUMSG_KB_ERROR_STARTBIT);
+			BPMSG1240;				
 			break;
 		case 2:
-			bpWbyte(kbScancode.code);
-			bpWstring(OUMSG_KB_ERROR_PARITY);				
+			//bpWbyte(kbScancode.code);
+			//bpWstring(OUMSG_KB_ERROR_PARITY);
+			BPMSG1241;
 			break;
 		case 3:
-			bpWbyte(kbScancode.code);
-			bpWstring(OUMSG_KB_ERROR_STOPBIT);				
+			//bpWbyte(kbScancode.code);
+			//bpWstring(OUMSG_KB_ERROR_STOPBIT);
+			BPMSG1242;
 			break;
 		case 4:
-			bpWstring(OUMSG_KB_ERROR_TIMEOUT);				
+			//bpWstring(OUMSG_KB_ERROR_TIMEOUT);
+			bpSP;
+			BPMSG1237;
 			break;
 		case 0xff://no data
-			bpWstring(OUMSG_KB_ERROR_NONE);				
+			//bpWstring(OUMSG_KB_ERROR_NONE);				
+			BPMSG1243;
 			break;
 		default:
-			bpWstring(OUMSG_KB_ERROR_UNK);				
+			//bpWstring(OUMSG_KB_ERROR_UNK);				
+			BPMSG1244;
 			break;
 	}
 }
@@ -314,3 +301,4 @@ unsigned char kbWaitClock(unsigned char c){
 		if(i==0)return 1;//timeout
 	}
 }
+

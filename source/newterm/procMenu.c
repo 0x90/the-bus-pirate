@@ -341,6 +341,7 @@ void serviceuser(void)
 				case '=':	//bpWline("-HEX/BIN/DEC convertor");
 							cmdstart++;
 							cmdstart&=CMDLENMSK;
+							consumewhitechars();
 							temp=getint();
 							bpWhex(temp);
 							bpWstring(" = ");

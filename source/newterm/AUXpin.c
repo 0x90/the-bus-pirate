@@ -222,7 +222,8 @@ void bpFreq(void){
 	if(l>0xff){//got count
 		l*=256;//adjust for prescaler...
 	}else{//no count, maybe it's less than prescaler (256hz)
-		bpWline("Autorange");
+		//bpWline("Autorange");
+		BPMSG1245;
 		T2CON=0b001010; //(TCKPS1|TCKPS0|T32|TCS); prescale to 0
 		l=bpFreq_count();
 	}
@@ -232,11 +233,13 @@ void bpFreq(void){
 	if(l>=1000000){
 		bpWstring(" (");
 		bpWlongdec(l/1000000);
-		bpWstring("+MHz)");
+		//bpWstring("+MHz)");
+		BPMSG1246;
 	}else if(l>=1000){
 		bpWstring(" (");
 		bpWlongdec(l/1000);
-		bpWstring("+kHz)");
+		//bpWstring("+kHz)");
+		BPMSG1247;
 	}
 	bpWBR;
 

@@ -264,6 +264,19 @@ BPMSG1234;0;"GND\t";
 BPMSG1235;0;"GND\tADC\t5.0V\t3.3V\tVPU\tAUX\t"
 //
 BPMSG1236;0;"execute : "
+// keyb.c
+BPMSG1237;0;" TIMEOUT"
+BPMSG1238;1;" 0. Macro menu\r\n 1. Live input monitor"
+BPMSG1239;1;"Input monitor, any key exits"
+BPMSG1240;1;" *startbit error"
+BPMSG1241;1;" *parity error"
+BPMSG1242;1;" *stopbit error"
+BPMSG1243;1;" NONE"
+BPMSG1244;1;" UNKNOWN ERROR"
+//auxpin
+BPMSG1245;0;" autorange "
+BPMSG1246;0;"+MHz)"
+BPMSG1247;0;"+kHz)"
 
 
 
