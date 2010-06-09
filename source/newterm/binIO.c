@@ -24,6 +24,7 @@
 #include "UART.h"
 #include "1wire.h"
 #include "binwire.h"
+#include "OpenOCD.h"
 #include "pic.h"
 
 extern struct _modeConfig modeConfig;
@@ -56,7 +57,8 @@ Commands:
 00000011 //enter raw UART mode
 00000100 // enter raw 1-wire
 00000101 //enter raw wire mode
-00000110 // pic programming mode
+00000110 // enter openocd
+00000111 // pic programming mode
 00001111 //reset, return to user terminal
 00010000 //short self test
 00010001 //full self test with jumpers
@@ -105,6 +107,11 @@ void binBB(void){
 			}else if(inByte==5){//goto RAW WIRE mode
 				binReset();
 				binwire();
+				binReset();
+				binBBversion(); //say name on return
+			}else if(inByte==6){//goto RAW WIRE mode
+				binReset();
+				binOpenOCD();
 				binReset();
 				binBBversion(); //say name on return
 			}else if(inByte==7){//goto pic mode

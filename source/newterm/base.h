@@ -26,7 +26,7 @@
 
 //#define BUSPIRATE_POST //used to switch POST on and off
 
-#define BP_FIRMWARE_STRING "Firmware v5.0-RC1 (r369)"
+#define BP_FIRMWARE_STRING "Firmware v5.0-RC2 (r370)"
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
@@ -42,11 +42,12 @@
 #define BP_USE_RAW3WIRE
 #define BP_USE_PCATKB
 #define BP_USE_LCD // include HD44780 LCD library
-#define BP_USE_PIC
+//#define BP_USE_PIC
 
-#define MAXPROTO 10	// need to set it manually for now (is there a smart way for this?)
+#define MAXPROTO 9// need to set it manually for now (is there a smart way for this?)
 
 #define BP_USE_BASIC   // basic subsystem
+//#define BP_USE_BASICI2C  // use an i2ceeprom for storing
 
 
 // only 1 should be uncommented

@@ -1291,6 +1291,7 @@ void basiccmdline(void)
 		else if(compare("EXIT"))
 		{	bpConfig.basic=0;
 		}
+#ifdef BP_USE_BASICI2C
 		else if(compare("FORMAT"))
 		{	format();
 		}
@@ -1300,6 +1301,7 @@ void basiccmdline(void)
 		else if(compare("LOAD"))
 		{	load();
 		}
+#endif
 		else if(compare("DEBUG"))
 		{	for(i=0; i<PGMSIZE; i+=16)
 			{	for(j=0; j<16; j++)
@@ -1324,7 +1326,7 @@ void basiccmdline(void)
 //	cmdstart=cmdend;
 }
 
-
+#ifdef BP_USE_BASICI2C
 
 // i2c eeprom interaction
 // need to incorperate it in bitbang or r2wire!
@@ -1590,4 +1592,5 @@ void load(void)
 	}
 }
 
-#endif
+#endif // BP_USE_BASICI2C
+#endif // BP_USE_BASIC

@@ -26,6 +26,8 @@
 extern struct _modeConfig modeConfig;
 extern struct _command bpCommand;
 
+#ifdef BP_USE_PCATKB
+
 void kbSetup(void);
 unsigned char kbReadBit(void);
 unsigned char kbReadCode(void);
@@ -302,3 +304,4 @@ unsigned char kbWaitClock(unsigned char c){
 	}
 }
 
+#endif
