@@ -33,10 +33,9 @@ void binrawversionString(void);
 	* 00001101 - Data high
     * 0001xxxx – Bulk transfer, send 1-16 bytes (0=1byte!)
     * 0010xxxx - Bulk clock ticks, send 1-16 ticks
-# 0011xxxx - Bulk bits, send 1-8 bits of the next byte (0=1bit!)
-# 0101xxxx - Bulk read, read 1-16bytes (0=1byte!)
-
+   * 0011xxxx - Bulk bits, send 1-8 bits of the next byte (0=1bit!)
     * 0100wxyz – Configure peripherals, w=power, x=pullups, y=AUX, z=CS
+   * 0101xxxx - Bulk read, read 1-16bytes (0=1byte!)
     * 0110000x – Set speed
     * 1000wxyz – Config, w=output type, x=3wire, y=lsb, z=n/a
 
@@ -179,7 +178,6 @@ void binwire(void){
 				break;
 
 			//case 0b0101: //# 0101xxxx - Bulk read, read 1-16bytes (0=1byte!)
-			
 
 			case 0b0100: //configure peripherals w=power, x=pullups, y=AUX, z=CS
 				binIOperipheralset(inByte);

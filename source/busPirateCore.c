@@ -21,47 +21,6 @@
 #include "base.h"
 #include "busPirateCore.h"
 
-//be sure mode entries line up with the _bpConfig.busMode list in busPirateCore.h
-char* mode[]  = 
-   {
-       "HiZ",
-#ifdef BP_USE_1WIRE
-       "1-WIRE",
-#endif
-#ifdef BP_USE_HWUART
-		"UART",
-#endif
-#ifdef BP_USE_I2C
-       "I2C",
-#endif
-#ifdef BP_USE_HWSPI
-       "SPI",
-#endif
-#ifdef BP_USE_JTAG
-		"JTAG",
-#endif
-#ifdef BP_USE_RAW2WIRE
-       "RAW2WIRE",
-#endif
-#ifdef BP_USE_RAW3WIRE
-       "RAW3WIRE",
-#endif
-#ifdef BP_USE_PCATKB
-		"PC KEYBOARD",
-#endif
-#ifdef BP_USE_MIDI
-		"MIDI",
-#endif
-#ifdef BP_USE_LIN
-		"LIN",
-#endif
-#ifdef BP_USE_CAN
-		"CAN",
-#endif
-#ifdef BP_USE_LCD
-		"LCD",
-#endif
-   };
 
 //include functions needed for protocol libraries
 //add new libraries here
@@ -101,91 +60,281 @@ char* mode[]  =
 #ifdef BP_USE_LCD
 	#include "HD44780.h"
 #endif
+#ifdef BP_USE_PIC
+	#include "pic.h"
+#endif
 
 extern struct _bpConfig bpConfig;
 extern struct _modeConfig modeConfig;
+extern int cmderror;	
 
-//send command to correct protocol library for processing
-//switch based on bpConfig.busMode variable
-void bpProcess(void){
-	switch(bpConfig.busMode){
-	#ifdef BP_USE_1WIRE
-		case DS1WIRE:
-			DS1wireProcess();
-			break;
-	#endif
-	#ifdef BP_USE_HWUART
-		case HWUART:
-			uartProcess();
-			break;
-	#endif
-	#ifdef BP_USE_I2C
-		case I2C:
-			i2cProcess();
-			break;
-	#endif
-	#ifdef BP_USE_HWSPI
-		case HWSPI:
-			spiProcess();
-			break;
-	#endif
-	#ifdef BP_USE_JTAG
-		case JTAG:
-			jtagProcess();
-			break;
-	#endif
-	#ifdef BP_USE_RAW2WIRE
-		case RAW2WIRE:
-			r2wProcess();
-			break;
-	#endif
-	#ifdef BP_USE_RAW3WIRE
-		case RAW3WIRE:
-			r3wProcess();
-			break;
-	#endif
-	#ifdef BP_USE_PCATKB
-		case PCATKB:
-			kbProcess();	
-			break;
-	#endif
-	#ifdef BP_USE_MIDI
-		case MIDI:
-			midiProcess();	
-			break;
-	#endif
-	#ifdef BP_USE_LIN
-		case LIN:
-			linProcess();		
-			break;
-	#endif
-	#ifdef BP_USE_CAN
-		case CAN:
-			canProcess();	
-			break;
-	#endif
-	#ifdef BP_USE_LCD
-		case LCD:
-			HD44780Process();	
-			break;
-	#endif
-		default: //error
-			BP_LEDMODE=0;//turn off MODE LED, error/no mode (Hi-Z)
-			break;
-	}
+void nullfunc1(void)
+{	//bpWline("ERROR: command has no effect here");
+	BPMSG1059;
+	cmderror=1;
 }
 
-//the number of bus modes available
-//used to navigate the protocol list array, 
-//done here because mode array isn't availble to other functions
-unsigned char bpNumBusModes(void){return (sizeof(mode)/2);}
+unsigned int nullfunc2(unsigned int c)
+{	//bpWline("ERROR: command has no effect here");
+	BPMSG1059;
+	cmderror=1;
+	return 0x100;
+}
 
-//echo the name of the current bus mode to the user terminal
-//used to show user prompt
-void bpEchoCurrentBusMode(void){bpWstring(mode[bpConfig.busMode]);}
+unsigned int nullfunc3(void)
+{	//bpWline("ERROR: command has no effect here");
+	BPMSG1059;
+	cmderror=1;
+	return 0;
+}
 
-//echo the name of the bus mode in the name array at position m to the user terminal
-//used for listing available bus modes
-void bpEchoBusMode(unsigned char m){bpWstring(mode[m]);}
+void nullfunc4(unsigned int c)
+{	//bpWline("ERROR: command has no effect here");
+	BPMSG1059;
+	cmderror=1;
+}
 
+void HiZsetup(void)
+{
+}
+
+void HiZcleanup(void)
+{
+}
+
+void HiZpins(void)
+{	//bpWline("CLK\tMOSI\tCS\MISO");
+	BPMSG1225;
+}
+
+proto protos[MAXPROTO+1] = {
+{	nullfunc1,				// start
+	nullfunc1,				// startR
+	nullfunc1,				// stop
+	nullfunc1,				// stopR
+	nullfunc2,				// send
+	nullfunc3,				// read
+	nullfunc1,				// clkh
+	nullfunc1,				// clkl
+	nullfunc1,				// dath
+	nullfunc1,				// datl
+	nullfunc3,				// dats
+	nullfunc1,				// clk
+	nullfunc3,				// bitr
+	nullfunc3,				// periodic
+	nullfunc4,				// macro
+	HiZsetup,				// setup
+	HiZcleanup,				// cleanup
+	HiZpins,
+	"HiZ" 					// name
+}
+#ifdef BP_USE_1WIRE
+,
+{	DS1wireReset,			// start
+	DS1wireReset,			// startR
+	nullfunc1,				// stop
+	nullfunc1,				// stopR
+	OWwrite,				// send
+	OWread,					// read
+	nullfunc1,				// clkh
+	nullfunc1,				// clkl
+	OWdath,					// dath
+	OWdatl,					// datl
+	nullfunc3,				// dats
+	OWbitclk,				// clk
+	OWbitr, 				// bitr
+	nullfunc3,				// periodic
+	OWmacro,				// macro
+	OWsetup,				// setup
+	HiZcleanup,				// cleanup
+	OWpins,
+	"1-WIRE" 				// name
+}
+#endif
+#ifdef BP_USE_HWUART
+,
+{	UARTstart,				// start
+	UARTstart,				// startR
+	UARTstop,				// stop
+	UARTstop,				// stopR
+	UARTwrite,				// send
+	UARTread,				// read
+	nullfunc1,				// clkh
+	nullfunc1,				// clkl
+	nullfunc1,				// dath
+	nullfunc1,				// datl
+	nullfunc3,				// dats
+	nullfunc1,				// clk
+	nullfunc3,				// bitr
+	UARTperiodic,			// periodic
+	UARTmacro,				// macro
+	UARTsetup,				// setup
+	UARTcleanup,			// cleanup
+	UARTpins,
+	"UART" 					// name
+}
+#endif
+#ifdef BP_USE_I2C
+,
+{	I2Cstart,				// start
+	I2Cstart,				// startR
+	I2Cstop,				// stop
+	nullfunc1,				// stopR
+	I2Cwrite,				// send
+	I2Cread,				// read
+	nullfunc1,				// clkh
+	nullfunc1,				// clkl
+	nullfunc1,				// dath
+	nullfunc1,				// datl
+	nullfunc3,				// dats
+	nullfunc1,				// clk
+	nullfunc3,				// bitr
+	nullfunc3,				// periodic
+	I2Cmacro,				// macro
+	I2Csetup,				// setup
+	I2Ccleanup,				// cleanup
+	I2Cpins,
+	"I2C" 					// name
+}
+#endif
+#ifdef BP_USE_HWSPI
+,
+{	SPIstart,				// start
+	SPIstartr,				// startR
+	SPIstop,				// stop
+	nullfunc1,				// stopR
+	SPIwrite,				// send
+	SPIread,				// read
+	nullfunc1,				// clkh
+	nullfunc1,				// clkl
+	nullfunc1,				// dath
+	nullfunc1,				// datl
+	nullfunc3,				// dats
+	nullfunc1,				// clk
+	nullfunc3,				// bitr
+	nullfunc3,				// periodic
+	SPImacro,				// macro
+	SPIsetup,				// setup
+	SPIcleanup,				// cleanup
+	SPIpins,
+	"SPI" 					// name
+}
+#endif
+#ifdef BP_USE_RAW2WIRE
+,
+{	R2Wstart,				// start
+	R2Wstart,				// startR
+	R2Wstop,				// stop
+	R2Wstop,				// stopR
+	R2Wwrite,				// send
+	R2Wread,				// read
+	R2Wclkh,				// clkh
+	R2Wclkl,				// clkl
+	R2Wdath,				// dath
+	R2Wdatl,				// datl
+	R2Wbitp,				// dats (=bitpeek)
+	R2Wclk,					// clk
+	R2Wbitr,				// bitr
+	nullfunc3,				// periodic
+	R2Wmacro,				// macro
+	R2Wsetup,				// setup
+	HiZcleanup,				// cleanup
+	R2Wpins,
+	"2WIRE"					// name
+}
+#endif
+#ifdef BP_USE_RAW3WIRE
+,
+{	R3Wstart,				// start
+	R3Wstartr,				// startR
+	R3Wstop,				// stop
+	R3Wstop,				// stopR
+	R3Wwrite,				// send
+	R3Wread,				// read
+	R3Wclkh,				// clkh
+	R3Wclkl,				// clkl
+	R3Wdath,				// dath
+	R3Wdatl,				// datl
+	R3Wbitp,				// dats
+	R3Wclk,					// clk
+ 	R3Wbitr,				// bitr
+	nullfunc3,				// periodic
+	nullfunc4,				// macro
+	R3Wsetup,				// setup
+	HiZcleanup,				// cleanup
+	R3Wpins,
+	"3WIRE" 					// name
+}
+#endif
+#ifdef BP_USE_PCATKB
+,
+{	nullfunc1,				// start
+	nullfunc1,				// startR
+	nullfunc1,				// stop
+	nullfunc1,				// stopR
+	KEYBwrite,				// send
+	KEYBread,				// read
+	nullfunc1,				// clkh
+	nullfunc1,				// clkl
+	nullfunc1,				// dath
+	nullfunc1,				// datl
+	nullfunc3,				// dats
+	nullfunc1,				// clk
+	nullfunc3,				// bitr
+	nullfunc3,				// periodic
+	KEYBmacro,				// macro
+	KEYBsetup,				// setup
+	HiZcleanup,				// cleanup
+	HiZpins,
+	"KEYB" 					// name
+}
+#endif
+#ifdef BP_USE_LCD
+,
+{	LCDstart,				// start
+	LCDstart,				// startR
+	LCDstop,				// stop
+	LCDstop,				// stopR
+	LCDwrite,				// send
+	LCDread,				// read
+	nullfunc1,				// clkh
+	nullfunc1,				// clkl
+	nullfunc1,				// dath
+	nullfunc1,				// datl
+	nullfunc3,				// dats
+	nullfunc1,				// clk
+	nullfunc3,				// bitr
+	nullfunc3, 				// periodic
+	LCDmacro,				// macro
+	LCDsetup,				// setup
+	HiZcleanup,				// cleanup
+	LCDpins,
+	"LCD" 					// name
+}
+#endif
+#ifdef BP_USE_PIC
+,
+{	picstart,				// start
+	picstart,				// startR
+	picstop,				// stop
+	picstop,				// stopR
+	picwrite,				// send
+	picread,				// read
+	nullfunc1,				// clkh
+	nullfunc1,				// clkl
+	nullfunc1,				// dath
+	nullfunc1,				// datl
+	nullfunc3,				// dats
+	nullfunc1,				// clk
+	nullfunc3,				// bitr
+	nullfunc3, 				// periodic
+	picmacro,				// macro
+	picinit,				// setup
+	piccleanup,				// cleanup
+	picpins,
+	"PIC" 					// name
+}
+#endif
+
+};
 

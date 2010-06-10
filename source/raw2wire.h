@@ -19,3 +19,21 @@ void r2wProcess(void);
 //these need to be visible to the MACROs, add as needed.
 unsigned char r2wReadByte(void);
 void r2wClockTicks(unsigned char c);
+
+
+void R2Wstart(void);
+void R2Wstop(void);
+unsigned int R2Wwrite(unsigned int c);
+unsigned int R2Wread(void);
+void R2Wclkl(void);
+void R2Wclkh(void);
+void R2Wdath(void);
+void R2Wdatl(void);
+unsigned int R2Wbitp(void);
+void R2Wclk(void);
+unsigned int R2Wbitr(void);
+void R2Wmacro(unsigned int c);
+void R2Wsetup(void);
+void R2Wpins(void);
+
+

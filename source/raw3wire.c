@@ -16,6 +16,7 @@
 #include "base.h"
 //#include "raw3wire.h"
 #include "bitbang.h"
+#include "procmenu.h"		// for the userinteraction subs
 
 #define R3WMOSI_TRIS 	BP_MOSI_DIR
 #define R3WCLK_TRIS 	BP_CLK_DIR
@@ -28,13 +29,141 @@
 #define R3WMISO 		BP_MISO 
 #define R3WCS 			BP_CS 
 
+// should this come from an .h?
 extern struct _modeConfig modeConfig;
 extern struct _command bpCommand;
+
+/*
+// move into a .h or other .c??? 
+int getnumber(int def, int max); // everything to make the compiler happy *dubbelzucht*
+int getint(void);
+int getrepeat(void);
+void consumewhitechars(void);
+extern int cmderror;
+*/
+
 
 struct _R3W{
 	unsigned char wwr:1;
 } r3wSettings;
 
+
+unsigned int R3Wread(void)
+{	return (bbReadWriteByte(0xff));
+}
+
+unsigned int R3Wwrite(unsigned int c)
+{	c=bbReadWriteByte(c);
+	if(r3wSettings.wwr==1)
+	{	return c;
+	}
+	else
+	{	return 0x100;
+	}
+}
+void R3Wstartr(void)
+{	r3wSettings.wwr=1;
+	bbCS(0);
+	//bpWmessage(MSG_CS_ENABLED);
+	BPMSG1159;
+}
+void R3Wstart(void)
+{	r3wSettings.wwr=0;
+	bbCS(0);
+	//bpWmessage(MSG_CS_ENABLED);
+	BPMSG1160;
+}
+void R3Wstop(void)
+{	r3wSettings.wwr=0;
+	bbCS(1);
+	//bpWmessage(MSG_CS_DISABLED);
+	BPMSG1160;
+}
+unsigned int R3Wbitr(void)
+{	return (bbReadBit());
+}
+unsigned int R3Wbitp(void)
+{	return (bbMISO());
+}
+void R3Wclk(void)
+{	bbClockTicks(1);
+}
+void R3Wclkh(void)
+{	bbCLK(1);				// same as r2wire?
+}
+void R3Wclkl(void)
+{	bbCLK(0);				// same as r2wire?
+}
+void R3Wdath(void)
+{	bbMOSI(1);				// same as r2wire?
+}
+void R3Wdatl(void)
+{	bbMOSI(0);				// same as r2wire?
+}
+void R3Wsetup(void)
+{	int speed, output;
+
+	consumewhitechars();
+	speed=getint();
+	consumewhitechars();
+	output=getint();
+
+	if((speed>0)&&(speed<=4))
+	{	modeConfig.speed=speed-1;
+	}
+	else	
+	{	speed=0;					// when speed is 0 we ask the user
+	}
+	if((output>0)&&(output<=2))
+	{	modeConfig.HiZ=(~(output-1));
+	}
+	else	
+	{	speed=0;					// when speed is 0 we ask the user
+	}
+
+	if(speed==0)
+	{	//bpWmessage(MSG_OPT_BB_SPEED);
+		BPMSG1065;
+		modeConfig.speed=(getnumber(1,1,4,0)-1);
+		//bpWmessage(MSG_OPT_OUTPUT_TYPE);
+		BPMSG1142;
+		modeConfig.HiZ=(~(getnumber(1,1,2,0)-1));
+		cmderror=0;
+	}
+	else
+	{	//bpWstring("R3W (spd hiz)=( ");
+		BPMSG1161;
+		bpWdec(modeConfig.speed); bpSP;
+		bpWdec(modeConfig.HiZ); bpSP;
+		bpWline(")");
+	}
+
+
+	modeConfig.allowlsb=1;
+	#ifdef BUSPIRATEV2
+	modeConfig.allowpullup=1;
+	#endif
+
+	//reset the write with read variable
+	r3wSettings.wwr=0;
+	
+	bbSetup(3, modeConfig.speed); //setup the bitbang library, must be done before calling bbCS below
+	//setup pins (pins are input/low when we start)
+	//MOSI output, low
+	//clock output, low
+	//MISO input
+	//CS output, high
+	R3WMOSI_TRIS=0;
+	R3WCLK_TRIS=0;
+	R3WMISO_TRIS=1;
+	bbCS(1);//takes care of custom HiZ settings too
+}
+
+void R3Wpins(void)
+{	BPMSG1225;
+}
+
+/*
 void r3wProcess(void){
 	static unsigned char c;
 	static unsigned int i;
@@ -47,7 +176,7 @@ void r3wProcess(void){
 			}else{
 				bpWmessage(MSG_READBULK);
 				bpWbyte(bpCommand.repeat);
-				bpWmessage(MSG_READBULK_BYTES);
+ 				bpWmessage(MSG_READBULK_BYTES);
 				for(i=0;i<bpCommand.repeat;i++){	
 					bpWbyte(bbReadWriteByte(0xff));
 					bpSP;
@@ -117,7 +246,7 @@ void r3wProcess(void){
 			break;
 		case CMD_PRESETUP:
 			bpWmessage(MSG_OPT_BB_SPEED);
-			modeConfig.speed=(bpUserNumberPrompt(1, 4, 1)-1);
+			modeConfig.speed=(bpUserNumberPrompt(1, 3, 1)-1);
 			bpWmessage(MSG_OPT_OUTPUT_TYPE);
 			modeConfig.HiZ=(~(bpUserNumberPrompt(1, 2, 1)-1));
 			modeConfig.allowlsb=1;
@@ -156,4 +285,6 @@ void r3wProcess(void){
 	}
 
 }
+*/
+
 

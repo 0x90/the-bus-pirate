@@ -13,7 +13,16 @@
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
-void HD44780Process(void);
+//void HD44780Process(void);
+
+unsigned int LCDread(void);
+unsigned int LCDwrite(unsigned int c);
+void LCDstart(void);
+void LCDstop(void);
+void LCDsetup(void);
+void LCDmacro(unsigned int c);
+void LCDpins(void);
+
 
 
 

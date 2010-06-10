@@ -15,3 +15,16 @@
  */
 void spiProcess(void);
 void binSPI(void);
+
+void SPIstart(void);
+void SPIstartr(void);
+void SPIstop(void);
+unsigned int SPIread(void);
+unsigned int SPIwrite(unsigned int c);
+void SPIsetup(void);
+void SPIcleanup(void);
+void SPImacro(unsigned int macro);
+void SPIpins(void);
+
+
+

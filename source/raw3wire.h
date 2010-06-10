@@ -16,5 +16,19 @@
 
 void r3wProcess(void);
 
+unsigned int R3Wread(void);
+unsigned int R3Wwrite(unsigned int c);
+void R3Wstartr(void);
+void R3Wstart(void);
+void R3Wstop(void);
+unsigned int R3Wbitr(void);
+unsigned int R3Wbitp(void);
+void R3Wclk(void);
+void R3Wclkh(void);
+void R3Wclkl(void);
+void R3Wdath(void);
+void R3Wdatl(void);
+void R3Wsetup(void);
+void R3Wpins(void);
 
 

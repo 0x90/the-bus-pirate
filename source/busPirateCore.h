@@ -39,9 +39,6 @@ struct _bpConfig {
 		#ifdef BP_USE_HWSPI
 		   	HWSPI,
 		#endif
-		#ifdef BP_USE_JTAG
-			JTAG,
-		#endif
 		#ifdef BP_USE_RAW2WIRE
 		    RAW2WIRE,
 		#endif
@@ -51,15 +48,6 @@ struct _bpConfig {
 		#ifdef BP_USE_PCATKB
 			PCATKB,	
 		#endif
-		#ifdef BP_USE_MIDI
-			MIDI,
-		#endif
-		#ifdef BP_USE_LIN
-			LIN,
-		#endif
-		#ifdef BP_USE_CAN
-			CAN,
-		#endif
 		#ifdef BP_USE_LCD
 			LCD,
 		#endif
@@ -67,8 +55,36 @@ struct _bpConfig {
 	// Device IDs from the chip
 	unsigned int dev_type;
 	unsigned int dev_rev;
+	unsigned char quiet:1;					// no output 
+	unsigned char basic:1;					// basic commandline
 };
 
+
+typedef struct _proto {
+	void (*protocol_start)(void);
+	void (*protocol_startR)(void);
+	void (*protocol_stop)(void);
+	void (*protocol_stopR)(void);
+	unsigned int (*protocol_send)(unsigned int);
+	unsigned int (*protocol_read)(void);
+	void (*protocol_clkh)(void);
+	void (*protocol_clkl)(void);
+	void (*protocol_dath)(void);
+	void (*protocol_datl)(void);
+	unsigned int (*protocol_dats)(void);
+	void (*protocol_clk)(void);
+	unsigned int (*protocol_bitr)(void);
+	unsigned int (*protocol_periodic)(void);
+	void (*protocol_macro)(unsigned int);
+	void (*protocol_setup)(void);
+	void (*protocol_cleanup)(void);
+	void (*protocol_pins)(void);
+	char protocol_name[8];
+} proto;
+
+
+
+/*
 //send command to correct protocol library for processing
 //switch based on bpConfig.busMode variable
 void bpProcess(void);
@@ -85,6 +101,8 @@ void bpEchoBusMode(unsigned char m);
 //used to navigate the protocol list array, 
 //done here because mode array isn't availble to other functions
 unsigned char bpNumBusModes(void);
+
+*/
 
 //bridge UART input in UART mode
 void busPirateAsyncUARTService(void);

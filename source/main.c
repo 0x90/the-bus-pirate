@@ -16,14 +16,14 @@
 #include "base.h"
 #include "busPirateCore.h"
 #include "procMenu.h"
-#include "procSyntax.h"
+//#include "procSyntax.h"
 #include "selftest.h"
-#include "binIO.h"
-#include "SUMP.h"
+//#include "binIO.h"
+//#include "SUMP.h"
 
 //set custom configuration for PIC 24F (now always set in bootloader page, not needed here)
-_CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
-_CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //turn off junk we don't need
+//_CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
+//_CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //turn off junk we don't need
 
 unsigned char irqFlag=0;
 void _T1Interrupt(void);
@@ -40,10 +40,19 @@ unsigned int currentByte;
 
 #pragma code
 //this loop services user input and passes it to be processed on <enter>
+
+
+
+
+
+
 int main(void){
 
 	Initialize();//setup bus pirate
 
+	serviceuser();
+
+/*
 	while(1){ //this is the main bus pirate loop
 		if(U1STAbits.OERR) U1STA &= (~0b10); //clear overrun error if exists
 
@@ -83,16 +92,13 @@ int main(void){
 			bpProcess();
 		}
 
-/*		//function to catch an interrupt and display IRQ, for testing interrupts
-		if(irqFlag==1){
-			irqFlag=0;
-			bpWline("IRQ DETECTED");
-			bpEchoCurrentBusMode(); //print the bus mode
-			UART1TX('>');//echo back//prompt
-		}
-*/
 
 	}//while
+
+	*/
+
+
+	return 0;
 }
 
 //bus pirate initialization
@@ -119,12 +125,16 @@ void Initialize(void){
 	bpConfig.dev_type = bpReadFlash(DEV_ADDR_UPPER, DEV_ADDR_TYPE);
 	bpConfig.dev_rev = bpReadFlash(DEV_ADDR_UPPER, DEV_ADDR_REV);
 
+	bpConfig.quiet=0;		// turn output on (default)
+
 	bpWBR; 	//send a line feed
+
+	TBLPAG=0; // we need to be in page 0 (somehow this isn't set)
 
 	versionInfo();//prints hardware and firmware version info (base.c)
 
-	bpEchoCurrentBusMode(); //print the bus mode
-	UART1TX('>');//prompt
+//	bpEchoCurrentBusMode(); //print the bus mode
+//	UART1TX('>');//prompt
 
 }
 

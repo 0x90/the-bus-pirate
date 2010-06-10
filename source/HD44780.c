@@ -16,9 +16,13 @@
 
 #include "bitbang.h"
 #include "base.h"
+#include "procmenu.h"
+
+#ifdef BP_USE_LCD
 
 //PCF8574 I2C write address (0x40 with all ADDR pins to ground)
-#define PCF8574_ADDRESS_WRITE 0x40
+// moved to sturcture to make it userconfigurable ;)
+//#define PCF8574_ADDRESS_WRITE 0x40
 
 //Define how the PCF8574 pins connect to the LCD
 #define PCF8574_LCD_RS 0b10000000
@@ -96,6 +100,7 @@ struct _HD44780_interface {
 	unsigned char RS:1; //register select, 0=command, 1=text
 	unsigned char RW:1; //read write, 0=write, 1=read
 	unsigned char LED:1; //LED on IO board, 0=on, 1=off
+	unsigned char PCF8574; //address of expander
 	//unsigned char dat; //8 data bits
 } HD44780;
 
@@ -111,6 +116,7 @@ unsigned char HD44780_ReadNibble(unsigned char reg);
 unsigned char HD44780_ReadByte(unsigned char reg);
 void HD44780_I2Cerror(void);
 
+/*
 //this function links the underlying LCD functions to generic commands that the bus pirate issues
 //put most used functions first for best performance
 void HD44780Process(void){
@@ -165,7 +171,7 @@ void HD44780Process(void){
 			bpWline(OUMSG_LCD_SETUP_ADAPTER);
 			c=bpUserNumberPrompt(1, 1, 1);
 
-			//******** REQUIRED DEFINES ***********
+			// ******** REQUIRED DEFINES ***********
 			#define SCL 		BP_CLK
 			#define SCL_TRIS 	BP_CLK_DIR     //-- The SCL Direction Register Bit
 			#define SDA 		BP_MOSI        //-- The SDA output pin
@@ -249,6 +255,167 @@ void HD44780Process(void){
 
 }
 
+*/
+
+unsigned int LCDread(void)
+{	return HD44780_ReadByte(HD44780.RS);
+}
+
+unsigned int LCDwrite(unsigned int c)
+{	HD44780_WriteByte(HD44780.RS, c);
+
+	return 0x100;
+}
+
+void LCDstart(void)
+{	HD44780.RS=HD44780_COMMAND;
+	//bpWline(OUMSG_LCD_COMMAND_MODE);
+	BPMSG1213;
+}
+
+void LCDstop(void)
+{	HD44780.RS=HD44780_DATA;
+	//bpWline(OUMSG_LCD_DATA_MODE);
+	BPMSG1214;
+}
+
+void LCDsetup(void)
+{	int address, type;
+
+	modeConfig.allowlsb=0;
+	modeConfig.allowpullup=1; 
+	modeConfig.HiZ=1;//yes, always HiZ
+
+	HD44780.RS=HD44780_DATA;
+
+	consumewhitechars();
+	type=getint();
+	consumewhitechars();
+	address=getint();
+
+	if(!((type==1)&&(address>=0x00)&&(address<=0xFF)))
+	{	cmderror=0;
+
+		//bpWline(OUMSG_LCD_SETUP_ADAPTER);
+		BPMSG1217;
+		//c=bpUserNumberPrompt(1, 1, 1);
+		getnumber(1,1,1,0);		// schiet mij maar in een kapotje :S
+	
+		// address of expander?
+		BPMSG1215;
+		HD44780.PCF8574=getnumber(0x40,0, 255, 0);
+	}
+	else
+	{	BPMSG1218;
+		bpWdec(type); bpSP;
+		bpWdec(address); bpSP;
+		BPMSG1162;
+		HD44780.PCF8574=address;
+	}
+
+	//******** REQUIRED DEFINES ***********
+	#define SCL 		BP_CLK
+	#define SCL_TRIS 	BP_CLK_DIR     //-- The SCL Direction Register Bit
+	#define SDA 		BP_MOSI        //-- The SDA output pin
+	#define SDA_TRIS 	BP_MOSI_DIR    //-- The SDA Direction Register Bit
+	
+	#define I2CLOW  	0         //-- Puts pin into output/low mode
+	#define I2CHIGH 	1         //-- Puts pin into Input/high mode
+	
+	#define I2C_SLOW	0
+	#define I2C_FAST	1
+	//-- Ensure pins are in high impedance mode --
+	SDA_TRIS=1;
+	SCL_TRIS=1;
+	//writes to the PORTs write to the LATCH
+	SCL=0;			//B8 scl 
+	SDA=0;			//B9 sda
+	bbSetup(2, 1); //2wire mode, high speed
+
+	//bpWmessage(MSG_ADAPTER);
+	BPMSG1216;
+}
+
+void LCDmacro(unsigned int c)
+{	int input,i;
+
+	consumewhitechars();
+	input=getint();
+	cmderror=0;
+
+	switch(c)
+	{	case 0://menu
+			//bpWline(OUMSG_LCD_MACRO_MENU);
+			BPMSG1219;
+			break;
+		case 1:
+		case 2:
+			//bpWline(OUMSG_LCD_MACRO_RESET);
+			BPMSG1093;
+			HD44780_Reset();
+			if(c==1) break;
+	
+			if(!((input>=1)&&(input<=2)))
+			{	//bpWline(OUMSG_LCD_MACRO_INIT_DISPLAYLINES);
+				BPMSG1220;
+				//c=bpUserNumberPrompt(1, 2, 2);
+				input=getnumber(2,1,2, 0);
+				if(input==1) HD44780_Init(DISPLAYLINES1); else HD44780_Init(DISPLAYLINES2);
+				//bpWline(OUMSG_LCD_MACRO_INIT);
+			}
+			BPMSG1221;
+			break;		
+		case 3: //Clear LCD and return home
+			HD44780_WriteByte(HD44780_COMMAND, CMD_CLEARDISPLAY);
+			bpDelayMS(15);//delay 15ms
+			//bpWline(OUMSG_LCD_MACRO_CLEAR);
+			BPMSG1222;
+			break;	
+		case 4: 
+			HD44780_WriteByte(HD44780_COMMAND, CMD_SETDDRAMADDR | (unsigned char)input);
+			//bpWline(OUMSG_LCD_MACRO_CURSOR);
+			BPMSG1223;
+			break;
+		case 6: //write numbers	
+			HD44780_WriteByte(HD44780_COMMAND, CMD_CLEARDISPLAY);//Clear LCD and return home
+			bpDelayMS(15);//delay 15ms
+			c=0x30;
+			for(i=0; i<input; i++){
+				if(c>0x39) c=0x30;
+				HD44780_WriteByte(HD44780_DATA, c);
+				UART1TX(c);
+				c++;
+			}
+			break;	
+		case 7://write characters				
+			HD44780_WriteByte(HD44780_COMMAND, CMD_CLEARDISPLAY); //Clear LCD and return home
+			bpDelayMS(15);//delay 15ms
+			c=0x21; //start character (!)
+			if(input==0) input=80;
+			for(i=0; i<input; i++){
+				if(c>127)c=0x21;
+				HD44780_WriteByte(HD44780_DATA, c);
+				UART1TX(c);
+				c++;
+			}
+			break;
+/*		case 8://terminal mode/pass through   //superseeded by send string command
+				bpWline(OUMSG_LCD_MACRO_TEXT);
+				HD44780_Term();
+			break; */
+		default:
+			//bpWmessage(MSG_ERROR_MACRO);
+			BPMSG1016;
+	}
+
+}
+
+void LCDpins(void)
+{	BPMSG1231;	
+}	
+
+/*
+// obsolete by send string command 
 //outputs typed text to the LCD
 void HD44780_Term(void){
 	#define HD44780_TERM_SIZE 24
@@ -260,6 +427,7 @@ void HD44780_Term(void){
 	for(i=0;i<currentByte; i++) HD44780_WriteByte(HD44780_DATA, tinput[i]);
 
 }
+*/
 
 //initialize LCD to 4bits with standard features
 //displaylines=0 for single line displays, displaylines=1 for multiline displays
@@ -302,11 +470,13 @@ void HD44780_Reset(void){
 	bpDelayUS(160);
 }
 
+/*
 //write a string to the LCD
 void HD44780_WriteString(char *s){
 	char c;
 	while((c = *s++)) HD44780_WriteByte(HD44780_DATA, c);
 }
+*/
 
 //write byte dat to register reg
 void HD44780_WriteByte(unsigned char reg, unsigned char dat){
@@ -377,7 +547,8 @@ unsigned char HD44780_I2Cread(void){
 	unsigned char c;
 
 	bbI2Cstart();
-	bbWriteByte((PCF8574_ADDRESS_WRITE+1)); //read address is WR+1
+	//bbWriteByte((PCF8574_ADDRESS_WRITE+1)); //read address is WR+1
+	bbWriteByte(HD44780.PCF8574+1); //read address is WR+1
 	if(bbReadBit()==1){HD44780_I2Cerror(); return 0;}
 	c=bbReadByte();
 	bbWriteBit(1); //send NACK to end read
@@ -388,13 +559,17 @@ unsigned char HD44780_I2Cread(void){
 //write value to PCF8574 I2C IO expander, message and return on ACK error
 void HD44780_I2Cwrite(unsigned char datout){
 	bbI2Cstart();
-	bbWriteByte(PCF8574_ADDRESS_WRITE);
+	//bbWriteByte(PCF8574_ADDRESS_WRITE);
+	bbWriteByte(HD44780.PCF8574);
 	if(bbReadBit()==1){HD44780_I2Cerror(); return;}
 	bbWriteByte(datout);
 	if(bbReadBit()==1){HD44780_I2Cerror(); return;}
 	bbI2Cstop();
 }
 
-void HD44780_I2Cerror(void){
-	bpWline(OUMSG_LCD_ERROR_ADAPTER);
+void HD44780_I2Cerror(void)
+{	//bpWline(OUMSG_LCD_ERROR_ADAPTER);
+	BPMSG1224;
 }
+
+#endif

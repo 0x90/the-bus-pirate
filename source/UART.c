@@ -17,8 +17,21 @@
 #include "uart2io.h"
 #include "binIOhelpers.h"
 
+#include "procmenu.h"		// for the userinteraction subs
+
+
 extern struct _modeConfig modeConfig;
 extern struct _command bpCommand;
+
+/*
+// move into a .h or other .c??? 
+int getnumber(int def, int max); // everything to make the compiler happy *dubbelzucht*
+int getint(void);
+int getrepeat(void);
+void consumewhitechars(void);
+extern int cmderror;
+*/
+
 
 struct _UART{
 	unsigned char dbp:2; //databits and parity
@@ -29,6 +42,266 @@ struct _UART{
 
 static unsigned int UART2speed[]={13332,3332,1666,832,416,207,103,68,34,127};//BRG:300,1200,2400,4800,9600,19200,38400,57600,115200, 31250,
 
+unsigned int UARTread(void)
+{	unsigned char c;
+	if(UART2RXRdy())
+	{	if(U2STAbits.PERR) BPMSG1194;	//bpWstring("-p "); //show any errors
+		if(U2STAbits.FERR) BPMSG1195;	//bpWstring("-f ");
+		c=UART2RX();
+
+		if(U2STAbits.OERR)
+		{	//bpWstring("*Bytes dropped*");
+			BPMSG1196;
+			U2STA &= (~0b10); //clear overrun error if exists
+		}
+		return c;
+	}
+	else
+	{	//bpWline(OUMSG_UART_READ_FAIL);
+		BPMSG1197;	
+	}
+	return 0;
+}
+
+unsigned int UARTwrite(unsigned int c)
+{	UART2TX(c);				//send byte
+	return 0x100;
+}
+
+// todo: read from cmdline for now it is ok
+
+void UARTsetup(void)
+{	int speed, dbp, sb, rxp, output;
+
+	consumewhitechars();
+	speed=getint();
+	consumewhitechars();
+	dbp=getint();
+	consumewhitechars();
+	sb=getint();
+	consumewhitechars();
+	rxp=getint();
+	consumewhitechars();
+	output=getint();
+ 
+	if((speed>0)&&(speed<=10))
+	{	modeConfig.speed=speed-1;
+	}
+	else	
+	{	speed=0;					// when speed is 0 we ask the user
+	}
+	if((dbp>0)&&(dbp<=4))
+	{	uartSettings.dbp=dbp-1;
+	}
+	else	
+	{	speed=0;					// when speed is 0 we ask the user
+	}
+	if((sb>0)&&(sb<=2))
+	{	uartSettings.sb=sb-1;
+	}
+	else	
+	{	speed=0;					// when speed is 0 we ask the user
+	}
+	if((rxp>0)&&(rxp<=2))
+	{	uartSettings.rxp=rxp-1;
+	}
+	else	
+	{	speed=0;					// when speed is 0 we ask the user
+	}
+	if((output>0)&&(output<=2))
+	{	modeConfig.HiZ=(~(output-1));
+	}
+	else	
+	{	speed=0;					// when speed is 0 we ask the user
+	}
+
+	if(speed==0)
+	{	cmderror=0;
+
+		//bpWmessage(MSG_OPT_UART_BAUD); //write text (baud rate)
+		BPMSG1133;
+		//bpWline(" 10. 31250 (MIDI)"); //add midi to the standard list // add to translation??
+		BPMSG1198;
+		//modeConfig.speed=(bpUserNumberPrompt(2, 10, 1)-1); //get user reply
+		modeConfig.speed=getnumber(1,1,10,0)-1; //get user reply
+		
+		//bpWstring("Data bits and parity:\x0D\x0A 1. 8, NONE *default \x0D\x0A 2. 8, EVEN \x0D\x0A 3. 8, ODD \x0D\x0A 4. 9, NONE \x0D\x0A");
+		//bpWline(OUMSG_UART_DATABITS_PARITY); //write text (data bit and parity)
+		BPMSG1199;
+		//uartSettings.dbp=(bpUserNumberPrompt(1, 4, 1)-1);
+		uartSettings.dbp=getnumber(1,1,4,0)-1;
+	
+		//bpWstring("Stop bits:\x0D\x0A 1. 1 *default\x0D\x0A 2. 2 \x0D\x0A");
+		//bpWline(OUMSG_UART_STOPBITS); //write text 
+		BPMSG1200;
+		//uartSettings.sb=(bpUserNumberPrompt(1, 2, 1)-1);
+		uartSettings.sb=getnumber(1,1,2,0)-1;
+	
+		//string("Receive polarity:\x0D\x0A 1. Idle 1 *default\x0D\x0A 2. Idle 0\x0D\x0A");				
+		//bpWline(OUMSG_UART_RXPOLARITY); //write text 
+		BPMSG1201;
+		//uartSettings.rxp=(bpUserNumberPrompt(1, 2, 1)-1);
+		uartSettings.rxp=getnumber(1,1,2,0)-1;
+	
+		//bpWmessage(MSG_OPT_OUTPUT_TYPE);
+		BPMSG1142;
+		//modeConfig.HiZ=(~(bpUserNumberPrompt(1, 2, 1)-1));
+		modeConfig.HiZ=(~(getnumber(1,1,2,0)-1));
+		//modeConfig.allowlsb=0; //already reset to 0
+	}
+	else
+	{	//bpWstring("UART (spd dbp sb rxp hiz)=( ");
+		BPMSG1202;
+		bpWdec(modeConfig.speed); bpSP;
+		bpWdec(uartSettings.dbp); bpSP;
+		bpWdec(uartSettings.sb); bpSP;
+		bpWdec(uartSettings.rxp); bpSP;
+		bpWdec(modeConfig.HiZ); bpSP;
+		//bpWline(")\r\n");
+		BPMSG1162;
+	}	
+
+
+	#ifdef BUSPIRATEV2
+	modeConfig.allowpullup=1;
+	#endif
+
+	UART2Setup(UART2speed[modeConfig.speed],modeConfig.HiZ, uartSettings.rxp, uartSettings.dbp, uartSettings.sb );
+	UART2Enable();
+}
+
+
+void UARTcleanup(void)
+{	UART2Disable();
+
+}
+
+void UARTmacro(unsigned int macro)
+{
+	switch(macro){
+		case 0://menu
+			//bpWline(OUMSG_UART_MACRO_MENU);
+			BPMSG1203;
+			break;
+		#if defined(BUSPIRATEV25) || defined(BUSPIRATEV3)
+		case 3://UART bridge with flow control
+			//setup RTS CTS on FTDI chip side
+			FTDI_CTS_DIR=0; //CTS (PIC output to FTDI)
+			FTDI_RTS_DIR=1; //RTS (PIC input from FTDI)
+			//PORTAbits.RA4=0;
+			//PORTAbits.RA5=0;
+			BP_CS_DIR=1;//external CTS (PIC input from external circuit)
+			BP_CLK_DIR=0;//external RTS (PIC output mirrors output from FTDI)
+			//BP_CS=0;//external CTS (PIC input from external circuit)
+			//BP_CLK=0;//external RTS (PIC mirrors output from FTDI)
+		#endif
+		case 1://transparent UART
+			//bpWline("UART bridge. Space continues, anything else exits.");
+			BPMSG1204;
+			if(UART1RX()!=' ')break; //escape
+			//bpWline("Reset to exit.");
+			BPMSG1205;
+			// could use a lot of improvement
+			//buffers for baud rate differences
+			//it's best to adjust the terminal to the same speed you want to use to avoid buffer overuns
+			//it will fail silently
+			U2STA &= (~0b10); //clear overrun error if exists
+			while(1){//never ending loop, reset Bus Pirate to get out
+				if((U2STAbits.URXDA==1)&& (U1STAbits.UTXBF == 0)){
+						U1TXREG = U2RXREG; //URXDA doesn't get cleared untill this happens
+				}
+				if((U1STAbits.URXDA==1)&& (U2STAbits.UTXBF == 0)){
+						U2TXREG = U1RXREG; //URXDA doesn't get cleared untill this happens
+				}
+				if(U2STAbits.OERR || U1STAbits.OERR){
+   					U2STA &= (~0b10); //clear overrun error if exists
+   					U1STA &= (~0b10); //clear overrun error if exists
+					BP_LEDMODE=0;//MODE LED off to signify overrun error
+				}
+				#if defined(BUSPIRATEV25) || defined(BUSPIRATEV3)
+				if(macro==3){
+					//pass RTS/CTS
+					BP_CLK=FTDI_RTS;
+					FTDI_CTS=BP_CS;								
+				}
+				#endif
+			}
+			break;
+		case 2: //Watch raw UART
+			//bpWline("Raw UART input. Space to exit.");
+			BPMSG1206;
+
+			// could use a lot of improvement
+			//buffers for baud rate differences
+			//it's best to adjust the terminal to the same speed you want to use to avoid buffer overuns
+			//it will fail silently
+			U2STA &= (~0b10); //clear overrun error if exists
+			while(1){//never ending loop, reset Bus Pirate to get out
+				if((U2STAbits.URXDA==1)&& (U1STAbits.UTXBF == 0)){
+						U1TXREG = U2RXREG; //URXDA doesn't get cleared untill this happens
+				}
+				if (U1STAbits.URXDA==1){//escape
+				 	if(U1RXREG == ' ') break;
+				}
+			}
+			break;
+		//case 2://auto UART baud rate
+		//	break;			
+		default:
+			//bpWmessage(MSG_ERROR_MACRO);
+			BPMSG1016;
+	}
+}
+
+
+void UARTstart(void)
+{	U2STA &= (~0b10); //clear overrun error if exists
+	uartSettings.eu=1;//open uart
+	modeConfig.periodicService=1;//start periodic service calls
+	//bpWline(OUMSG_UART_LIVE_DISPLAY_ON);
+	BPMSG1207;
+}
+
+void UARTstop(void)
+{	uartSettings.eu=0;// uart
+	modeConfig.periodicService=0;//start periodic service calls
+	//bpWline(OUMSG_UART_LIVE_DISPLAY_OFF);
+	BPMSG1208;
+}
+
+unsigned int UARTperiodic(void)
+{	unsigned int temp;
+
+	temp=0;
+	while(UART2RXRdy())			//data ready
+	{	if(uartSettings.eu==1)
+		{	bpWBR;
+			//bpWmessage(MSG_READ); //bpWstring(OUMSG_UART_READ);
+			BPMSG1102;
+			if(U2STAbits.PERR) BPMSG1194;	//bpWstring("-p "); //show any errors
+			if(U2STAbits.FERR) BPMSG1195;	//bpWstring("-f ");
+			bpWbyte(UART2RX());
+			if(U2STAbits.OERR)
+			{	//bpWstring("*Bytes dropped*");
+				BPMSG1196;
+	 			U2STA &= (~0b10); //clear overrun error if exists
+			}	
+			bpWBR;
+		}else
+		{	UART2RX();//clear the buffer....
+		}
+		temp=1;
+	}
+	return temp;
+}
+
+void UARTpins(void)
+{	BPMSG1230;
+}
+
+
+
+/*
 void uartProcess(void){
 	static unsigned char c;
 	static unsigned int i;
@@ -207,6 +480,8 @@ void uartProcess(void){
 	}
 
 }
+*/
+
 
 /*
 databits and parity (2bits)

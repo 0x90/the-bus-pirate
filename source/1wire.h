@@ -18,5 +18,19 @@ void DS1wireProcess(void);
 unsigned char PROBE_CHECKSUM (unsigned char *BYTE, int size_of_BYTE);
 void bin1WIRE(void);
 
+unsigned int OWread(void);
+unsigned int OWwrite(unsigned int c);
+unsigned int OWbitr(void);
+void OWbitclk(void);
+void OWdatl(void);
+void OWdath(void);
+void OWsetup(void);
+void OWmacro(unsigned int macro);
+void OWpins(void);
+
+// from m_1wire123.h anything to make the compiler.linker happy *zucht*
+void DS1wireReset(void);
+
+
 
 

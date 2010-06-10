@@ -13,9 +13,6 @@
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
-
-#include "base.h"
-
 //manage user terminal input
 unsigned int bpUserNumberPrompt(unsigned int maxBytes, unsigned int maxValue, unsigned int defValue);
 
@@ -123,6 +120,7 @@ void bpWhexBuf(unsigned int c); //write a hex value to ring buffer
 #define PIC_REV_A3	0x3003
 #define PIC_REV_B4	0x3042
 #define PIC_REV_B5	0x3043
+#define PIC_REV_B8	0x3046
 
 // Read the lower 16 bits from programming flash memory
 unsigned int bpReadFlash(unsigned int page, unsigned int addr);

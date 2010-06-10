@@ -63,222 +63,208 @@ unsigned char LastFamilyDiscrepancy;
 unsigned char LastDeviceFlag;
 unsigned char crc8;
 
-void DS1wireReset(void);
+// implementation new framework other part in buspiratecore.c
+unsigned int OWread(void)
+{	return (OWReadByte());
+}
 
-//this function links the underlying library functions to generic commands that the bus pirate issues
-//put most used functions first for best performance
-void DS1wireProcess(void){
-	static unsigned char c,j;
+unsigned int OWwrite(unsigned int c)
+{	OWWriteByte(c);
+	return 0x100;
+}
+
+unsigned int OWbitr(void)
+{	return(OWReadBit());
+}
+
+void OWbitclk(void)
+{	OWWriteBit(DS1wireDataState);
+	bpEchoState(DS1wireDataState);
+}
+
+void OWdatl(void)
+{	//bpWstring(OUMSG_1W_BIT_WRITE);
+	BPMSG1000;
+	DS1wireDataState=0;
+	bpEchoState(0);
+	//bpWline(OUMSG_1W_BIT_WRITE_NOTE);
+	BPMSG1001;
+	OWWriteBit(DS1wireDataState);
+}
+
+void OWdath(void)
+{	//bpWstring(OUMSG_1W_BIT_WRITE);
+	BPMSG1000;
+	DS1wireDataState=1;
+	bpEchoState(1);
+	//bpWline(OUMSG_1W_BIT_WRITE_NOTE);
+	BPMSG1001;
+	OWWriteBit(DS1wireDataState);
+}
+
+void OWsetup(void)
+{	modeConfig.allowlsb=0;
+	modeConfig.allowpullup=1; 
+	modeConfig.HiZ=1;//yes, always HiZ
+
+	OWroster.num=0;//clear any old 1-wire bus enumeration rosters
+	//-- Ensure pins are in high impedance mode --
+	SDA_TRIS=1;
+	//writes to the PORTs write to the LATCH
+	SDA=0;			//B9 sda
+	//bpWline("1WIRE routines Copyright (C) 2000 Michael Pearce");
+	//bpWline("Released under GNU General Public License");
+	BPMSG1002;
+	BPMSG1003;
+}
+
+void OWmacro(unsigned int macro)
+{	static unsigned char c,j;
 	static unsigned int i;
 	static unsigned char devID[8];
-	switch(bpCommand.cmd){
-		case CMD_READ:
-			if(bpCommand.repeat==1){
-				bpWmessage(MSG_READ);
-				c=OWReadByte();
-				bpWbyte(c);
+
+	if(macro>0 && macro<51){
+		macro--;//adjust down one for roster array index
+		if(macro>=OWroster.num){//no device #X on the bus, try ROM SEARCH (0xF0)
+			//bpWline(OUMSG_1W_MACRO_ADDRESS_NODEVICE);
+			BPMSG1004;
+			return;
+		}
+		//write out the address of the device in the macro
+		//bpWstring(OUMSG_1W_MACRO_ADDRESS);//xxx WRITE BUS #X ID:
+		BPMSG1005;
+		bpWdec(macro+1);
+		bpWstring(": ");
+		for(j=0;j<8;j++){
+			bpWbyte(OWroster.dev[macro].id[j]); 
+			bpSP; 
+			OWWriteByte(OWroster.dev[macro].id[j]);
+		} //write address
+		bpBR;
+		return;
+	}
+	switch(macro){
+		case 0://menu
+			//bpWline(OUMSG_1W_MACRO_MENU);
+			//bpWline(OUMSG_1W_MACRO_SEARCH_ROM_HEADER);
+			BPMSG1006;
+			BPMSG1007;
+			//write out roster of devices and macros, or SEARCH ROM NOT RUN, TRY (0xf0)
+			if(OWroster.num==0){
+				//bpWline(OUMSG_1W_MACRO_ADDRESS_NODEVICE);
+				BPMSG1004;
 			}else{
-				bpWmessage(MSG_READBULK);
-				bpWbyte(bpCommand.repeat);
-				bpWmessage(MSG_READBULK_BYTES);
-				for(i=0;i<bpCommand.repeat;i++){	
-					c=OWReadByte();
-					bpWbyte(c);
+				for(c=0;c<OWroster.num; c++){
+					bpSP;//space
+					bpWdec(c+1);
+					bpWstring(".");
+					for(j=0;j<8;j++){bpWbyte(OWroster.dev[c].id[j]); bpSP;}
+					//bpWstring("\x0D\x0A   *");
+					BPMSG1008;
+					DS1wireID(OWroster.dev[c].id[0]);	//print the device family identity (if known)
+				}
+			}
+			//bpWline(OUMSG_1W_MACRO_MENU_ROM);
+			BPMSG1009;
+			break;
+		//1WIRE ROM COMMANDS
+		case 0xec://ALARM SEARCH
+		case 0xf0: //SEARCH ROM
+			SearchChar=macro;
+			if(macro==0xec){
+				//bpWline(OUMSG_1W_MACRO_ALARMSEARCH_ROM);
+				BPMSG1010;
+			}else{//SEARCH ROM command...
+				//bpWline(OUMSG_1W_MACRO_SEARCH_ROM);
+				BPMSG1011;
+			}
+
+			//bpWline(OUMSG_1W_MACRO_SEARCH_ROM_HEADER);
+			BPMSG1007;
+			// find ALL devices
+			j = 0;
+			c = OWFirst();
+			OWroster.num=0;
+			while (c){
+				//the roster number is the shortcut macro
+				bpSP;
+				bpWdec(j+1);
+				bpWstring(".");
+		
+				// print address
+				for (i = 0; i <8; i++){
+					bpWbyte(ROM_NO[i]);
 					bpSP;
 				}
-			}
-			bpWBR;
-			break;
-		case CMD_WRITE:
-			//bpWmessage(MSG_WRITE);
-			//bpWbyte(bpCommand.num);
-			//OWWriteByte(bpCommand.num);
-			//bpWBR;
-			bpWmessage(MSG_WRITE);
-			bpWbyte(bpCommand.num);
-			if(bpCommand.repeat==1){
-				OWWriteByte(bpCommand.num);//send byte
-			}else{
-				bpWstring(" , ");
-				bpWbyte(bpCommand.repeat);
-				bpWmessage(MSG_WRITEBULK);
-				for(i=0;i<bpCommand.repeat;i++)OWWriteByte(bpCommand.num);//send byte
-			}
-			bpWBR;
-			break;
-		case CMD_STARTR:
-		case CMD_START:
-			//bus reset
-			DS1wireReset();
-			break;
-		case CMD_BIT_READ:
-			c=OWReadBit();
-			bpWmessage(MSG_BIT_READ);
-			bpEchoState(c);
-			bpWmessage(MSG_BIT_NOWINPUT);
-			break;
-		case CMD_BIT_CLK: //we use clock as the 1wire write slot, use _- to set data state
-			bpWbyte(bpCommand.repeat);
-			bpWstring(OUMSG_1W_BIT_BULKWRITE);
-			for(i=0;i<bpCommand.repeat;i++) OWWriteBit(DS1wireDataState);
-			bpEchoState(DS1wireDataState);
-			bpWline(")");
-			break;
-		case CMD_BIT_DATH://this also sets a bit direction variable that sets the bits that are clocked with ^
-		case CMD_BIT_DATL:
-			bpWstring(OUMSG_1W_BIT_WRITE);
-			if(bpCommand.cmd==CMD_BIT_DATL){
-				DS1wireDataState=0;
-				bpEchoState(0);
-			}else{
-				DS1wireDataState=1;
-				bpEchoState(1);
-			}
-			bpWline(OUMSG_1W_BIT_WRITE_NOTE);
-			OWWriteBit(DS1wireDataState);
-			break;
-		case CMD_PRESETUP: //set the options avaiable here....
-			modeConfig.allowlsb=0;
-			modeConfig.allowpullup=1; 
-			modeConfig.HiZ=1;//yes, always HiZ
-			break;
-		case CMD_SETUP:
-			OWroster.num=0;//clear any old 1-wire bus enumeration rosters
-			//-- Ensure pins are in high impedance mode --
-			SDA_TRIS=1;
-			//writes to the PORTs write to the LATCH
-			SDA=0;			//B9 sda
-			bpWline("1WIRE routines Copyright (C) 2000 Michael Pearce");
-			bpWline("Released under GNU General Public License");
-			bpWmessage(MSG_READY);
-			break;
-		case CMD_CLEANUP: //no cleanup needed...
-			break;
-		case CMD_MACRO:
-			if(bpCommand.num>0 && bpCommand.num<51){
-				bpCommand.num--;//adjust down one for roster array index
-				if(bpCommand.num>=OWroster.num){//no device #X on the bus, try ROM SEARCH (0xF0)
-					bpWline(OUMSG_1W_MACRO_ADDRESS_NODEVICE);
-					return;
+				//bpWstring("\x0D\x0A   *");
+				BPMSG1008;
+				DS1wireID(ROM_NO[0]);	//print the device family identity (if known)
+				
+				//keep the first X number of one wire IDs in a roster
+				//so we can refer to them by macro, rather than ID
+				if(j<OW_DEV_ROSTER_SLOTS){//only as many as we have room for
+					for(i=0;i<8;i++) OWroster.dev[OWroster.num].id[i]=ROM_NO[i];
+					OWroster.num++;//increment the roster count
 				}
-				//write out the address of the device in the macro
-				bpWstring(OUMSG_1W_MACRO_ADDRESS);//xxx WRITE BUS #X ID:
-				bpWdec(bpCommand.num+1);
-				bpWstring(": ");
-				for(j=0;j<8;j++){
-					bpWbyte(OWroster.dev[bpCommand.num].id[j]); 
-					bpSP; 
-					OWWriteByte(OWroster.dev[bpCommand.num].id[j]);
-				} //write address
-				bpWline(" ");
-				return;
+
+				j++;	
+		
+				c = OWNext();
 			}
-			switch(bpCommand.num){
-				case 0://menu
-					bpWline(OUMSG_1W_MACRO_MENU);
-					bpWline(OUMSG_1W_MACRO_SEARCH_ROM_HEADER);
-					//write out roster of devices and macros, or SEARCH ROM NOT RUN, TRY (0xf0)
-					if(OWroster.num==0){
-						bpWline(OUMSG_1W_MACRO_ADDRESS_NODEVICE);
-					}else{
-						for(c=0;c<OWroster.num; c++){
-							bpSP;//space
-							bpWdec(c+1);
-							bpWstring(".");
-							for(j=0;j<8;j++){bpWbyte(OWroster.dev[c].id[j]); bpSP;}
-							bpWstring("\x0D\x0A   *");
-							DS1wireID(OWroster.dev[c].id[0]);	//print the device family identity (if known)
-						}
-					}
-					bpWline(OUMSG_1W_MACRO_MENU_ROM);
-					break;
-				//1WIRE ROM COMMANDS
-				case 0xec://ALARM SEARCH
-				case 0xf0: //SEARCH ROM
-					SearchChar=bpCommand.num;
-					if(bpCommand.num==0xec){
-						bpWline(OUMSG_1W_MACRO_ALARMSEARCH_ROM);						
-					}else{//SEARCH ROM command...
-						bpWline(OUMSG_1W_MACRO_SEARCH_ROM);
-					}
 
-					bpWline(OUMSG_1W_MACRO_SEARCH_ROM_HEADER);
-					// find ALL devices
-					j = 0;
-					c = OWFirst();
-					OWroster.num=0;
-					while (c){
-						//the roster number is the shortcut macro
-						bpSP;
-						bpWdec(j+1);
-						bpWstring(".");
-				
-						// print address
-						for (i = 0; i <8; i++){
-							bpWbyte(ROM_NO[i]);
-							bpSP;
-						}
-						bpWstring("\x0D\x0A   *");
-						DS1wireID(ROM_NO[0]);	//print the device family identity (if known)
-						
-						//keep the first X number of one wire IDs in a roster
-						//so we can refer to them by macro, rather than ID
-						if(j<OW_DEV_ROSTER_SLOTS){//only as many as we have room for
-							for(i=0;i<8;i++) OWroster.dev[OWroster.num].id[i]=ROM_NO[i];
-							OWroster.num++;//increment the roster count
-						}
-
-						j++;	
-				
-						c = OWNext();
-					}
-
-					bpWline(OUMSG_1W_MACRO_SEARCH_ROM_NOTE);				
-					break;
-				case 0x33://READ ROM
-					DS1wireReset();
-					bpWstring(OUMSG_1W_MACRO_READ_ROM);
-					OWWriteByte(0x33);
-					for(i=0; i<8; i++){
-						devID[i]=OWReadByte();
-						bpWbyte(devID[i]);
-						bpSP;	
-					}
-					bpWBR;	
-					DS1wireID(devID[0]);
-					break;
-				case 0x55://MATCH ROM
-					DS1wireReset();
-					bpWline(OUMSG_1W_MACRO_MATCH_ROM);
-					OWWriteByte(0x55);
-					break;
-				case 0xcc://SKIP ROM
-					DS1wireReset();
-					bpWline(OUMSG_1W_MACRO_SKIP_ROM);
-					OWWriteByte(0xCC);
-					break;
-				default:
-					bpWmessage(MSG_ERROR_MACRO);
-			}
+			//bpWline(OUMSG_1W_MACRO_SEARCH_ROM_NOTE);
+			BPMSG1012;		
 			break;
-		case CMD_ENDOFSYNTAX: break;
+		case 0x33://READ ROM
+			DS1wireReset();
+			//bpWstring(OUMSG_1W_MACRO_READ_ROM);
+			BPMSG1013;
+			OWWriteByte(0x33);
+			for(i=0; i<8; i++){
+				devID[i]=OWReadByte();
+				bpWbyte(devID[i]);
+				bpSP;	
+			}
+			bpWBR;	
+			DS1wireID(devID[0]);
+			break;
+		case 0x55://MATCH ROM
+			DS1wireReset();
+			//bpWline(OUMSG_1W_MACRO_MATCH_ROM);
+			BPMSG1014;
+			OWWriteByte(0x55);
+			break;
+		case 0xcc://SKIP ROM
+			DS1wireReset();
+			//bpWline(OUMSG_1W_MACRO_SKIP_ROM);
+			BPMSG1015;
+			OWWriteByte(0xCC);
+			break;
 		default:
-			bpWmessage(MSG_ERROR_MODE);
+			//bpWmessage(MSG_ERROR_MACRO);
+			BPMSG1016;
 	}
+}
 
+void OWpins(void)
+{	BPMSG1229;
 }
 
 void DS1wireReset(void){
 	unsigned char c;
 
 	c=OWReset();
-	bpWstring(OUMSG_1W_RESET);	
+	//bpWstring(OUMSG_1W_RESET);
+	BPMSG1017;	
 	if(c==0){
-		bpWline(OUMSG_1W_RESET_OK);			
+		//bpWline(OUMSG_1W_RESET_OK);			
+		//BPMSG1018; //remove?
+		BPMSG1185;
 	}else{
-		bpWstring(OUMSG_1W_RESET_ERROR);
-		if(c&0b1)  bpWstring(OUMSG_1W_RESET_SHORT);	
-		if(c&0b10) bpWstring(OUMSG_1W_RESET_NODEV);
+		//bpWstring(OUMSG_1W_RESET_ERROR);
+		BPMSG1019;
+		if(c&0b1)  BPMSG1020;		//bpWstring(OUMSG_1W_RESET_SHORT);	
+		if(c&0b10) BPMSG1021;		//bpWstring(OUMSG_1W_RESET_NODEV);
 		bpWstring("(");	
 		bpWbyte(c);
 		bpWline(")");
@@ -295,22 +281,28 @@ void DS1wireID(unsigned char famID){
 	#define DS2431 0x2D
 	switch(famID){//check for device type
 		case DS18S20:
-			bpWline("DS18S20 High Pres Dig Therm");
+			//bpWline("DS18S20 High Pres Dig Therm");
+			BPMSG1022;
 			break;
 		case DS18B20:
-			bpWline("DS18B20 Prog Res Dig Therm");
+			//bpWline("DS18B20 Prog Res Dig Therm");
+			BPMSG1023;
 			break;
 		case DS1822:
-			bpWline("DS1822 Econ Dig Therm");
+			//bpWline("DS1822 Econ Dig Therm");
+			BPMSG1024;
 			break;
 		case DS2404:
-			bpWline("DS2404 Econram time Chip");
+			//bpWline("DS2404 Econram time Chip");
+			BPMSG1025;
 			break;
 		case DS2431:
-			bpWline("DS2431 1K EEPROM");
+			//bpWline("DS2431 1K EEPROM");
+			BPMSG1026;
 			break;
 		default:
-			bpWline("Unknown device");
+			//bpWline("Unknown device");
+			BPMSG1027;
 
 	}
 }
