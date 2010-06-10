@@ -37,7 +37,7 @@ BPMSG1032;0;"PR2:"
 BPMSG1033;0;"Duty cycle in % "
 BPMSG1034;1;"PWM active"
 // sorry 10351036 are none existant!
-BPMSG1037;0;"PWM active: try G to disable PWM"
+BPMSG1037;1;"PWM active: try g to disable PWM"
 BPMSG1038;0;"Frequency on AUX pin: "
 BPMSG1039;0;"AUX INPUT/HI-Z"
 BPMSG1040;1;"AUX HIGH"

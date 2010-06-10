@@ -228,19 +228,9 @@ void bpFreq(void){
 		l=bpFreq_count();
 	}
 
-	bpWlongdec(l);
-	bpWstring("Hz");				
-	if(l>=1000000){
-		bpWstring(" (");
-		bpWlongdec(l/1000000);
-		//bpWstring("+MHz)");
-		BPMSG1246;
-	}else if(l>=1000){
-		bpWstring(" (");
-		bpWlongdec(l/1000);
-		//bpWstring("+kHz)");
-		BPMSG1247;
-	}
+	bpWlongdecf(l);		// this function uses comma's to seperate thousands.
+	bpWstring(" Hz");				
+
 	bpWBR;
 
 	//return clock input to other pin

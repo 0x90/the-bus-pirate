@@ -37,7 +37,7 @@ _bpmessages:
 	.pascii	"PR2:"
 	.pascii	"Duty cycle in % "
 	.pascii	"PWM active"
-	.pascii	"PWM active: try G to disable PWM"
+	.pascii	"PWM active: try g to disable PWM"
 	.pascii	"Frequency on AUX pin: "
 	.pascii	"AUX INPUT/HI-Z"
 	.pascii	"AUX HIGH"

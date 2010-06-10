@@ -93,6 +93,57 @@ void  bpWlongdec(unsigned long l){
 
 }
 
+// userfriendly printing of looooonng ints
+void bpWlongdecf(unsigned long l)
+{	unsigned long int temp;
+	int mld, mil;
+
+	mld=0; mil=0; temp=0;
+
+	if(l>=1000000)
+	{	temp=l/1000000;
+		bpWintdec(temp);
+		UART1TX(',');
+		l%=1000000;
+		if(l<1000) bpWstring("000,");
+		mld=1;
+		mil=1;
+	}
+	if(l>=1000)
+	{	temp=l/1000;
+		if(temp>100)
+		{	bpWintdec(temp);
+		}
+		else if(mld)
+		{	if(temp>10)
+			{	UART1TX('0');		// 1 leading zero
+			}
+			else
+			{	bpWstring("00");
+			}
+			bpWintdec(temp);
+		}
+		else bpWintdec(temp);
+		UART1TX(',');
+		l%=1000;
+		mil=1;
+	}	
+	if(l>100)
+	{	bpWintdec(l);
+	}
+	else if(mil)
+	{	if(l>10)
+		{	UART1TX('0');		// 1 leading zero
+		}
+		else
+		{	bpWstring("00");
+		}
+		bpWintdec(l);
+	}
+	else bpWintdec(l);
+}
+
+
 //output an 16bit/integer decimal value to the user terminal
 void  bpWintdec(unsigned int i){
     unsigned int c,m;

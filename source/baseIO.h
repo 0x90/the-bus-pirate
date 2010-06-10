@@ -58,6 +58,8 @@ void bpWintdec(unsigned int i);
 
 //output an 32bit/long decimal value to the user terminal
 void bpWlongdec(unsigned long l);
+//friendly version
+void bpWlongdecf(unsigned long l);
 
 //print a float number to the user terminal 
 // (special to show volts to a single digit for ADC measurements)
