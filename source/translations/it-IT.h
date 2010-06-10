@@ -6,6 +6,8 @@
 //****************************************/
 //these terms become part of the terminal text messaging system 
 //one copy can be accessed from anywhere in the code, this saves a bunch of space
+#ifdef LANGUAGE_IT_IT
+
 #define MSG_READY_T		"PRONTO\x0D\x0A"
 
 #define MSG_READ_T 		"LETTURA: "
@@ -226,5 +228,7 @@
 #define HELP_SYNTAX_BITPEEK_T		". Lettura stato dei pin di input"
 #define HELP_SYNTAX_BITCLK_T		"^ Clock tick"
 #define HELP_SYNTAX_BITREAD_T		"! Lettura bit"
+
+#endif
 
 //Please leave one blank line after this comment. If you don't, the compiler gets mad.
