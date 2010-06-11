@@ -44,7 +44,7 @@ void binrawversionString(void);
 void binrawversionString(void){bpWstring("RAW1");}
 
 void binwire(void){
-	static unsigned char inByte, rawCommand, i, wires;
+	static unsigned char inByte, rawCommand, i, wires, pic[3];
 	
 	modeConfig.HiZ=1;//yes, always hiz (bbio uses this setting, should be changed to a setup variable because stringing the modeconfig struct everyhwere is getting ugly!)
 	modeConfig.lsbEN=0;//just in case!
@@ -176,6 +176,56 @@ void binwire(void){
 				}
 				UART1TX(1);
 				break;
+
+			case 0b1010:// PIC commands
+
+				switch(inByte){
+					case 0b10100100:
+						//get command byte, two data bytes
+						for(i=0; i<3; i++){
+							while(U1STAbits.URXDA == 0);//wait for a byte
+							pic[i]=U1RXREG; //get byte, reuse rawCommand variable
+						}
+						
+						rawCommand=pic[0]; //recycle this variable, too lazy to change the loop today
+
+						//needs to support 4 or 6 or etc modes
+						//should steal from pic.c
+						for(i=0;i<4;i++){
+							if(rawCommand & 0b10000000){//send 1
+								bbWriteBit(1); //send bit
+							}else{ //send 0
+								bbWriteBit(0); //send bit
+							}
+							rawCommand=rawCommand<<1; //pop the MSB off
+						}
+					
+						//needs to support 14 or 16 bit writes
+						//should steal from pic.c
+						bbWriteByte(pic[1]); //send byte
+						bbWriteByte(pic[2]); //send byte
+						UART1TX(1);//send 1/OK	
+						break;
+					case 0b10100101://write x bit command, read x bits and return in 2 bytes
+						while(U1STAbits.URXDA == 0);//wait for a byte
+						rawCommand=U1RXREG; //get byte, reuse rawCommand variable
+						for(i=0;i<4;i++){
+							if(rawCommand & 0b10000000){//send 1
+								bbWriteBit(1); //send bit
+							}else{ //send 0
+								bbWriteBit(0); //send bit
+							}
+							rawCommand=rawCommand<<1; //pop the MSB off
+						}
+						UART1TX(bbReadByte());
+						UART1TX(bbReadByte());
+						break;
+					default:
+						UART1TX(0x00);//send 0/Error
+						break;
+				}
+
+				break;			
 
 			//case 0b0101: //# 0101xxxx - Bulk read, read 1-16bytes (0=1byte!)
 
