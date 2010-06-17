@@ -192,12 +192,12 @@ void binwire(void){
 						//needs to support 4 or 6 or etc modes
 						//should steal from pic.c
 						for(i=0;i<4;i++){
-							if(rawCommand & 0b10000000){//send 1
+							if(rawCommand & 0b1){//send 1
 								bbWriteBit(1); //send bit
 							}else{ //send 0
 								bbWriteBit(0); //send bit
 							}
-							rawCommand=rawCommand<<1; //pop the MSB off
+							rawCommand=rawCommand>>1; //pop the LSB off
 						}
 					
 						//needs to support 14 or 16 bit writes
@@ -210,14 +210,14 @@ void binwire(void){
 						while(U1STAbits.URXDA == 0);//wait for a byte
 						rawCommand=U1RXREG; //get byte, reuse rawCommand variable
 						for(i=0;i<4;i++){
-							if(rawCommand & 0b10000000){//send 1
+							if(rawCommand & 0b1){//send 1
 								bbWriteBit(1); //send bit
 							}else{ //send 0
 								bbWriteBit(0); //send bit
 							}
-							rawCommand=rawCommand<<1; //pop the MSB off
+							rawCommand=rawCommand>>1; //pop the LSB off
 						}
-						UART1TX(bbReadByte());
+						bbReadByte(); //dummy byte, setup input
 						UART1TX(bbReadByte());
 						break;
 					default:
