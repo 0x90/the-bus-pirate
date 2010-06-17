@@ -529,8 +529,8 @@ void serviceuser(void)
 								UART1TX(0x22);
 								while(cmdbuf[((++cmdstart)&CMDLENMSK)]!=0x22)
 								{	cmdstart&=CMDLENMSK;
-									protos[bpConfig.busMode].protocol_send(cmdbuf[cmdstart]);
 									UART1TX(cmdbuf[cmdstart]);
+									protos[bpConfig.busMode].protocol_send(cmdbuf[cmdstart]);
 								}
 								cmdstart&=CMDLENMSK;
 								UART1TX(0x22);
