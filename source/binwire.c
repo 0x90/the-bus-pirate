@@ -188,10 +188,21 @@ void binwire(void){
 						}
 						
 						rawCommand=pic[0]; //recycle this variable, too lazy to change the loop today
-
+						
+						//use upper 2 bits of pic[0] to determine a delay, if any.
+						pic[0]=pic[0]>>6;
 						//needs to support 4 or 6 or etc modes
 						//should steal from pic.c
 						for(i=0;i<4;i++){
+							
+							//hold data for write time
+							if((pic[0]>0) && i==3 ){
+								bbCLK(1);
+								bpDelayMS(pic[0]);
+								bbCLK(0);
+								continue;
+							}
+
 							if(rawCommand & 0b1){//send 1
 								bbWriteBit(1); //send bit
 							}else{ //send 0
