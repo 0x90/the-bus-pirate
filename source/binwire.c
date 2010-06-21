@@ -4,6 +4,7 @@
 
 extern struct _modeConfig modeConfig;
 void binrawversionString(void);
+void PIC24NOP(void);
 
 #define R3WMOSI_TRIS 	BP_MOSI_DIR
 #define R3WCLK_TRIS 	BP_CLK_DIR
@@ -43,8 +44,26 @@ void binrawversionString(void);
 
 void binrawversionString(void){bpWstring("RAW1");}
 
+void PIC24NOP(void){
+	//send four bit SIX command (write)
+	bbWriteBit(0); //send bit
+	bbWriteBit(0); //send bit
+	bbWriteBit(0); //send bit
+	bbWriteBit(0); //send bit
+	
+	//send data payload
+	bbWriteByte(0x00); //send byte
+	bbWriteByte(0x00); //send byte
+	bbWriteByte(0x00); //send byte
+
+}
+enum { PIC614=0,
+	   PIC416,
+	   PIC424,
+	};
+
 void binwire(void){
-	static unsigned char inByte, rawCommand, i, wires, pic[3];
+	static unsigned char inByte, rawCommand, i, wires, pic[4], picMode=PIC614;
 	
 	modeConfig.HiZ=1;//yes, always hiz (bbio uses this setting, should be changed to a setup variable because stringing the modeconfig struct everyhwere is getting ugly!)
 	modeConfig.lsbEN=0;//just in case!
@@ -180,56 +199,119 @@ void binwire(void){
 			case 0b1010:// PIC commands
 
 				switch(inByte){
-					case 0b10100100:
-						//get command byte, two data bytes
-						for(i=0; i<3; i++){
+					case 0b10100000:
 							while(U1STAbits.URXDA == 0);//wait for a byte
-							pic[i]=U1RXREG; //get byte, reuse rawCommand variable
-						}
-						
-						rawCommand=pic[0]; //recycle this variable, too lazy to change the loop today
-						
-						//use upper 2 bits of pic[0] to determine a delay, if any.
-						pic[0]=pic[0]>>6;
-						//needs to support 4 or 6 or etc modes
-						//should steal from pic.c
-						for(i=0;i<4;i++){
+							picMode=U1RXREG; //get byte
+							UART1TX(1);//send 1/OK							
+						break;
+					case 0b10100100:					
+						switch(picMode){
+							case PIC416:	
+								//get command byte, two data bytes
+								for(i=0; i<3; i++){
+									while(U1STAbits.URXDA == 0);//wait for a byte
+									pic[i]=U1RXREG; //get byte, reuse rawCommand variable
+								}			
+								rawCommand=pic[0]; //recycle this variable, too lazy to change the loop today
+								
+								//use upper 2 bits of pic[0] to determine a delay, if any.
+								pic[0]=pic[0]>>6;
+								//needs to support 4 or 6 or etc modes
+								//should steal from pic.c
+								for(i=0;i<4;i++){
+									
+									//hold data for write time
+									if((pic[0]>0) && i==3 ){
+										bbCLK(1);
+										bpDelayMS(pic[0]);
+										bbCLK(0);
+										continue;
+									}
+		
+									if(rawCommand & 0b1){//send 1
+										bbWriteBit(1); //send bit
+									}else{ //send 0
+										bbWriteBit(0); //send bit
+									}
+									rawCommand=rawCommand>>1; //pop the LSB off
+								}
 							
-							//hold data for write time
-							if((pic[0]>0) && i==3 ){
-								bbCLK(1);
-								bpDelayMS(pic[0]);
-								bbCLK(0);
-								continue;
-							}
+								//needs to support 14 or 16 bit writes
+								//should steal from pic.c
+								bbWriteByte(pic[1]); //send byte
+								bbWriteByte(pic[2]); //send byte
+								UART1TX(1);//send 1/OK	
+								break;
+							case PIC424:
+								//get command byte, two data bytes
+								for(i=0; i<4; i++){
+									while(U1STAbits.URXDA == 0);//wait for a byte
+									pic[i]=U1RXREG; //get byte, reuse rawCommand variable
+								}		
+								//do any pre instruction NOPs	
 
-							if(rawCommand & 0b1){//send 1
-								bbWriteBit(1); //send bit
-							}else{ //send 0
+								//send four bit SIX command (write)
 								bbWriteBit(0); //send bit
-							}
-							rawCommand=rawCommand>>1; //pop the LSB off
+								bbWriteBit(0); //send bit
+								bbWriteBit(0); //send bit
+								bbWriteBit(0); //send bit
+								
+								//send data payload
+								bbWriteByte(pic[0]); //send byte
+								bbWriteByte(pic[1]); //send byte
+								bbWriteByte(pic[2]); //send byte
+
+								//do any post instruction NOPs
+								pic[3]&=0x0F;
+								for(i=0; i<pic[3]; i++){
+									PIC24NOP();
+								}
+
+								UART1TX(1);//send 1/OK	
+								break;
+							default:
+								UART1TX(0);//send 1/OK				
+								break;
 						}
-					
-						//needs to support 14 or 16 bit writes
-						//should steal from pic.c
-						bbWriteByte(pic[1]); //send byte
-						bbWriteByte(pic[2]); //send byte
-						UART1TX(1);//send 1/OK	
 						break;
 					case 0b10100101://write x bit command, read x bits and return in 2 bytes
-						while(U1STAbits.URXDA == 0);//wait for a byte
-						rawCommand=U1RXREG; //get byte, reuse rawCommand variable
-						for(i=0;i<4;i++){
-							if(rawCommand & 0b1){//send 1
+						switch(picMode){
+							case PIC416:
+								while(U1STAbits.URXDA == 0);//wait for a byte
+								rawCommand=U1RXREG; //get byte, reuse rawCommand variable
+								for(i=0;i<4;i++){
+									if(rawCommand & 0b1){//send 1
+										bbWriteBit(1); //send bit
+									}else{ //send 0
+										bbWriteBit(0); //send bit
+									}
+									rawCommand=rawCommand>>1; //pop the LSB off
+								}
+								bbReadByte(); //dummy byte, setup input
+								UART1TX(bbReadByte());
+								break;
+							case PIC424:
+								//send four bit REGOUT command (read)
 								bbWriteBit(1); //send bit
-							}else{ //send 0
 								bbWriteBit(0); //send bit
-							}
-							rawCommand=rawCommand>>1; //pop the LSB off
+								bbWriteBit(0); //send bit
+								bbWriteBit(0); //send bit
+								
+								//one byte output
+								bbWriteByte(0x00); //send byte
+
+								//read 2 bytes
+								pic[0]=bbReadByte();
+								pic[1]=bbReadByte();
+								//ALWAYS POST nop TWICE after a read
+								PIC24NOP();
+								PIC24NOP();
+							
+								//return bytes
+								UART1TX(pic[0]);
+								UART1TX(pic[1]);								
+								break;
 						}
-						bbReadByte(); //dummy byte, setup input
-						UART1TX(bbReadByte());
 						break;
 					default:
 						UART1TX(0x00);//send 0/Error
