@@ -365,7 +365,15 @@ int getnumvar(void)
 {	int temp;
 	temp=0;
 
-	if((pgmspace[pc]>='A')&&(pgmspace[pc]<='Z'))
+	if((pgmspace[pc]=='('))
+    {
+		pc++;
+        temp=evaluate();
+		if((pgmspace[pc]==')'))
+		{	pc++;
+		}
+	}
+	else if((pgmspace[pc]>='A')&&(pgmspace[pc]<='Z'))
 	{	//bpWstring("var ");
 		//bpWhex(pgmspace[pc]);
 		//bpSP;
@@ -412,36 +420,57 @@ int getnumvar(void)
 	return temp;
 }
 
+int getmultdiv(void)
+{	int temp;
+	temp=getnumvar();
+    while (1) {
+		if((pgmspace[pc]!='*')&&(pgmspace[pc]!='/'))
+		{	return temp;
+		}
+		else									// assume operand
+		{	//bpWstring("op ");
+			//UART1TX(pgmspace[pc]);
+			//bpSP;
+			switch(pgmspace[pc++])
+			{	case '*': 	//UART1TX('*');
+							temp*=getnumvar();
+							break;
+				case '/':	//UART1TX('/');
+							temp/=getnumvar();
+							break;
+				default:	break;
+			}
+		}
+	}
+
+
+}
+
 int assign(void)
 {	unsigned int temp;
 	
 	//pc+=2;
-	temp=getnumvar();
+	temp=getmultdiv();
 
-	if((pgmspace[pc]!='-')&&(pgmspace[pc]!='+')&&(pgmspace[pc]!='*')&&(pgmspace[pc]!='/'))
-	{	return temp;
-	}
-	else									// assume operand
-	{	//bpWstring("op ");
-		//UART1TX(pgmspace[pc]);
-		//bpSP;
-		switch(pgmspace[pc++])
-		{	case '-': 	//UART1TX('-');
-						temp-=getnumvar();
-						break;
-			case '+':	//UART1TX('+');
-						temp+=getnumvar();
-						break;
-			case '*':	//UART1TX('*');
-						temp*=getnumvar();
-						break;
-			case '/':	//UART1TX('/');
-						temp/=getnumvar();
-						break;
-			default:	break;
+    while (1) {
+		if((pgmspace[pc]!='-')&&(pgmspace[pc]!='+'))
+		{	return temp;
 		}
-		return temp;
-	}			
+		else									// assume operand
+		{	//bpWstring("op ");
+			//UART1TX(pgmspace[pc]);
+			//bpSP;
+			switch(pgmspace[pc++])
+			{	case '-': 	//UART1TX('-');
+							temp-=getmultdiv();
+							break;
+				case '+':	//UART1TX('+');
+							temp+=getmultdiv();
+							break;
+				default:	break;
+			}
+		}
+	}
 }
 
 int evaluate(void)

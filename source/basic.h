@@ -128,6 +128,7 @@ void interpreter(void);
 void handleelse(void);
 int searchlineno(unsigned int line);
 int getnumvar(void);
+int getmultdiv(void);
 int assign(void);
 int evaluate(void);	
 void interpreter(void);
