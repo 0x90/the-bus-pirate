@@ -1183,7 +1183,7 @@ void setDisplayMode(void)
 		//bpWmessage(MSG_OPT_DISPLAYMODE); //show the display mode options message			
 		BPMSG1127;
 		//	bpConfig.displayMode=(bpUserNumberPrompt(1, 4, 1)-1); //get, store user reply
-		bpConfig.displayMode=getnumber(1, 1, 4,0); //get, store user reply
+		bpConfig.displayMode=getnumber(1, 1, 4,0)-1; //get, store user reply
 	}
 	//bpWmessage(MSG_OPT_DISPLAYMODESET);//show display mode update text
 	BPMSG1128;
