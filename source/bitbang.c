@@ -151,7 +151,7 @@ unsigned char bbReadWriteByte(unsigned char c){
 			dat=dat<<1;  //shift the data input byte bits
 			if(di)dat++; //if datapin in is high, set LBS
 		}else{//get LSB first
-			tem=tem<<1;  //shift data output bits
+			tem=tem>>1;  //shift data output bits (fixed in v5.1, was <<)
 			dat=dat>>1;  //shift the data input byte bits
 			if(di)dat+=0b10000000; //if datapin is HIGH, set MSB
 		}
