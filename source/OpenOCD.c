@@ -187,6 +187,11 @@ this will misbehave when polling is turned off in OpenOCD
 				IFS0bits.U1RXIF = 0; // reset the RX flag
 
 				j = (inByte << 8) | inByte2; // number of bit sequences
+
+				// this fixes possible buffer overflow
+				if (j > 0x2000) 
+					j = 0x2000;
+
 				i = (j+7)/8; // number of bytes used
 				buf[0] = CMD_TAP_SHIFT;
 				buf[1] = inByte;
