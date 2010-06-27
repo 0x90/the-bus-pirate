@@ -296,9 +296,16 @@ unsigned int UART1TXAvailable;
 
 void UART1TXInt() {
 	if (IEC0bits.U1TXIE == 1)
-		return; 	if (UART1TXAvailable == UART1TXSent)
-		return; 	while(U1STAbits.UTXBF == 1); //if buffer is full, wait 	IFS0bits.U1TXIF = 0;
+		return;
+	if (UART1TXAvailable == UART1TXSent)
+		return;
+
+	while(U1STAbits.UTXBF == 1); //if buffer is full, wait
+	
+	IFS0bits.U1TXIF = 0;
+
 	IEC0bits.U1TXIE = 1;
+
 	U1TXREG = UART1TXBuf[UART1TXSent];
 }
 
@@ -306,12 +313,16 @@ void UART1TXInt() {
 void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt(void) {
 	UART1RXBuf[UART1RXRecvd] = U1RXREG;
 	UART1RXRecvd++;
+
 	if (UART1RXRecvd == UART1RXToRecv) {
 		// disable UART1 RX interrupt 
 		IEC0bits.U1RXIE = 0;
 	}
+
 	IFS0bits.U1RXIF = 0;
-} void __attribute__((interrupt, no_auto_psv)) _U1TXInterrupt(void) {
+}
+
+void __attribute__((interrupt, no_auto_psv)) _U1TXInterrupt(void) {
 	UART1TXSent++;
 	if (UART1TXSent == UART1TXAvailable) {
 		// if everything is sent  disale interrupts
@@ -319,7 +330,9 @@ void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt(void) {
 	} else {
 		// feed next byte
 		U1TXREG = UART1TXBuf[UART1TXSent];	
-	} 	IFS0bits.U1TXIF = 0;
+	}
+
+	IFS0bits.U1TXIF = 0;
 }
 
 
