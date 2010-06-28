@@ -81,7 +81,7 @@ BPMSG1067;0;"Set speed:\r\n 1. 100KHz\r\n 2. 400KHz\r\n 3. 1MHz"
 BPMSG1068;0;"I2C (mod spd)=( "
 BPMSG1069;0;" 0.Macro menu\r\n 1.7bit address search\r\n 2.I2C sniffer"
 BPMSG1070;0;"Searching 7bit I2C address space. \r\n   Found devices at:"
-BPMSG1071;0;"I2C bus sniffer, press any key to exit"
+BPMSG1071;1;"Sniffer, press any key to exit"
 //m_1wire213.c
 //main.c
 //pic.c
@@ -267,7 +267,7 @@ BPMSG1236;0;"execute : "
 // keyb.c
 BPMSG1237;0;" TIMEOUT"
 BPMSG1238;1;" 0. Macro menu\r\n 1. Live input monitor"
-BPMSG1239;1;"Input monitor, any key exits"
+BPMSG1239;1;"Input monitor, any `` exits"
 BPMSG1240;1;" *startbit error"
 BPMSG1241;1;" *parity error"
 BPMSG1242;1;" *stopbit error"

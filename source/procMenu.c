@@ -1203,7 +1203,8 @@ void setBaudRate(void)
 	{	bpConfig.termSpeed=i-1;
 	}
 	else
-	{	//bpWmessage(MSG_OPT_UART_BAUD); //show stored dialog
+	{	cmderror=0;
+		//bpWmessage(MSG_OPT_UART_BAUD); //show stored dialog
 		BPMSG1133;
 	//	bpConfig.termSpeed=(bpUserNumberPrompt(1, 9, 9)-1);
 		bpConfig.termSpeed=getnumber(9,1,9,0)-1;

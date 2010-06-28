@@ -70,7 +70,7 @@ _bpmessages:
 	.pascii	"I2C (mod spd)=( "
 	.pascii	" 0.Macro menu\r\n 1.7bit address search\r\n 2.I2C sniffer"
 	.pascii	"Searching 7bit I2C address space. \r\n   Found devices at:"
-	.pascii	"I2C bus sniffer, press any key to exit"
+	.pascii	"Sniffer, press any key to exit"
 	.pascii	"Commandmode?\r\n1. 6b/14b\r\n2. 4b/16b"
 	.pascii	"Delay?"
 	.pascii	"PIC(mod dly)=("
@@ -234,7 +234,7 @@ _bpmessages:
 	.pascii	"execute : "
 	.pascii	" TIMEOUT"
 	.pascii	" 0. Macro menu\r\n 1. Live input monitor"
-	.pascii	"Input monitor, any key exits"
+	.pascii	"Input monitor, any `` exits"
 	.pascii	" *startbit error"
 	.pascii	" *parity error"
 	.pascii	" *stopbit error"
@@ -266,6 +266,7 @@ _bpmessages:
 	.pascii	"s\tScript engine\t\t\t:\tRepeat e.g. r:10"
 	.pascii	"v\tShow volts/states\t<x>/<x= >/<0>\tUsermacro x/assign x/list all"
 	.pascii	"w/W\tPSU (off/ON)"
+
 
 
 #endif
