@@ -5,6 +5,7 @@
  Version  : 1.0.2
  
  Changelog:
+ +2010-06-28 - Made HEX parser case-insensative
  
   + 2010-02-04 - Changed polling interval to 10ms on Windows select wrapper, suggested by Michal (robots)
   
@@ -234,9 +235,30 @@ int readWithTimeout(int fd, uint8* out, int length, int timeout)
 }
 
 unsigned char hexdec(const char* pc)
-{
-	return (((pc[0] >= 'A') ? ( pc[0] - 'A' + 10 ) : ( pc[0] - '0' ) ) << 4 | 
-			((pc[1] >= 'A') ? ( pc[1] - 'A' + 10 ) : ( pc[1] - '0' ) )) & 0x0FF;
+{	unsigned char temp;
+
+	if(pc[0]>='a'){
+		temp=pc[0]-'a'+10;
+	}else if(pc[0] >= 'A'){
+		temp=pc[0]-'A'+10;		
+	}else{
+		temp=pc[0] - '0';
+	}
+	temp=temp<<4;
+	
+	if(pc[1]>='a'){
+		temp|=pc[1]-'a'+10;
+	}else if(pc[1] >= 'A'){
+		temp|=pc[1]-'A'+10;		
+	}else{
+		temp|=pc[1] - '0';
+	}
+	
+	return(temp & 0x0FF);
+
+	
+	//return (((pc[0] >= 'A') ? ( pc[0] - 'A' + 10 ) : ( pc[0] - '0' ) ) << 4 | 
+	//		((pc[1] >= 'A') ? ( pc[1] - 'A' + 10 ) : ( pc[1] - '0' ) )) & 0x0FF;
 	
 }
 
