@@ -487,10 +487,11 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 		}
 */
 		if(SPI1STATbits.SPIROV==1 || SPI2STATbits.SPIROV==1 ){//we weren't fast enough, buffer overflow
-			//bpWline(OUMSG_SPI_SNIFF_BUFFER);	
+			BP_LEDMODE=0;
+			if(termMode) bpWline("Couldn't keep up");	
 			SPI1STATbits.SPIROV=0;
 			SPI2STATbits.SPIROV=0;						
-			//break;
+			break;
 		}
 
 		UARTbufService();
