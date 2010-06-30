@@ -30,7 +30,7 @@ extern struct _command bpCommand;
 extern proto protos[MAXPROTO];
 
 void walkdungeon(void);
-void walkdungeon(void) {}
+//void walkdungeon(void) {}
 
 void setMode(void); //change protocol/bus mode
 void setDisplayMode(void); //user terminal number display mode dialog (eg HEX, DEC, BIN, RAW)
@@ -263,7 +263,14 @@ void serviceuser(void)
 							bpFreq();
 							break;
 				case 'g':	//bpWline("-frequency generate on AUX");
-							bpPWM();
+							if((cmdbuf[(cmdstart+1)&CMDLENMSK])=='o')
+							{	cmdstart+=2;
+								cmdstart&=CMDLENMSK;
+								walkdungeon();
+							}
+							else
+							{	bpPWM();
+							}
 							break;
 				case 'c':	//bpWline("-aux pin assigment");
 							modeConfig.altAUX=0;
@@ -1009,7 +1016,14 @@ again:											// need to do it proper with whiles and ifs..
 //print version info (used in menu and at startup in main.c)
 void versionInfo(void){
 	unsigned int i;
-	bpWline(BP_VERSION_STRING);
+
+	#if defined (BUSPIRATEV2) //we can tell if it's v3a or v3b, show it here
+		bpWstring(BP_VERSION_STRING);
+		UART1TX(bpConfig.HWversion);
+		bpBR;	
+	#else
+		bpWline(BP_VERSION_STRING);
+	#endif
 
 	bpWstring(BP_FIRMWARE_STRING);
 	//bpWstring(" Bootloader v");

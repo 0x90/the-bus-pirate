@@ -121,9 +121,29 @@ void Initialize(void){
 		
 	InitializeUART1(); //init the PC side serial port
 
+	#if defined (BUSPIRATEV2)
+		//find the Bus Pirate revision
+		//pullup on, do it now so it can settle during the next operations
+		CNPU1bits.CN6PUE=1;
+	#endif
+
 	// Get the chip type and revision
 	bpConfig.dev_type = bpReadFlash(DEV_ADDR_UPPER, DEV_ADDR_TYPE);
 	bpConfig.dev_rev = bpReadFlash(DEV_ADDR_UPPER, DEV_ADDR_REV);
+
+	#if defined (BUSPIRATEV2)
+		//now check the revision
+		//if 0 3b, else v2go, or v3
+		if(PORTBbits.RB2==1){
+			bpConfig.HWversion='a';
+		}else{
+			bpConfig.HWversion='b';
+		}
+		//pullup off
+		CNPU1bits.CN6PUE=0;
+	#else
+		bpConfig.HWversion=0;
+	#endif
 
 	bpConfig.quiet=0;		// turn output on (default)
 
