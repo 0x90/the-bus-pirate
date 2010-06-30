@@ -462,14 +462,16 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 			}
 
 			c=SPI2BUF;
-			UARTbuf('(');
+
 			if(termMode){ //show hex output in terminal mode
+				UARTbuf('('); //only show the () in terminal mode
 				bpWhexBuf(c);
+				UARTbuf(')');
 			}else{ //escaped byte value in binary mode
-				UARTbuf('\\');
+				//UARTbuf('\\'); //removed the escape on the slave in v5.1
 				UARTbuf(c);
 			}
-			UARTbuf(')');
+
 		}
 /*
 		if(SPI2STATbits.SRXMPT==0){//rx buffer NOT empty, get and display byte
@@ -493,9 +495,13 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 
 		UARTbufService();
 		if(U1STAbits.URXDA == 1){//any key pressed, exit
-			c=U1RXREG;
-			bpBR;
-			break;
+			if(U1RXREG=='r'){
+				SPI1STATbits.SPIEN=0; //only enable when CS matches desired state
+				SPI2STATbits.SPIEN=0;
+			}else{
+				if(termMode) bpBR; //fixed in 5.1: also sent br to binmode
+				break;
+			}
 		}
 	}
 	spiSlaveDisable();
