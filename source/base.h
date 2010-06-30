@@ -26,7 +26,7 @@
 
 //#define BUSPIRATE_POST //used to switch POST on and off
 
-#define BP_FIRMWARE_STRING "Firmware v5.0 (r395)"
+#define BP_FIRMWARE_STRING "Firmware v5.1 (rxxx)"
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
@@ -93,10 +93,10 @@ asm (".equ BLJUMPADDRESS, 0xABF8");
 	#define BUSPIRATEV2
 	#include "hardwarev2a.h"
 #elif defined(BUSPIRATEV25)
-	#define BUSPIRATEV2
+	#define BUSPIRATEV2 //v25 (2go) and v3 are about the same, enable the same featue set for both
 	#include "hardwarev25.h"
 #elif defined(BUSPIRATEV3)
-	#define BUSPIRATEV2
+	#define BUSPIRATEV2 //v25 (2go) and v3 are about the same, enable the same featue set for both
 	#include "hardwarev3.h"
 #else
 	#error "No hardware defined in base.h."
