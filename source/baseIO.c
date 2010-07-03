@@ -287,12 +287,12 @@ void UART1Speed(unsigned char brg) {
 }
 
 /* interrupt transfer related stuff */
-unsigned char *UART1RXBuf;
-unsigned int UART1RXToRecv;
-unsigned int UART1RXRecvd;
-unsigned char *UART1TXBuf;
-unsigned int UART1TXSent;
-unsigned int UART1TXAvailable;
+unsigned char __attribute__ ((section (".bss.filereg"))) *UART1RXBuf;
+unsigned int  __attribute__ ((section (".bss.filereg"))) UART1RXToRecv;
+unsigned int  __attribute__ ((section (".bss.filereg"))) UART1RXRecvd;
+unsigned char __attribute__ ((section (".bss.filereg"))) *UART1TXBuf;
+unsigned int  __attribute__ ((section (".bss.filereg"))) UART1TXSent;
+unsigned int  __attribute__ ((section (".bss.filereg"))) UART1TXAvailable;
 
 void UART1TXInt() {
 	if (IEC0bits.U1TXIE == 1)
