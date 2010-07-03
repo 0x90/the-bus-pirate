@@ -152,6 +152,35 @@ SECTIONS
     . += (DEFINED (__ICD2RAM) ? 0x50 : 0 );
   } > data
 
+  /*
+  ** Data sections
+  **
+  ** We orginize them ourselves to force some stuff to be addressable
+  ** as 'filereg' and to push huge buffers to the end of RAM
+  */
+  .data.filereg :
+  {
+    *(.data.filereg);
+  } > data
+
+  .bss.filereg (NOLOAD) :
+  {
+    *(.bss.filereg);
+    __end_filereg = .;
+  } > data
+
+  .data :
+  {
+    *(.data);
+  } > data
+
+  .bss  (NOLOAD):
+  {
+    *(.bss);
+    *(.bss.end);
+  } > data
+
+  __FILEREG_OVERFLOW = (__end_filereg > 0x2000) ? (__end_filereg - 0x2000) : 0;
 
   /*
   ** Other sections in data memory are not explicitly mapped.
