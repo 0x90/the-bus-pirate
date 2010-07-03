@@ -271,6 +271,7 @@ file_057=HD44780.h
 file_058=pc_at_keyboard.h
 file_059=OpenOCD.h
 file_060=p24FJ64GA002.gld
+file_061=OpenOCD_asm.S
 [SUITE_INFO]
 suite_guid={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 suite_state=

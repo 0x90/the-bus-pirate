@@ -49,7 +49,7 @@ static void binOpenOCDString(void);
 static void binOpenOCDPinMode(unsigned char mode);
 static void binOpenOCDHandleFeature(unsigned char feat, unsigned char action);
 static void binOpenOCDAnswer(unsigned char *buf, unsigned int len);
-static void binOpenOCDTapShift(unsigned char *in_buf, unsigned char *out_buf, unsigned int end_count, unsigned int delay);
+extern void binOpenOCDTapShiftFast(unsigned char *in_buf, unsigned char *out_buf, unsigned int bits, unsigned int delay);
 
 
 enum {
@@ -210,7 +210,7 @@ this will misbehave when polling is turned off in OpenOCD
 				// enable RX interrupt
 				IEC0bits.U1RXIE = 1;
 
-				binOpenOCDTapShift(UART1RXBuf, UART1TXBuf, j, OpenOCDJtagDelay);
+				binOpenOCDTapShiftFast(UART1RXBuf, UART1TXBuf, j, OpenOCDJtagDelay);
 				break;
 			default:
 				buf[0] = 0x00; // unknown command
@@ -310,66 +310,4 @@ static void binOpenOCDHandleFeature(unsigned char feat, unsigned char action) {
 		default:
 			break;
 	}
-}
-
-static void binOpenOCDTapShift(unsigned char *in_buf, unsigned char *out_buf, unsigned int end_count, unsigned int delay) {
-
-	unsigned char data_waiting = 0;
-	unsigned int bit_count;
-	unsigned int buf_offset;
-	unsigned char bit_offset;
-	unsigned int i;
-
-	for (bit_count = 0; bit_count < end_count; bit_count ++) {
-		buf_offset = bit_count / 8;
-		bit_offset = bit_count % 8;
-
-		// wait for the ISR to fill the buffer
-		while (UART1RXRecvd <= buf_offset * 2 + 1);
-
-		// set the TDI line
-		if ((in_buf[buf_offset * 2] >> bit_offset) & 1) {
-			OOCD_TDI = 1;
-		} else {
-			OOCD_TDI = 0;
-		}
-
-		// set the TMS line
-		if ((in_buf[buf_offset * 2 + 1] >> bit_offset) & 1) {
-			OOCD_TMS = 1;
-		} else {
-			OOCD_TMS = 0;
-		}
-
-		OOCD_CLK = 0;
-		for (i=0; i<delay; i++);
-		OOCD_CLK = 1;
-
-		// read the TDO line
-		if (IOPOR & OOCD_TDO) {
-			out_buf[buf_offset] |= 1 << bit_offset;
-		} else {
-			out_buf[buf_offset] &= ~(1 << bit_offset);
-		}
-
-		data_waiting = 1;
-		
-		// if the last bit of byte was written
-		if (bit_offset == 7) {
-			data_waiting = 0;
-			UART1TXAvailable ++;
-			
-			// if we have enought data, go send something
-			if (UART1TXAvailable - UART1TXSent > 64) {
-				UART1TXInt();
-			}
-		}
-	}
-
-	if (data_waiting == 1) {
-		UART1TXAvailable ++;
-	}
-
-	// if there was something left
-	UART1TXInt();
 }
