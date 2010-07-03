@@ -17,7 +17,7 @@
 //these settings persist between modes
 // such as terminal side baud rate, display mode, bus mode
 struct _bpConfig {
-	unsigned char terminalInput[TERMINAL_BUFFER]; //hold user terminal input
+	unsigned char *terminalInput; //hold user terminal input
 	unsigned char termSpeed;
 	enum {
 	 	HEX=0,
