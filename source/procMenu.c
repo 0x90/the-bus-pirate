@@ -1205,28 +1205,45 @@ void setDisplayMode(void)
 
 //configure user terminal side UART baud rate
 void setBaudRate(void)
-{	unsigned char i;
+{	unsigned char speed;
+	unsigned char brg;
+	unsigned char i;
 
 	cmdstart++;
 	cmdstart&=CMDLENMSK;
 	
 	consumewhitechars();
-	i=getint();
+	speed=getint();
 
-	if((i>0)&&(i<=9))
-	{	bpConfig.termSpeed=i-1;
+	if((speed>0)&&(speed<=10))
+	{	bpConfig.termSpeed=speed-1;
 	}
 	else
 	{	cmderror=0;
 		//bpWmessage(MSG_OPT_UART_BAUD); //show stored dialog
 		BPMSG1133;
 	//	bpConfig.termSpeed=(bpUserNumberPrompt(1, 9, 9)-1);
-		bpConfig.termSpeed=getnumber(9,1,9,0)-1;
+		bpConfig.termSpeed=getnumber(9,1,10,0)-1;
+	}
+
+	if(bpConfig.termSpeed==9)
+	{	consumewhitechars();
+		brg=getint();
+
+		if(brg==0)
+		{	cmderror=0;
+			bpWline("Enter raw value for BRG");
+			brg=getnumber(34,0,32767,0);
+		}
 	}
 
 	//bpWmessage(MSG_OPT_TERMBAUD_ADJUST); //show 'adjust and press space dialog'
 	BPMSG1134;
 	while(U1STAbits.TRMT==0);//wait for TX to finish or reinit flushes part of prompt string from buffer
+
+	if(bpConfig.termSpeed==9)
+	{		UART1Speed(brg);
+	}	
 	InitializeUART1();
 	while(1){ //wait for space to prove valid baud rate switch
     	while(U1STAbits.URXDA == 0); //new style with buffer

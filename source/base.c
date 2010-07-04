@@ -135,8 +135,10 @@ void bpADCCprobe(void)
 
 //Initialize the terminal UART for the speed currently set in bpConfig.termSpeed
 static unsigned int UARTspeed[]={13332,3332,1666,832,416,207,103,68,34,};//BRG:300,1200,2400,4800,9600,19200,38400,57600,115200
-void InitializeUART1(void){
-    U1BRG = UARTspeed[bpConfig.termSpeed];//13332=300, 1666=2400, 416=9600, 34@32mhz=115200....
+void InitializeUART1(void)
+{	// if termspeed==9 it is custom
+	// dunno if the additional settings are needed but justin kaas!
+	if(bpConfig.termSpeed!=9) U1BRG = UARTspeed[bpConfig.termSpeed];	//13332=300, 1666=2400, 416=9600, 34@32mhz=115200....
     U1MODE = 0;
     U1MODEbits.BRGH = 1;
     U1STA = 0;

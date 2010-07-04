@@ -130,7 +130,7 @@ _bpmessages:
 	.pascii	"5V: "
 	.pascii	" | 3.3V: "
 	.pascii	" | VPULLUP: "
-	.pascii	"Set serial port speed: (bps)\r\n 1. 300\r\n 2. 1200\r\n 3. 2400\r\n 4. 4800\r\n 5. 9600\r\n 6. 19200\r\n 7. 38400\r\n 8. 57600\r\n 9. 115200"
+	.pascii	"Set serial port speed: (bps)\r\n 1. 300\r\n 2. 1200\r\n 3. 2400\r\n 4. 4800\r\n 5. 9600\r\n 6. 19200\r\n 7. 38400\r\n 8. 57600\r\n 9. 115200\r\n10. BRG raw value"
 	.pascii	"Adjust your terminal and press space to continue"
 	.pascii	"Are you sure? "
 	.pascii	"CFG1:"
@@ -193,11 +193,10 @@ _bpmessages:
 	.pascii	"-f "
 	.pascii	"*Bytes dropped*"
 	.pascii	"FAILED, NO DATA"
-	.pascii	" 10. 31250 (MIDI)"
 	.pascii	"Data bits and parity:\r\n 1. 8, NONE *default \r\n 2. 8, EVEN \r\n 3. 8, ODD \r\n 4. 9, NONE"
 	.pascii	"Stop bits:\r\n 1. 1 *default\r\n 2. 2"
 	.pascii	"Receive polarity:\r\n 1. Idle 1 *default\r\n 2. Idle 0"
-	.pascii	"UART (spd dbp sb rxp hiz)=( "
+	.pascii	"UART (spd brg dbp sb rxp hiz)=( "
 	.pascii	" 0.Macro menu\r\n 1.Transparent UART bridge\r\n 2. Live UART monitor\r\n 3.UART bridge with flow control"
 	.pascii	"UART bridge. Space continues, anything else exits."
 	.pascii	"Reset to exit."
@@ -243,6 +242,8 @@ _bpmessages:
 	.pascii	" autorange "
 	.pascii	"+MHz)"
 	.pascii	"+kHz)"
+	.pascii	"Raw value for BRG (MIDI=127)"
+	.pascii	"WARNING: Possible bufferoverflow"
 	.pascii	"General\t\t\t\t\tProtocol interaction"
 	.pascii	"---------------------------------------------------------------------------"
 	.pascii	"?\tThis help\t\t\t(0)\tList current macros"
@@ -266,7 +267,6 @@ _bpmessages:
 	.pascii	"s\tScript engine\t\t\t:\tRepeat e.g. r:10"
 	.pascii	"v\tShow volts/states\t<x>/<x= >/<0>\tUsermacro x/assign x/list all"
 	.pascii	"w/W\tPSU (off/ON)"
-
 
 
 #endif

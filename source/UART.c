@@ -71,10 +71,14 @@ unsigned int UARTwrite(unsigned int c)
 // todo: read from cmdline for now it is ok
 
 void UARTsetup(void)
-{	int speed, dbp, sb, rxp, output;
+{	int speed, dbp, sb, rxp, output, brg;
 
 	consumewhitechars();
 	speed=getint();
+	if(speed==10)
+	{	consumewhitechars();
+		brg=getint();
+	}
 	consumewhitechars();
 	dbp=getint();
 	consumewhitechars();
@@ -121,9 +125,14 @@ void UARTsetup(void)
 		//bpWmessage(MSG_OPT_UART_BAUD); //write text (baud rate)
 		BPMSG1133;
 		//bpWline(" 10. 31250 (MIDI)"); //add midi to the standard list // add to translation??
-		BPMSG1198;
+		//BPMSG1198;
 		//modeConfig.speed=(bpUserNumberPrompt(2, 10, 1)-1); //get user reply
 		modeConfig.speed=getnumber(1,1,10,0)-1; //get user reply
+
+		if(modeConfig.speed==9)
+		{	BPMSG1248;
+			brg=getnumber(34,1,32767,0);
+		}
 		
 		//bpWstring("Data bits and parity:\x0D\x0A 1. 8, NONE *default \x0D\x0A 2. 8, EVEN \x0D\x0A 3. 8, ODD \x0D\x0A 4. 9, NONE \x0D\x0A");
 		//bpWline(OUMSG_UART_DATABITS_PARITY); //write text (data bit and parity)
@@ -153,6 +162,12 @@ void UARTsetup(void)
 	{	//bpWstring("UART (spd dbp sb rxp hiz)=( ");
 		BPMSG1202;
 		bpWdec(modeConfig.speed); bpSP;
+		if(modeConfig.speed==9)
+		{	bpWintdec(brg); bpSP;
+		}
+		else
+		{	bpWintdec(UART2speed[modeConfig.speed]); bpSP;
+		}
 		bpWdec(uartSettings.dbp); bpSP;
 		bpWdec(uartSettings.sb); bpSP;
 		bpWdec(uartSettings.rxp); bpSP;
@@ -165,9 +180,18 @@ void UARTsetup(void)
 	#ifdef BUSPIRATEV2
 	modeConfig.allowpullup=1;
 	#endif
+	
+	if(modeConfig.speed==9)
+	{	UART2Setup(brg,modeConfig.HiZ, uartSettings.rxp, uartSettings.dbp, uartSettings.sb );
+	}
+	else
+	{	UART2Setup(UART2speed[modeConfig.speed],modeConfig.HiZ, uartSettings.rxp, uartSettings.dbp, uartSettings.sb );
+	}
 
-	UART2Setup(UART2speed[modeConfig.speed],modeConfig.HiZ, uartSettings.rxp, uartSettings.dbp, uartSettings.sb );
 	UART2Enable();
+
+	if(U2BRG<U1BRG) BPMSG1249;
+
 }
 
 
