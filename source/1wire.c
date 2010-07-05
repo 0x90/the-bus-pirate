@@ -265,9 +265,7 @@ void DS1wireReset(void){
 		BPMSG1019;
 		if(c&0b1)  BPMSG1020;		//bpWstring(OUMSG_1W_RESET_SHORT);	
 		if(c&0b10) BPMSG1021;		//bpWstring(OUMSG_1W_RESET_NODEV);
-		bpWstring("(");	
-		bpWbyte(c);
-		bpWline(")");
+		bpBR;
 	}
 }
 

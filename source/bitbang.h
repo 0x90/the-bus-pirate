@@ -39,8 +39,8 @@ void bbPins(unsigned char dir, unsigned int pins, unsigned char delay);
 unsigned char bbR(unsigned int pin);
 
 //protocol helper functions
-void bbI2Cstart(void);
-void bbI2Cstop(void);
+int bbI2Cstart(void);
+int bbI2Cstop(void);
 
 //protocol specific pseudo functions 
 #define bbI2Cack()  bbWriteBit(0) //low bit is ACK

@@ -163,7 +163,11 @@ void I2Cstart(void)
 	}
 
 	if(i2cmode==SOFT)
-	{	bbI2Cstart();
+	{	if(bbI2Cstart()){//bus contention
+			BPMSG1019; //warning
+			BPMSG1020; //short or no pullups
+			bpBR;
+		}	
 	}
 #ifdef BP_USE_I2C_HW
 	else 
@@ -309,8 +313,16 @@ void I2Cmacro(unsigned int c)
 			BPMSG1069;
 			break;
 		case 1:
+			//setup both lines high first
+			bbH(MOSI+CLK, 0); 
 			//bpWline(OUMSG_I2C_MACRO_SEARCH);
 			BPMSG1070;
+			if(BP_CLK==0 || BP_MOSI==0){
+				BPMSG1019; //warning
+				BPMSG1020; //short or no pullups
+				bpBR;
+				return;
+			}
 			for(i=0;i<0x100;i++){
 		
 				if(i2cmode==SOFT)
@@ -326,6 +338,7 @@ void I2Cmacro(unsigned int c)
 				}
 #endif		
 				if(c==0){//0 is ACK
+
 					bpWbyte(i);
 					bpWchar('('); //bpWstring("(");
 					bpWbyte((i>>1));
@@ -353,6 +366,7 @@ void I2Cmacro(unsigned int c)
 #endif
 			}
 			bpWBR;	
+			
 			break;	
 		case 2:
 			if(i2cmode==HARD)I2C1CONbits.I2CEN = 0;//disable I2C module

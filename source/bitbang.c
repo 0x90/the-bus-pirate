@@ -92,10 +92,14 @@ void bbSetup(unsigned char pins, unsigned char speed){
 //
 // HELPER functions
 //
-void bbI2Cstart(void){
+int bbI2Cstart(void){
+	int error=0;
 //http://www.esacademy.com/faq/i2c/busevents/i2cstast.htm
 	//setup both lines high first
 	bbH(MOSI+CLK, bitbang.delayClock);
+
+	//check bus state, return error if held low
+	if(BP_CLK==0 || BP_MOSI==0) error=1;
 
 	//now take data low while clock is high
 	bbL(MOSI, bitbang.delayClock);
@@ -105,11 +109,13 @@ void bbI2Cstart(void){
 	
 	//example suggests returning SDA to high
 	bbH(MOSI, bitbang.delayClock);
+	
+	return error;
 
 }
 
 
-void bbI2Cstop(void){
+int bbI2Cstop(void){
 //http://www.esacademy.com/faq/i2c/busevents/i2cstast.htm
 
 	//setup both lines low first
@@ -124,6 +130,7 @@ void bbI2Cstop(void){
 
 	//return clock low, importatnt for raw2wire smartcard
 	//bbL(CLK, bitbang.delayClock);
+	return 0;
 }
 
 //
