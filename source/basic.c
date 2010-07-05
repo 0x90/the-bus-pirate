@@ -396,9 +396,9 @@ int getnumvar(void)
 			case TOK_BITREAD:	//temp=protobitr();
 							temp=protos[bpConfig.busMode].protocol_bitr();
 							break;
-			case TOK_PSU:	temp=modeConfig.vregEN;
+			case TOK_PSU:	temp=BP_VREGEN; //modeConfig.vregEN;
 							break;
-			case TOK_PULLUP:	temp=modeConfig.pullupEN;
+			case TOK_PULLUP:	temp=(~BP_PULLUP); //modeConfig.pullupEN;
 							break;
 #if defined( BUSPIRATEV1A) || defined (BUSPIRATEV2)
 			case TOK_ADC:	temp=bpADC(12);
@@ -951,12 +951,12 @@ void interpreter(void)
 							if(assign())
 							{	//protopsuon();
 								BP_VREG_ON();
-								modeConfig.vregEN=1;
+								//modeConfig.vregEN=1;
 							}
 							else
 							{	//protopsuoff();
 								BP_VREG_OFF();
-								modeConfig.vregEN=0;
+								//modeConfig.vregEN=0;
 							}
 							handleelse();
 						
@@ -1041,12 +1041,12 @@ void interpreter(void)
 							if(assign())
 							{	//protopullupon();
 								BP_PULLUP_ON(); 
-								modeConfig.pullupEN=1;
+								//modeConfig.pullupEN=1;
 							}
 							else
 							{	//protopullupoff();
 								BP_PULLUP_OFF();
-								modeConfig.pullupEN=0;
+								//modeConfig.pullupEN=0;
 							}
 #else
 							pc+=len-1; 	// fail silently

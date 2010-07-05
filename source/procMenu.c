@@ -267,9 +267,14 @@ void serviceuser(void)
 							{	cmdstart+=2;
 								cmdstart&=CMDLENMSK;
 								walkdungeon();
+								break;
 							}
-							else
-							{	bpPWM();
+
+							if(bpConfig.busMode==HIZ)
+							{	//bpWmessage(MSG_ERROR_MODE);
+								BPMSG1088;
+							}else{
+								bpPWM();
 							}
 							break;
 				case 'c':	//bpWline("-aux pin assigment");
@@ -312,7 +317,7 @@ void serviceuser(void)
 							}
 							else
 							{	BP_PULLUP_OFF(); //pseudofunction in hardwarevx.h
-								modeConfig.pullupEN=0;
+//								modeConfig.pullupEN=0;
 								//bpWmessage(MSG_OPT_PULLUP_OFF);
 								BPMSG1089;
 							}
@@ -336,7 +341,7 @@ void serviceuser(void)
 									BPMSG1209;
 								}
 								BP_PULLUP_ON(); //pseudofunction in hardwarevx.h
-								modeConfig.pullupEN=1;
+//								modeConfig.pullupEN=1;
 								//bpWmessage(MSG_OPT_PULLUP_ON);
 								BPMSG1091;
 							}
@@ -405,16 +410,35 @@ void serviceuser(void)
 							break;
 #if defined( BUSPIRATEV1A) || defined( BUSPIRATEV2)
 				case 'W':	//bpWline("-PSU on");	//enable any active power supplies
-							BP_VREG_ON();
-							//bpWmessage(MSG_VREG_ON);
-							BPMSG1096;
-							modeConfig.vregEN=1;
+							if(bpConfig.busMode==HIZ)
+							{	//bpWmessage(MSG_ERROR_MODE);
+								BPMSG1088;
+							}else{
+								BP_VREG_ON();
+								ADCON(); // turn ADC ON
+								bpDelayMS(2);//wait for VREG to come up
+							
+								if((bpADC(V33ADC)>V33L)&&(bpADC(V5ADC)>V5L)){ //voltages are correct
+									//bpWmessage(MSG_VREG_ON);
+									BPMSG1096;
+									//modeConfig.vregEN=1;
+								}else{
+									BP_VREG_OFF();
+									bpWline("VREG failed, is there a short?");
+								}
+								ADCOFF(); // turn ADC OFF
+							}
 							break;
 				case 'w':	//bpWline("-PSU off");	//disable the power supplies
-							BP_VREG_OFF();
-							//bpWmessage(MSG_VREG_OFF);
-							BPMSG1097;
-							modeConfig.vregEN=0;
+							if(bpConfig.busMode==HIZ)
+							{	//bpWmessage(MSG_ERROR_MODE);
+								BPMSG1088;
+							}else{
+								BP_VREG_OFF();
+								//bpWmessage(MSG_VREG_OFF);
+								BPMSG1097;
+								//modeConfig.vregEN=0;
+							}
 							break;
 				case 'd':	//bpWline("-read ADC");	//do an adc reading
 							//bpWstring(OUMSG_PS_ADC_VOLT_PROBE);	
@@ -1081,8 +1105,8 @@ void statusInfo(void){
 	pinStates();
 
 	#if defined (BUSPIRATEV1A) || defined (BUSPIRATEV2)
-	//vreg status 
-	if(modeConfig.vregEN==1) BPMSG1096; else BPMSG1097;	//bpWmessage(MSG_VREG_ON); else bpWmessage(MSG_VREG_OFF);
+	//vreg status (was modeConfig.vregEN)
+	if(BP_VREGEN==1) BPMSG1096; else BPMSG1097;	//bpWmessage(MSG_VREG_ON); else bpWmessage(MSG_VREG_OFF);
 	//voltage report
 //	measureSupplyVoltages();
 	#endif
@@ -1096,7 +1120,8 @@ void statusInfo(void){
 	//pullups available, enabled?
 	#if defined (BUSPIRATEV1A) || defined (BUSPIRATEV2)
 	if(modeConfig.allowpullup==1){
-		if(modeConfig.pullupEN==1) BPMSG1091; else BPMSG1089;	//bpWmessage(MSG_OPT_PULLUP_ON); else bpWmessage(MSG_OPT_PULLUP_OFF);
+		//was modeConfig.pullupEN
+		if(BP_PULLUP==1) BPMSG1091; else BPMSG1089;	//bpWmessage(MSG_OPT_PULLUP_ON); else bpWmessage(MSG_OPT_PULLUP_OFF);
 	}else{
 		BPMSG1122;	//bpWmessage(MSG_STATUS_PULLUP_NOTALLOWED);
 	}

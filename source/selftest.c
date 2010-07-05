@@ -82,18 +82,12 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 	//ADC check
 	//bpPOSTWline("ADC and supply");
 	BPMSG1170;
-	AD1CON1bits.ADON = 1; // turn ADC ON
-#define V5BASE 0x307 //(((5/2)/3.3)*1024))
-#define V5H	V5BASE+0x50
-#define V5L V5BASE-0x50
-#define V33BASE 0x200 //(((3.3/2)/3.3)*1024))
-#define V33H	V33BASE+0x50
-#define V33L	V33BASE-0x50
+	ADCON(); // turn ADC ON
 
 	//0x030F is 5volts
 	//bpPOSTWstring("5V");
 	BPMSG1171;
-	bpADCPinTest(9,V5L, V5H);
+	bpADCPinTest(V5ADC,V5L, V5H);
 	
 	if(jumperTest){
 		//Vpullup is connected to 5volts
@@ -105,7 +99,7 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 	//0x0208 is 3.3volts
 	//bpPOSTWstring("3.3V");
 	BPMSG1173;
-	bpADCPinTest(10,V33L, V33H);
+	bpADCPinTest(V33ADC,V33L, V33H);
 
 	if(jumperTest){
 		//ADC is connected to 3.3volts
@@ -114,7 +108,7 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 		bpADCPinTest(12,V33L, V33H);
 	}
 
-	AD1CON1bits.ADON = 0; // turn ADC OFF 
+	ADCOFF(); // turn ADC OFF 
 
 //*************
 //

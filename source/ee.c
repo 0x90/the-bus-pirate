@@ -138,11 +138,11 @@ void walkdungeon(void)
 		case 6:	DUNGEON6;
 				break;
 		case 7:	DUNGEON7;
-				if(modeConfig.pullupEN==1) EETEXT2;
+				if(BP_PULLUP==1) EETEXT2; //was modeConfig.pullupEN==1
 				break;
 		case 8:	DUNGEON8;
 				AD1CON1bits.ADON = 1;
-				if((bpConfig.busMode==3)&&(modeConfig.pullupEN==1)&&(bpADC(10)>0x150))
+				if((bpConfig.busMode==3)&&(BP_PULLUP==1)&&(bpADC(10)>0x150)) //was modeConfig.pullupEN==1
 				{	EETEXT3;
 					ASCII1;
 					ASCII2;

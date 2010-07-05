@@ -382,20 +382,20 @@ void binpic(void)
 											}
 											if(cmd&0x02)	// vreg on
 											{	BP_VREG_ON();
-												modeConfig.vregEN=1;
+												//modeConfig.vregEN=1;
 											}
 											else
 											{	BP_VREG_OFF();
-												modeConfig.vregEN=0;
+												//modeConfig.vregEN=0;
 											}
 											if(cmd&0x01)	// pullup on
 #if defined( BUSPIRATEV0A) || defined( BUSPIRATEV2)
 											{	BP_PULLUP_ON(); 
-												modeConfig.pullupEN=1;
+//												modeConfig.pullupEN=1;
 											}
 											else
 											{	BP_PULLUP_OFF();
-												modeConfig.pullupEN=0;
+//												modeConfig.pullupEN=0;
 											}
 #endif
 										}
