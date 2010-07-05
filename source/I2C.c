@@ -359,6 +359,7 @@ void I2Cmacro(unsigned int c)
 		
 			//bpWline(OUMSG_I2C_MACRO_SNIFFER);	
 			BPMSG1071;
+			BPMSG1250;
 			I2C_Sniffer(1); //set for terminal output
 
 #ifdef BP_USE_I2C_HW

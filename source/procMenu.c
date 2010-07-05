@@ -44,8 +44,7 @@ void convert(void); //convert input to HEX/DEC/BIN
 void pinDirection(unsigned int pin);
 void pinState(unsigned int pin);
 void pinStates(void);
-//void easterEgg(void);
-int agree(void);
+
 
 //global vars    move to bpconfig structure?
 char cmdbuf[CMDBUFLEN];
@@ -1156,17 +1155,17 @@ void pinStates(void)
 	BPMSG1234;
 	AD1CON1bits.ADON = 1;
 #if defined(BUSPIRATEV25)
-	bpWvolts(bpADC(12)); BPMSG1045; UART1TX('\t');
+	bpWvolts(bpADC(PROBEADC)); BPMSG1045; UART1TX('\t');
 #else
-	bpWvolts(bpADC(10)); BPMSG1045; UART1TX('\t');
+	bpWvolts(bpADC(V33ADC)); BPMSG1045; UART1TX('\t');
 #endif
-	bpWvolts(bpADC(9)); BPMSG1045; UART1TX('\t');
+	bpWvolts(bpADC(V5ADC)); BPMSG1045; UART1TX('\t');
 #if defined(BUSPIRATEV25)
-	bpWvolts(bpADC(10)); BPMSG1045; UART1TX('\t');
+	bpWvolts(bpADC(V33ADC)); BPMSG1045; UART1TX('\t');
 #else
-	bpWvolts(bpADC(12)); BPMSG1045; UART1TX('\t');
+	bpWvolts(bpADC(PROBEADC)); BPMSG1045; UART1TX('\t');
 #endif
-	bpWvolts(bpADC(11)); BPMSG1045; UART1TX('\t');
+	bpWvolts(bpADC(VPUADC)); BPMSG1045; UART1TX('\t');
 	AD1CON1bits.ADON = 0;
 	pinState(AUX);
 	pinState(CLK);
@@ -1224,7 +1223,6 @@ void setDisplayMode(void)
 void setBaudRate(void)
 {	unsigned char speed;
 	unsigned char brg;
-	unsigned char i;
 
 	cmdstart++;
 	cmdstart&=CMDLENMSK;
@@ -1256,6 +1254,7 @@ void setBaudRate(void)
 
 	//bpWmessage(MSG_OPT_TERMBAUD_ADJUST); //show 'adjust and press space dialog'
 	BPMSG1134;
+	BPMSG1251;
 	while(U1STAbits.TRMT==0);//wait for TX to finish or reinit flushes part of prompt string from buffer
 
 	if(bpConfig.termSpeed==9)
@@ -1263,29 +1262,11 @@ void setBaudRate(void)
 	}	
 	InitializeUART1();
 	while(1){ //wait for space to prove valid baud rate switch
-    	while(U1STAbits.URXDA == 0); //new style with buffer
-		i=U1RXREG; //return the byte
-	    IFS0bits.U1RXIF = 0;
-		if(i==0x20)break;
+		while(!UART1RXRdy());
+		if(UART1RX()==' ')break;
 	}
 }
 
 
-int agree(void)
-{	char c;
 
-	//bpWstring("Are you sure? ");
-	BPMSG1135;
-
-	while(!UART1RXRdy());
-	c=UART1RX();
-	UART1TX(c);
-	bpBR;
-
-	if((c=='y')||(c=='Y'))
-	{	return 1;
-	}
-
-	return 0;
-}
 

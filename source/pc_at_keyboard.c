@@ -82,6 +82,7 @@ void KEYBmacro(unsigned int c)
 				break;
 		case 1:	//bpWline(OUMSG_KB__MACRO_LIVE);
 				BPMSG1239;
+				BPMSG1250;
 				while(1)
 				{	if(kbReadByte()==0)
 					{	bpWbyte(kbScancode.code);

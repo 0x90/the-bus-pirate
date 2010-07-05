@@ -106,7 +106,7 @@ void bpADCCprobe(void)
 	//bpWline(OUMSG_PS_ADCC);
 	BPMSG1042;
 	//bpWline(OUMSG_PS_ANY_KEY);
-	BPMSG1043;
+	BPMSG1250; //BPMSG1043;
 	//bpWstring(OUMSG_PS_ADC_VOLT_PROBE);
 	BPMSG1044;
 	bpWvolts(0);						// print dummy (0v)

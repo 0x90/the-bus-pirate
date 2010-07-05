@@ -60,3 +60,21 @@ void printHelp(void)
 	HLP1021;
 	HLP1022;
 }
+
+int agree(void)
+{	char c;
+
+	//bpWstring("Are you sure? ");
+	BPMSG1135;
+
+	while(!UART1RXRdy());
+	c=UART1RX();
+	UART1TX(c);
+	bpBR;
+
+	if((c=='y')||(c=='Y'))
+	{	return 1;
+	}
+
+	return 0;
+}

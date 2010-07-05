@@ -237,6 +237,7 @@ void SPImacro(unsigned int macro)
 			c=getnumber(1,1,3,0)-1;
 			//bpWline(OUMSG_SPI_SNIFF_BEGIN);
 			BPMSG1071;	//moved to a more generic message 
+			BPMSG1250;
 			spiSniffer(c,1);//configure for terminal mode
 			break;
 		default:

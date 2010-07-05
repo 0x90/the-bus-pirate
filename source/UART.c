@@ -220,11 +220,11 @@ void UARTmacro(unsigned int macro)
 			//BP_CLK=0;//external RTS (PIC mirrors output from FTDI)
 		#endif
 		case 1://transparent UART
-			//bpWline("UART bridge. Space continues, anything else exits.");
+			//bpWline("UART bridge");
 			BPMSG1204;
-			if(UART1RX()!=' ')break; //escape
-			//bpWline("Reset to exit.");
-			BPMSG1205;
+			//bpWline("Reset to exit");
+			BPMSG1205; 
+			if(!agree()) break;
 			// could use a lot of improvement
 			//buffers for baud rate differences
 			//it's best to adjust the terminal to the same speed you want to use to avoid buffer overuns
@@ -252,9 +252,10 @@ void UARTmacro(unsigned int macro)
 			}
 			break;
 		case 2: //Watch raw UART
-			//bpWline("Raw UART input. Space to exit.");
+			//bpWline("Raw UART input");
 			BPMSG1206;
-
+			BPMSG1250; //any key to exit
+			
 			// could use a lot of improvement
 			//buffers for baud rate differences
 			//it's best to adjust the terminal to the same speed you want to use to avoid buffer overuns
@@ -265,7 +266,8 @@ void UARTmacro(unsigned int macro)
 						U1TXREG = U2RXREG; //URXDA doesn't get cleared untill this happens
 				}
 				if (U1STAbits.URXDA==1){//escape
-				 	if(U1RXREG == ' ') break;
+				 	macro=U1RXREG;//read it to discard the byte
+					break;//leave the loop
 				}
 			}
 			break;

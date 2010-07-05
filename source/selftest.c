@@ -41,10 +41,10 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 	if(showProgress && jumperTest){
 		//bpPOSTWline("Disconnect any devices");
 		//bpPOSTWline("Connect (Vpu to +5V) and (ADC to +3.3V)");
-		//bpPOSTWline("Press a key to start");
 		BPMSG1163;
-		while(!UART1RXRdy());
-		UART1RX();
+		BPMSG1251; // //bpPOSTWline("Press a key to start");
+		while(!UART1RXRdy()); //wait for key
+		UART1RX();//discard byte
 	}
 
 	//bpPOSTWline("Ctrl");
@@ -150,6 +150,7 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 		BP_LEDMODE=1;
 		//bpPOSTWline("MODE and VREG LEDs should be on! Any key exits.");
 		BPMSG1178;
+		BPMSG1250;
 		while(!UART1RXRdy());
 		UART1RX();
 		BP_LEDMODE=0;
