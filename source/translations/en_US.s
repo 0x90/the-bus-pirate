@@ -4,8 +4,8 @@
 _bpmessages:
 	.pascii	"WRITE BIT: "
 	.pascii	" *next clock (^) will also have this value"
-	.pascii	"1WIRE routines Copyright (C) 2000 Michael Pearce"
-	.pascii	"Released under GNU General Public License"
+	.pascii	"1WIRE routines (C) 2000 Michael Pearce"
+	.pascii	"GNU GPL"
 	.pascii	"No device, try (ALARM) SEARCH macro first"
 	.pascii	"ADDRESS MACRO "
 	.pascii	" 0.Macro menu"
@@ -89,7 +89,6 @@ _bpmessages:
 	.pascii	"a/A/@ controls CS/TMS pin"
 	.pascii	"Command not used in this mode"
 	.pascii	"Pull-up resistors OFF"
-	.pascii	"Supply config deprecated, toggle with W/w"
 	.pascii	"Pull-up resistors ON"
 	.pascii	"Self-test in HiZ mode only."
 	.pascii	"RESET"
@@ -267,6 +266,7 @@ _bpmessages:
 	.pascii	"s\tScript engine\t\t\t:\tRepeat e.g. r:10"
 	.pascii	"v\tShow volts/states\t<x>/<x= >/<0>\tUsermacro x/assign x/list all"
 	.pascii	"w/W\tPSU (off/ON)"
+
 
 
 #endif

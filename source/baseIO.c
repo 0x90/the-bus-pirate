@@ -221,7 +221,6 @@ void bpWinthex(unsigned int c) {
 }
 
 
-#if defined( BUSPIRATEV1A) || defined (BUSPIRATEV2)
 //convert a float number to a x.1 decimal (max 255.9 because of char type...)
 //extra attention is needed for leading 0s with more than one trailing decimal place
 //we just use one and ignore....
@@ -253,7 +252,6 @@ void bpWvolts(unsigned int a){
 	bpWdec(c);
 
 }
-#endif
 
 //
 //

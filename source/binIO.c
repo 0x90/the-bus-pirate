@@ -243,15 +243,13 @@ unsigned char binBBpindirectionset(unsigned char inByte){
 unsigned char binBBpinset(unsigned char inByte){
 	unsigned char i;
 
-	#ifndef BUSPIRATEV0A
 	if(inByte&0b1000000){
 		BP_VREG_ON();//power on
 	}else{
 		BP_VREG_OFF();//power off
 	}
-	#endif
 	
-	#if defined(BUSPIRATEV0A) || defined( BUSPIRATEV2)
+	#if defined( BUSPIRATEV2)
 	if(inByte&0b100000){
 		BP_PULLUP_ON();//pullups on
 	}else{

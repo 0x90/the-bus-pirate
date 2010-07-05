@@ -400,10 +400,8 @@ int getnumvar(void)
 							break;
 			case TOK_PULLUP:	temp=(~BP_PULLUP); //modeConfig.pullupEN;
 							break;
-#if defined( BUSPIRATEV1A) || defined (BUSPIRATEV2)
 			case TOK_ADC:	temp=bpADC(12);
 							break;
-#endif
 			default:		temp=0;
 		}
 	}
@@ -1036,7 +1034,7 @@ void interpreter(void)
 			case TOK_PULLUP:	pcupdated=1;
 							pc+=4;
 
-#if defined( BUSPIRATEV0A) || defined( BUSPIRATEV2)
+#if defined(BUSPIRATEV2)
 //#if(0)
 							if(assign())
 							{	//protopullupon();

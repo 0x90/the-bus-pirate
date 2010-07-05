@@ -253,12 +253,9 @@ void serviceuser(void)
 				case 'o':	//bpWline("-data output set");
 							setDisplayMode();
 							break;
-#if defined( BUSPIRATEV1A) || defined (BUSPIRATEV2)
 				case 'v':	//bpWline("-check supply voltage");
 							pinStates();
 							//measureSupplyVoltages();
-							break;
-#endif
 				case 'f':	//bpWline("-frequency count on AUX");
 							bpFreq();
 							break;
@@ -309,7 +306,7 @@ void serviceuser(void)
 							break;
 				case 'p':	//bpWline("-pullup resistors off");
 
-#if defined( BUSPIRATEV0A) || defined( BUSPIRATEV2)
+#if defined( BUSPIRATEV2)
 							//don't allow pullups on some modules. also: V0a limitation of 2 resistors
 							if(modeConfig.allowpullup==0)
 							{	//bpWmessage(MSG_ERROR_MODE);
@@ -321,15 +318,12 @@ void serviceuser(void)
 								//bpWmessage(MSG_OPT_PULLUP_OFF);
 								BPMSG1089;
 							}
-#elif defined(BUSPIRATEV1A)
-							//bpWline(OUMSG_PM_1A_P_DEPRECATED);
-							BPMSG1090;
 #endif
 
 							break;
 				case 'P':	//bpWline("-pullup resistors on");
 
-#if defined( BUSPIRATEV0A) || defined( BUSPIRATEV2)
+#if defined(BUSPIRATEV2)
 							//don't allow pullups on some modules. also: V0a limitation of 2 resistors
 							if(modeConfig.allowpullup==0)
 							{	//bpWmessage(MSG_ERROR_MODE);
@@ -344,10 +338,13 @@ void serviceuser(void)
 //								modeConfig.pullupEN=1;
 								//bpWmessage(MSG_OPT_PULLUP_ON);
 								BPMSG1091;
+								
+								ADCON();
+								if(bpADC(VPUADC)<0x50){ //no pullup voltage detected
+									bpWline("Warning: no voltage on Vpullup pin");
+								}
+								ADCOFF();
 							}
-#elif defined(BUSPIRATEV1A)
-							//bpWline(OUMSG_PM_1A_P_DEPRECATED);
-							BPMSG1090;
 #endif
 							break;
 				case '=':	//bpWline("-HEX/BIN/DEC convertor");
@@ -362,7 +359,7 @@ void serviceuser(void)
 							bpWbin(temp);	
 							bpBR;
 							break;
-#if defined(BUSPIRATEV25) || defined (BUSPIRATEV3)
+#if defined(BUSPIRATEV2)
 				case '~':	//bpWline("-selftest");
 							if(bpConfig.busMode==HIZ){			
 								selfTest(1,1);//self test, showprogress in terminal
@@ -408,7 +405,6 @@ void serviceuser(void)
 									bpWBR;
 							}
 							break;
-#if defined( BUSPIRATEV1A) || defined( BUSPIRATEV2)
 				case 'W':	//bpWline("-PSU on");	//enable any active power supplies
 							if(bpConfig.busMode==HIZ)
 							{	//bpWmessage(MSG_ERROR_MODE);
@@ -424,7 +420,8 @@ void serviceuser(void)
 									//modeConfig.vregEN=1;
 								}else{
 									BP_VREG_OFF();
-									bpWline("VREG failed, is there a short?");
+									bpWline("VREG too low, is there a short?");
+									BPMSG1097;
 								}
 								ADCOFF(); // turn ADC OFF
 							}
@@ -451,7 +448,6 @@ void serviceuser(void)
 				case 'D':	//bpWline("-DVM mode");	//dumb voltmeter mode
 							bpADCCprobe();
 							break;
-#endif
 				case '&':	//bpWline("-delay 1ms");
 							repeat=getrepeat();
 							//bpWstring(OUMSG_PS_DELAY);
@@ -1104,12 +1100,10 @@ void statusInfo(void){
 
 	pinStates();
 
-	#if defined (BUSPIRATEV1A) || defined (BUSPIRATEV2)
 	//vreg status (was modeConfig.vregEN)
 	if(BP_VREGEN==1) BPMSG1096; else BPMSG1097;	//bpWmessage(MSG_VREG_ON); else bpWmessage(MSG_VREG_OFF);
 	//voltage report
 //	measureSupplyVoltages();
-	#endif
 	
 	//AUX pin setting
 	if(modeConfig.altAUX==1) BPMSG1087; else BPMSG1086;	//bpWmessage(MSG_OPT_AUXPIN_CS); else bpWmessage(MSG_OPT_AUXPIN_AUX);
@@ -1118,14 +1112,12 @@ void statusInfo(void){
 	if(modeConfig.HiZ==1) BPMSG1120; else BPMSG1121;	// bpWmessage(MSG_STATUS_OUTPUT_HIZ); else bpWmessage(MSG_STATUS_OUTPUT_NORMAL);
 	
 	//pullups available, enabled?
-	#if defined (BUSPIRATEV1A) || defined (BUSPIRATEV2)
 	if(modeConfig.allowpullup==1){
 		//was modeConfig.pullupEN
 		if(BP_PULLUP==1) BPMSG1091; else BPMSG1089;	//bpWmessage(MSG_OPT_PULLUP_ON); else bpWmessage(MSG_OPT_PULLUP_OFF);
 	}else{
 		BPMSG1122;	//bpWmessage(MSG_STATUS_PULLUP_NOTALLOWED);
 	}
-	#endif
 	
 	//bitorder toggle available, enabled
 	if(modeConfig.allowlsb==1){

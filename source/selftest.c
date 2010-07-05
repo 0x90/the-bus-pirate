@@ -93,7 +93,7 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 		//Vpullup is connected to 5volts
 		//bpPOSTWstring("VPU");
 		BPMSG1172;
-		bpADCPinTest(11,V5L, V5H);
+		bpADCPinTest(VPUADC,V5L, V5H);
 	}
 
 	//0x0208 is 3.3volts
@@ -105,7 +105,7 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 		//ADC is connected to 3.3volts
 		//bpPOSTWstring("ADC");
 		BPMSG1174;
-		bpADCPinTest(12,V33L, V33H);
+		bpADCPinTest(PROBEADC,V33L, V33H);
 	}
 
 	ADCOFF(); // turn ADC OFF 

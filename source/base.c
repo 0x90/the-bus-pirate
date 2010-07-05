@@ -59,30 +59,27 @@ void bpInit(void){
 
 	clearModeConfig(); //reset the mode settings structure
 	
-	#if defined( BUSPIRATEV0A) || defined( BUSPIRATEV2)
+	#if defined( BUSPIRATEV2)
 		BP_PULLUP_OFF();
 	#endif
 
-	#if defined( BUSPIRATEV1A) || defined( BUSPIRATEV2)
-		
-		BP_VREG_OFF();//disable the VREG
+	BP_VREG_OFF();//disable the VREG
 
-		//setup voltage monitoring on ADC. Should be moved to hardwarevx.h!
-		AD1PCFGbits.PCFG9=0; //B15/AN9/ADC4/50V
-		AD1PCFGbits.PCFG10=0;//B14/AN10/ADC3/33V
-		AD1PCFGbits.PCFG11=0;//B13/AN11/ADC2/Vextpullup
-		AD1PCFGbits.PCFG12=0;//B12/AN12/ADC1/EXT
-		//AD1PCFG&=(~0b11110);//analog pins
-	
-		//configure the ADC
-		AD1CON1bits.SSRC  = 0b111;// SSRC<3:0> = 111 implies internal
-									// counter ends sampling and starts
-									// converting.
-		AD1CSSL = 0;
-		AD1CON3 = 0x1F02; // Sample time = 31Tad,
-							// Tad = 2 Tcy
-		AD1CON2 = 0;
-	#endif
+	//setup voltage monitoring on ADC. Should be moved to hardwarevx.h!
+	AD1PCFGbits.PCFG9=0; //B15/AN9/ADC4/50V
+	AD1PCFGbits.PCFG10=0;//B14/AN10/ADC3/33V
+	AD1PCFGbits.PCFG11=0;//B13/AN11/ADC2/Vextpullup
+	AD1PCFGbits.PCFG12=0;//B12/AN12/ADC1/EXT
+	//AD1PCFG&=(~0b11110);//analog pins
+
+	//configure the ADC
+	AD1CON1bits.SSRC  = 0b111;// SSRC<3:0> = 111 implies internal
+								// counter ends sampling and starts
+								// converting.
+	AD1CSSL = 0;
+	AD1CON3 = 0x1F02; // Sample time = 31Tad,
+						// Tad = 2 Tcy
+	AD1CON2 = 0;
 }
 
 #if defined( BUSPIRATEV1A) || defined (BUSPIRATEV2)

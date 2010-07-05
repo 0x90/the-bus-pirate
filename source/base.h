@@ -18,11 +18,8 @@
 #include <p24fxxxx.h>
 
 //this sets the hardware version
-//#define BUSPIRATEV0A //http://hackaday.com/2008/11/19/how-to-the-bus-pirate-universal-serial-interface/
-//#define BUSPIRATEV2A
-//#define BUSPIRATEV25 //AKA Bus Pirate v2go
 //#define BUSPIRATEV1A //http://hackaday.com/2009/01/22/how-to-bus-pirate-v1-improved-universal-serial-interface/
-#define BUSPIRATEV3 
+#define BUSPIRATEV3 //also v2go
 
 //#define BUSPIRATE_POST //used to switch POST on and off
 
@@ -85,16 +82,8 @@ asm (".equ BLJUMPADDRESS, 0xABF8");
 #endif
 
 
-#if defined(BUSPIRATEV0A)
-	#include "hardwarev0a.h"
-#elif defined(BUSPIRATEV1A)
+#if defined(BUSPIRATEV1A)
 	#include "hardwarev1a.h"
-#elif defined(BUSPIRATEV2A)
-	#define BUSPIRATEV2
-	#include "hardwarev2a.h"
-#elif defined(BUSPIRATEV25)
-	#define BUSPIRATEV2 //v25 (2go) and v3 are about the same, enable the same featue set for both
-	#include "hardwarev25.h"
 #elif defined(BUSPIRATEV3)
 	#define BUSPIRATEV2 //v25 (2go) and v3 are about the same, enable the same featue set for both
 	#include "hardwarev3.h"
@@ -115,7 +104,8 @@ asm (".equ BLJUMPADDRESS, 0xABF8");
 #define V33BASE 0x200 //(((3.3/2)/3.3)*1024))
 #define V33H	V33BASE+0x50
 #define V33L	V33BASE-0x50
-
+#define VPUADC	11
+#define PROBEADC 12
 #define ADCON() AD1CON1bits.ADON = 1 // turn ADC ON 
 #define ADCOFF() AD1CON1bits.ADON = 0 // turn ADC OFF 
 
