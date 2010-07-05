@@ -249,118 +249,6 @@ void SPIpins(void)
 {	BPMSG1225;
 }
 
-/*
-void spiProcess(void){
-	static unsigned char c;
-	static unsigned int i;
-
-	switch(bpCommand.cmd){
-		case CMD_STARTR:
-		case CMD_START:
-			if(bpCommand.cmd==CMD_STARTR){spiSettings.wwr=1;}else{spiSettings.wwr=0;}
-			//cs enable
-			SPICS=0; 
-			bpWmessage(MSG_CS_ENABLED);
-			break;
-		case CMD_STOP:
-			//cs disable
-			SPICS=1;
-			bpWmessage(MSG_CS_DISABLED);
-			break;
-		case CMD_READ:
-			if(bpCommand.repeat==1){
-				bpWmessage(MSG_READ);
-				c=spiWriteByte(0xff);
-				bpWbyte(c);
-			}else{
-				bpWmessage(MSG_READBULK);	
-				bpWbyte(bpCommand.repeat);
-				bpWmessage(MSG_READBULK_BYTES);
-				for(i=0;i<bpCommand.repeat;i++){	
-					bpWbyte(spiWriteByte(0xff));
-					bpSP;//space
-				}
-			}
-			bpWBR;
-			break;
-		case CMD_WRITE:
-			bpWmessage(MSG_WRITE);
-			bpWbyte(bpCommand.num);
-			if(bpCommand.repeat==1){
-				c=spiWriteByte(bpCommand.num);
-				if(spiSettings.wwr==1){
-					bpSP;
-					bpWmessage(MSG_READ);
-					bpWbyte(c);
-				}
-			}else{
-				bpWstring(" , ");
-				bpWbyte(bpCommand.repeat);
-				bpWmessage(MSG_WRITEBULK);
-				for(i=0;i<bpCommand.repeat;i++)c=spiWriteByte(bpCommand.num);
-			}
-			bpWBR;
-			break;
-		case CMD_PRESETUP:
-			//bpWstring("Set speed:\x0D\x0A 1. 30KHz\x0D\x0A 2. 125KHz\x0D\x0A 3. 250KHz\x0D\x0A 4. 1MHz\x0D\x0A");
-			bpWline(OUMSG_SPI_SPEED);
-			modeConfig.speed=(bpUserNumberPrompt(1, 4, 1)-1);
-
-			//bpWstring("Clock polarity:\x0D\x0A 1. Idle low *default\x0D\x0A 2. Idle high\x0D\x0A");
-			bpWmessage(MSG_OPT_CKP);
-			spiSettings.ckp=(bpUserNumberPrompt(1, 2, 1)-1);
-
-			//bpWstring("Output clock edge:\x0D\x0A 1. Idle to active\x0D\x0A 2. Active to idle *default\x0D\x0A");
-			bpWmessage(MSG_OPT_CKE);
-			spiSettings.cke=(bpUserNumberPrompt(1, 2, 2)-1);
-
-			//bpWstring("Input sample phase:\x0D\x0A 1. Middle *default\x0D\x0A 2. End\x0D\x0A");
-			bpWmessage(MSG_OPT_SMP);
-			spiSettings.smp=(bpUserNumberPrompt(1, 2, 1)-1);
-
-			bpWmessage(MSG_OPT_OUTPUT_TYPE);
-			modeConfig.HiZ=(~(bpUserNumberPrompt(1, 2, 1)-1));
-			
-			modeConfig.allowlsb=0;
-			#ifdef BUSPIRATEV2
-			modeConfig.allowpullup=1;
-			#endif
-			break;
-		case CMD_SETUP:
-			//cleanup variables
-			spiSettings.wwr=0;
-			//do SPI peripheral setup
-			spiSetup(SPIspeed[modeConfig.speed]);
-			bpWmessage(MSG_READY);
-			break;
-		case CMD_CLEANUP:
-			//turn off SPI
-			spiDisable();
-			break;
-		case CMD_MACRO:
-			switch(bpCommand.num){
-				case 0:
-					bpWline(OUMSG_SPI_MACRO_MENU);
-					break;
-				case 1:
-					bpWline(OUMSG_SPI_SNIFF_MENU);
-					c=(bpUserNumberPrompt(1, 3, 1)-1);
-					bpWline(OUMSG_SPI_SNIFF_BEGIN);
-					spiSniffer(c,1);//configure for terminal mode
-					break;
-				default:
-					bpWmessage(MSG_ERROR_MACRO);
-			}
-			break;
-		case CMD_ENDOFSYNTAX: break;
-		default:
-			bpWmessage(MSG_ERROR_MODE);
-	}
-
-}
-
-*/
-
 void spiSetup(unsigned char spiSpeed){
     SPI1STATbits.SPIEN = 0;//disable, just in case...
 	
@@ -411,6 +299,7 @@ void spiDisable(void){
 	SPIMOSI_ODC=0;
 	SPICLK_ODC=0; 
 	SPICS_ODC=0;
+	//make all input maybe???
 }
 
 //void spiCSHigh(void){SPICS=1;}
@@ -437,8 +326,13 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 	spiDisable();
 	spiSlaveSetup();
 
+	//setup external interrupt on CS pin for sniffer CS sync erratta work around
+	RPINR0bits.INT1R=BP_CS_RPIN; //assign INT1 to CS pin
+	INTCON2bits.INT1EP=(~csState);//interrupt edge 0=pos (low to high), 1=neg (high to low), opposite CS state
+	IFS1bits.INT1IF=0;
+
 	while(1){
-		if(csState>1 || SPICS==csState){
+		if(csState>1 || ((SPICS==csState) &&(IFS1bits.INT1IF==1))){
 			if(SPI1STATbits.SPIEN==0){
 				SPI1STATbits.SPIEN=1; 
 				SPI2STATbits.SPIEN=1;
@@ -449,6 +343,7 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 				SPI1STATbits.SPIEN=0; //only enable when CS matches desired state
 				SPI2STATbits.SPIEN=0;
 				UARTbuf(']');//bpWBR; //cs disabled
+				IFS1bits.INT1IF=0;//clear interrupt flag
 			}
 		}
 
@@ -473,19 +368,7 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 			}
 
 		}
-/*
-		if(SPI2STATbits.SRXMPT==0){//rx buffer NOT empty, get and display byte
-			c=SPI2BUF;
-			UARTbuf('(');
-			if(termMode){ //show hex output in terminal mode
-				bpWhexBuf(c);
-			}else{ //escaped byte value in binary mode
-				UARTbuf('\\');
-				UARTbuf(c);
-			}
-			UARTbuf(')');
-		}
-*/
+
 		if(SPI1STATbits.SPIROV==1 || SPI2STATbits.SPIROV==1 ){//we weren't fast enough, buffer overflow
 			BP_LEDMODE=0;
 			if(termMode) bpWline("Couldn't keep up");	
@@ -499,6 +382,7 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 			if(U1RXREG=='r'){
 				SPI1STATbits.SPIEN=0; //only enable when CS matches desired state
 				SPI2STATbits.SPIEN=0;
+				IFS1bits.INT1IF=0;//clear interrupt flag
 			}else{
 				if(termMode) bpBR; //fixed in 5.1: also sent br to binmode
 				break;
@@ -506,6 +390,7 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 		}
 	}
 	spiSlaveDisable();
+	RPINR0bits.INT1R=0b11111; //remove INT1 from CS pin
 	spiSetup(SPIspeed[modeConfig.speed]);
 }
 
@@ -569,7 +454,8 @@ void spiSlaveSetup(void){
 	SPI1CON2bits.SPIBEN=1;
 	SPI2CON2bits.SPIBEN=1;
 //8. Enable SPI operation by setting the SPIEN bit(SPIxSTAT<15>).
-	//SPI1STATbits.SPIEN=1;
+	//SPI1STATbits.SPIEN=1;	
+	
 }
 
 void spiSlaveDisable(void){
