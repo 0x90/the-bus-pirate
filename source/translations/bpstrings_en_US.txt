@@ -1,9 +1,8 @@
 // messages in the various subsystems
 //1wire.c
 BPMSG1000;0;"WRITE BIT: "
-BPMSG1001;1;" *next clock (^) will also have this value" 
-BPMSG1002;1;"1WIRE routines (C) 2000 Michael Pearce"
-BPMSG1003;1;"GNU GPL"
+BPMSG1001;1;" *next clock (^) will use this value" 
+BPMSG1002;1;"1WIRE routines (C) 2000 Michael Pearce GNU GPL"
 BPMSG1004;1;"No device, try (ALARM) SEARCH macro first"
 BPMSG1005;0;"ADDRESS MACRO "
 BPMSG1006;1;" 0.Macro menu"
@@ -65,7 +64,7 @@ BPMSG1058;0;"Loading from slot "
 //binwire
 //bitbang
 ///buspiratecore
-BPMSG1059;0;"ERROR: command has no effect here"
+BPMSG1059;1;"ERROR: command has no effect here"
 //I2C
 BPMSG1060;0;"ACK"
 BPMSG1061;0;"NACK"
@@ -109,6 +108,7 @@ BPMSG1095;0;"AUX INPUT/HI-Z, READ: "
 BPMSG1096;1;"POWER SUPPLIES ON"
 BPMSG1097;1;"POWER SUPPLIES OFF"
 //also 1044..
+BPMSG1098;0;"DATA STATE: "
 BPMSG1099;0;"DELAY "
 BPMSG1100;1;"us"
 BPMSG1101;0;"WRITE: "
@@ -118,8 +118,8 @@ BPMSG1104;1;"CLOCK, 0"
 BPMSG1105;1;"DATA OUTPUT, 1"
 BPMSG1106;1;"DATA OUTPUT, 0"
 BPMSG1107;1;" *pin is now HiZ"
-BPMSG1108;1;"CLOCK TICK"
-BPMSG1109;1;"READ BIT: "
+BPMSG1108;0;"CLOCK TICKS: "
+BPMSG1109;0;"READ BIT: "
 BPMSG1110;0;"Syntax error at char "
 BPMSG1111;1;"x. exit(without change)"
 BPMSG1112;1;"no mode change"

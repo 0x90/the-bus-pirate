@@ -255,6 +255,7 @@ void serviceuser(void)
 				case 'v':	//bpWline("-check supply voltage");
 							pinStates();
 							//measureSupplyVoltages();
+							break;
 				case 'f':	//bpWline("-frequency count on AUX");
 							bpFreq();
 							break;
@@ -615,62 +616,67 @@ void serviceuser(void)
 							bpBR;
 							break;
 				case '/':	//bpWline("-CLK hi");
-							repeat=getrepeat()+1;
-							while(--repeat)
-							{	//bpWmessage(MSG_BIT_CLKH);
+							//repeat=getrepeat()+1;
+							//while(--repeat)
+							//{	//bpWmessage(MSG_BIT_CLKH);
 								BPMSG1103;
 								protos[bpConfig.busMode].protocol_clkh();
-							}
+							//}
 							break;
 				case '\\':	//bpWline("-CLK lo");
-							repeat=getrepeat()+1;
-							while(--repeat)
-							{	//bpWmessage(MSG_BIT_CLKL);
+							//repeat=getrepeat()+1;
+							//while(--repeat)
+							//{	//bpWmessage(MSG_BIT_CLKL);
 								BPMSG1104;
 								protos[bpConfig.busMode].protocol_clkl();
-							}
+							//}
 							break;
 				case '-':	//bpWline("-DAT hi");
-							repeat=getrepeat()+1;
-							while(--repeat)	
-							{	//bpWmessage(MSG_BIT_DATH);
+							//repeat=getrepeat()+1;
+							//while(--repeat)	
+							//{	//bpWmessage(MSG_BIT_DATH);
 								BPMSG1105;
 								protos[bpConfig.busMode].protocol_dath();
-							}
+							//}
 							break;
 				case '_':	//bpWline("-DAT lo");
-							repeat=getrepeat()+1;
-							while(--repeat)
-							{	//bpWmessage(MSG_BIT_DATL);
+							//repeat=getrepeat()+1;
+							//while(--repeat)
+							//{	//bpWmessage(MSG_BIT_DATL);
 								BPMSG1106;
 								protos[bpConfig.busMode].protocol_datl();
-							}
+							//}
 							break;
 				case '.':	//bpWline("-DAT state read");
-							repeat=getrepeat()+1;
-							while(--repeat)	
+							//repeat=getrepeat()+1;
+							BPMSG1098;
+							//while(--repeat)	
 							{	bpEchoState(protos[bpConfig.busMode].protocol_dats());
 								//bpWmessage(MSG_BIT_NOWINPUT);
-								BPMSG1107;
+								//BPMSG1107;
 							}
 							break;
 				case '^':	//bpWline("-CLK pulse");
-							repeat=getrepeat()+1;
+							repeat=getrepeat();
+							BPMSG1108;
+							bpWbyte(repeat);
+							repeat++;
 							while(--repeat)
 							{	//bpWmessage(MSG_BIT_CLK);
-								BPMSG1108;
 								protos[bpConfig.busMode].protocol_clk();
 							}
+							bpBR;
 							break;
 				case '!':	//bpWline("-bit read");
 							repeat=getrepeat()+1;
+							BPMSG1109;
 							while(--repeat)	
 							{	//bpWmessage(MSG_BIT_READ);
-								BPMSG1109;
 								bpEchoState(protos[bpConfig.busMode].protocol_bitr());
-								//bpWmessage(MSG_BIT_NOWINPUT);
-								BPMSG1107;
+								bpSP;
 							}
+							//bpWmessage(MSG_BIT_NOWINPUT);
+							BPMSG1107;
 							break;
 					// white char/delimeters
 				case 0x00:

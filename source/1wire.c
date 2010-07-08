@@ -79,27 +79,30 @@ unsigned int OWbitr(void)
 
 void OWbitclk(void)
 {	OWWriteBit(DS1wireDataState);
-	bpEchoState(DS1wireDataState);
+	//bpEchoState(DS1wireDataState);
+}
+unsigned int OWstate(void){
+	return DS1wireDataState;
 }
 
 void OWdatl(void)
 {	//bpWstring(OUMSG_1W_BIT_WRITE);
-	BPMSG1000;
+	//BPMSG1000;
 	DS1wireDataState=0;
-	bpEchoState(0);
+	//bpEchoState(0);
 	//bpWline(OUMSG_1W_BIT_WRITE_NOTE);
 	BPMSG1001;
-	OWWriteBit(DS1wireDataState);
+	//OWWriteBit(DS1wireDataState);
 }
 
 void OWdath(void)
 {	//bpWstring(OUMSG_1W_BIT_WRITE);
-	BPMSG1000;
+	//BPMSG1000;
 	DS1wireDataState=1;
-	bpEchoState(1);
+	//bpEchoState(1);
 	//bpWline(OUMSG_1W_BIT_WRITE_NOTE);
 	BPMSG1001;
-	OWWriteBit(DS1wireDataState);
+	//OWWriteBit(DS1wireDataState);
 }
 
 void OWsetup(void)
@@ -115,7 +118,7 @@ void OWsetup(void)
 	//bpWline("1WIRE routines Copyright (C) 2000 Michael Pearce");
 	//bpWline("Released under GNU General Public License");
 	BPMSG1002;
-	BPMSG1003;
+	//BPMSG1003;
 }
 
 void OWmacro(unsigned int macro)

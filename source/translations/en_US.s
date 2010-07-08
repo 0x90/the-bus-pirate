@@ -2,9 +2,8 @@
 .global _bpmessages
 _bpmessages:
 	.pascii	"WRITE BIT: "
-	.pascii	" *next clock (^) will also have this value"
-	.pascii	"1WIRE routines (C) 2000 Michael Pearce"
-	.pascii	"GNU GPL"
+	.pascii	" *next clock (^) will use this value"
+	.pascii	"1WIRE routines (C) 2000 Michael Pearce GNU GPL"
 	.pascii	"No device, try (ALARM) SEARCH macro first"
 	.pascii	"ADDRESS MACRO "
 	.pascii	" 0.Macro menu"
@@ -93,6 +92,7 @@ _bpmessages:
 	.pascii	"AUX INPUT/HI-Z, READ: "
 	.pascii	"POWER SUPPLIES ON"
 	.pascii	"POWER SUPPLIES OFF"
+	.pascii	"DATA STATE: "
 	.pascii	"DELAY "
 	.pascii	"us"
 	.pascii	"WRITE: "
@@ -102,7 +102,7 @@ _bpmessages:
 	.pascii	"DATA OUTPUT, 1"
 	.pascii	"DATA OUTPUT, 0"
 	.pascii	" *pin is now HiZ"
-	.pascii	"CLOCK TICK"
+	.pascii	"CLOCK TICKS: "
 	.pascii	"READ BIT: "
 	.pascii	"Syntax error at char "
 	.pascii	"x. exit(without change)"
@@ -265,7 +265,5 @@ _bpmessages:
 	.pascii	"s\tScript engine\t\t\t:\tRepeat e.g. r:10"
 	.pascii	"v\tShow volts/states\t<x>/<x= >/<0>\tUsermacro x/assign x/list all"
 	.pascii	"w/W\tPSU (off/ON)"
-
-
 
 #endif

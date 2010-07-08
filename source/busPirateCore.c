@@ -140,7 +140,7 @@ proto protos[MAXPROTO+1] = {
 	nullfunc1,				// clkl
 	OWdath,					// dath
 	OWdatl,					// datl
-	nullfunc3,				// dats
+	OWstate,				// dats
 	OWbitclk,				// clk
 	OWbitr, 				// bitr
 	nullfunc3,				// periodic

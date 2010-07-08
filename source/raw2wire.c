@@ -175,129 +175,6 @@ void R2Wpins(pins)
 {	BPMSG1231;
 }
 
-/*
-void r2wProcess(void){
-	static unsigned char c;
-	static unsigned int i;
-
-	switch(bpCommand.cmd){
-		case CMD_READ:
-			if(bpCommand.repeat==1){
-				bpWmessage(MSG_READ);
-				c=bbReadByte();
-				bpWbyte(c);
-			}else{
-				bpWmessage(MSG_READBULK);
-				bpWbyte(bpCommand.repeat);
-				bpWmessage(MSG_READBULK_BYTES);
-				for(i=0;i<bpCommand.repeat;i++){	
-					bpWbyte(bbReadByte());
-					bpSP;
-				}
-			}
-			bpWBR;
-			break;
-		case CMD_WRITE:
-			//bpWmessage(MSG_WRITE);	
-			//bbWriteByte(bpCommand.num);
-			//bpWbyte(bpCommand.num);
-			//bpWBR;
-			bpWmessage(MSG_WRITE);
-			bpWbyte(bpCommand.num);
-			if(bpCommand.repeat==1){
-				bbWriteByte(bpCommand.num);//send byte
-			}else{
-				bpWstring(" , ");
-				bpWbyte(bpCommand.repeat);
-				bpWmessage(MSG_WRITEBULK);
-				for(i=0;i<bpCommand.repeat;i++) bbWriteByte(bpCommand.num);//send byte
-			}
-			bpWBR;
-			break;
-		case CMD_STARTR:
-		case CMD_START:
-			bbI2Cstart();
-			bpWstring("(\\-/_\\)");
-			bpWmessage(MSG_I2C_START);
-			break;
-		case CMD_STOP:
-			bbI2Cstop();
-			bpWstring("(_/-\\)");
-			bpWmessage(MSG_I2C_STOP);
-			break;
-		case CMD_BIT_READ:
-			bpWmessage(MSG_BIT_READ);
-			bpEchoState(bbReadBit());
-			bpWmessage(MSG_BIT_NOWINPUT);	
-			break;
-		case CMD_BIT_PEEK:
-			bpWmessage(MSG_BIT_PEEK);
-			bpEchoState(bbMISO());
-			bpWmessage(MSG_BIT_NOWINPUT);
-			break;
-		case CMD_BIT_CLK:
-			bpWbyte(bpCommand.repeat);
-			bpWmessage(MSG_BIT_CLK);
-			bbClockTicks(bpCommand.repeat);
-			break;
-		case CMD_BIT_CLKH:
-			bpWmessage(MSG_BIT_CLKH);
-			bbCLK(1);
-			break;
-		case CMD_BIT_CLKL:
-			bpWmessage(MSG_BIT_CLKL);
-			bbCLK(0);
-			break;
-		case CMD_BIT_DATH:
-			bpWmessage(MSG_BIT_DATH);
-			bbMOSI(1);
-			break;
-		case CMD_BIT_DATL:
-			bpWmessage(MSG_BIT_DATL);
-			bbMOSI(0);
-			break;
-		case CMD_PRESETUP:
-			//set the options avaiable here....
-			modeConfig.allowlsb=1;
-			modeConfig.allowpullup=1; 
-			bpWmessage(MSG_OPT_BB_SPEED);
-			modeConfig.speed=(bpUserNumberPrompt(1, 3, 1)-1);
-			bpWmessage(MSG_OPT_OUTPUT_TYPE);
-			modeConfig.HiZ=(~(bpUserNumberPrompt(1, 2, 1)-1));
-			break;
-		case CMD_SETUP:
-			//writes to the PORTs write to the LATCH
-			R2WCLK=0;			//B8 scl 
-			R2WDIO=0;			//B9 sda
-			R2WDIO_TRIS=1;//data input
-			R2WCLK_TRIS=0;//clock output
-			bbSetup(2, modeConfig.speed);
-			bpWmessage(MSG_READY);
-			break;
-		case CMD_CLEANUP://no cleanup needed
-			break;
-		case CMD_MACRO:
-			switch(bpCommand.num){
-				case MENU:
-					bpWstring(OUMSG_R2W_MACRO_MENU);
-					break;
-				case ISO78133ATR:
-					r2wMacro_78133Write();
-				case ISO78133ATR_PARSE:
-					r2wMacro_78133Read();
-					break;
-				default:
-					bpWmessage(MSG_ERROR_MACRO);
-			}
-			break;
-		case CMD_ENDOFSYNTAX: break;
-		default:
-			bpWmessage(MSG_ERROR_MODE);
-	}
-
-}
-
-*/
 //
 // R2W macros
 
@@ -330,7 +207,7 @@ void r2wMacro_78133Read(void){
 	unsigned char c;
 	unsigned int i;
 
-	bpWstring("ISO 7816-3 reply (uses current LSB setting): ");
+	//bpWstring("ISO 7816-3 reply (uses current LSB setting): ");
 	BPMSG1146;
 
 	//read and display ISO 7813-3 bytes
@@ -370,12 +247,12 @@ void r2wMacro_78133Read(void){
 			BPMSG1152;
 			break;
 	}
-
+	bpBR;
 	//bits4 RFU
 	//bits 3:1 structure, x00 reserved, 010 general, 110 proprietary, x01 x11, special
 	
 	//bit 8 Supports random read lengths (0=false)
-	bpWstring("Read type: ");
+	//bpWstring("Read type: ");
 	BPMSG1153;
 	//c=(m[1]>>7);
 	if((m[1]>>7)==0){
@@ -385,7 +262,7 @@ void r2wMacro_78133Read(void){
 		//bpWline("variable length");
 		BPMSG1155;
 	}
-	
+	bpBR;
 	//bit 7:4 data units (0001=128, 0010 = 256, 0011=512, etc, 1111=RFU)
 	//bpWstring("Data units: ");
 	BPMSG1156;
@@ -401,10 +278,10 @@ void r2wMacro_78133Read(void){
 		for(m[0]=0;m[0]<c;m[0]++)i*=2;//multiply by two each time
 		bpWintdec(i);
 	}
-	bpWBR;
+	bpBR;
 	
 	//bit 3:1 length of data units in bits (2^(3:1))
-	bpWstring("Data unit length (bits): ");
+	//bpWstring("Data unit length (bits): ");
 	BPMSG1158;
 	c=(m[1]&(~0b11111000));
 	i=1;

@@ -328,12 +328,13 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 	spiSlaveSetup();
 
 	//setup external interrupt on CS pin for sniffer CS sync erratta work around
-	RPINR0bits.INT1R=BP_CS_RPIN; //assign INT1 to CS pin
-	INTCON2bits.INT1EP=(~csState);//interrupt edge 0=pos (low to high), 1=neg (high to low), opposite CS state
-	IFS1bits.INT1IF=0;
+	//RPINR0bits.INT1R=BP_CS_RPIN; //assign INT1 to CS pin
+	//INTCON2bits.INT1EP=(~csState);//interrupt edge 0=pos (low to high), 1=neg (high to low), opposite CS state
+	//IFS1bits.INT1IF=0;
 
 	while(1){
-		if(csState>1 || ((SPICS==csState) &&(IFS1bits.INT1IF==1))){
+		//if(csState>1 || ((SPICS==csState) &&(IFS1bits.INT1IF==1))){
+		if(csState>1 || (SPICS==csState)){
 			if(SPI1STATbits.SPIEN==0){
 				SPI1STATbits.SPIEN=1; 
 				SPI2STATbits.SPIEN=1;
@@ -344,7 +345,7 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 				SPI1STATbits.SPIEN=0; //only enable when CS matches desired state
 				SPI2STATbits.SPIEN=0;
 				UARTbuf(']');//bpWBR; //cs disabled
-				IFS1bits.INT1IF=0;//clear interrupt flag
+				//IFS1bits.INT1IF=0;//clear interrupt flag
 			}
 		}
 
@@ -383,7 +384,7 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 			if(U1RXREG=='r'){
 				SPI1STATbits.SPIEN=0; //only enable when CS matches desired state
 				SPI2STATbits.SPIEN=0;
-				IFS1bits.INT1IF=0;//clear interrupt flag
+				//IFS1bits.INT1IF=0;//clear interrupt flag
 			}else{
 				if(termMode) bpBR; //fixed in 5.1: also sent br to binmode
 				break;
@@ -481,22 +482,13 @@ rawSPI mode:
     * 00000001 – SPI mode/rawSPI version string (SPI1)
     * 00000010 – CS low (0)
     * 00000011 – CS high (1)
+	* Sniffers
     * 0001xxxx – Bulk SPI transfer, send 1-16 bytes (0=1byte!)
-    * 0010xxxx – Low 4 bits of byte + single byte write/read
-    * 0011xxxx – High 4 bits of byte
     * 0100wxyz – Configure peripherals, w=power, x=pullups, y=AUX, z=CS
-    * 01010000 – Read peripherals
     * 01100xxx – Set SPI speed, 30, 125, 250khz; 1, 2, 2.6, 4, 8MHz
-    * 01110000 – Read SPI speed
     * 1000wxyz – SPI config, w=output type, x=idle, y=clock edge, z=sample
-    * 10010000 – Read SPI config
 	
-Tips:
-A byte is sent/read on SPI each time the low bits are sent (0001xxxx). 
-If the upper 4 bits are the same as the last byte, just send the lower 
-bits again for a two-fold increase in speed.
 */
-static unsigned char bufOutByte;
 static unsigned char binSPIspeed[]={0b00000,0b11000,0b11100,0b11101,0b00011,0b01000,0b10000,0b11000};//00=30,01=125,10=250,11=1000khz, 100=2mhz,101=2.667mhz,  110=4mhz, 111=8mhz; datasheet pg 142
 
 void binSPIversionString(void){bpWstring("SPI1");}
@@ -565,16 +557,6 @@ void binSPI(void){
 					UART1TX(spiWriteByte(U1RXREG));
 				}
 
-				break;
-			case 0b0010://add lower four bits to buffered byte, TX/RX
-				inByte&=(~0b11110000); //clear command portion
-				bufOutByte|=inByte; //set lower four bits
-				UART1TX(spiWriteByte(bufOutByte));
-				break;
-			case 0b0011://add upper four bits to buffered byte
-				bufOutByte&=(~0b11110000);//clear current upper bits
-				bufOutByte|=(inByte<<4); //set upper four bits;
-				UART1TX(1);//send 1/OK
 				break;
 			case 0b0100: //configure peripherals w=power, x=pullups, y=AUX, z=CS
 				binIOperipheralset(inByte);	

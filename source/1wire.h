@@ -27,6 +27,7 @@ void OWdath(void);
 void OWsetup(void);
 void OWmacro(unsigned int macro);
 void OWpins(void);
+unsigned int OWstate(void);
 
 // from m_1wire123.h anything to make the compiler.linker happy *zucht*
 void DS1wireReset(void);
