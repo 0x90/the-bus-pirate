@@ -398,8 +398,10 @@ int getnumvar(void)
 							break;
 			case TOK_PSU:	temp=BP_VREGEN; //modeConfig.vregEN;
 							break;
+#if defined (BUSPIRATEV2)
 			case TOK_PULLUP:	temp=(~BP_PULLUP); //modeConfig.pullupEN;
 							break;
+#endif
 			case TOK_ADC:	temp=bpADC(12);
 							break;
 			default:		temp=0;

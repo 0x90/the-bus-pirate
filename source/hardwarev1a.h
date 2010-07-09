@@ -50,6 +50,8 @@
 #define BP_LEDPWR		PORTAbits.RA3
 #define BP_EN50V		PORTAbits.RA4
 #define BP_EN33V		PORTBbits.RB5
+#define BP_VREGEN		BP_EN33V //duplicate so it's compatiable wtih v2 code in procMenu.c
+#define BP_PULLUP		BP_EN33V //duplicate so it's compatiable wtih v2 code in procMenu.c
 
 //these macros set the direction registers for each IO pin
 #define BP_MOSI_DIR 	TRISBbits.TRISB9
