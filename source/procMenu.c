@@ -1115,7 +1115,8 @@ void statusInfo(void){
 
 	//open collector outputs?
 	if(modeConfig.HiZ==1) BPMSG1120; else BPMSG1121;	// bpWmessage(MSG_STATUS_OUTPUT_HIZ); else bpWmessage(MSG_STATUS_OUTPUT_NORMAL);
-	
+
+#if defined(BUSPIRATEV2)	
 	//pullups available, enabled?
 	if(modeConfig.allowpullup==1){
 		//was modeConfig.pullupEN
@@ -1123,6 +1124,7 @@ void statusInfo(void){
 	}else{
 		BPMSG1122;	//bpWmessage(MSG_STATUS_PULLUP_NOTALLOWED);
 	}
+#endif
 	
 	//bitorder toggle available, enabled
 	if(modeConfig.allowlsb==1){
