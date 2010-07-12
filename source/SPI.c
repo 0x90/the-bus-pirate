@@ -208,7 +208,7 @@ void SPIsetup(void)
 		BPMSG1162;
 	}	
 
-	modeConfig.allowlsb=0;
+	modeConfig.allowlsb=1;
 	#ifdef BUSPIRATEV2
 	modeConfig.allowpullup=1;
 	#endif
@@ -308,6 +308,10 @@ void spiDisable(void){
 //void spiCSLow(void){SPICS=0;}
 
 unsigned char spiWriteByte(unsigned char c){
+
+	if(modeConfig.lsbEN==1){//adjust bitorder
+		c=bpRevByte(c);
+	}
 	SPI1BUF = c;
 	while(!IFS0bits.SPI1IF);
 	c=SPI1BUF;
@@ -320,6 +324,7 @@ unsigned char spiWriteByte(unsigned char c){
 //	SPI Sniffer 
 //
 //
+#define USE_SPICS //enabled SPI CS pin
 void spiSniffer(unsigned char csState, unsigned char termMode){
 	unsigned char c;
 
@@ -331,8 +336,20 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 	//RPINR0bits.INT1R=BP_CS_RPIN; //assign INT1 to CS pin
 	//INTCON2bits.INT1EP=(~csState);//interrupt edge 0=pos (low to high), 1=neg (high to low), opposite CS state
 	//IFS1bits.INT1IF=0;
+#ifdef USE_SPICS
+	SPI1STATbits.SPIEN=1; 
+	SPI2STATbits.SPIEN=1;
+#endif
 
 	while(1){
+/*
+|
+| Need new way to track CS 
+|SPIxTBF(2) high for CS active
+|
+|
+|*/
+#ifndef USE_SPICS
 		//if(csState>1 || ((SPICS==csState) &&(IFS1bits.INT1IF==1))){
 		if(csState>1 || (SPICS==csState)){
 			if(SPI1STATbits.SPIEN==0){
@@ -348,7 +365,9 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 				//IFS1bits.INT1IF=0;//clear interrupt flag
 			}
 		}
+#else
 
+#endif
 		if(SPI1STATbits.SRXMPT==0 && SPI2STATbits.SRXMPT==0){//rx buffer NOT empty, get and display byte
 			c=SPI1BUF;
 			if(termMode){ //show hex output in terminal mode

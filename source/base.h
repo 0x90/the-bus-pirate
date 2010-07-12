@@ -134,6 +134,8 @@ struct _command {
 	unsigned int repeat;	
 };
 
+unsigned char bpRevByte(unsigned char c);
+
 //reset all peripherals before configuring a new bus protocol
 void bpInit(void); 
 
