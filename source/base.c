@@ -208,8 +208,8 @@ unsigned char bpRevByte(unsigned char c){
 	unsigned char r=0, i;
 
 	for(i=0b1; i!=0; i=i<<1){
+		r=r<<1;	
 		if(c&i)r|=0b1;
-		r=r<<1;		
 	}
 	return r;
 }
