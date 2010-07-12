@@ -326,7 +326,9 @@ unsigned char spiWriteByte(unsigned char c){
 //
 #define USE_SPICS //enabled SPI CS pin
 void spiSniffer(unsigned char csState, unsigned char termMode){
-	unsigned char c;
+	unsigned char c, lastCS;
+
+	lastCS=1;
 
 	UARTbufSetup();
 	spiDisable();
@@ -366,10 +368,21 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 			}
 		}
 #else
-
+		//detect when CS changes. works independently of the data interrupts
+		if(lastCS==0 && SPICS ==1){
+			UARTbuf(']');//bpWBR; //cs disabled
+			lastCS=1;
+		}
 #endif
 		if(SPI1STATbits.SRXMPT==0 && SPI2STATbits.SRXMPT==0){//rx buffer NOT empty, get and display byte
 			c=SPI1BUF;
+			
+			//check if CS is just now low
+			if(lastCS==1){
+				UARTbuf('[');//bpWBR; //CS enabled
+				lastCS=0; //SPICS;
+			}
+
 			if(termMode){ //show hex output in terminal mode
 				bpWhexBuf(c);
 			}else{ //escaped byte value in binary mode
