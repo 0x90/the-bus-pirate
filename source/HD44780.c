@@ -141,8 +141,6 @@ void LCDstop(void)
 void LCDsetup(void)
 {	int address, type;
 
-//	modeConfig.allowlsb=0;
-	modeConfig.allowpullup=1; 
 	modeConfig.HiZ=1;//yes, always HiZ
 
 	HD44780.RS=HD44780_DATA;

@@ -104,9 +104,6 @@ void R2Wdath(void)
 void R2Wsetup(void)
 {	int speed, output;
 
-//	modeConfig.allowlsb=1;
-	modeConfig.allowpullup=1; 
-
 	consumewhitechars();
 	speed=getint();
 	consumewhitechars();

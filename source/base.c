@@ -29,11 +29,7 @@ void clearModeConfig(void){
 	modeConfig.speed=0; 
 	modeConfig.periodicService=0;
 	modeConfig.altAUX=0;
-	//modeConfig.allowlsb=0;
 	modeConfig.lsbEN=0;
-	modeConfig.allowpullup=0; 
-//	modeConfig.pullupEN=0;
-	//modeConfig.vregEN=0; 
 }
 
 //get bus pirate ready after first start

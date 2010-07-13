@@ -118,12 +118,8 @@ struct _modeConfig {
 	unsigned char speed; 
 	unsigned char altAUX:1;
 	unsigned char periodicService:1;
-//	unsigned char allowlsb:1;
 	unsigned char lsbEN:1;
-	unsigned char allowpullup:1; 
-	//unsigned char pullupEN:1; 
 	unsigned char HiZ:1;
-	//unsigned char vregEN:1;
 	unsigned char int16:1;			// 16 bits output?
 	unsigned char buf[16];
 };

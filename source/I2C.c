@@ -33,7 +33,7 @@
 extern struct _bpConfig bpConfig; //holds persistant bus pirate settings (see base.h) need hardware version info
 extern struct _modeConfig modeConfig;
 extern struct _command bpCommand;
-
+/*
 static struct _i2csniff {
 	unsigned char bits;
 	unsigned char data;
@@ -42,7 +42,7 @@ static struct _i2csniff {
 	unsigned char I2CD:2;
 	unsigned char I2CC:2; //prevous and current clock pin state
 } I2Csniff;
-
+*/
 //hardware functions
 void hwi2cSetup(void);
 void hwi2cstart(void);
@@ -282,8 +282,6 @@ void I2Csetup(void)
 
 	//set the options avaiable here....
 	modeConfig.HiZ=1;//yes, always hiz
-	modeConfig.allowpullup=1; 
-	//modeConfig.allowlsb=0; //auto cleared on mode change
 
 	if(i2cmode==SOFT)
 	{	SDA_TRIS=1;
@@ -473,17 +471,18 @@ void hwi2cSetup(void){
 //
 //
 //*******************/
+/*
 void I2C_SnifferSetup(void){
 //we dont actually use interrupts, we poll the interrupt flag
-/*
-1. Ensure that the CN pin is configured as a digital input by setting the associated bit in the
-TRISx register.
-2. Enable interrupts for the selected CN pins by setting the appropriate bits in the CNENx
-registers.
-3. Turn on the weak pull-up devices (if desired) for the selected CN pins by setting the
-appropriate bits in the CNPUx registers.
-4. Clear the CNxIF interrupt flag.
-*/
+
+//1. Ensure that the CN pin is configured as a digital input by setting the associated bit in the
+//TRISx register.
+//2. Enable interrupts for the selected CN pins by setting the appropriate bits in the CNENx
+//registers.
+//3. Turn on the weak pull-up devices (if desired) for the selected CN pins by setting the
+//appropriate bits in the CNPUx registers.
+//4. Clear the CNxIF interrupt flag.
+
 	//-- Ensure pins are in high impedance mode --
 	SDA_TRIS=1;
 	SCL_TRIS=1;
@@ -504,6 +503,9 @@ appropriate bits in the CNPUx registers.
 	I2Csniff.I2CC|=SCL; //use to see which pin changes on interrupt
 
 }
+*/
+
+
 // \ - escape character
 //[ - start
 //0xXX - data
@@ -511,6 +513,7 @@ appropriate bits in the CNPUx registers.
 //- - NACK -
 //] - stop
 #define ESCAPE_CHAR '\\'
+/*
 void I2C_Sniffer(unsigned char termMode){
 	unsigned char c;
 
@@ -581,7 +584,124 @@ void I2C_Sniffer(unsigned char termMode){
 
 	}
 }
+*/
 
+void I2C_Sniffer(unsigned char termMode)
+{
+	unsigned char SDANew,SDAOld;
+	unsigned char SCLNew,SCLOld;
+
+	unsigned char DataState=0;
+	unsigned char DataBits=0;
+	unsigned char dat=0;
+
+	//unsigned char *BitBuffer=bpConfig.terminalInput;
+	//unsigned short BufferPos=0;
+	//unsigned short AckPos=0;
+	//unsigned short DataPos=0;
+
+	//setup ring buffer pointers
+	UARTbufSetup();
+	
+	SDA_TRIS=1; // -- Ensure pins are in high impedance mode --
+	SCL_TRIS=1;
+
+	SCL=0; // writes to the PORTs write to the LATCH
+	SDA=0;
+
+	CNEN2bits.CN21IE=1; // enable change notice on SCL and SDA
+	CNEN2bits.CN22IE=1;
+
+	IFS1bits.CNIF=0; // clear the change interrupt flag
+
+	SDAOld=SDANew=SDA;
+	SCLOld=SDANew=SCL;
+
+	//while(!U1STAbits.URXDA&&(BufferPos<32768)) // BitBuffer Space = 4096*8 bits 
+	while(1)
+	{
+		if(!IFS1bits.CNIF){//check change notice interrupt
+			//user IO service
+			UARTbufService();
+			if(U1STAbits.URXDA == 1){//any key pressed, exit
+				dat=U1RXREG;
+				break;
+			}		
+			continue; 
+		}
+
+		IFS1bits.CNIF=0;//clear interrupt flag
+
+		SDANew=SDA; //store current state right away
+		SCLNew=SCL;
+
+		if(DataState&&!SCLOld&&SCLNew) // Sample When SCL Goes Low To High
+		{
+			if(DataBits<8) //we're still collecting data bits
+			{
+				dat=dat<<1;
+				if(SDANew)
+				{
+					dat|=1;
+				}
+
+				DataBits++;
+			}
+			else
+			{	
+				//put the data byte in the terminal or binary output
+				if(termMode){//output for the terminal 
+					bpWhexBuf(dat);
+				}else{ //output for binary mode
+					UARTbuf(ESCAPE_CHAR); //escape character
+					UARTbuf(dat); //write byte value
+				}
+				
+				if(SDANew) // SDA High Means NACK
+				{
+					UARTbuf('-'); 
+				}	
+				else // SDA Low Means ACK
+				{
+					UARTbuf('+'); //write ACK status
+				}
+	
+				DataBits=0; // Ready For Next Data Byte
+				
+			}
+		}
+		else if(SCLOld&&SCLNew) // SCL High, Must Be Data Transition
+		{
+			if(SDAOld&&!SDANew) // Start Condition (High To Low)
+			{
+				DataState=1; // Allow Data Collection
+				DataBits=0;
+
+				UARTbuf('[');//say start, use bus pirate syntax to display data
+				
+			}
+			else if(!SDAOld&&SDANew) // Stop Condition (Low To High)
+			{
+				DataState=0; // Don't Allow Data Collection
+				DataBits=0;
+
+				UARTbuf(']');//say stop
+
+			}	
+		}
+
+		SDAOld=SDANew; // Save Last States
+		SCLOld=SCLNew;
+	}
+	
+	CNEN2bits.CN21IE=0; // Clear Change Notice
+	CNEN2bits.CN22IE=0;
+
+	if(termMode)
+	{
+		bpBR;
+	}	
+}
 
 /*
 rawI2C mode:

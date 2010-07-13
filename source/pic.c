@@ -96,7 +96,6 @@ void picinit(void)
 	}
 
 	modeConfig.HiZ=1;				// to allow different Vcc 
-	modeConfig.allowpullup=1;		// pullup is allowed
 	modeConfig.int16=1;
 	bbL(MOSI|CLK, PICSPEED);		// pull both pins to 0 before applying Vcc and Vpp
 }
@@ -323,7 +322,6 @@ void binpic(void)
 
 	bpWstring("PIC1");
 	modeConfig.HiZ=1;				// to allow different Vcc 
-	modeConfig.allowpullup=1;		// pullup is allowed
 	bbL(MOSI|CLK, PICSPEED);		// pull both pins to 0 before applying Vcc and Vpp
 	picmode=PICMODE6;
 	piccmddelay=2;

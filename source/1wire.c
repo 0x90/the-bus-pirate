@@ -106,8 +106,7 @@ void OWdath(void)
 }
 
 void OWsetup(void)
-{	//modeConfig.allowlsb=0;
-	modeConfig.allowpullup=1; 
+{	
 	modeConfig.HiZ=1;//yes, always HiZ
 
 	OWroster.num=0;//clear any old 1-wire bus enumeration rosters

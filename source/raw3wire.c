@@ -139,11 +139,6 @@ void R3Wsetup(void)
 	}
 
 
-//	modeConfig.allowlsb=1;
-	#ifdef BUSPIRATEV2
-	modeConfig.allowpullup=1;
-	#endif
-
 	//reset the write with read variable
 	r3wSettings.wwr=0;
 	

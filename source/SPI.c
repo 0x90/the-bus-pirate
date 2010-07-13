@@ -208,11 +208,6 @@ void SPIsetup(void)
 		BPMSG1162;
 	}	
 
-//	modeConfig.allowlsb=1;
-	#ifdef BUSPIRATEV2
-	modeConfig.allowpullup=1;
-	#endif
-	
 	spiSettings.wwr=0;
 	//do SPI peripheral setup
 	spiSetup(SPIspeed[modeConfig.speed]);

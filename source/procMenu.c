@@ -306,11 +306,12 @@ void serviceuser(void)
 								BPMSG1123;
 							//}
 							break;
+#if defined( BUSPIRATEV2)
 				case 'p':	//bpWline("-pullup resistors off");
 
-#if defined( BUSPIRATEV2)
+
 							//don't allow pullups on some modules. also: V0a limitation of 2 resistors
-							if(modeConfig.allowpullup==0)
+							if(bpConfig.busMode==HIZ)
 							{	//bpWmessage(MSG_ERROR_MODE);
 								BPMSG1088;
 							}
@@ -320,14 +321,10 @@ void serviceuser(void)
 								//bpWmessage(MSG_OPT_PULLUP_OFF);
 								BPMSG1089;
 							}
-#endif
-
 							break;
 				case 'P':	//bpWline("-pullup resistors on");
-
-#if defined(BUSPIRATEV2)
 							//don't allow pullups on some modules. also: V0a limitation of 2 resistors
-							if(modeConfig.allowpullup==0)
+							if(bpConfig.busMode==HIZ)
 							{	//bpWmessage(MSG_ERROR_MODE);
 								BPMSG1088;
 							}
@@ -1144,21 +1141,12 @@ void statusInfo(void){
 
 #if defined(BUSPIRATEV2)	
 	//pullups available, enabled?
-	if(modeConfig.allowpullup==1){
-		//was modeConfig.pullupEN
-		if(BP_PULLUP==1) BPMSG1091; else BPMSG1089;	//bpWmessage(MSG_OPT_PULLUP_ON); else bpWmessage(MSG_OPT_PULLUP_OFF);
-	}else{
-		BPMSG1122;	//bpWmessage(MSG_STATUS_PULLUP_NOTALLOWED);
-	}
+	//was modeConfig.pullupEN
+	if(BP_PULLUP==1) BPMSG1091; else BPMSG1089;	//bpWmessage(MSG_OPT_PULLUP_ON); else bpWmessage(MSG_OPT_PULLUP_OFF);
 #endif
 	
 	//bitorder toggle available, enabled
-	//if(modeConfig.allowlsb==1){
 	if(modeConfig.lsbEN==0) BPMSG1123; else BPMSG1124;	//bpWmessage(MSG_OPT_BITORDER_LSB); else bpWmessage(MSG_OPT_BITORDER_MSB);
-	//}else{
-		//bpWmessage(MSG_STATUS_BITORDER_NOTALLOWED);
-		//BPMSG1125;
-	//}
 
 	//bpWline("*----------*");
 	BPMSG1119;
