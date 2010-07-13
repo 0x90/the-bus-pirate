@@ -622,12 +622,14 @@ void I2C_Sniffer(unsigned char termMode)
 	{
 		if(!IFS1bits.CNIF){//check change notice interrupt
 			//user IO service
-			UARTbufService();
-			if(U1STAbits.URXDA == 1){//any key pressed, exit
-				dat=U1RXREG;
-				break;
-			}		
-			continue; 
+			if(U1STAbits.UTXBF == 0){//check first, don;t waste time jumping to function
+				UARTbufService();
+				if(U1STAbits.URXDA == 1){//any key pressed, exit
+					dat=U1RXREG;
+					break;
+				}		
+				continue; 
+			}
 		}
 
 		IFS1bits.CNIF=0;//clear interrupt flag

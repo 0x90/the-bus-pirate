@@ -338,37 +338,37 @@ void __attribute__((interrupt, no_auto_psv)) _U1TXInterrupt(void) {
 //uses user terminal input buffer to buffer UART output
 //any existing user input will be destroyed
 //best used for binary mode and sniffers
-static struct _UARTRINGBUF{
-	unsigned int writepointer;
-	unsigned int readpointer;
-}ringBuf;
+//static struct _UARTRINGBUF{
+static unsigned int writepointer;
+static unsigned int readpointer;
+//}ringBuf;
 
 void UARTbufSetup(void){
 	//setup ring buffer pointers
-	ringBuf.readpointer=0;
-	ringBuf.writepointer=1;
+	readpointer=0;
+	writepointer=1;
 }
 
 void UARTbuf(char c){
-	if(ringBuf.writepointer==ringBuf.readpointer){
+	if(writepointer==readpointer){
 		BP_LEDMODE=0;//drop byte, buffer full LED off
 	}else{
-		bpConfig.terminalInput[ringBuf.writepointer]=c;
-		ringBuf.writepointer++;
-		if(ringBuf.writepointer==TERMINAL_BUFFER) ringBuf.writepointer=0; //check for wrap
+		bpConfig.terminalInput[writepointer]=c;
+		writepointer++;
+		if(writepointer==TERMINAL_BUFFER) writepointer=0; //check for wrap
 	}
 }
 
 void UARTbufService(void){
 	unsigned int i;
 
-	i=ringBuf.readpointer+1;
+	i=readpointer+1;
 	if(i==TERMINAL_BUFFER) i=0; //check for wrap
-	if(i==ringBuf.writepointer) return; //buffer empty, 
+	if(i==writepointer) return; //buffer empty, 
 
 	if(U1STAbits.UTXBF == 0){//free slot, move a byte to UART
-		ringBuf.readpointer=i;
-		U1TXREG=bpConfig.terminalInput[ringBuf.readpointer];
+		readpointer=i;
+		U1TXREG=bpConfig.terminalInput[readpointer];
 	}
 }
 
