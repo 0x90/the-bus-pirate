@@ -194,7 +194,7 @@ BPMSG1188;1;"Clock polarity:\r\n 1. Idle low *default\r\n 2. Idle high"
 BPMSG1189;1;"Output clock edge:\r\n 1. Idle to active\r\n 2. Active to idle *default"
 BPMSG1190;1;"Input sample phase:\r\n 1. Middle *default\r\n 2. End"
 BPMSG1191;0;"SPI (spd ckp ske smp hiz)=( "
-BPMSG1192;1;" 0.Macro menu\r\n 1.Sniff CS low\r\n 2. Sniff all traffic\r\n"
+BPMSG1192;1;" 0.Macro menu\r\n 1.Sniff CS low\r\n 2.Sniff all traffic"
 //sump.c
 //uart2io
 //uart.c
