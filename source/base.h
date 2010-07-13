@@ -18,12 +18,12 @@
 #include <p24fxxxx.h>
 
 //this sets the hardware version
-#define BUSPIRATEV1A //http://hackaday.com/2009/01/22/how-to-bus-pirate-v1-improved-universal-serial-interface/
-//#define BUSPIRATEV3 //also v2go
+//#define BUSPIRATEV1A //http://hackaday.com/2009/01/22/how-to-bus-pirate-v1-improved-universal-serial-interface/
+#define BUSPIRATEV3 //also v2go
 
 //#define BUSPIRATE_POST //used to switch POST on and off
 
-#define BP_FIRMWARE_STRING "Firmware v5.2 (r422)"
+#define BP_FIRMWARE_STRING "Firmware v5.3RC (r428)"
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
@@ -118,7 +118,7 @@ struct _modeConfig {
 	unsigned char speed; 
 	unsigned char altAUX:1;
 	unsigned char periodicService:1;
-	unsigned char allowlsb:1;
+//	unsigned char allowlsb:1;
 	unsigned char lsbEN:1;
 	unsigned char allowpullup:1; 
 	//unsigned char pullupEN:1; 

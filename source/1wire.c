@@ -106,7 +106,7 @@ void OWdath(void)
 }
 
 void OWsetup(void)
-{	modeConfig.allowlsb=0;
+{	//modeConfig.allowlsb=0;
 	modeConfig.allowpullup=1; 
 	modeConfig.HiZ=1;//yes, always HiZ
 

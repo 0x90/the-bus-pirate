@@ -63,7 +63,7 @@ enum { PIC614=0,
 	};
 
 void binwire(void){
-	static unsigned char inByte, rawCommand, i, wires, pic[4], picMode=PIC614;
+	static unsigned char inByte, rawCommand, i,c, wires, pic[4], picMode=PIC614;
 	
 	modeConfig.HiZ=1;//yes, always hiz (bbio uses this setting, should be changed to a setup variable because stringing the modeconfig struct everyhwere is getting ugly!)
 	modeConfig.lsbEN=0;//just in case!
@@ -118,10 +118,14 @@ void binwire(void){
 						break;					
 					case 6://read byte
 						if(wires==2){
-							UART1TX(bbReadByte());
+							i=bbReadByte();
 						}else{
-							UART1TX(bbReadWriteByte(0xff));
+							i=bbReadWriteByte(0xff);
 						}
+						if(modeConfig.lsbEN==1){//adjust bitorder
+							i=bpRevByte(i);
+						}
+						UART1TX(i);
 						break;
 					case 7://read bit 
 						UART1TX(bbReadBit());
@@ -162,11 +166,19 @@ void binwire(void){
 
 				for(i=0;i<inByte;i++){
 					while(U1STAbits.URXDA == 0);//wait for a byte
+					c=U1RXREG;
+					if(modeConfig.lsbEN==1){//adjust bitorder
+						c=bpRevByte(c);
+					}
 					if(wires==2){//2 wire, send 1
-						bbWriteByte(U1RXREG); //send byte
+						bbWriteByte(c); //send byte
 						UART1TX(1);
 					}else{ //3 wire, return read byte
-						UART1TX(bbReadWriteByte(U1RXREG)); //send byte
+						c=bbReadWriteByte(c); //send byte
+						if(modeConfig.lsbEN==1){//adjust bitorder
+							c=bpRevByte(c);
+						}
+						UART1TX(c);
 					}
 				}
 

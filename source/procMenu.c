@@ -284,25 +284,27 @@ void serviceuser(void)
 							//bpWmessage(MSG_OPT_AUXPIN_CS);
 							BPMSG1087;
 							break;
-				case 'l':	//bpWline("-bit order set (MSB)");
-							if(modeConfig.allowlsb==0)
-							{	//bpWmessage(MSG_ERROR_MODE);
-								BPMSG1088;
-							}
-							else
-							{	modeConfig.lsbEN=0;
+				case 'L':	//bpWline("-bit order set (MSB)");
+							//if(bpConfig.busMode==HIZ)
+							//{	//bpWmessage(MSG_ERROR_MODE);
+							//	BPMSG1088;
+							//}
+							//else
+							//{	
+								modeConfig.lsbEN=1;
 								BPMSG1124;
-							}
+							//}
 							break;
-				case 'L':	//bpWline("-bit order set (LSB)");
-							if(modeConfig.allowlsb==0)
-							{	//bpWmessage(MSG_ERROR_MODE);`
-								BPMSG1088;
-							}
-							else
-							{	modeConfig.lsbEN=1;
+				case 'l':	//bpWline("-bit order set (LSB)");
+							//if(bpConfig.busMode==HIZ)
+							//{	//bpWmessage(MSG_ERROR_MODE);`
+							//	BPMSG1088;
+							//}
+							//else
+							//{	
+								modeConfig.lsbEN=0;
 								BPMSG1123;
-							}
+							//}
 							break;
 				case 'p':	//bpWline("-pullup resistors off");
 
@@ -352,6 +354,19 @@ void serviceuser(void)
 							cmdstart&=CMDLENMSK;
 							consumewhitechars();
 							temp=getint();
+							bpWhex(temp);
+							bpWstring(" = ");
+							bpWdec(temp);
+							bpWstring(" = ");
+							bpWbin(temp);	
+							bpBR;
+							break;
+				case '|':	//bpWline("-HEX/BIN/DEC convertor");
+							cmdstart++;
+							cmdstart&=CMDLENMSK;
+							consumewhitechars();
+							temp=getint();
+							temp=bpRevByte((unsigned char)temp);
 							bpWhex(temp);
 							bpWstring(" = ");
 							bpWdec(temp);
@@ -594,11 +609,17 @@ void serviceuser(void)
 							repeat=getrepeat()+1;
 							while(--repeat)
 							{	bpWbyte(sendw);
+								if(modeConfig.lsbEN==1){//adjust bitorder
+									sendw=bpRevByte(sendw);
+								}
 								temp=protos[bpConfig.busMode].protocol_send(sendw);
 								bpSP;
 								if(temp<0x100)
 								{	//bpWmessage(MSG_READ);
 									BPMSG1102;
+									if(modeConfig.lsbEN==1){//adjust bitorder
+										temp=bpRevByte((unsigned char)temp);
+									}
 									bpWbyte(temp);
 									bpSP;
 								}
@@ -610,7 +631,12 @@ void serviceuser(void)
 							BPMSG1102;
 							repeat=getrepeat()+1;
 							while(--repeat)
-							{	bpWbyte(protos[bpConfig.busMode].protocol_read());
+							{	
+								c=protos[bpConfig.busMode].protocol_read();
+								if(modeConfig.lsbEN==1){//adjust bitorder
+									c=bpRevByte(c);
+								}
+								bpWbyte(c);
 								bpSP;
 							}
 							bpBR;
@@ -1127,12 +1153,12 @@ void statusInfo(void){
 #endif
 	
 	//bitorder toggle available, enabled
-	if(modeConfig.allowlsb==1){
-		if(modeConfig.lsbEN==1) BPMSG1123; else BPMSG1124;	//bpWmessage(MSG_OPT_BITORDER_LSB); else bpWmessage(MSG_OPT_BITORDER_MSB);
-	}else{
+	//if(modeConfig.allowlsb==1){
+	if(modeConfig.lsbEN==0) BPMSG1123; else BPMSG1124;	//bpWmessage(MSG_OPT_BITORDER_LSB); else bpWmessage(MSG_OPT_BITORDER_MSB);
+	//}else{
 		//bpWmessage(MSG_STATUS_BITORDER_NOTALLOWED);
-		BPMSG1125;
-	}
+		//BPMSG1125;
+	//}
 
 	//bpWline("*----------*");
 	BPMSG1119;

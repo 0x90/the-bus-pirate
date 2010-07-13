@@ -116,147 +116,6 @@ unsigned char HD44780_ReadNibble(unsigned char reg);
 unsigned char HD44780_ReadByte(unsigned char reg);
 void HD44780_I2Cerror(void);
 
-/*
-//this function links the underlying LCD functions to generic commands that the bus pirate issues
-//put most used functions first for best performance
-void HD44780Process(void){
-	static unsigned char c;
-	static unsigned int i;
-	switch(bpCommand.cmd){
-		case CMD_READ:
-			bpWmessage(MSG_READ);
-			c=HD44780_ReadByte(HD44780.RS);
-			bpWbyte(c);
-			bpWBR;
-			break;
-		case CMD_WRITE:
-			if(HD44780.RS == HD44780_COMMAND){
-				bpWstring(OUMSG_LCD_WRITE_COMMAND);	
-			}else{
-				bpWstring(OUMSG_LCD_WRITE_DATA);
-			}
-			bpWmessage(MSG_WRITE);
-			bpWbyte(bpCommand.num);
-
-			if(bpCommand.repeat==1){
-				HD44780_WriteByte(HD44780.RS, bpCommand.num);
-			}else{
-				bpWstring(" , ");
-				bpWbyte(bpCommand.repeat);
-				bpWmessage(MSG_WRITEBULK);
-				for(i=0;i<bpCommand.repeat;i++)HD44780_WriteByte(HD44780.RS, bpCommand.num);
-			}
-			bpWBR;
-			break;
-		case CMD_STARTR:
-		case CMD_START:
-			//next byte is command
-			HD44780.RS=HD44780_COMMAND;
-			bpWline(OUMSG_LCD_COMMAND_MODE);
-			break;
-		case CMD_STOP:
-			//next byte is data
-			HD44780.RS=HD44780_DATA;
-			bpWline(OUMSG_LCD_DATA_MODE);
-			break;
-		case CMD_PRESETUP:
-			//set the options avaiable here....
-			modeConfig.allowlsb=0;
-			modeConfig.allowpullup=1; 
-			modeConfig.HiZ=1;//yes, always HiZ
-
-			HD44780.RS=HD44780_DATA;
-			break;
-		case CMD_SETUP:
-			bpWline(OUMSG_LCD_SETUP_ADAPTER);
-			c=bpUserNumberPrompt(1, 1, 1);
-
-			// ******** REQUIRED DEFINES ***********
-			#define SCL 		BP_CLK
-			#define SCL_TRIS 	BP_CLK_DIR     //-- The SCL Direction Register Bit
-			#define SDA 		BP_MOSI        //-- The SDA output pin
-			#define SDA_TRIS 	BP_MOSI_DIR    //-- The SDA Direction Register Bit
-			
-			#define I2CLOW  	0         //-- Puts pin into output/low mode
-			#define I2CHIGH 	1         //-- Puts pin into Input/high mode
-			
-			#define I2C_SLOW	0
-			#define I2C_FAST	1
-			//-- Ensure pins are in high impedance mode --
-			SDA_TRIS=1;
-			SCL_TRIS=1;
-			//writes to the PORTs write to the LATCH
-			SCL=0;			//B8 scl 
-			SDA=0;			//B9 sda
-			bbSetup(2, 1); //2wire mode, high speed
-
-			bpWmessage(MSG_ADAPTER);
-			break;
-		case CMD_CLEANUP: //no cleanup needed...
-			break;
-		case CMD_MACRO:
-			switch(bpCommand.num){
-				case 0://menu
-					bpWline(OUMSG_LCD_MACRO_MENU);
-					break;
-				case 1:
-				case 2:
-					bpWline(OUMSG_LCD_MACRO_RESET);
-					HD44780_Reset();
-					if(bpCommand.num==1) break;
-
-					bpWline(OUMSG_LCD_MACRO_INIT_DISPLAYLINES);
-					c=bpUserNumberPrompt(1, 2, 2);
-					if(c==1) HD44780_Init(DISPLAYLINES1); else HD44780_Init(DISPLAYLINES2);
-					bpWline(OUMSG_LCD_MACRO_INIT);
-					break;		
-				case 3: //Clear LCD and return home
-					HD44780_WriteByte(HD44780_COMMAND, CMD_CLEARDISPLAY);
-					bpDelayMS(15);//delay 15ms
-					bpWline(OUMSG_LCD_MACRO_CLEAR);
-					break;	
-				case 4: //set cursor position to bpCommand.repeat
-					HD44780_WriteByte(HD44780_COMMAND, CMD_SETDDRAMADDR | (unsigned char)bpCommand.repeat);
-					bpWline(OUMSG_LCD_MACRO_CURSOR);
-					break;
-				case 6: //write numbers	
-					HD44780_WriteByte(HD44780_COMMAND, CMD_CLEARDISPLAY);//Clear LCD and return home
-					bpDelayMS(15);//delay 15ms
-					c=0x30;
-					for(i=0; i<bpCommand.repeat; i++){
-						if(c>0x39) c=0x30;
-						HD44780_WriteByte(HD44780_DATA, c);
-						c++;
-					}
-					break;	
-				case 7://write characters				
-					HD44780_WriteByte(HD44780_COMMAND, CMD_CLEARDISPLAY); //Clear LCD and return home
-					bpDelayMS(15);//delay 15ms
-					c=0x21; //start character (!)
-					if(bpCommand.repeat==0) bpCommand.repeat=80;
-					for(i=0; i<bpCommand.repeat; i++){
-						if(c>127)c=0x21;
-						HD44780_WriteByte(HD44780_DATA, c);
-						c++;
-					}
-					break;
-				case 8://terminal mode/pass through
-						bpWline(OUMSG_LCD_MACRO_TEXT);
-						HD44780_Term();
-					break;
-				default:
-					bpWmessage(MSG_ERROR_MACRO);
-			}
-			break;
-		case CMD_ENDOFSYNTAX: break;
-		default:
-			bpWmessage(MSG_ERROR_MODE);
-	}
-
-}
-
-*/
-
 unsigned int LCDread(void)
 {	return HD44780_ReadByte(HD44780.RS);
 }
@@ -282,7 +141,7 @@ void LCDstop(void)
 void LCDsetup(void)
 {	int address, type;
 
-	modeConfig.allowlsb=0;
+//	modeConfig.allowlsb=0;
 	modeConfig.allowpullup=1; 
 	modeConfig.HiZ=1;//yes, always HiZ
 
@@ -414,20 +273,6 @@ void LCDpins(void)
 {	BPMSG1231;	
 }	
 
-/*
-// obsolete by send string command 
-//outputs typed text to the LCD
-void HD44780_Term(void){
-	#define HD44780_TERM_SIZE 24
-	unsigned int currentByte=0, i;
-	unsigned char tinput[HD44780_TERM_SIZE];
-
-	while(bpGetUserInput(&currentByte, HD44780_TERM_SIZE, tinput)==0);
-
-	for(i=0;i<currentByte; i++) HD44780_WriteByte(HD44780_DATA, tinput[i]);
-
-}
-*/
 
 //initialize LCD to 4bits with standard features
 //displaylines=0 for single line displays, displaylines=1 for multiline displays

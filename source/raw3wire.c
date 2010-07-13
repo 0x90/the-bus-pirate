@@ -139,7 +139,7 @@ void R3Wsetup(void)
 	}
 
 
-	modeConfig.allowlsb=1;
+//	modeConfig.allowlsb=1;
 	#ifdef BUSPIRATEV2
 	modeConfig.allowpullup=1;
 	#endif
@@ -163,128 +163,5 @@ void R3Wpins(void)
 {	BPMSG1225;
 }
 
-/*
-void r3wProcess(void){
-	static unsigned char c;
-	static unsigned int i;
-
-	switch(bpCommand.cmd){
-		case CMD_READ:
-			if(bpCommand.repeat==1){
-				bpWmessage(MSG_READ);
-				bpWbyte(bbReadWriteByte(0xff));
-			}else{
-				bpWmessage(MSG_READBULK);
-				bpWbyte(bpCommand.repeat);
- 				bpWmessage(MSG_READBULK_BYTES);
-				for(i=0;i<bpCommand.repeat;i++){	
-					bpWbyte(bbReadWriteByte(0xff));
-					bpSP;
-				}
-			}
-			bpWBR;
-			break;
-		case CMD_WRITE:
-			bpWmessage(MSG_WRITE);
-			bpWbyte(bpCommand.num);
-			if(bpCommand.repeat==1){
-				c=bbReadWriteByte(bpCommand.num);
-				if(r3wSettings.wwr==1){
-					bpSP;
-					bpWmessage(MSG_READ);
-					bpWbyte(c);
-				}
-			}else{
-				bpWstring(" , ");
-				bpWbyte(bpCommand.repeat);
-				bpWmessage(MSG_WRITEBULK);
-				for(i=0;i<bpCommand.repeat;i++)c=bbReadWriteByte(bpCommand.num);
-			}
-			bpWBR;
-			break;
-		case CMD_STARTR:
-		case CMD_START:
-			if(bpCommand.cmd==CMD_STARTR){r3wSettings.wwr=1;}else{r3wSettings.wwr=0;}
-			bbCS(0);
-			bpWmessage(MSG_CS_ENABLED);
-			break;
-		case CMD_STOP:
-			r3wSettings.wwr=0;
-			bbCS(1);
-			bpWmessage(MSG_CS_DISABLED);
-			break;
-		case CMD_BIT_READ: //note: uses existing data state (good)
-			bpWmessage(MSG_BIT_READ);
-			bpEchoState(bbReadBit());
-			bpWBR;
-			break;
-		case CMD_BIT_PEEK:
-			bpWmessage(MSG_BIT_PEEK);
-			bpEchoState(bbMISO());
-			bpWBR;
-			break;
-		case CMD_BIT_CLK:
-			bpWbyte(bpCommand.repeat);
-			bpWmessage(MSG_BIT_CLK);
-			bbClockTicks(bpCommand.repeat);
-			break;
-		case CMD_BIT_CLKH:
-			bpWmessage(MSG_BIT_CLKH);
-			bbCLK(1);
-			break;
-		case CMD_BIT_CLKL:
-			bpWmessage(MSG_BIT_CLKL);
-			bbCLK(0);
-			break;
-		case CMD_BIT_DATH:
-			bpWmessage(MSG_BIT_DATH);
-			bbMOSI(1);
-			break;
-		case CMD_BIT_DATL:
-			bpWmessage(MSG_BIT_DATL);
-			bbMOSI(0);
-			break;
-		case CMD_PRESETUP:
-			bpWmessage(MSG_OPT_BB_SPEED);
-			modeConfig.speed=(bpUserNumberPrompt(1, 3, 1)-1);
-			bpWmessage(MSG_OPT_OUTPUT_TYPE);
-			modeConfig.HiZ=(~(bpUserNumberPrompt(1, 2, 1)-1));
-			modeConfig.allowlsb=1;
-			#ifdef BUSPIRATEV2
-			modeConfig.allowpullup=1;
-			#endif
-			break;
-		case CMD_SETUP:
-			//reset the write with read variable
-			r3wSettings.wwr=0;
-			
-			bbSetup(3, modeConfig.speed); //setup the bitbang library, must be done before calling bbCS below
-			//setup pins (pins are input/low when we start)
-			//MOSI output, low
-			//clock output, low
-			//MISO input
-			//CS output, high
-			R3WMOSI_TRIS=0;
-			R3WCLK_TRIS=0;
-			R3WMISO_TRIS=1;
-			bbCS(1);//takes care of custom HiZ settings too
-
-			bpWmessage(MSG_READY);
-			break;
-		case CMD_CLEANUP://no cleanup needed
-			break;
-		case CMD_MACRO:
-			//switch(bpCommand.num){
-			//	default:
-					bpWmessage(MSG_ERROR_MACRO);
-			//}
-			break;
-		case CMD_ENDOFSYNTAX: break;
-		default:
-			bpWmessage(MSG_ERROR_MODE);
-	}
-
-}
-*/
 
 

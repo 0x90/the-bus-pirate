@@ -208,7 +208,7 @@ void SPIsetup(void)
 		BPMSG1162;
 	}	
 
-	modeConfig.allowlsb=1;
+//	modeConfig.allowlsb=1;
 	#ifdef BUSPIRATEV2
 	modeConfig.allowpullup=1;
 	#endif
@@ -309,9 +309,6 @@ void spiDisable(void){
 
 unsigned char spiWriteByte(unsigned char c){
 
-	if(modeConfig.lsbEN==1){//adjust bitorder
-		c=bpRevByte(c);
-	}
 	SPI1BUF = c;
 	while(!IFS0bits.SPI1IF);
 	c=SPI1BUF;
@@ -339,8 +336,14 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 	//INTCON2bits.INT1EP=(~csState);//interrupt edge 0=pos (low to high), 1=neg (high to low), opposite CS state
 	//IFS1bits.INT1IF=0;
 #ifdef USE_SPICS
-	SPI1STATbits.SPIEN=1; 
-	SPI2STATbits.SPIEN=1;
+	if(csState==0 || csState==2){
+		SPI1STATbits.SPIEN=1; 
+		SPI2STATbits.SPIEN=1;
+	}
+	if(csState==0){
+		SPI1CON1bits.SSEN=1; //CS pin active
+		SPI2CON1bits.SSEN=1; //CS pin active
+	}
 #endif
 
 	while(1){
@@ -440,10 +443,10 @@ void spiSlaveSetup(void){
 	SPIMISO_TRIS=1; 		//B7 SDI input
 	SPIMOSI_TRIS=1;			//b9 SDO input
 
-#ifdef USE_SPICS
+//#ifdef USE_SPICS
 	RPINR21bits.SS1R=6;//SPICS_RPIN; //assign CS function to bus pirate CS pin
 	RPINR23bits.SS2R=6;
-#endif
+//#endif
 	RPINR20bits.SDI1R=9; //B9 MOSI
 	RPINR20bits.SCK1R=8;//SPICLK_RPIN; //assign SPI1 CLK input to bus pirate CLK pin
 	RPINR22bits.SDI2R=7; //B7 MiSo
@@ -472,10 +475,10 @@ void spiSlaveSetup(void){
 //4. Clear the SMP bit.
 	SPI1CON1bits.SMP=0;
 	SPI2CON1bits.SMP=0;
-#ifdef USE_SPICS
-	SPI1CON1bits.SSEN=1; //CS pin active
-	SPI2CON1bits.SSEN=1; //CS pin active
-#endif
+
+//	SPI1CON1bits.SSEN=1; //CS pin active
+//	SPI2CON1bits.SSEN=1; //CS pin active
+
 	SPI1CON1bits.DISSDO=1;//Disable SDO pin in slave mode
 	SPI1CON1bits.MSTEN=0;
 	SPI2CON1bits.DISSDO=1;//Disable SDO pin in slave mode
@@ -497,10 +500,10 @@ void spiSlaveDisable(void){
 	SPI1CON1bits.DISSDO=0;//restore SDO pin 
 	SPI2STATbits.SPIEN=0; //SPI module off
 	SPI2CON1bits.DISSDO=0;//restore SDO pin 
-#ifdef USE_SPICS
+//#ifdef USE_SPICS
 	RPINR21bits.SS1R=0b11111;	//assign CS input to none
 	RPINR23bits.SS2R=0b11111;	//assign CS input to none
-#endif
+//#endif
 	RPINR20bits.SDI1R=0b11111;
 	RPINR20bits.SCK1R=0b11111;	//assign CLK input to none
 	RPINR22bits.SDI2R=0b11111;

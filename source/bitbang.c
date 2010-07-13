@@ -144,7 +144,7 @@ unsigned char bbReadWriteByte(unsigned char c){
 
 	//begin with clock low...	
 
-	if(modeConfig.lsbEN==0){bt=0x80;}else{bt=0x01;}
+	bt=0x80;
 
 	tem=c;//????
 	for(i=0;i<8;i++){
@@ -153,15 +153,10 @@ unsigned char bbReadWriteByte(unsigned char c){
 		di=bbR(MISO); //read data pin	
 		bbL(CLK,bitbang.delayClock);;//set clock low
 
-		if(modeConfig.lsbEN==0){//get MSB first
-			tem=tem<<1;  //shift data output bits
-			dat=dat<<1;  //shift the data input byte bits
-			if(di)dat++; //if datapin in is high, set LBS
-		}else{//get LSB first
-			tem=tem>>1;  //shift data output bits (fixed in v5.1, was <<)
-			dat=dat>>1;  //shift the data input byte bits
-			if(di)dat+=0b10000000; //if datapin is HIGH, set MSB
-		}
+		//get MSB first
+		tem=tem<<1;  //shift data output bits
+		dat=dat<<1;  //shift the data input byte bits
+		if(di)dat++; //if datapin in is high, set LBS
 	}
 	return dat;
 }
@@ -173,7 +168,7 @@ void bbWriteByte(unsigned char c){
 
 	//bbo();//prepare for output
 
-	if(modeConfig.lsbEN==0){bt=0x80;}else{bt=0x01;}
+	bt=0x80;
 
 	tem=c;//????
 	for(i=0;i<8;i++){
@@ -182,7 +177,8 @@ void bbWriteByte(unsigned char c){
 		bbH(CLK,bitbang.delayClock);
 		bbL(CLK,bitbang.delayClock);
 
-		if(modeConfig.lsbEN==0)tem=tem<<1; else tem=tem>>1;//next output bit
+		tem=tem<<1; //next output bit
+
 	}
 }
 
@@ -197,13 +193,9 @@ unsigned char bbReadByte(void){
 		di=bbR(MOSI); //same as MISO on 2-wire
 		bbL(CLK,bitbang.delayClock);;//set clock low
 		
-		if(modeConfig.lsbEN==0){//get MSB first
-			dat=dat<<1;//shift the data input byte bits
-			if(di)dat++;//if datapin in is high, set LBS
-		}else{//get LSB first
-			dat=dat>>1;//shift the data input byte bits
-			if(di)dat|=0b10000000; //if datapin is HIGH, set MSB
-		}
+		//get MSB first
+		dat=dat<<1;//shift the data input byte bits
+		if(di)dat++;//if datapin in is high, set LBS
 
 	}
 	return dat;
