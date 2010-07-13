@@ -218,23 +218,24 @@ void SPIcleanup(void)
 }
 
 void SPImacro(unsigned int macro)
-{	int c;
+{
 
 	switch(macro){
 		case 0:
 			//bpWline(OUMSG_SPI_MACRO_MENU);
 			BPMSG1192;
 			break;
-		case 1:
-			//bpWline(OUMSG_SPI_SNIFF_MENU);
-			BPMSG1193;
-			//c=(bpUserNumberPrompt(1, 3, 1)-1);
-			c=getnumber(1,1,3,0)-1;
-			//bpWline(OUMSG_SPI_SNIFF_BEGIN);
+		case 1://sniff CS low
 			BPMSG1071;	//moved to a more generic message 
 			BPMSG1250;
-			spiSniffer(c,1);//configure for terminal mode
+			spiSniffer(1,1);//configure for terminal mode
 			break;
+		case 2://sniff all
+			BPMSG1071;	//moved to a more generic message 
+			BPMSG1250;
+			spiSniffer(0,1);//configure for terminal mode
+			break;
+		case 3: //sniff CS high
 		default:
 			//bpWmessage(MSG_ERROR_MACRO);
 			BPMSG1016;
@@ -298,10 +299,6 @@ void spiDisable(void){
 	//make all input maybe???
 }
 
-//void spiCSHigh(void){SPICS=1;}
-
-//void spiCSLow(void){SPICS=0;}
-
 unsigned char spiWriteByte(unsigned char c){
 
 	SPI1BUF = c;
@@ -326,59 +323,37 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 	spiDisable();
 	spiSlaveSetup();
 
-	//setup external interrupt on CS pin for sniffer CS sync erratta work around
-	//RPINR0bits.INT1R=BP_CS_RPIN; //assign INT1 to CS pin
-	//INTCON2bits.INT1EP=(~csState);//interrupt edge 0=pos (low to high), 1=neg (high to low), opposite CS state
-	//IFS1bits.INT1IF=0;
-#ifdef USE_SPICS
-	if(csState==0 || csState==2){
-		SPI1STATbits.SPIEN=1; 
-		SPI2STATbits.SPIEN=1;
-	}
-	if(csState==0){
+	if(csState==0){ //mode 0, use CS pin
 		SPI1CON1bits.SSEN=1; //CS pin active
 		SPI2CON1bits.SSEN=1; //CS pin active
 	}
-#endif
 
+	if(csState<2){ //mode 0 & 1, always on
+		SPI1STATbits.SPIEN=1; 
+		SPI2STATbits.SPIEN=1;
+
+		//CNEN2bits.CN21IE=1; // enable change notice on CS
+		//IFS1bits.CNIF=0; // clear the change interrupt flag
+	}
 	while(1){
-/*
-|
-| Need new way to track CS 
-|SPIxTBF(2) high for CS active
-|
-|
-|*/
-#ifndef USE_SPICS
-		//if(csState>1 || ((SPICS==csState) &&(IFS1bits.INT1IF==1))){
-		if(csState>1 || (SPICS==csState)){
-			if(SPI1STATbits.SPIEN==0){
-				SPI1STATbits.SPIEN=1; 
-				SPI2STATbits.SPIEN=1;
-				UARTbuf('[');//bpWBR; //CS enabled
-			} 
-		}else{
-			if(SPI1STATbits.SPIEN==1){
-				SPI1STATbits.SPIEN=0; //only enable when CS matches desired state
-				SPI2STATbits.SPIEN=0;
-				UARTbuf(']');//bpWBR; //cs disabled
-				//IFS1bits.INT1IF=0;//clear interrupt flag
-			}
-		}
-#else
+
 		//detect when CS changes. works independently of the data interrupts
+		//if(IFS1bits.CNIF && (SPICS==1)){
 		if(lastCS==0 && SPICS ==1){
 			UARTbuf(']');//bpWBR; //cs disabled
 			lastCS=1;
+			//IFS1bits.CNIF=0; // clear the change interrupt flag
 		}
-#endif
+
 		if(SPI1STATbits.SRXMPT==0 && SPI2STATbits.SRXMPT==0){//rx buffer NOT empty, get and display byte
 			c=SPI1BUF;
 			
 			//check if CS is just now low
+			//if(IFS1bits.CNIF && (SPICS==0)){
 			if(lastCS==1){
 				UARTbuf('[');//bpWBR; //CS enabled
 				lastCS=0; //SPICS;
+				//IFS1bits.CNIF=0; // clear the change interrupt flag
 			}
 
 			if(termMode){ //show hex output in terminal mode
