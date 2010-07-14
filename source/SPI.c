@@ -20,7 +20,6 @@
 
 #include "procmenu.h"		// for the userinteraction subs
 
-
 //#define USE_SPICS //the CS hardware pin on silicone REV 3 doesn't work, optionally enable it here
 
 //direction registers

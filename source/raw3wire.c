@@ -71,7 +71,7 @@ void R3Wstart(void)
 {	r3wSettings.wwr=0;
 	bbCS(0);
 	//bpWmessage(MSG_CS_ENABLED);
-	BPMSG1160;
+	BPMSG1159;
 }
 void R3Wstop(void)
 {	r3wSettings.wwr=0;
