@@ -23,7 +23,7 @@
 
 //#define BUSPIRATE_POST //used to switch POST on and off
 
-#define BP_FIRMWARE_STRING "Firmware v5.3 (r440)"
+#define BP_FIRMWARE_STRING "Firmware v5.4RC (r442)"
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
@@ -121,6 +121,7 @@ struct _modeConfig {
 	unsigned char lsbEN:1;
 	unsigned char HiZ:1;
 	unsigned char int16:1;			// 16 bits output?
+	unsigned char numbits;
 	unsigned char buf[16];
 };
 

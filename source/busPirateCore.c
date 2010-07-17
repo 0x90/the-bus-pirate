@@ -95,11 +95,13 @@ void nullfunc4(unsigned int c)
 }
 
 void HiZsetup(void)
-{
+{	modeConfig.numbits=8;	// std 8 bits! :P (make this configurable?)
+	modeConfig.int16=0;
 }
 
 void HiZcleanup(void)
-{
+{	modeConfig.numbits=8;	// std 8 bits! :P (make this configurable?)
+	modeConfig.int16=0;
 }
 
 void HiZpins(void)

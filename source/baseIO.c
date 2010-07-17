@@ -31,8 +31,9 @@ unsigned int bpGetUserInput(unsigned int *currentByte, unsigned int maxBytes, un
 */
 
 //echo ASCII 0 or 1, given unsigned char c
-void bpEchoState(unsigned char c){
-		UART1TX(c+0x30);
+void bpEchoState(unsigned int c)
+{	if(c) UART1TX('1');
+		else UART1TX('0');
 }
 
 //

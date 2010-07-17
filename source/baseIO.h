@@ -27,7 +27,7 @@ unsigned int ASCII2INT(unsigned char totalDigits, unsigned char *numberArr);
 
 //echo ASCII 0 or 1, given unsigned char c
 //#define bpEchoState(c) UART1TX(c+0x30) 
-void bpEchoState(unsigned char c);
+void bpEchoState(unsigned int c);
 
 //
 //

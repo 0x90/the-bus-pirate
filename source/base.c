@@ -207,6 +207,10 @@ unsigned char bpRevByte(unsigned char c){
 		r=r<<1;	
 		if(c&i)r|=0b1;
 	}
+
+	if(modeConfig.numbits!=8)
+	{	r>>=(8-modeConfig.numbits);
+	}
 	return r;
 }
 

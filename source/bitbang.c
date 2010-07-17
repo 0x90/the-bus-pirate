@@ -87,11 +87,14 @@ void bbSetup(unsigned char pins, unsigned char speed){
 			bitbang.delayHalfClock = BB_MAXSPEED_HALFCLOCK;
 			break;
 	}
+
+
 }
 
 //
 // HELPER functions
 //
+
 int bbI2Cstart(void){
 	int error=0;
 //http://www.esacademy.com/faq/i2c/busevents/i2cstast.htm
@@ -139,15 +142,16 @@ int bbI2Cstop(void){
 
 // ** Read with write for 3-wire protocols ** //
 
-unsigned char bbReadWriteByte(unsigned char c){
-	unsigned char i,bt,tem,di,dat=0;
+//unsigned char bbReadWriteByte(unsigned char c){
+unsigned int bbReadWriteByte(unsigned int c){
+	unsigned int i,bt,tem,di,dat=0;
 
 	//begin with clock low...	
-
-	bt=0x80;
+	bt=1<<(modeConfig.numbits-1);
 
 	tem=c;//????
-	for(i=0;i<8;i++){
+//	for(i=0;i<8;i++){
+	for(i=0;i<modeConfig.numbits;i++){
 		bbPins((tem&bt), MOSI, bitbang.delaySettle); //set data out
 		bbH(CLK,bitbang.delayClock);//set clock high
 		di=bbR(MISO); //read data pin	
@@ -163,15 +167,16 @@ unsigned char bbReadWriteByte(unsigned char c){
 
 // ** Seperate read/write for 2-wire protocols ** //
 
-void bbWriteByte(unsigned char c){
-	unsigned char i,bt,tem;
+void bbWriteByte(unsigned int c){
+	unsigned int i,bt,tem;
 
 	//bbo();//prepare for output
 
-	bt=0x80;
+	//bt=0x80;
+	bt=1<<(modeConfig.numbits-1);
 
 	tem=c;//????
-	for(i=0;i<8;i++){
+	for(i=0;i<modeConfig.numbits;i++){
 		//if( (b & d)== 0) bbL(bitbang.MOpin,bitbang.delaySettle); else bbH(bitbang.MOpin,bitbang.delaySettle);//setup the data pin
 		bbPins((tem&bt), MOSI, bitbang.delaySettle );
 		bbH(CLK,bitbang.delayClock);
@@ -182,22 +187,22 @@ void bbWriteByte(unsigned char c){
 	}
 }
 
-unsigned char bbReadByte(void){
-	unsigned char i,di,dat=0;
+unsigned int bbReadByte(void){
+	unsigned int i,di,dat=0;
 
 	//bbi();//prepare for input
 	bbR(MOSI); //setup for input
 
-	for(i=0;i<8;i++){
+	for(i=0;i<modeConfig.numbits;i++){
 		bbH(CLK,bitbang.delayClock);//set clock high
 		di=bbR(MOSI); //same as MISO on 2-wire
 		bbL(CLK,bitbang.delayClock);;//set clock low
-		
+
 		//get MSB first
 		dat=dat<<1;//shift the data input byte bits
 		if(di)dat++;//if datapin in is high, set LBS
-
 	}
+
 	return dat;
 }
 
@@ -230,6 +235,7 @@ void bbClockTicks(unsigned char c){
 		bbH(CLK,bitbang.delayClock);
 		bbL(CLK,bitbang.delayClock);
 	}
+
 }
 
 //
@@ -259,7 +265,7 @@ void bbL(unsigned int pins, unsigned char delay){
 	bpDelayUS(delay);//delay	
 }
 
-void bbPins(unsigned char dir, unsigned int pins, unsigned char delay){
+void bbPins(unsigned int dir, unsigned int pins, unsigned char delay){
 	if(dir==0){
 		IOLAT &=(~pins); //pins to 0
 		IODIR &=(~pins);//direction to output

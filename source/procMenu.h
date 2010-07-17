@@ -35,6 +35,7 @@ void serviceuser(void);
 
 int getint(void);
 int getrepeat(void);
+int getnumbits(void);
 void consumewhitechars(void);
 void changemode(void);
 int cmdhistory(void);

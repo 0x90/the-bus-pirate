@@ -30,7 +30,6 @@ extern struct _command bpCommand;
 extern proto protos[MAXPROTO];
 
 void walkdungeon(void);
-//void walkdungeon(void) {}
 
 void setMode(void); //change protocol/bus mode
 void setDisplayMode(void); //user terminal number display mode dialog (eg HEX, DEC, BIN, RAW)
@@ -66,11 +65,12 @@ void serviceuser(void)
 {	int cmd, stop;
 	int newstart;
 	int oldstart;
-	int sendw;
+	unsigned int sendw;
 	int repeat;
 	unsigned char c;
 	int temp;
 	int binmodecnt;
+	int numbits;
 
 	// init
 	cmd=0;
@@ -293,6 +293,7 @@ void serviceuser(void)
 							//{	
 								modeConfig.lsbEN=1;
 								BPMSG1124;
+								bpBR;
 							//}
 							break;
 				case 'l':	//bpWline("-bit order set (LSB)");
@@ -304,6 +305,7 @@ void serviceuser(void)
 							//{	
 								modeConfig.lsbEN=0;
 								BPMSG1123;
+								bpBR;
 							//}
 							break;
 #if defined( BUSPIRATEV2)
@@ -320,6 +322,7 @@ void serviceuser(void)
 //								modeConfig.pullupEN=0;
 								//bpWmessage(MSG_OPT_PULLUP_OFF);
 								BPMSG1089;
+								bpBR;
 							}
 							break;
 				case 'P':	//bpWline("-pullup resistors on");
@@ -337,6 +340,7 @@ void serviceuser(void)
 //								modeConfig.pullupEN=1;
 								//bpWmessage(MSG_OPT_PULLUP_ON);
 								BPMSG1091;
+								bpBR;
 								
 								ADCON();
 								if(bpADC(VPUADC)<0x50){ //no pullup voltage detected
@@ -429,11 +433,13 @@ void serviceuser(void)
 								if((bpADC(V33ADC)>V33L)&&(bpADC(V5ADC)>V5L)){ //voltages are correct
 									//bpWmessage(MSG_VREG_ON);
 									BPMSG1096;
+									bpBR;
 									//modeConfig.vregEN=1;
 								}else{
 									BP_VREG_OFF();
 									bpWline("VREG too low, is there a short?");
 									BPMSG1097;
+									bpBR;
 								}
 								ADCOFF(); // turn ADC OFF
 							}
@@ -446,6 +452,7 @@ void serviceuser(void)
 								BP_VREG_OFF();
 								//bpWmessage(MSG_VREG_OFF);
 								BPMSG1097;
+								bpBR;
 								//modeConfig.vregEN=0;
 							}
 							break;
@@ -569,7 +576,11 @@ void serviceuser(void)
 								while(cmdbuf[((++cmdstart)&CMDLENMSK)]!=0x22)
 								{	cmdstart&=CMDLENMSK;
 									UART1TX(cmdbuf[cmdstart]);
-									protos[bpConfig.busMode].protocol_send(cmdbuf[cmdstart]);
+									sendw=cmdbuf[cmdstart];
+									if(modeConfig.lsbEN==1)		//adjust bitorder
+									{	sendw=bpRevByte(sendw);
+									}
+									protos[bpConfig.busMode].protocol_send(sendw);
 								}
 								cmdstart&=CMDLENMSK;
 								UART1TX(0x22);
@@ -604,8 +615,14 @@ void serviceuser(void)
 							cmdstart--;	
 							cmdstart&=CMDLENMSK;
 							repeat=getrepeat()+1;
+							numbits=getnumbits();
+							if(numbits) modeConfig.numbits=numbits;
 							while(--repeat)
 							{	bpWbyte(sendw);
+								if(modeConfig.numbits!=8)
+								{	UART1TX(';');
+									bpWdec(modeConfig.numbits);
+								}	
 								if(modeConfig.lsbEN==1){//adjust bitorder
 									sendw=bpRevByte(sendw);
 								}
@@ -627,6 +644,8 @@ void serviceuser(void)
 							//bpWmessage(MSG_READ);							
 							BPMSG1102;
 							repeat=getrepeat()+1;
+							numbits=getnumbits();
+							if(numbits) modeConfig.numbits=numbits;
 							while(--repeat)
 							{	
 								c=protos[bpConfig.busMode].protocol_read();
@@ -634,6 +653,10 @@ void serviceuser(void)
 									c=bpRevByte(c);
 								}
 								bpWbyte(c);
+								if(modeConfig.numbits!=8)
+								{	UART1TX(';');
+									bpWdec(modeConfig.numbits);
+								}	
 								bpSP;
 							}
 							bpBR;
@@ -820,6 +843,20 @@ int getrepeat(void)
 		return temp;
 	}
 	return 1;								// no repeat count=1
+}
+
+int getnumbits(void)
+{	int temp;
+
+	if(cmdbuf[(cmdstart+1)&CMDLENMSK]==';')
+	{	cmdstart+=2;
+		cmdstart&=CMDLENMSK;
+		temp=getint();
+		cmdstart--;							// to allow [6:10] (start send 6 10 times stop) 
+		cmdstart&=CMDLENMSK;
+		return temp;
+	}
+	return 0;								// no numbits=0;
 }
 
 void consumewhitechars(void)
@@ -1130,27 +1167,38 @@ void statusInfo(void){
 
 	//vreg status (was modeConfig.vregEN)
 	if(BP_VREGEN==1) BPMSG1096; else BPMSG1097;	//bpWmessage(MSG_VREG_ON); else bpWmessage(MSG_VREG_OFF);
-	//voltage report
-//	measureSupplyVoltages();
-	
-	//AUX pin setting
-	if(modeConfig.altAUX==1) BPMSG1087; else BPMSG1086;	//bpWmessage(MSG_OPT_AUXPIN_CS); else bpWmessage(MSG_OPT_AUXPIN_AUX);
-
-	//open collector outputs?
-	if(modeConfig.HiZ==1) BPMSG1120; else BPMSG1121;	// bpWmessage(MSG_STATUS_OUTPUT_HIZ); else bpWmessage(MSG_STATUS_OUTPUT_NORMAL);
+	UART1TX(','); bpSP;
 
 #if defined(BUSPIRATEV2)	
 	//pullups available, enabled?
 	//was modeConfig.pullupEN
 	if(BP_PULLUP==1) BPMSG1091; else BPMSG1089;	//bpWmessage(MSG_OPT_PULLUP_ON); else bpWmessage(MSG_OPT_PULLUP_OFF);
+	UART1TX(','); bpSP;
 #endif
+
+	//open collector outputs?
+	if(modeConfig.HiZ==1) BPMSG1120; else BPMSG1121;	// bpWmessage(MSG_STATUS_OUTPUT_HIZ); else bpWmessage(MSG_STATUS_OUTPUT_NORMAL);
+
+	//voltage report
+//	measureSupplyVoltages();
 	
+
 	//bitorder toggle available, enabled
 	if(modeConfig.lsbEN==0) BPMSG1123; else BPMSG1124;	//bpWmessage(MSG_OPT_BITORDER_LSB); else bpWmessage(MSG_OPT_BITORDER_MSB);
+	UART1TX(','); bpSP;
+
+	// show partial writes 
+	//bpWline("Number of bits read/write: ");
+	BPMSG1252;
+	bpWdec(modeConfig.numbits);
+	bpBR;
+
+	//AUX pin setting
+	if(modeConfig.altAUX==1) BPMSG1087; else BPMSG1086;	//bpWmessage(MSG_OPT_AUXPIN_CS); else bpWmessage(MSG_OPT_AUXPIN_AUX);
+
 
 	//bpWline("*----------*");
 	BPMSG1119;
-
 }
 
 void pinStates(void) 

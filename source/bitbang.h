@@ -16,10 +16,13 @@
 //setup the library first
 void bbSetup(unsigned char pins, unsigned char speed);
 
-//byte functions
-unsigned char bbReadWriteByte(unsigned char c);
-void bbWriteByte(unsigned char c);
-unsigned char bbReadByte(void);
+//byte functions 
+// bytes are overrated! migrating to unsigned int :D (read and write (procmenu) are already unsigned int)
+// the actual number of bits are stored in the bitbang struct, after each call this is set to 8
+//   should the default be configurable??
+unsigned int bbReadWriteByte(unsigned int c);
+void bbWriteByte(unsigned int c);
+unsigned int bbReadByte(void);
 
 //bit read and write functions
 unsigned char bbReadBit(void);
@@ -35,7 +38,7 @@ unsigned char bbMISO (void);
 //pin twiddling functions with delays
 void bbH(unsigned int pins, unsigned char delay);
 void bbL(unsigned int pins, unsigned char delay);
-void bbPins(unsigned char dir, unsigned int pins, unsigned char delay);
+void bbPins(unsigned int dir, unsigned int pins, unsigned char delay);
 unsigned char bbR(unsigned int pin);
 
 //protocol helper functions
