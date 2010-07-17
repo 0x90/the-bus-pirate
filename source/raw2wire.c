@@ -51,8 +51,9 @@ unsigned int R2Wread(void)
 {	return (bbReadByte());
 }
 
-void R2Wwrite(unsigned int c)
+unsigned int R2Wwrite(unsigned int c)
 {	bbWriteByte(c);//send byte
+	return 0x100;
 }
 
 void R2Wstart(void)
