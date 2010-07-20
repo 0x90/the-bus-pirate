@@ -31,7 +31,8 @@ def main():
         exit()      
     
     # Create an instance of the RAW_WIRE class as we are using the BitBang/RAW_WIRE mode
-    rw = RAW_WIRE( '/dev/bus_pirate', 115200 )
+    #rw = RAW_WIRE( '/dev/bus_pirate', 115200 )
+    rw = RAW_WIRE( options.device, 115200 )
     
     if not rw.BBmode():
         print "Can't enter into BitBang mode."
@@ -87,9 +88,9 @@ def main():
         # Enable the Chip select signal
         rw.CS_High()
     
-        rw.bulk_trans(1,"\x06")
+        rw.bulk_trans(1, [0x6])
             
-        rw.bulk_trans(1,"\x00")
+        rw.bulk_trans(1, [0x0])
         
         # and read the items
         

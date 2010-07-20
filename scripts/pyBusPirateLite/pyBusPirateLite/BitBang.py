@@ -164,7 +164,7 @@ class BBIO:
 		self.port.write(chr(0x10 | (byte_count-1)))
 		self.timeout(0.1)
 		for i in range(byte_count):
-			self.port.write(byte_string[i])
+			self.port.write(chr(byte_string[i]))
 			self.timeout(0.1)
 		data = self.response(byte_count+2, True)
 		return data[1:]
