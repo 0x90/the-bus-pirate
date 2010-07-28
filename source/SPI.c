@@ -57,6 +57,7 @@ struct _SPI{
 	unsigned char cke:1;
 	unsigned char smp:1;
 	unsigned char wwr:1;
+	unsigned char csl:1;		// to /CS or  not to CS
 } spiSettings;
 
 static unsigned char SPIspeed[]={0b00000,0b11000,0b11100,0b11101};//30,125,250,1000khz; datasheet pg 142
@@ -72,21 +73,40 @@ extern int cmderror;
 
 void SPIstartr(void)
 {	spiSettings.wwr=1;	
-	SPICS=0; 
+	if(spiSettings.csl)
+	{	SPICS=0; 
+	}
+	else
+	{	SPICS=1;
+	}
 	///bpWmessage(MSG_CS_ENABLED);
+	if(spiSettings.csl) UART1TX('/');
 	BPMSG1159;
 }
 
 void SPIstart(void)
 {	spiSettings.wwr=0;	
-	SPICS=0; 
+	if(spiSettings.csl)
+	{	SPICS=0; 
+	}
+	else
+	{	SPICS=1;
+	}
 	//bpWmessage(MSG_CS_ENABLED);
+	if(spiSettings.csl) UART1TX('/');
 	BPMSG1159;
 }
 
 void SPIstop(void)
-{	SPICS=1;
+{	if(spiSettings.csl)
+	{	SPICS=1; 
+	}
+	else
+	{	SPICS=0;
+	}
+
 	//bpWmessage(MSG_CS_DISABLED);
+	if(spiSettings.csl) UART1TX('/');
 	BPMSG1160;
 }
 
@@ -107,7 +127,7 @@ unsigned int SPIwrite(unsigned int c)
 }
 
 void SPIsetup(void)
-{	int speed, clkpol, clkedge, sample, output;
+{	int speed, clkpol, clkedge, sample, output, cslow;
 
 	consumewhitechars();
 	speed=getint();
@@ -117,6 +137,8 @@ void SPIsetup(void)
 	clkedge=getint();
 	consumewhitechars();
 	sample=getint();
+	consumewhitechars();
+	cslow=getint();
 	consumewhitechars();
 	output=getint();
 
@@ -155,6 +177,14 @@ void SPIsetup(void)
 	{	speed=0;					// when speed is 0 we ask the user
 	}
 
+	if((cslow>0)&&(cslow<=2))
+	{	spiSettings.csl=(cslow-1);
+	}
+	else	
+	{	speed=0;					// when speed is 0 we ask the user
+	}
+
+
 	if((output>0)&&(output<=2))
 	{	modeConfig.HiZ=(~(output-1));
 	}
@@ -189,7 +219,11 @@ void SPIsetup(void)
 		BPMSG1190;
 		//spiSettings.smp=(bpUserNumberPrompt(1, 2, 1)-1);
 		spiSettings.smp=getnumber(1,1,2,0)-1;
-	
+
+		//bpWline("CS:\r\n 1. CS\r\n 2. /CS *default");
+		BPMSG1253;
+		spiSettings.csl=getnumber(2,1,2,0)-1;
+
 		//bpWmessage(MSG_OPT_OUTPUT_TYPE);
 		BPMSG1142;
 		//modeConfig.HiZ=(~(bpUserNumberPrompt(1, 2, 1)-1));
@@ -202,6 +236,7 @@ void SPIsetup(void)
 		bpWdec(spiSettings.ckp); bpSP;
 		bpWdec(spiSettings.cke); bpSP;
 		bpWdec(spiSettings.smp); bpSP;
+		bpWdec(spiSettings.csl); bpSP;
 		bpWdec(modeConfig.HiZ); bpSP;
 		//bpWline(")\r\n");
 		BPMSG1162;
@@ -210,6 +245,9 @@ void SPIsetup(void)
 	spiSettings.wwr=0;
 	//do SPI peripheral setup
 	spiSetup(SPIspeed[modeConfig.speed]);
+
+	// set cs the way the user wants
+	SPICS=spiSettings.csl;
 }
 
 void SPIcleanup(void)

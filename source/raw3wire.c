@@ -45,6 +45,7 @@ extern int cmderror;
 
 struct _R3W{
 	unsigned char wwr:1;
+	unsigned char csl:1;
 } r3wSettings;
 
 
@@ -63,20 +64,38 @@ unsigned int R3Wwrite(unsigned int c)
 }
 void R3Wstartr(void)
 {	r3wSettings.wwr=1;
-	bbCS(0);
+	if(r3wSettings.csl)
+	{	bbCS(0);
+	}
+	else
+	{	bbCS(1);
+	}
 	//bpWmessage(MSG_CS_ENABLED);
+	if(r3wSettings.csl) UART1TX('/');
 	BPMSG1159;
 }
 void R3Wstart(void)
 {	r3wSettings.wwr=0;
-	bbCS(0);
+	if(r3wSettings.csl)
+	{	bbCS(0);
+	}
+	else
+	{	bbCS(1);
+	}
 	//bpWmessage(MSG_CS_ENABLED);
+	if(r3wSettings.csl) UART1TX('/');
 	BPMSG1159;
 }
 void R3Wstop(void)
 {	r3wSettings.wwr=0;
-	bbCS(1);
+	if(r3wSettings.csl)
+	{	bbCS(1);
+	}
+	else
+	{	bbCS(0);
+	}
 	//bpWmessage(MSG_CS_DISABLED);
+	if(r3wSettings.csl) UART1TX('/');
 	BPMSG1160;
 }
 unsigned int R3Wbitr(void)
@@ -101,15 +120,23 @@ void R3Wdatl(void)
 {	bbMOSI(0);				// same as r2wire?
 }
 void R3Wsetup(void)
-{	int speed, output;
+{	int speed, output, cslow;
 
 	consumewhitechars();
 	speed=getint();
+	consumewhitechars();
+	cslow=getint();
 	consumewhitechars();
 	output=getint();
 
 	if((speed>0)&&(speed<=4))
 	{	modeConfig.speed=speed-1;
+	}
+	else	
+	{	speed=0;					// when speed is 0 we ask the user
+	}
+	if((cslow>0)&&(cslow<=2))
+	{	r3wSettings.csl=(cslow-1);
 	}
 	else	
 	{	speed=0;					// when speed is 0 we ask the user
@@ -125,6 +152,11 @@ void R3Wsetup(void)
 	{	//bpWmessage(MSG_OPT_BB_SPEED);
 		BPMSG1065;
 		modeConfig.speed=(getnumber(1,1,4,0)-1);
+
+		//bpWline("CS:\r\n 1. CS\r\n 2. /CS *default");
+		BPMSG1253;
+		r3wSettings.csl=getnumber(2,1,2,0)-1;
+
 		//bpWmessage(MSG_OPT_OUTPUT_TYPE);
 		BPMSG1142;
 		modeConfig.HiZ=(~(getnumber(1,1,2,0)-1));
@@ -134,6 +166,7 @@ void R3Wsetup(void)
 	{	//bpWstring("R3W (spd hiz)=( ");
 		BPMSG1161;
 		bpWdec(modeConfig.speed); bpSP;
+		bpWdec(r3wSettings.csl); bpSP;
 		bpWdec(modeConfig.HiZ); bpSP;
 		bpWline(")");
 	}
@@ -151,7 +184,9 @@ void R3Wsetup(void)
 	R3WMOSI_TRIS=0;
 	R3WCLK_TRIS=0;
 	R3WMISO_TRIS=1;
-	bbCS(1);//takes care of custom HiZ settings too
+
+	// set cs the way the user wants
+	bbCS(r3wSettings.csl);//takes care of custom HiZ settings too
 }
 
 void R3Wpins(void)

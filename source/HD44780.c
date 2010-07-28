@@ -190,6 +190,8 @@ void LCDsetup(void)
 void LCDmacro(unsigned int c)
 {	int input,i;
 
+	cmdstart++;
+	cmdstart&=CMDLENMSK;
 	consumewhitechars();
 	input=getint();
 	cmderror=0;

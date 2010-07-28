@@ -161,7 +161,7 @@ BPMSG1158;0;"Data unit length (bits): "
 //raw3wire
 BPMSG1159;1;"CS ENABLED"
 BPMSG1160;1;"CS DISABLED"
-BPMSG1161;0;"R3W (spd hiz)=( "
+BPMSG1161;0;"R3W (spd csl hiz)=( "
 BPMSG1162;0;")\r\n"
 //selftest.c
 BPMSG1163;1;"Disconnect any devices\r\nConnect (Vpu to +5V) and (ADC to +3.3V)"
@@ -193,7 +193,7 @@ BPMSG1187;1;"Set speed:\r\n 1. 30KHz\r\n 2. 125KHz\r\n 3. 250KHz\r\n 4. 1MHz"
 BPMSG1188;1;"Clock polarity:\r\n 1. Idle low *default\r\n 2. Idle high"
 BPMSG1189;1;"Output clock edge:\r\n 1. Idle to active\r\n 2. Active to idle *default"
 BPMSG1190;1;"Input sample phase:\r\n 1. Middle *default\r\n 2. End"
-BPMSG1191;0;"SPI (spd ckp ske smp hiz)=( "
+BPMSG1191;0;"SPI (spd ckp ske smp csl hiz)=( "
 BPMSG1192;1;" 0.Macro menu\r\n 1.Sniff CS low\r\n 2.Sniff all traffic"
 //sump.c
 //uart2io
@@ -267,6 +267,8 @@ BPMSG1250;1;"Any key to exit"
 BPMSG1251;1;"Space to continue"
 //procmenu.c
 BPMSG1252;0;"Number of bits read/write: "
+//spi/r3w
+BPMSG1253;1;"CS:\r\n 1. CS\r\n 2. /CS *default"
 
 // help
 HLP1000;1;"General\t\t\t\t\tProtocol interaction"
