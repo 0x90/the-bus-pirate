@@ -101,7 +101,6 @@ struct _HD44780_interface {
 	//unsigned char dat; //8 data bits
 } HD44780;
 
-void HD44780_Term(void); //outputs typed text to the LCD
 void HD44780_Reset(void); //reset the LCD to 4 bit mode
 void HD44780_Init(unsigned char displaylines); //initialize LCD to 4bit mode with typical settings and X displaylines
 void HD44780_WriteString(char *s); //write a string to the LCD
