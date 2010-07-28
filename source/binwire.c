@@ -1,10 +1,14 @@
 #include "base.h"
 #include "bitbang.h"
+#include "busPirateCore.h"
 #include "binIOhelpers.h"
 
 extern struct _modeConfig modeConfig;
+extern struct _bpConfig bpConfig;
 void binrawversionString(void);
 void PIC24NOP(void);
+void PIC416Write(unsigned char cmd, unsigned char datl, unsigned char dath);
+
 
 #define R3WMOSI_TRIS 	BP_MOSI_DIR
 #define R3WCLK_TRIS 	BP_CLK_DIR
@@ -64,10 +68,12 @@ enum { PIC614=0,
 
 void binwire(void){
 	static unsigned char inByte, rawCommand, i,c, wires, pic[4], picMode=PIC614;
+	static unsigned int cmds, j;
 	
 	modeConfig.HiZ=1;//yes, always hiz (bbio uses this setting, should be changed to a setup variable because stringing the modeconfig struct everyhwere is getting ugly!)
 	modeConfig.lsbEN=0;//just in case!
 	modeConfig.speed=1;
+	modeConfig.numbits=8;
 	//startup in raw2wire mode
 	wires=2;
 	//configure for raw3wire mode
@@ -216,49 +222,35 @@ void binwire(void){
 							picMode=U1RXREG; //get byte
 							UART1TX(1);//send 1/OK							
 						break;
-					case 0b10100100:					
+					case 0b10100100:		//write			
 						switch(picMode){
 							case PIC416:	
+
+								//get the number of commands that will follow
+								while(U1STAbits.URXDA == 0);//wait for a byte
+								cmds=U1RXREG; //get byte, reuse rawCommand variable
+								cmds=cmds*3; //make sure an int
 								//get command byte, two data bytes
-								for(i=0; i<3; i++){
+								for(j=0; j<cmds; j++){
 									while(U1STAbits.URXDA == 0);//wait for a byte
-									pic[i]=U1RXREG; //get byte, reuse rawCommand variable
-								}			
-								rawCommand=pic[0]; //recycle this variable, too lazy to change the loop today
-								
-								//use upper 2 bits of pic[0] to determine a delay, if any.
-								pic[0]=pic[0]>>6;
-								//needs to support 4 or 6 or etc modes
-								//should steal from pic.c
-								for(i=0;i<4;i++){
-									
-									//hold data for write time
-									if((pic[0]>0) && i==3 ){
-										bbCLK(1);
-										bpDelayMS(pic[0]);
-										bbCLK(0);
-										continue;
-									}
-		
-									if(rawCommand & 0b1){//send 1
-										bbWriteBit(1); //send bit
-									}else{ //send 0
-										bbWriteBit(0); //send bit
-									}
-									rawCommand=rawCommand>>1; //pop the LSB off
+									bpConfig.terminalInput[j]=U1RXREG;
 								}
-							
-								//needs to support 14 or 16 bit writes
-								//should steal from pic.c
-								bbWriteByte(pic[1]); //send byte
-								bbWriteByte(pic[2]); //send byte
+								
+								for(j=0; j<cmds; j=j+3){
+									PIC416Write(bpConfig.terminalInput[j], bpConfig.terminalInput[j+1], bpConfig.terminalInput[j+2]);
+								}
+
 								UART1TX(1);//send 1/OK	
 								break;
 							case PIC424:
+								//get the number of commands that will follow
+								while(U1STAbits.URXDA == 0);//wait for a byte
+								cmds=U1RXREG; //get byte, reuse rawCommand variable
+								cmds=cmds*3; //make sure an int
 								//get command byte, two data bytes
-								for(i=0; i<4; i++){
+								for(i=0; i<cmds; i++){
 									while(U1STAbits.URXDA == 0);//wait for a byte
-									pic[i]=U1RXREG; //get byte, reuse rawCommand variable
+									bpConfig.terminalInput[i]=U1RXREG;
 								}		
 								//do any pre instruction NOPs	
 
@@ -289,18 +281,30 @@ void binwire(void){
 					case 0b10100101://write x bit command, read x bits and return in 2 bytes
 						switch(picMode){
 							case PIC416:
+
+								//get the number of commands that will follow
 								while(U1STAbits.URXDA == 0);//wait for a byte
 								rawCommand=U1RXREG; //get byte, reuse rawCommand variable
-								for(i=0;i<4;i++){
-									if(rawCommand & 0b1){//send 1
-										bbWriteBit(1); //send bit
-									}else{ //send 0
-										bbWriteBit(0); //send bit
+								//cmds=cmds; //make sure an int
+								//repeat
+								while(U1STAbits.URXDA == 0);//wait for a byte
+								cmds=U1RXREG;
+								
+								
+								for(j=0; j<cmds; j++){
+									//write command
+									c=rawCommand; //temporary varaible
+									for(i=0;i<4;i++){
+										if(c & 0b1){//send 1
+											bbWriteBit(1); //send bit
+										}else{ //send 0
+											bbWriteBit(0); //send bit
+										}
+										c=c>>1; //pop the LSB off
 									}
-									rawCommand=rawCommand>>1; //pop the LSB off
+									bbReadByte(); //dummy byte, setup input
+									UART1TX(bbReadByte());
 								}
-								bbReadByte(); //dummy byte, setup input
-								UART1TX(bbReadByte());
 								break;
 							case PIC424:
 								//send four bit REGOUT command (read)
@@ -374,4 +378,34 @@ void binwire(void){
 }
 
 
+void PIC416Write(unsigned char cmd, unsigned char datl, unsigned char dath){
+	unsigned char i, delay;
 
+	//use upper 2 bits of pic[0] to determine a delay, if any.
+	delay=cmd>>6;
+	//needs to support 4 or 6 or etc modes
+	//should steal from pic.c
+	for(i=0;i<4;i++){
+		
+		//hold data for write time
+		if(i==3 && (delay>0)){
+			bbCLK(1);
+			bpDelayMS(delay);
+			bbCLK(0);
+			continue;
+		}
+
+		if(cmd & 0b1){//send 1
+			bbWriteBit(1); //send bit
+		}else{ //send 0
+			bbWriteBit(0); //send bit
+		}
+		cmd=cmd>>1; //pop the LSB off
+	}
+
+	//needs to support 14 or 16 bit writes
+	//should steal from pic.c
+	bbWriteByte(datl); //send byte
+	bbWriteByte(dath); //send byte
+
+}

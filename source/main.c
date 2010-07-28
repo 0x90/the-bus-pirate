@@ -42,11 +42,6 @@ unsigned int currentByte;
 #pragma code
 //this loop services user input and passes it to be processed on <enter>
 
-
-
-
-
-
 int main(void){
 
 	Initialize();//setup bus pirate
@@ -147,6 +142,7 @@ void Initialize(void){
 	#endif
 
 	bpConfig.quiet=0;		// turn output on (default)
+	modeConfig.numbits=8;
 
 	bpWBR; 	//send a line feed
 
