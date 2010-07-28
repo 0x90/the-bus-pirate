@@ -298,7 +298,7 @@ proto protos[MAXPROTO+1] = {
 	LCDstop,				// stop
 	LCDstop,				// stopR
 	LCDwrite,				// send
-	LCDread,				// read
+	nullfunc3,				// read
 	nullfunc1,				// clkh
 	nullfunc1,				// clkl
 	nullfunc1,				// dath
@@ -309,7 +309,7 @@ proto protos[MAXPROTO+1] = {
 	nullfunc3, 				// periodic
 	LCDmacro,				// macro
 	LCDsetup,				// setup
-	HiZcleanup,				// cleanup
+	SPIcleanup,				// cleanup
 	LCDpins,
 	"LCD" 					// name
 }

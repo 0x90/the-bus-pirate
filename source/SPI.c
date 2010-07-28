@@ -45,9 +45,9 @@ extern struct _modeConfig modeConfig;
 extern struct _command bpCommand;
 
 void binSPIversionString(void);
-void spiSetup(unsigned char spiSpeed);
-void spiDisable(void);
-unsigned char spiWriteByte(unsigned char c);
+//void spiSetup(unsigned char spiSpeed);
+//void spiDisable(void);
+//unsigned char spiWriteByte(unsigned char c);
 void spiSlaveDisable(void);
 void spiSlaveSetup(void);
 void spiSniffer(unsigned char csState, unsigned char termMode);
