@@ -232,7 +232,7 @@ _bpmessages:
 	.pascii	"General\t\t\t\t\tProtocol interaction"
 	.pascii	"---------------------------------------------------------------------------"
 	.pascii	"?\tThis help\t\t\t(0)\tList current macros"
-	.pascii	"= X\tConverts X\t\t\t(x)\tMacro x"
+	.pascii	"=X/|X\tConverts X/reverse X\t\t(x)\tMacro x"
 	.pascii	"~\tSelftest\t\t\t[\tStart"
 	.pascii	"#\tReset\t\t\t\t]\tStop"
 	.pascii	"$\tJump to bootloader\t\t{\tStart with read"
@@ -250,7 +250,8 @@ _bpmessages:
 	.pascii	"o\tSet output type\t\t\t.\tDAT read"
 	.pascii	"p/P\tPullup resistors (off/ON)\t!\tBit read"
 	.pascii	"s\tScript engine\t\t\t:\tRepeat e.g. r:10"
-	.pascii	"v\tShow volts/states\t<x>/<x= >/<0>\tUsermacro x/assign x/list all"
-	.pascii	"w/W\tPSU (off/ON)"
+	.pascii	"v\tShow volts/states\t\t;\tBits to read/write e.g. 0x55;2"
+	.pascii	"w/W\tPSU (off/ON)\t\t<x>/<x= >/<0>\tUsermacro x/assign x/list all"
+
 
 #endif
