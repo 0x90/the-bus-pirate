@@ -25,3 +25,5 @@ void UARTstart(void);
 void UARTstop(void);
 unsigned int UARTperiodic(void);
 void UARTpins(void);
+void UARTsettings(void);
+

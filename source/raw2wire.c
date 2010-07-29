@@ -102,6 +102,16 @@ void R2Wdath(void)
 {	bbMOSI(1);
 }
 
+void R2Wsettings(void)
+{	//bpWstring("R2W (spd hiz)=( ");
+	BPMSG1143;
+	bpWdec(modeConfig.speed); bpSP;
+	bpWdec(modeConfig.HiZ); bpSP;
+	//bpWline(")\r\n");
+	BPMSG1162;
+}
+
+
 void R2Wsetup(void)
 {	int speed, output;
 
@@ -134,13 +144,9 @@ void R2Wsetup(void)
 		modeConfig.HiZ=(~(getnumber(1,1,2,0)-1));
 	}
 	else
-	{	//bpWstring("R2W (spd hiz)=( ");
-		BPMSG1143;
-		bpWdec(modeConfig.speed); bpSP;
-		bpWdec(modeConfig.HiZ); bpSP;
-		//bpWline(")\r\n");
-		BPMSG1162;
+	{	R2Wsettings();
 	}
+
 	//writes to the PORTs write to the LATCH
 	R2WCLK=0;			//B8 scl 
 	R2WDIO=0;			//B9 sda

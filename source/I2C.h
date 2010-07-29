@@ -26,3 +26,5 @@ void I2Csetup(void);
 void I2Ccleanup(void);
 void I2Cmacro(unsigned int c);
 void I2Cpins(void);
+void I2Csettings(void);
+

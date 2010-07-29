@@ -206,6 +206,18 @@ void I2Cstop(void)
 	BPMSG1063;
 }
 
+void I2Csettings(void)
+{	//bpWstring("I2C (mod spd)=( ");
+	BPMSG1068;
+#ifdef BP_USE_I2C_HW
+	bpWdec(i2cmode); bpSP;
+#else
+	bpWdec(0); bpSP;			// softmode
+#endif 
+	bpWdec(modeConfig.speed); bpSP;
+	bpWline(")");
+}
+
 void I2Csetup(void)
 {	int HW, speed;
 
@@ -266,15 +278,7 @@ void I2Csetup(void)
 		// See http://forum.microchip.com/tm.aspx?m=271183&mpage=1
 		if(bpConfig.dev_rev<=PIC_REV_A3) BPMSG1066;	//bpWline(OUMSG_I2C_REV3_WARN);
 
-		//bpWstring("I2C (mod spd)=( ");
-		BPMSG1068;
-#ifdef BP_USE_I2C_HW
- 		bpWdec(i2cmode); bpSP;
-#else
-		bpWdec(0); bpSP;			// softmode
-#endif 
-		bpWdec(modeConfig.speed); bpSP;
-		bpWline(")");
+		I2Csettings();
 
 		ackPending=0;
 //		I2Cstop();			// this needs to be done after a mode change??

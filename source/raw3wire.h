@@ -30,5 +30,5 @@ void R3Wdath(void);
 void R3Wdatl(void);
 void R3Wsetup(void);
 void R3Wpins(void);
-
+void R3Wsettings(void);
 

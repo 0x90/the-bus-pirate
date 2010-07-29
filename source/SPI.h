@@ -28,5 +28,5 @@ void SPIpins(void);
 void spiSetup(unsigned char spiSpeed);
 void spiDisable(void);
 unsigned char spiWriteByte(unsigned char c);
-
+void SPIsettings(void);
 

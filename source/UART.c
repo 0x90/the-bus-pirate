@@ -70,6 +70,25 @@ unsigned int UARTwrite(unsigned int c)
 
 // todo: read from cmdline for now it is ok
 
+void UARTsettings(void)
+{	//bpWstring("UART (spd dbp sb rxp hiz)=( ");
+	BPMSG1202;
+	bpWdec(modeConfig.speed); bpSP;
+	if(modeConfig.speed==9)
+	{	bpWintdec(U2BRG); bpSP;
+	}
+	else
+	{	bpWintdec(UART2speed[modeConfig.speed]); bpSP;
+	}
+	bpWdec(uartSettings.dbp); bpSP;
+	bpWdec(uartSettings.sb); bpSP;
+	bpWdec(uartSettings.rxp); bpSP;
+	bpWdec(modeConfig.HiZ); bpSP;
+	//bpWline(")\r\n");
+	BPMSG1162;
+}	
+
+
 void UARTsetup(void)
 {	int speed, dbp, sb, rxp, output, brg;
 
@@ -153,22 +172,8 @@ void UARTsetup(void)
 
 	}
 	else
-	{	//bpWstring("UART (spd dbp sb rxp hiz)=( ");
-		BPMSG1202;
-		bpWdec(modeConfig.speed); bpSP;
-		if(modeConfig.speed==9)
-		{	bpWintdec(brg); bpSP;
-		}
-		else
-		{	bpWintdec(UART2speed[modeConfig.speed]); bpSP;
-		}
-		bpWdec(uartSettings.dbp); bpSP;
-		bpWdec(uartSettings.sb); bpSP;
-		bpWdec(uartSettings.rxp); bpSP;
-		bpWdec(modeConfig.HiZ); bpSP;
-		//bpWline(")\r\n");
-		BPMSG1162;
-	}	
+	{	UARTsettings();
+	}
 
 	if(modeConfig.speed==9)
 	{	UART2Setup(brg,modeConfig.HiZ, uartSettings.rxp, uartSettings.dbp, uartSettings.sb );

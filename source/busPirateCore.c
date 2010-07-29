@@ -109,6 +109,10 @@ void HiZpins(void)
 	BPMSG1225;
 }
 
+void HiZsettings(void)
+{	bpBR;
+}
+
 proto protos[MAXPROTO+1] = {
 {	nullfunc1,				// start
 	nullfunc1,				// startR
@@ -127,7 +131,8 @@ proto protos[MAXPROTO+1] = {
 	nullfunc4,				// macro
 	HiZsetup,				// setup
 	HiZcleanup,				// cleanup
-	HiZpins,
+	HiZpins,				// pins
+	HiZsettings,			// HiZ doesn't have settings
 	"HiZ" 					// name
 }
 #ifdef BP_USE_1WIRE
@@ -149,7 +154,8 @@ proto protos[MAXPROTO+1] = {
 	OWmacro,				// macro
 	OWsetup,				// setup
 	HiZcleanup,				// cleanup
-	OWpins,
+	OWpins,					// pins
+	HiZsettings,			// settings
 	"1-WIRE" 				// name
 }
 #endif
@@ -173,6 +179,7 @@ proto protos[MAXPROTO+1] = {
 	UARTsetup,				// setup
 	UARTcleanup,			// cleanup
 	UARTpins,
+	UARTsettings,
 	"UART" 					// name
 }
 #endif
@@ -196,6 +203,7 @@ proto protos[MAXPROTO+1] = {
 	I2Csetup,				// setup
 	I2Ccleanup,				// cleanup
 	I2Cpins,
+	I2Csettings,
 	"I2C" 					// name
 }
 #endif
@@ -219,6 +227,7 @@ proto protos[MAXPROTO+1] = {
 	SPIsetup,				// setup
 	SPIcleanup,				// cleanup
 	SPIpins,
+	SPIsettings,
 	"SPI" 					// name
 }
 #endif
@@ -242,6 +251,7 @@ proto protos[MAXPROTO+1] = {
 	R2Wsetup,				// setup
 	HiZcleanup,				// cleanup
 	R2Wpins,
+	R2Wsettings,
 	"2WIRE"					// name
 }
 #endif
@@ -265,6 +275,7 @@ proto protos[MAXPROTO+1] = {
 	R3Wsetup,				// setup
 	HiZcleanup,				// cleanup
 	R3Wpins,
+	R3Wsettings,
 	"3WIRE" 					// name
 }
 #endif
@@ -288,6 +299,7 @@ proto protos[MAXPROTO+1] = {
 	KEYBsetup,				// setup
 	HiZcleanup,				// cleanup
 	HiZpins,
+	HiZsettings,
 	"KEYB" 					// name
 }
 #endif
@@ -309,8 +321,9 @@ proto protos[MAXPROTO+1] = {
 	nullfunc3, 				// periodic
 	LCDmacro,				// macro
 	LCDsetup,				// setup
-	SPIcleanup,				// cleanup
+	HiZcleanup,				// cleanup
 	LCDpins,
+	HiZsettings,
 	"LCD" 					// name
 }
 #endif
@@ -334,6 +347,7 @@ proto protos[MAXPROTO+1] = {
 	picinit,				// setup
 	piccleanup,				// cleanup
 	picpins,
+	HiZsettings,
 	"PIC" 					// name
 }
 #endif

@@ -80,6 +80,7 @@ typedef struct _proto {
 	void (*protocol_setup)(void);
 	void (*protocol_cleanup)(void);
 	void (*protocol_pins)(void);
+	void (*protocol_settings)(void);
 	char protocol_name[8];
 } proto;
 

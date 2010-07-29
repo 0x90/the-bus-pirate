@@ -119,6 +119,17 @@ void R3Wdath(void)
 void R3Wdatl(void)
 {	bbMOSI(0);				// same as r2wire?
 }
+
+void R3Wsettings(void)
+{	//bpWstring("R3W (spd hiz)=( ");
+	BPMSG1161;
+	bpWdec(modeConfig.speed); bpSP;
+	bpWdec(r3wSettings.csl); bpSP;
+	bpWdec(modeConfig.HiZ); bpSP;
+	bpWline(")");
+}
+
+
 void R3Wsetup(void)
 {	int speed, output, cslow;
 
@@ -163,14 +174,8 @@ void R3Wsetup(void)
 		cmderror=0;
 	}
 	else
-	{	//bpWstring("R3W (spd hiz)=( ");
-		BPMSG1161;
-		bpWdec(modeConfig.speed); bpSP;
-		bpWdec(r3wSettings.csl); bpSP;
-		bpWdec(modeConfig.HiZ); bpSP;
-		bpWline(")");
+	{	R3Wsettings();
 	}
-
 
 	//reset the write with read variable
 	r3wSettings.wwr=0;

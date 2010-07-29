@@ -126,6 +126,20 @@ unsigned int SPIwrite(unsigned int c)
 	}
 }
 
+void SPIsettings(void)
+{	//bpWstring("SPI (spd ckp ske smp hiz)=( ");
+	BPMSG1191;
+	bpWdec(modeConfig.speed); bpSP;
+	bpWdec(spiSettings.ckp); bpSP;
+	bpWdec(spiSettings.cke); bpSP;
+	bpWdec(spiSettings.smp); bpSP;
+	bpWdec(spiSettings.csl); bpSP;
+	bpWdec(modeConfig.HiZ); bpSP;
+	//bpWline(")\r\n");
+	BPMSG1162;
+}	
+
+
 void SPIsetup(void)
 {	int speed, clkpol, clkedge, sample, output, cslow;
 
@@ -230,18 +244,8 @@ void SPIsetup(void)
 		modeConfig.HiZ=(~(getnumber(1,1,2,0)-1));
 	}
 	else
-	{	//bpWstring("SPI (spd ckp ske smp hiz)=( ");
-		BPMSG1191;
-		bpWdec(modeConfig.speed); bpSP;
-		bpWdec(spiSettings.ckp); bpSP;
-		bpWdec(spiSettings.cke); bpSP;
-		bpWdec(spiSettings.smp); bpSP;
-		bpWdec(spiSettings.csl); bpSP;
-		bpWdec(modeConfig.HiZ); bpSP;
-		//bpWline(")\r\n");
-		BPMSG1162;
-	}	
-
+	{	SPIsettings();
+	}
 	spiSettings.wwr=0;
 	//do SPI peripheral setup
 	spiSetup(SPIspeed[modeConfig.speed]);

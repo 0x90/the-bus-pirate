@@ -1196,6 +1196,7 @@ void statusInfo(void){
 	//AUX pin setting
 	if(modeConfig.altAUX==1) BPMSG1087; else BPMSG1086;	//bpWmessage(MSG_OPT_AUXPIN_CS); else bpWmessage(MSG_OPT_AUXPIN_AUX);
 
+	protos[bpConfig.busMode].protocol_settings();
 
 	//bpWline("*----------*");
 	BPMSG1119;
