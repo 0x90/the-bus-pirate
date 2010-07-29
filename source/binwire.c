@@ -246,31 +246,33 @@ void binwire(void){
 								//get the number of commands that will follow
 								while(U1STAbits.URXDA == 0);//wait for a byte
 								cmds=U1RXREG; //get byte, reuse rawCommand variable
-								cmds=cmds*3; //make sure an int
-								//get command byte, two data bytes
-								for(i=0; i<cmds; i++){
+								cmds=cmds*4; //make sure an int
+								//get three byte command, 1 byte pre-post NOP
+								for(j=0; j<cmds; j++){
 									while(U1STAbits.URXDA == 0);//wait for a byte
-									bpConfig.terminalInput[i]=U1RXREG;
+									bpConfig.terminalInput[j]=U1RXREG;
 								}		
-								//do any pre instruction NOPs	
 
-								//send four bit SIX command (write)
-								bbWriteBit(0); //send bit
-								bbWriteBit(0); //send bit
-								bbWriteBit(0); //send bit
-								bbWriteBit(0); //send bit
-								
-								//send data payload
-								bbWriteByte(pic[0]); //send byte
-								bbWriteByte(pic[1]); //send byte
-								bbWriteByte(pic[2]); //send byte
-
-								//do any post instruction NOPs
-								pic[3]&=0x0F;
-								for(i=0; i<pic[3]; i++){
-									PIC24NOP();
+								for(j=0; j<cmds; j=j+4){
+									//do any pre instruction NOPs	
+	
+									//send four bit SIX command (write)
+									bbWriteBit(0); //send bit
+									bbWriteBit(0); //send bit
+									bbWriteBit(0); //send bit
+									bbWriteBit(0); //send bit
+									
+									//send data payload
+									bbWriteByte(bpConfig.terminalInput[j]); //send byte
+									bbWriteByte(bpConfig.terminalInput[j+1]); //send byte
+									bbWriteByte(bpConfig.terminalInput[j+2]); //send byte
+	
+									//do any post instruction NOPs
+									bpConfig.terminalInput[j+3]&=0x0F;
+									for(i=0; i<bpConfig.terminalInput[j+3]; i++){
+										PIC24NOP();
+									}
 								}
-
 								UART1TX(1);//send 1/OK	
 								break;
 							default:
