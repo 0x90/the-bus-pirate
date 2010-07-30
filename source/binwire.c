@@ -286,11 +286,11 @@ void binwire(void){
 
 								//get the number of commands that will follow
 								while(U1STAbits.URXDA == 0);//wait for a byte
-								rawCommand=U1RXREG; //get byte, reuse rawCommand variable
+								cmds=U1RXREG; //get byte, reuse rawCommand variable
 								//cmds=cmds; //make sure an int
-								//repeat
+								//get teh command to send on each read....
 								while(U1STAbits.URXDA == 0);//wait for a byte
-								cmds=U1RXREG;
+								rawCommand=U1RXREG;
 								
 								
 								for(j=0; j<cmds; j++){
@@ -309,25 +309,62 @@ void binwire(void){
 								}
 								break;
 							case PIC424:
-								//send four bit REGOUT command (read)
-								bbWriteBit(1); //send bit
-								bbWriteBit(0); //send bit
-								bbWriteBit(0); //send bit
-								bbWriteBit(0); //send bit
-								
-								//one byte output
-								bbWriteByte(0x00); //send byte
+								//get the number of commands that will follow
+								while(U1STAbits.URXDA == 0);//wait for a byte
+								cmds=U1RXREG; //get byte, reuse rawCommand variable
+								//cmds=cmds; //make sure an int
+								//get the command to send before the read...
+								//while(U1STAbits.URXDA == 0);//wait for a byte
+								//rawCommand=U1RXREG;
 
-								//read 2 bytes
-								pic[0]=bbReadByte();
-								pic[1]=bbReadByte();
-								//ALWAYS POST nop TWICE after a read
-								PIC24NOP();
-								PIC24NOP();
-							
-								//return bytes
-								UART1TX(pic[0]);
-								UART1TX(pic[1]);								
+								while(U1STAbits.URXDA == 0);//wait for a byte
+								pic[0]=U1RXREG; //get byte, reuse rawCommand variable
+
+								while(U1STAbits.URXDA == 0);//wait for a byte
+								pic[1]=U1RXREG; //get byte, reuse rawCommand variable
+
+								while(U1STAbits.URXDA == 0);//wait for a byte
+								pic[2]=U1RXREG; //get byte, reuse rawCommand variable
+								
+								
+								for(j=0; j<cmds; j++){
+									//write command
+									//send four bit SIX command (write)
+									bbWriteBit(0); //send bit
+									bbWriteBit(0); //send bit
+									bbWriteBit(0); //send bit
+									bbWriteBit(0); //send bit
+									
+									//send data payload
+									bbWriteByte(pic[0]); //send byte
+									bbWriteByte(pic[1]); //send byte
+									bbWriteByte(pic[2]); //send byte
+	
+									//do any post instruction NOPs
+									//bpConfig.terminalInput[j+3]&=0x0F;
+									//for(i=0; i<2; i++){
+										PIC24NOP();
+										PIC24NOP();
+									//}
+
+									//send four bit REGOUT command (read)
+									bbWriteBit(1); //send bit
+									bbWriteBit(0); //send bit
+									bbWriteBit(0); //send bit
+									bbWriteBit(0); //send bit
+									
+									//one byte output
+									bbWriteByte(0x00); //send byte
+		
+									//read 2 bytes
+									//return bytes
+									UART1TX(bbReadByte());
+									UART1TX(bbReadByte());
+
+									//ALWAYS POST nop TWICE after a read
+									PIC24NOP();
+									PIC24NOP();
+								}
 								break;
 						}
 						break;
