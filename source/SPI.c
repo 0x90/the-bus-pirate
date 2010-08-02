@@ -543,7 +543,7 @@ void binSPIversionString(void){bpWstring("SPI1");}
 
 void binSPI(void){
 	static unsigned char inByte, rawCommand, i;
-	unsigned int j, cmds;
+	unsigned int j, fw, fr;
 
 	//useful default values
 	/* CKE=1, CKP=0, SMP=0 */
@@ -596,45 +596,46 @@ void binSPI(void){
 					case 0b0110: //long pump
 						//get the number of commands that will follow
 						while(U1STAbits.URXDA == 0);//wait for a byte
-						cmds=U1RXREG; //get byte
-						cmds=cmds<<8;
+						fw=U1RXREG; //get byte
+						fw=fw<<8;
 						while(U1STAbits.URXDA == 0);//wait for a byte
-						cmds|=U1RXREG; //get byte
+						fw|=U1RXREG; //get byte
 
-						if(inByte==0b0101){ //get up to buffer bytes at once, send all at once, not return
-							//check length and report error
-							if(cmds>=TERMINAL_BUFFER){
-								UART1TX(0); 
-								break;
-							}
-							//get bytes
-							for(j=0; j<cmds; j++){
-								while(U1STAbits.URXDA == 0);//wait for a byte
-								bpConfig.terminalInput[j]=U1RXREG;
-							}
-							
-							for(j=0; j<cmds; j++){
-								spiWriteByte(bpConfig.terminalInput[j]);
-							}
-						}else if(inByte==0b0110){ //move bytes from serial port to SPI, error if SPI buffer overflow
-							for(j=0; j<cmds; j++){
-								while(U1STAbits.URXDA == 0);//wait for a byte
-								SPI1BUF = U1RXREG;
-								if(!IFS0bits.SPI1IF){
-									UART1TX(0); 
-									break;
-								}
-								i=SPI1BUF;
-								IFS0bits.SPI1IF = 0;
-							}
-							
-						}else{
-							for(j=0; j<cmds; j++){ //read bulk bytes from SPI
-								UART1TX(spiWriteByte(0xff));
-							}
+						//get the number of reads to do
+						while(U1STAbits.URXDA == 0);//wait for a byte
+						fr=U1RXREG; //get byte
+						fr=fr<<8;
+						while(U1STAbits.URXDA == 0);//wait for a byte
+						fr|=U1RXREG; //get byte
+
+						//check length and report error
+						if(fw>=TERMINAL_BUFFER||fr>=TERMINAL_BUFFER){
+							UART1TX(0); 
+							break;
 						}
 
 						UART1TX(1);//send 1/OK	
+
+						SPICS=0;
+						//get bytes
+						for(j=0; j<fw; j++){
+							while(U1STAbits.URXDA == 0);//wait for a byte
+							bpConfig.terminalInput[j]=U1RXREG;
+						}
+						
+						for(j=0; j<fw; j++){
+							spiWriteByte(bpConfig.terminalInput[j]);
+						}
+
+						for(j=0; j<fr; j++){ //read bulk bytes from SPI
+							bpConfig.terminalInput[j]=spiWriteByte(0xff);
+						}
+
+						for(j=0; j<fr; j++){ //read bulk bytes from SPI
+							UART1TX(bpConfig.terminalInput[j]);
+						}
+						SPICS=1;	
+
 						break;
 					default:
 						UART1TX(0);
