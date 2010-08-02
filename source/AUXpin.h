@@ -22,6 +22,8 @@ void bpAuxHigh(void);
 void bpAuxLow(void);
 unsigned int bpAuxRead(void);
 
+void bpServo(void);
+
 extern int PWMfreq;
 extern int PWMduty;
 

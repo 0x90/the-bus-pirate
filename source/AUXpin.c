@@ -337,6 +337,61 @@ unsigned int bpAuxRead(void){
 	return c;
 }
 
+//setup the Servo PWM
+void bpServo(void)
+{
+   unsigned int PWM_period, PWM_dutycycle;
+   char done = 0;
+   float PWM_pd;
+
+   // Clear timers
+   T2CON=0;      // clear settings
+   T4CON=0;
+   OC5CON =0;
+   
+   if(AUXmode==AUX_PWM){    //PWM is on, stop it
+      AUXPIN_RPOUT = 0;   //remove output from AUX pin
+      BPMSG1028;
+      AUXmode=AUX_IO;
+      if(cmdbuf[((cmdstart + 1)& CMDLENMSK)] == 0x00)
+         return; // return if no arguments to function
+   }
+
+   cmdstart++;
+   cmdstart &= CMDLENMSK;
+
+   //get any compound commandline variables
+   consumewhitechars();
+   if (181 > (PWM_pd=getint()))
+      done++;
+
+   // Setup multiplier for 50 Hz
+   T2CONbits.TCKPS1=1;
+   T2CONbits.TCKPS0=1;
+   PWM_period=1250;;
+
+   if(done!=1)//if no commandline vairable, prompt for position
+   {
+      BPMSG1033;
+      PWM_pd=getnumber(90,0,180,0);
+   }
+
+   PWM_pd/=3500;
+   PWM_dutycycle=(PWM_period * PWM_pd) + 62;
+
+   //assign pin with PPS
+   AUXPIN_RPOUT = OC5_IO;
+
+   OC5R = PWM_dutycycle;
+   OC5RS = PWM_dutycycle;
+   OC5CON = 0x6;         
+   PR2   = PWM_period;   
+   T2CONbits.TON = 1;   
+
+   BPMSG1034;
+   AUXmode=AUX_PWM;
+}
+
 /*1. Set the PWM period by writing to the selected
 Timer Period register (PRy).
 2. Set the PWM duty cycle by writing to the OCxRS
