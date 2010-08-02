@@ -614,8 +614,6 @@ void binSPI(void){
 							break;
 						}
 
-						//UART1TX(1);//send 1/OK	
-
 						SPICS=0;
 						//get bytes
 						for(j=0; j<fw; j++){
@@ -635,6 +633,8 @@ void binSPI(void){
 							UART1TX(bpConfig.terminalInput[j]);
 						}
 						SPICS=1;	
+
+						UART1TX(1);//send 1/OK
 
 						break;
 					default:
