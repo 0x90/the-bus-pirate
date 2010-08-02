@@ -614,7 +614,7 @@ void binSPI(void){
 							break;
 						}
 
-						UART1TX(1);//send 1/OK	
+						//UART1TX(1);//send 1/OK	
 
 						SPICS=0;
 						//get bytes
