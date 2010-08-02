@@ -16,6 +16,7 @@
 
 #include "SPI.h"
 #include "base.h"
+#include "busPirateCore.h"
 #include "binIOhelpers.h"
 
 #include "procmenu.h"		// for the userinteraction subs
@@ -43,6 +44,7 @@
 
 extern struct _modeConfig modeConfig;
 extern struct _command bpCommand;
+extern struct _bpConfig bpConfig; //we use the big buffer
 
 void binSPIversionString(void);
 //void spiSetup(unsigned char spiSpeed);
@@ -541,6 +543,7 @@ void binSPIversionString(void){bpWstring("SPI1");}
 
 void binSPI(void){
 	static unsigned char inByte, rawCommand, i;
+	unsigned int j, cmds;
 
 	//useful default values
 	/* CKE=1, CKP=0, SMP=0 */
@@ -587,6 +590,51 @@ void binSPI(void){
 					case 0b1111://cs high
 						spiSniffer(1, 0);
 						UART1TX(1);
+						break;
+					case 0b0100: //long read
+					case 0b0101: //long write
+					case 0b0110: //long pump
+						//get the number of commands that will follow
+						while(U1STAbits.URXDA == 0);//wait for a byte
+						cmds=U1RXREG; //get byte
+						cmds=cmds<<8;
+						while(U1STAbits.URXDA == 0);//wait for a byte
+						cmds|=U1RXREG; //get byte
+
+						if(inByte==0b0101){ //get up to buffer bytes at once, send all at once, not return
+							//check length and report error
+							if(cmds>=TERMINAL_BUFFER){
+								UART1TX(0); 
+								break;
+							}
+							//get bytes
+							for(j=0; j<cmds; j++){
+								while(U1STAbits.URXDA == 0);//wait for a byte
+								bpConfig.terminalInput[j]=U1RXREG;
+							}
+							
+							for(j=0; j<cmds; j++){
+								spiWriteByte(bpConfig.terminalInput[j]);
+							}
+						}else if(inByte==0b0110){ //move bytes from serial port to SPI, error if SPI buffer overflow
+							for(j=0; j<cmds; j++){
+								while(U1STAbits.URXDA == 0);//wait for a byte
+								SPI1BUF = U1RXREG;
+								if(!IFS0bits.SPI1IF){
+									UART1TX(0); 
+									break;
+								}
+								i=SPI1BUF;
+								IFS0bits.SPI1IF = 0;
+							}
+							
+						}else{
+							for(j=0; j<cmds; j++){ //read bulk bytes from SPI
+								UART1TX(spiWriteByte(0xff));
+							}
+						}
+
+						UART1TX(1);//send 1/OK	
 						break;
 					default:
 						UART1TX(0);
