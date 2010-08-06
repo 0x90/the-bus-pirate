@@ -490,6 +490,9 @@ void serviceuser(void)
 							bpConfig.basic=1;
 							break;
 #endif
+				case 'S': //servo control
+							bpServo();
+							break;
 				case '<':	cmderror=1;
 							temp=1;
 

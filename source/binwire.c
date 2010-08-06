@@ -8,7 +8,8 @@ extern struct _bpConfig bpConfig;
 void binrawversionString(void);
 void PIC24NOP(void);
 void PIC416Write(unsigned char cmd, unsigned char datl, unsigned char dath);
-
+void PIC424Write(unsigned long cmd, unsigned char pn);
+void PIC424Read(void);
 
 #define R3WMOSI_TRIS 	BP_MOSI_DIR
 #define R3WCLK_TRIS 	BP_CLK_DIR
@@ -316,7 +317,7 @@ void binwire(void){
 								//get the command to send before the read...
 								//while(U1STAbits.URXDA == 0);//wait for a byte
 								//rawCommand=U1RXREG;
-
+/*
 								while(U1STAbits.URXDA == 0);//wait for a byte
 								pic[0]=U1RXREG; //get byte, reuse rawCommand variable
 
@@ -326,7 +327,7 @@ void binwire(void){
 								while(U1STAbits.URXDA == 0);//wait for a byte
 								pic[2]=U1RXREG; //get byte, reuse rawCommand variable
 								
-								
+
 								for(j=0; j<cmds; j++){
 									//write command
 									//send four bit SIX command (write)
@@ -364,6 +365,20 @@ void binwire(void){
 									//ALWAYS POST nop TWICE after a read
 									PIC24NOP();
 									PIC24NOP();
+								}
+								*/
+								for(j=0; j<cmds; j++){
+									//write command
+									PIC424Write(0xBA0B96, 2);
+									PIC424Read();
+									
+									PIC424Write(0xBADBB6, 2);
+									PIC424Write(0xBAD3D6, 2);
+									PIC424Read();
+
+									PIC424Write(0xBA0BB6, 2);
+									PIC424Read();
+
 								}
 								break;
 						}
@@ -447,4 +462,44 @@ void PIC416Write(unsigned char cmd, unsigned char datl, unsigned char dath){
 	bbWriteByte(datl); //send byte
 	bbWriteByte(dath); //send byte
 
+}
+
+void PIC424Write(unsigned long cmd, unsigned char pn){
+	unsigned char i;
+		//send four bit SIX command (write)
+		bbWriteBit(0); //send bit
+		bbWriteBit(0); //send bit
+		bbWriteBit(0); //send bit
+		bbWriteBit(0); //send bit
+		
+		//send data payload 0xBA0B96 0xBADBB6 0xBA0BB6
+		bbWriteByte(bpRevByte(cmd)); //send byte
+		bbWriteByte(bpRevByte(cmd>>8)); //send byte
+		bbWriteByte(bpRevByte(cmd>>16)); //send byte
+
+		//do any post instruction NOPs
+		pn&=0x0F;
+		for(i=0; i<pn; i++){
+			PIC24NOP();
+		}
+}
+
+void PIC424Read(void){
+	//send four bit REGOUT command (read)
+	bbWriteBit(1); //send bit
+	bbWriteBit(0); //send bit
+	bbWriteBit(0); //send bit
+	bbWriteBit(0); //send bit
+	
+	//one byte output
+	bbWriteByte(0x00); //send byte
+
+	//read 2 bytes
+	//return bytes
+	UART1TX(bbReadByte());
+	UART1TX(bbReadByte());
+
+	//ALWAYS POST nop TWICE after a read
+	PIC24NOP();
+	PIC24NOP();
 }
