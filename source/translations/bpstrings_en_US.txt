@@ -269,6 +269,10 @@ BPMSG1251;1;"Space to continue"
 BPMSG1252;0;"Number of bits read/write: "
 //spi/r3w
 BPMSG1253;1;"CS:\r\n 1. CS\r\n 2. /CS *default"
+//auxpin
+BPMSG1254;1;"Position in degrees"
+BPMSG1255;1;"Servo active"
+
 
 // help
 HLP1000;1;"General\t\t\t\t\tProtocol interaction"
@@ -284,7 +288,7 @@ HLP1009;1;"b\tSet baudrate\t\t\t123"
 HLP1010;1;"c/C\tAUX assignment (aux/CS)\t\t0x123"
 HLP1011;1;"d/D\tMeasure ADC (once/CONT.)\t0b110\tSend value"
 HLP1012;1;"f\tMeasure frequency\t\tr\tRead"
-HLP1013;1;"g\tGenerate frequency/PWM\t\t/\tCLK hi"
+HLP1013;1;"g/S\tGenerate PWM/Servo\t\t/\tCLK hi"
 HLP1014;1;"h\tCommandhistory\t\t\t\\\tCLK lo"
 HLP1015;1;"i\tVersioninfo/statusinfo\t\t^\tCLK tick"
 HLP1016;1;"l/L\tBitorder (msb/LSB)\t\t-\tDAT hi"

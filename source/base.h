@@ -23,25 +23,40 @@
 
 //#define BUSPIRATE_POST //used to switch POST on and off
 
-#define BP_FIRMWARE_STRING "Firmware v5.5 (r464)"
+#define BP_FIRMWARE_STRING "Firmware v5.6RC (r467) "
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
 //#define LANGUAGE_ES_ES
 
+
 //include/exclude modules here
-#define BP_USE_1WIRE
-#define BP_USE_HWUART //hardware uart (now also MIDI)
-#define BP_USE_I2C
-//#define BP_USE_I2C_HW
-#define BP_USE_HWSPI //hardware spi
+// standard protocols
 #define BP_USE_RAW2WIRE
 #define BP_USE_RAW3WIRE
-#define BP_USE_PCATKB
-#define BP_USE_LCD // include HD44780 LCD library
-//#define BP_USE_PIC
 
-#define MAXPROTO 9// need to set it manually for now (is there a smart way for this?)
+
+#define BP_FW1
+
+// most used protos
+#ifdef BP_FW1
+	#define BP_USE_1WIRE
+	#define BP_USE_HWUART //hardware uart (now also MIDI)
+	#define BP_USE_I2C
+//#define BP_USE_I2C_HW
+	#define BP_USE_HWSPI //hardware spi
+
+	#define MAXPROTO 7
+#endif
+
+// lesser used protos
+#ifdef BP_FW2
+	#define BP_USE_PCATKB
+	#define BP_USE_LCD // include HD44780 LCD library
+//#define BP_USE_PIC
+	#define MAXPROTO 5
+#endif
+
 
 #define BP_USE_BASIC   // basic subsystem
 //#define BP_USE_BASICI2C  // use an i2ceeprom for storing

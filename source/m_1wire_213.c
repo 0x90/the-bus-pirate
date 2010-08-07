@@ -53,6 +53,9 @@
 //****************************************************************************
 
 #include "base.h"
+
+#ifdef BP_USE_1WIRE
+
 #include "m_1wire_213.h"
 
 //#define D_RiseSpace 5        // Rise Time + Minimum Space (3uS+1uS absolute min)
@@ -322,4 +325,4 @@ unsigned char PROBE_CHECKSUM (unsigned char *BYTE, int size_of_BYTE){
 }
 
 //****************** END OF
-
+#endif

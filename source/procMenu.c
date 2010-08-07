@@ -192,12 +192,14 @@ void serviceuser(void)
 		stop=0;
 		cmderror=0;
 
+#ifdef BP_USE_BASIC
 		if(bpConfig.basic)
 		{	basiccmdline();
 			//bpWline("Ready.");
 			BPMSG1085;
 			stop=1;
 		}
+#endif
 
 //		for(i=0; i<CMDBUFLEN; i++)						// print ringbuffer
 //		{	if(cmdbuf[i]) UART1TX(cmdbuf[i]);
@@ -260,14 +262,13 @@ void serviceuser(void)
 							bpFreq();
 							break;
 				case 'g':	//bpWline("-frequency generate on AUX");
-							//if((cmdbuf[(cmdstart+1)&CMDLENMSK])=='o')
-							//{	cmdstart+=2;
-							//	cmdstart&=CMDLENMSK;
-								//walkdungeon();
-							//	break;
-						//}
-
-							if(bpConfig.busMode==HIZ)
+							if((cmdbuf[(cmdstart+1)&CMDLENMSK])=='o')
+							{	cmdstart+=2;
+								cmdstart&=CMDLENMSK;
+								walkdungeon();
+								break;
+							}
+							else if(bpConfig.busMode==HIZ)
 							{	//bpWmessage(MSG_ERROR_MODE);
 								BPMSG1088;
 							}else{
@@ -491,7 +492,12 @@ void serviceuser(void)
 							break;
 #endif
 				case 'S': //servo control
-							bpServo();
+							if(bpConfig.busMode==HIZ)
+							{	//bpWmessage(MSG_ERROR_MODE);
+								BPMSG1088;
+							}else{
+								bpServo();
+							}
 							break;
 				case '<':	cmderror=1;
 							temp=1;
@@ -1114,6 +1120,15 @@ void versionInfo(void){
 	#endif
 
 	bpWstring(BP_FIRMWARE_STRING);
+
+	UART1TX('[');
+	for(i=0; i<MAXPROTO ; i++)
+	{	if(i) bpSP;
+		bpWstring(protos[i].protocol_name);
+	}
+	UART1TX(']');
+
+
 	//bpWstring(" Bootloader v");
 	BPMSG1126;
 	i=bpReadFlash(CFG_ADDR_UPPER, BL_ADDR_VER);

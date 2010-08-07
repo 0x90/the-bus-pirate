@@ -84,24 +84,33 @@ void binBB(void){
 		if((inByte&0b10000000)==0){//if command bit cleared, process command
 			if(inByte==0){//reset, send BB version
 				binBBversion();
-			}else if(inByte==1){//goto SPI mode
+			}
+			else if(inByte==1){//goto SPI mode
 				binReset();
+#ifdef BP_USE_HWSPI
 				binSPI();//go into rawSPI loop
+#endif
 				binReset();
 				binBBversion(); //say name on return
 			}else if(inByte==2){//goto I2C mode
 				binReset();
+#ifdef BP_USE_I2C
 				binI2C();
+#endif
 				binReset();
 				binBBversion(); //say name on return
 			}else if(inByte==3){//goto UART mode
 				binReset();
+#ifdef BP_USE_HWUART
 				binUART();
+#endif
 				binReset();
 				binBBversion(); //say name on return
 			}else if(inByte==4){//goto 1WIRE mode
 				binReset();
+#ifdef BP_USE_1WIRE
 				bin1WIRE();
+#endif
 				binReset();
 				binBBversion(); //say name on return
 			}else if(inByte==5){//goto RAW WIRE mode

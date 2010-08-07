@@ -344,7 +344,20 @@ void HD44780_WriteNibble(unsigned char reg, unsigned char dat){
 
 }
 
-//write value to PCF8574 I2C IO expander, message and return on ACK error
+// copied from spi.c, but with thesplitfirmware it was gone..
+unsigned char spiWriteByte(unsigned char c){
+
+	SPI1BUF = c;
+	while(!IFS0bits.SPI1IF);
+	c=SPI1BUF;
+	IFS0bits.SPI1IF = 0;
+	return c;
+}
+
+
+
+
+//write value to 595 IO expander, message and return on ACK error
 void HD44780_SPIwrite(unsigned char datout){
 	spiWriteByte(datout);
 	SPICS=1;

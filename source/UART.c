@@ -14,6 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 #include "base.h"
+
+#ifdef BP_USE_HWUART
+
 #include "uart2io.h"
 #include "binIOhelpers.h"
 
@@ -475,3 +478,5 @@ void binUART(void){
 		}//if inbyte
 	}//while loop
 }//function
+
+#endif

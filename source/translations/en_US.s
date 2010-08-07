@@ -1,4 +1,5 @@
 #ifdef LANGUAGE_EN_US
+
 .global _bpmessages
 _bpmessages:
 	.pascii	"WRITE BIT: "
@@ -229,6 +230,8 @@ _bpmessages:
 	.pascii	"Space to continue"
 	.pascii	"Number of bits read/write: "
 	.pascii	"CS:\r\n 1. CS\r\n 2. /CS *default"
+	.pascii	"Position in degrees"
+	.pascii	"Servo active"
 	.pascii	"General\t\t\t\t\tProtocol interaction"
 	.pascii	"---------------------------------------------------------------------------"
 	.pascii	"?\tThis help\t\t\t(0)\tList current macros"
@@ -242,7 +245,7 @@ _bpmessages:
 	.pascii	"c/C\tAUX assignment (aux/CS)\t\t0x123"
 	.pascii	"d/D\tMeasure ADC (once/CONT.)\t0b110\tSend value"
 	.pascii	"f\tMeasure frequency\t\tr\tRead"
-	.pascii	"g\tGenerate frequency/PWM\t\t/\tCLK hi"
+	.pascii	"g/S\tGenerate PWM/Servo\t\t/\tCLK hi"
 	.pascii	"h\tCommandhistory\t\t\t\\\tCLK lo"
 	.pascii	"i\tVersioninfo/statusinfo\t\t^\tCLK tick"
 	.pascii	"l/L\tBitorder (msb/LSB)\t\t-\tDAT hi"
@@ -250,7 +253,7 @@ _bpmessages:
 	.pascii	"o\tSet output type\t\t\t.\tDAT read"
 	.pascii	"p/P\tPullup resistors (off/ON)\t!\tBit read"
 	.pascii	"s\tScript engine\t\t\t:\tRepeat e.g. r:10"
-	.pascii	"v\tShow volts/states\t\t;\tBits to read/write e.g. 0x55;2"
+	.pascii	"v\tShow volts/states\t\t.\tBits to read/write e.g. 0x55.2"
 	.pascii	"w/W\tPSU (off/ON)\t\t<x>/<x= >/<0>\tUsermacro x/assign x/list all"
 
 

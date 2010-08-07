@@ -23,6 +23,8 @@
 
 //#define USE_SPICS //the CS hardware pin on silicone REV 3 doesn't work, optionally enable it here
 
+#ifdef BP_USE_HWSPI
+
 //direction registers
 #define SPIMOSI_TRIS 	BP_MOSI_DIR	
 #define SPICLK_TRIS 	BP_CLK_DIR	
@@ -682,3 +684,4 @@ void binSPI(void){
 	}//while loop
 }//function
 
+#endif

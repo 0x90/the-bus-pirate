@@ -16,10 +16,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "base.h"
+
+#ifdef BP_USE_1WIRE
 //abstraction for m_i2c_1.c
 #include "m_1wire_213.h"
 #include "1wire.h"
-#include "base.h"
 #include "binIOhelpers.h"
 
 extern struct _modeConfig modeConfig;
@@ -648,3 +650,4 @@ void bin1WIRE(void){
 
 }
 
+#endif
