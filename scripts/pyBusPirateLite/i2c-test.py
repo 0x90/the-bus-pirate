@@ -40,8 +40,10 @@ def i2c_read_bytes(address, numbytes, ret=False):
 			print ord(i2c.read_byte())
 		else:
 			data_out.append(ord(i2c.read_byte()))
-		i2c.send_ack()
+		if numbytes > 1:
+			i2c.send_ack()
 		numbytes-=1
+	i2c.send_nack()
 	i2c.send_stop_bit()
 	if ret:
 		return data_out
