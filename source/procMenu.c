@@ -1122,12 +1122,14 @@ void versionInfo(void){
 
 	bpWstring(BP_FIRMWARE_STRING);
 
+	#ifndef BP_MAIN
 	UART1TX('[');
 	for(i=0; i<MAXPROTO ; i++)
 	{	if(i) bpSP;
 		bpWstring(protos[i].protocol_name);
 	}
 	UART1TX(']');
+	#endif
 
 
 	//bpWstring(" Bootloader v");

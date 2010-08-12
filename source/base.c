@@ -51,6 +51,8 @@ void bpInit(void){
 		BP_LEDPWR_DIR=0;
 	#endif
 
+	BP_AUX_RPOUT = 0;    //remove output from AUX pin (PWM/servo modes)
+
 	bpConfig.busMode=HIZ;
 
 	clearModeConfig(); //reset the mode settings structure
