@@ -273,12 +273,12 @@ void SPImacro(unsigned int macro)
 		case 1://sniff CS low
 			BPMSG1071;	//moved to a more generic message 
 			BPMSG1250;
-			spiSniffer(1,1);//configure for terminal mode
+			spiSniffer(0,1);//configure for terminal mode
 			break;
 		case 2://sniff all
 			BPMSG1071;	//moved to a more generic message 
 			BPMSG1250;
-			spiSniffer(0,1);//configure for terminal mode
+			spiSniffer(1,1);//configure for terminal mode
 			break;
 		case 3: //sniff CS high
 		default:
