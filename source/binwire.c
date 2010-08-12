@@ -68,7 +68,7 @@ enum { PIC614=0,
 	};
 
 void binwire(void){
-	static unsigned char inByte, rawCommand, i,c, wires, pic[4], picMode=PIC614;
+	static unsigned char inByte, rawCommand, i,c, wires, picMode=PIC614;
 	static unsigned int cmds, j;
 	
 	modeConfig.HiZ=1;//yes, always hiz (bbio uses this setting, should be changed to a setup variable because stringing the modeconfig struct everyhwere is getting ugly!)

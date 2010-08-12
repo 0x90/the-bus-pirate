@@ -262,13 +262,14 @@ void serviceuser(void)
 							bpFreq();
 							break;
 				case 'g':	//bpWline("-frequency generate on AUX");
-							if((cmdbuf[(cmdstart+1)&CMDLENMSK])=='o')
+							/*if((cmdbuf[(cmdstart+1)&CMDLENMSK])=='o')
 							{	cmdstart+=2;
 								cmdstart&=CMDLENMSK;
 								walkdungeon();
 								break;
 							}
-							else if(bpConfig.busMode==HIZ)
+							else*/
+							if(bpConfig.busMode==HIZ)
 							{	//bpWmessage(MSG_ERROR_MODE);
 								BPMSG1088;
 							}else{

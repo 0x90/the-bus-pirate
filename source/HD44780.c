@@ -343,7 +343,7 @@ void HD44780_WriteNibble(unsigned char reg, unsigned char dat){
 	HD44780_SPIwrite(dat);
 
 }
-
+#ifndef BP_MAIN
 // copied from spi.c, but with thesplitfirmware it was gone..
 unsigned char spiWriteByte(unsigned char c){
 
@@ -354,7 +354,7 @@ unsigned char spiWriteByte(unsigned char c){
 	return c;
 }
 
-
+#endif
 
 
 //write value to 595 IO expander, message and return on ACK error
@@ -364,5 +364,6 @@ void HD44780_SPIwrite(unsigned char datout){
 	//bpDelayUS(255);
 	SPICS=0;
 }
+
 
 #endif
