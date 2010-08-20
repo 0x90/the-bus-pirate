@@ -123,7 +123,13 @@ void serviceuser(void)
 				}
 			}
 
-			c=UART1RX();
+			if(U1STAbits.OERR){//check for user terminal buffer overflow error
+				U1STA &= (~0b10); //clear overrun error if exists
+				continue; //resume getting more user input
+			}else{
+				c=UART1RX(); //no error, process byte
+			}
+
 			switch(c)
 			{	case 0x08:	if(cmdend!=cmdstart)				// backspace pressed, do we have already input??
 							{	cmdend--;

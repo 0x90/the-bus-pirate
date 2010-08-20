@@ -111,6 +111,7 @@ void UART1Speed(unsigned char brg);
 //
 //
 void UARTbufService(void);
+void UARTbufFlush(void);
 void UARTbufSetup(void);
 void UARTbuf(char c);
 void bpWhexBuf(unsigned int c); //write a hex value to ring buffer

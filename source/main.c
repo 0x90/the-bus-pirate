@@ -48,52 +48,6 @@ int main(void){
 
 	serviceuser();
 
-/*
-	while(1){ //this is the main bus pirate loop
-		if(U1STAbits.OERR) U1STA &= (~0b10); //clear overrun error if exists
-
-		switch(bpGetUserInput(&currentByte, TERMINAL_BUFFER, bpConfig.terminalInput)){//service user prompt in baseIO.c
-			case 0x01://got enter, process user input
-				switch(currentByte){
-					case 0://no bytes, error
-						bpWmessage(MSG_ERROR_SYNTAX);
-						break;
-					case 1://1 byte, try to process as a menu option
-						if(checkMenuCommand(bpConfig.terminalInput[0]))break;
-					default://multiple bytes, process as syntax
-						processSyntaxString(currentByte, bpConfig.terminalInput);//process a syntax string
-				}
-				currentByte=0;
-				binmodecnt=0; //reset any null characters
-				bpEchoCurrentBusMode(); //print the bus mode
-				UART1TX('>');//echo prompt
-				break;
-			case 0xff://got rawIO mode trigger
-				binmodecnt++;
-				if(binmodecnt>19){
-					binBB();//hand control to binary mode service loop. resume as normal on return
-					//binmodecnt=0; //this line is unreachable, exit with hardware reset
-				}
-				break;
-			case 0xfe:
-				if(binmodecnt>=5) SUMP();
-				binmodecnt=0;
-				break;	
-		}
-
-		//send the periodic service command to the current protocol
-		//allows to check UART for async RX bytes, etc, independent of user input
-		if(modeConfig.periodicService==1){
-			bpCommand.cmd=CMD_PERIODIC_SERVICE;
-			bpProcess();
-		}
-
-
-	}//while
-
-	*/
-
-
 	return 0;
 }
 

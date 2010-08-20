@@ -362,6 +362,7 @@ unsigned char spiWriteByte(unsigned char c){
 void spiSniffer(unsigned char csState, unsigned char termMode){
 	unsigned char c, lastCS;
 
+spiSnifferStart:
 	lastCS=1;
 
 	UARTbufSetup();
@@ -376,10 +377,8 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 	if(csState<2){ //mode 0 & 1, always on
 		SPI1STATbits.SPIEN=1; 
 		SPI2STATbits.SPIEN=1;
-
-		//CNEN2bits.CN21IE=1; // enable change notice on CS
-		//IFS1bits.CNIF=0; // clear the change interrupt flag
 	}
+
 	while(1){
 
 		//detect when CS changes. works independently of the data interrupts
@@ -387,18 +386,14 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 		if(lastCS==0 && SPICS ==1){
 			UARTbuf(']');//bpWBR; //cs disabled
 			lastCS=1;
-			//IFS1bits.CNIF=0; // clear the change interrupt flag
 		}
 
 		if(SPI1STATbits.SRXMPT==0 && SPI2STATbits.SRXMPT==0){//rx buffer NOT empty, get and display byte
 			c=SPI1BUF;
-			
-			//check if CS is just now low
-			//if(IFS1bits.CNIF && (SPICS==0)){
+
 			if(lastCS==1){
 				UARTbuf('[');//bpWBR; //CS enabled
 				lastCS=0; //SPICS;
-				//IFS1bits.CNIF=0; // clear the change interrupt flag
 			}
 
 			if(termMode){ //show hex output in terminal mode
@@ -414,35 +409,36 @@ void spiSniffer(unsigned char csState, unsigned char termMode){
 				UARTbuf('('); //only show the () in terminal mode
 				bpWhexBuf(c);
 				UARTbuf(')');
-			}else{ //escaped byte value in binary mode
-				//UARTbuf('\\'); //removed the escape on the slave in v5.1
+			}else{ //binary mode
 				UARTbuf(c);
 			}
 
 		}
 
 		if(SPI1STATbits.SPIROV==1 || SPI2STATbits.SPIROV==1 ){//we weren't fast enough, buffer overflow
-			BP_LEDMODE=0;
-			if(termMode) bpWline("Couldn't keep up");	
-			SPI1STATbits.SPIROV=0;
-			SPI2STATbits.SPIROV=0;						
+
+			UARTbufFlush();
+			SPI1STAT=0; 
+			SPI2STAT=0;
+
+			if(termMode){
+				bpWline("Couldn't keep up");	
+				goto spiSnifferStart;
+			}else{
+				BP_LEDMODE=0;
+			}			
 			break;
 		}
 
 		UARTbufService();
 		if(U1STAbits.URXDA == 1){//any key pressed, exit
-			if(U1RXREG=='r'){
-				SPI1STATbits.SPIEN=0; //only enable when CS matches desired state
-				SPI2STATbits.SPIEN=0;
-				//IFS1bits.INT1IF=0;//clear interrupt flag
-			}else{
-				if(termMode) bpBR; //fixed in 5.1: also sent br to binmode
-				break;
-			}
+			c=U1RXREG;
+			if(termMode) bpBR; //fixed in 5.1: also sent br to binmode
+			break;
 		}
 	}
 	spiSlaveDisable();
-	RPINR0bits.INT1R=0b11111; //remove INT1 from CS pin
+
 	spiSetup(SPIspeed[modeConfig.speed]);
 }
 

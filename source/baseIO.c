@@ -373,6 +373,21 @@ void UARTbufService(void){
 	}
 }
 
+void UARTbufFlush(void){
+	unsigned int i;
+	
+	while(1){
+		i=readpointer+1;
+		if(i==TERMINAL_BUFFER) i=0; //check for wrap
+		if(i==writepointer) return; //buffer empty, 
+	
+		if(U1STAbits.UTXBF == 0){//free slot, move a byte to UART
+			readpointer=i;
+			U1TXREG=bpConfig.terminalInput[readpointer];
+		}
+	}
+}
+
 // Read the lower 16 bits from programming flash memory
 unsigned int bpReadFlash(unsigned int page, unsigned int addr)
 {
