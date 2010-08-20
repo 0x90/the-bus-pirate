@@ -1,0 +1,1 @@
+This file is only for programming the bootlaoder to a new PIC. Use the upgrade package to upgrade.See dangerousprototypes.com
