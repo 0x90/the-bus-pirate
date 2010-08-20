@@ -32,3 +32,36 @@
 	<unistd.h>
 	"serial.h"
 
+1282296370 source:e:\work\bus-pirate\trunk\scripts\spisniffer\source\serial.c
+	<stdio.h>
+	<stdlib.h>
+	<fcntl.h>
+	<string.h>
+	"serial.h"
+
+1282296378 e:\work\bus-pirate\trunk\scripts\spisniffer\source\serial.h
+	<windows.h>
+	<time.h>
+	<unistd.h>
+	<termios.h>
+	<sys/select.h>
+	<sys/types.h>
+	<sys/time.h>
+	<IOKit/serial/ioss.h>
+	<sys/ioctl.h>
+	<stdint.h>
+	<windows.h>
+	<time.h>
+	<unistd.h>
+	<termios.h>
+	<sys/select.h>
+	<sys/types.h>
+	<sys/time.h>
+
+1282300988 source:e:\work\bus-pirate\trunk\scripts\spisniffer\source\main.c
+	<stdio.h>
+	<stdlib.h>
+	<conio.h>
+	<unistd.h>
+	"serial.h"
+

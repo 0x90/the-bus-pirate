@@ -131,14 +131,13 @@ int main(int argc, char** argv)
   param_port=strdup("COM3");    //default for debugging
 
 
-
+    printf("--------------------------------------------\n");
+    printf("\n");
+    printf(" Bus Pirate binary mode SPI SNIFFER utility v0.1 (CC-0)\n");
+    printf(" http://dangerousprototypes.com\n");
     if( argc == 1 )
 	{
 		//print usage
-		printf("--------------------------------------------\n");
-		printf("\n");
-		printf(" Bus Pirate binary mode SPI SNIFFER utility (CC-0)\n");
-		printf(" http://dangerousprototypes.com\n");
 		printf("\n");
         printf(" Usage:              \n");
 		printf("   %s portname\n ",argv[0]);
@@ -152,10 +151,6 @@ int main(int argc, char** argv)
 		return 0;
 	}
 
-    printf("\n");
-    printf(" Bus Pirate binary mode SPI SNIFFER utility (CC-0)\n");
-    printf(" http://dangerousprototypes.com\n");
-    printf("\n");
     printf(" Press escape to exit \n");
     printf("\n");
 
@@ -163,7 +158,7 @@ int main(int argc, char** argv)
     // Open serial port
     //
     param_port=strdup(argv[1]);
-	printf("\n Opening Bus Pirate on %s at %sbps...\n", param_port, param_speed);
+	printf(" Opening Bus Pirate on %s at %sbps...\n", param_port, param_speed);
 	fd = serial_open(param_port);
 	if (fd < 0) {
 		fprintf(stderr, "Error opening serial port\n");
