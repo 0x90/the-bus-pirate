@@ -1,2 +1,2 @@
-SPIsniffer COM3
+SPIsniffer -d COM3
 pause

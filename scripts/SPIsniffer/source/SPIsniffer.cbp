@@ -11,6 +11,7 @@
 				<Option object_output="obj\Debug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters="-d com1 -m -c 1 -p 0" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
@@ -31,6 +32,10 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="buspirate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="buspirate.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>

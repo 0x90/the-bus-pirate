@@ -32,14 +32,14 @@
 	<unistd.h>
 	"serial.h"
 
-1282296370 source:e:\work\bus-pirate\trunk\scripts\spisniffer\source\serial.c
+1282296372 source:e:\work\bus-pirate\trunk\scripts\spisniffer\source\serial.c
 	<stdio.h>
 	<stdlib.h>
 	<fcntl.h>
 	<string.h>
 	"serial.h"
 
-1282296378 e:\work\bus-pirate\trunk\scripts\spisniffer\source\serial.h
+1282296380 e:\work\bus-pirate\trunk\scripts\spisniffer\source\serial.h
 	<windows.h>
 	<time.h>
 	<unistd.h>
@@ -58,10 +58,24 @@
 	<sys/types.h>
 	<sys/time.h>
 
-1282300988 source:e:\work\bus-pirate\trunk\scripts\spisniffer\source\main.c
+1282571658 source:e:\work\bus-pirate\trunk\scripts\spisniffer\source\main.c
 	<stdio.h>
 	<stdlib.h>
 	<conio.h>
 	<unistd.h>
+	<string.h>
+	<windef.h>
+	"buspirate.h"
 	"serial.h"
+
+1282570427 e:\work\bus-pirate\trunk\scripts\spisniffer\source\buspirate.h
+	<stdint.h>
+
+1282570427 source:e:\work\bus-pirate\trunk\scripts\spisniffer\source\buspirate.c
+	<stdlib.h>
+	<string.h>
+	<stdio.h>
+	<unistd.h>
+	"serial.h"
+	"buspirate.h"
 
