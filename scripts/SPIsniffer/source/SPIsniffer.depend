@@ -58,7 +58,7 @@
 	<sys/types.h>
 	<sys/time.h>
 
-1282571658 source:e:\work\bus-pirate\trunk\scripts\spisniffer\source\main.c
+1282814383 source:e:\work\bus-pirate\trunk\scripts\spisniffer\source\main.c
 	<stdio.h>
 	<stdlib.h>
 	<conio.h>
@@ -68,10 +68,10 @@
 	"buspirate.h"
 	"serial.h"
 
-1282570427 e:\work\bus-pirate\trunk\scripts\spisniffer\source\buspirate.h
+1282814040 e:\work\bus-pirate\trunk\scripts\spisniffer\source\buspirate.h
 	<stdint.h>
 
-1282570427 source:e:\work\bus-pirate\trunk\scripts\spisniffer\source\buspirate.c
+1282814528 source:e:\work\bus-pirate\trunk\scripts\spisniffer\source\buspirate.c
 	<stdlib.h>
 	<string.h>
 	<stdio.h>

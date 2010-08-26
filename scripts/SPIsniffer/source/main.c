@@ -30,8 +30,6 @@ int disable_comport = 0;   //1 to say yes, disable comport, any value to enable 
 int dumphandle;     // use by dump file when using the -d dumfile.txt parameter
 char *dumpfile;
 
-#define SPI 0x01
-
 int print_usage(char * appname)
 	{
 		//print usage
@@ -211,7 +209,15 @@ while ((opt = getopt(argc, argv, "ms:p:e:d:")) != -1) {
 
 
           fprintf(stderr, " Configuring Bus Pirate...\n");
-   	      BP_EnableMode(fd, SPI); //enter BBIO then SPI
+   	      //BP_EnableMode(fd, SPI); //enter BBIO then SPI
+   	      if(BP_EnableBinary(fd)!=BBIO){
+                fprintf(stderr, "Buspirate cannot switch to binary mode :( \n");
+                return -1;
+   	      }
+          if(BP_EnableMode(fd , SPI)!=SPI){
+                fprintf(stderr, "Buspirate cannot switch to SPI mode :( \n");
+                return -1;
+          }
     //
 	//Start sniffer
 	//
