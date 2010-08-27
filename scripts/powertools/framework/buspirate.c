@@ -32,21 +32,20 @@ uint32_t BP_WriteToPirate(int fd, char * val) {
 
 
     serial_write(fd, val, 1);
+    Sleep(1);
+    res = serial_read(fd, &ret, 1);
 
-    if (disable_comport != 1) {  //if comport is enable, we need a response from the port
-
-          res = serial_read(fd, &ret, 1);
-
-	      if( ret != '\x01') {
-	          if (modem==TRUE){
-	             printf("Modem responded with %i byte and with a value of 0X%X\n",res,ret);
-
-	          } else {
-		          printf("ERROR");
+	if( ret != '\x01') {
+	       if (modem==TRUE){
+	             printf(" Modem responded with %i byte and with a value of 0X%X\n",res,ret);
+                 return 0;
+	           }
+	            else {
+		          printf(" ERROR: BusPirate replied with 0x%x instead of 0x01 \n",ret);
 		          return -1;
 	          }
 	        }
-        }
+    printf(" BusPirate said: OK\n");
 	return 0;
 }
 
@@ -80,12 +79,12 @@ int BP_EnableBinary(int fd)   // should return BBIO if ok, ERR if not
 		ret = serial_read(fd, tmp, 5);
 		if (modem==TRUE)
 		{
-            printf("\nModem Responded = %i\n",ret);
+            printf("\n Modem Responded = %i\n",ret);
             done=1;
 		}
 		else {
 		     if (ret != 5 && tries>20) {
-			         fprintf(stderr, "Buspirate did not respond correctly :( %i \n", ret );
+			         fprintf(stderr, " Buspirate did not respond correctly :( %i \n", ret );
 			         ret=ERR;
 		      }
 		      else if (strncmp(tmp, "BBIO1", 5) == 0) {
@@ -95,7 +94,8 @@ int BP_EnableBinary(int fd)   // should return BBIO if ok, ERR if not
 		}
 
 		if (tries>25){
-		printf("Buspirate:Too many tries in serial read! -exiting \n - chip not detected, or not readable/writable\n");
+		printf(" Buspirate:Too many tries in serial read! -exiting \n - chip not detected, or not readable/writable\n");
+		break;
 		ret=ERR;
 		}
 	}
@@ -114,7 +114,7 @@ int BP_EnableMode(int fd, char bbmode)
 	//int cmd_sent = 0;
 	int tries=0;
     current_mode=(int)bbmode;
-	printf(" Switching to %s mode\n",modes[bbmode]);
+	printf(" Switching to %s mode\n",modes[current_mode]);
 
 
 	tmp[0] = bbmode;
@@ -125,7 +125,7 @@ int BP_EnableMode(int fd, char bbmode)
 	ret = serial_read(fd, tmp, 4);
 	if (modem==TRUE)
 		{
-            printf("Modem Responded = %i with value of ",ret);
+            printf(" Modem Responded = %i with value of ",ret);
              if(ret>0){
             for(c=0; c<ret; c++){
                 printf("%02X ", (uint8_t)tmp[c]);
@@ -173,7 +173,7 @@ int BP_EnableMode(int fd, char bbmode)
                break;
 
             default:
-                 fprintf(stderr, "Buspirate did not respond correctly :( %i \n", ret );
+                 fprintf(stderr, " Buspirate did not respond correctly :( %i \n", ret );
                  response=ERR;
              }
 

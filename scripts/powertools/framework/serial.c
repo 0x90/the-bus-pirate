@@ -208,13 +208,12 @@ int serial_write(int fd, char *buf, int size)
 
 	//fprintf(stderr, "size = %d ret = %d\n", size, ret);
 	//buspirate_print_buffer(buf, size);
-    if (disable_comport !=1)   //added for no port
-    {
-    	if (ret != size)
+
+   	if (ret != size)
 	    	fprintf(stderr, "Error sending data");
-	    return ret;
-    }
-    return ret;
+	return ret;
+
+
 }
 
 int serial_read(int fd, char *buf, int size)
@@ -259,17 +258,7 @@ int serial_read(int fd, char *buf, int size)
 	//printf("should have read = %i actual size = %i \n", size, len);
 	//fprintf(stderr, "should have read = %d actual size = %d \n", size, len);
 	//buspirate_print_buffer(buf, len);
-if (disable_comport!=1)
-{
 
-
-	//if (len != size)
-	//	fprintf(stderr, "Error sending data");
-
-
-	return len;
-}
-else
 return len;
 }
 

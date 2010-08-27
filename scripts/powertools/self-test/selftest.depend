@@ -1,18 +1,13 @@
 # depslib dependency file v1.0
-1282818763 source:e:\work\bus-pirate\trunk\scripts\self-tester\source\main.c
-	<stdio.h>
+1282840436 source:c:\jamz\framework\buspirate.c
 	<stdlib.h>
-	<conio.h>
-	<unistd.h>
 	<string.h>
-	<windef.h>
-	"buspirate.h"
+	<stdio.h>
+	<unistd.h>
 	"serial.h"
+	"buspirate.h"
 
-1282814040 e:\work\bus-pirate\trunk\scripts\self-tester\source\buspirate.h
-	<stdint.h>
-
-1282296380 e:\work\bus-pirate\trunk\scripts\self-tester\source\serial.h
+1282835633 c:\jamz\framework\serial.h
 	<windows.h>
 	<time.h>
 	<unistd.h>
@@ -31,18 +26,23 @@
 	<sys/types.h>
 	<sys/time.h>
 
-1282296372 source:e:\work\bus-pirate\trunk\scripts\self-tester\source\serial.c
+1282835633 c:\jamz\framework\buspirate.h
+	<stdint.h>
+
+1282839916 source:c:\jamz\framework\serial.c
 	<stdio.h>
 	<stdlib.h>
 	<fcntl.h>
 	<string.h>
 	"serial.h"
 
-1282814641 source:e:\work\bus-pirate\trunk\scripts\self-tester\source\buspirate.c
-	<stdlib.h>
-	<string.h>
+1282849898 source:c:\jamz\self-tester\source\main.c
 	<stdio.h>
+	<stdlib.h>
+	<conio.h>
 	<unistd.h>
-	"serial.h"
-	"buspirate.h"
+	<string.h>
+	<windef.h>
+	"..\..\framework\buspirate.h"
+	"..\..\framework\serial.h"
 

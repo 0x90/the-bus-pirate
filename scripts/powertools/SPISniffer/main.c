@@ -21,21 +21,22 @@
 #include <string.h>
 #include <windef.h>
 
-#include "buspirate.h"
-#include "serial.h"
+
+#include "..\framework\buspirate.h"
+#include "..\framework\serial.h"
 
 int modem =FALSE;   //set this to TRUE of testing a MODEM
 int verbose = 0;
-int disable_comport = 0;   //1 to say yes, disable comport, any value to enable port default is 0 meaning port is enable.
+//int disable_comport = 0;   //1 to say yes, disable comport, any value to enable port default is 0 meaning port is enable.
 int dumphandle;     // use by dump file when using the -d dumfile.txt parameter
 char *dumpfile;
 
 int print_usage(char * appname)
 	{
 		//print usage
-		printf("\n\n");
+		printf("\n");
 
-	  printf("-------------------------------------------------------\n");
+	    printf("-----------------------------------------------------------------------------\n");
 		printf("\n");
         printf(" Usage:              \n");
 		printf("   %s  -d device -e 1 -p 0 \n ",appname);
@@ -50,7 +51,7 @@ int print_usage(char * appname)
 
         printf("\n");
 
-       printf("-------------------------------------------------------\n");
+        printf("-----------------------------------------------------------------------------\n");
 
 
 		return 0;
@@ -60,7 +61,7 @@ int print_usage(char * appname)
 
 int main(int argc, char** argv)
 {
-int opt;
+  int opt;
   char buffer[256] = {0}, i;
   int fd;
   int res,c;
@@ -82,15 +83,15 @@ int opt;
     printf(" http://dangerousprototypes.com\n");
     printf("\n");
     printf("-------------------------------------------------------\n");
-   printf("\n\n\n");
+  // printf("\n\n\n");
 
 //p == port
 // p=polarity
 // e=clock edge
 
 if (argc <= 1)  {
-	    printf("ERROR: Invalid argument(s).\n\n");
-	    printf("Help Menu\n");
+
+	    printf(" Help Menu\n");
 		print_usage(argv[0]);
 		exit(-1);
 	}
@@ -101,14 +102,14 @@ while ((opt = getopt(argc, argv, "ms:p:e:d:")) != -1) {
 
 			case 'd':  // device   eg. com1 com12 etc
 				if ( param_port != NULL){
-					printf("Device/PORT error!\n");
+					printf(" Device/PORT error!\n");
 					exit(-1);
 				}
 				param_port = strdup(optarg);
 				break;
 			case 'e':      // clock edge
  				if (param_clockedge != NULL) {
-					printf("Clock Edge should be 0 or 1\n");
+					printf(" Clock Edge should be 0 or 1\n");
 					exit(-1);
 				}
 				param_clockedge = strdup(optarg);
@@ -116,7 +117,7 @@ while ((opt = getopt(argc, argv, "ms:p:e:d:")) != -1) {
 				break;
 			case 'p':
 				if (param_polarity != NULL) {
-					printf("Polarity must be 0 or 1\n");
+					printf(" Polarity must be 0 or 1\n");
 					exit(-1);
 				}
 				param_polarity = strdup(optarg);
@@ -124,7 +125,7 @@ while ((opt = getopt(argc, argv, "ms:p:e:d:")) != -1) {
 				break;
 				case 's':
 				if (param_speed != NULL) {
-					printf("Speed should be set: eg  115200 \n");
+					printf(" Speed should be set: eg  115200 \n");
 					exit(-1);
 				}
 				param_speed = strdup(optarg);
@@ -135,21 +136,21 @@ while ((opt = getopt(argc, argv, "ms:p:e:d:")) != -1) {
 				break;
 
 			default:
-				printf("Invalid argument %c", opt);
+				printf(" Invalid argument %c", opt);
 				print_usage(argv[0]);
-				//exit(-1);
+				exit(-1);
 				break;
 		}
 	}
-    printf(" Press escape to exit \n");
-    printf("\n");
+ //   printf(" Press escape to exit \n");
+ //   printf("\n");
 
 
 
     //param_port=strdup("COM3");
     //Set default if NULL
     if (param_port==NULL){
-        printf("No serial port set\n");
+        printf(" No serial port set\n");
 		print_usage(argv[0]);
 		exit(-1);
     }
@@ -164,7 +165,8 @@ while ((opt = getopt(argc, argv, "ms:p:e:d:")) != -1) {
           param_speed=strdup("115200");
 
 
-    printf("\n  Parameters used: Device = %s,  Speed = %s, Clock Edge= %s, Polarity= %s\n\n",param_port,param_speed,param_clockedge,param_polarity);
+    printf("\n Parameters used:\n");
+    printf(" Device = %s,  Speed = %s, Clock Edge= %s, Polarity= %s\n\n",param_port,param_speed,param_clockedge,param_polarity);
 
 
     //
@@ -174,7 +176,7 @@ while ((opt = getopt(argc, argv, "ms:p:e:d:")) != -1) {
 	printf(" Opening Bus Pirate on %s at %sbps...\n", param_port, param_speed);
 	fd = serial_open(param_port);
 	if (fd < 0) {
-		fprintf(stderr, "Error opening serial port\n");
+		fprintf(stderr, " Error opening serial port\n");
 		return -1;
 	}
 
@@ -211,11 +213,14 @@ while ((opt = getopt(argc, argv, "ms:p:e:d:")) != -1) {
           fprintf(stderr, " Configuring Bus Pirate...\n");
    	      //BP_EnableMode(fd, SPI); //enter BBIO then SPI
    	      if(BP_EnableBinary(fd)!=BBIO){
-                fprintf(stderr, "Buspirate cannot switch to binary mode :( \n");
+                fprintf(stderr, " Buspirate cannot switch to binary mode :( \n");
+                fprintf(stderr, " Exiting...\n");
+
                 return -1;
    	      }
           if(BP_EnableMode(fd , SPI)!=SPI){
-                fprintf(stderr, "Buspirate cannot switch to SPI mode :( \n");
+                fprintf(stderr, " Buspirate cannot switch to SPI mode :( \n");
+                fprintf(stderr, " Exiting...\n");
                 return -1;
           }
     //
@@ -224,13 +229,18 @@ while ((opt = getopt(argc, argv, "ms:p:e:d:")) != -1) {
 
     //configure according to user settings
     //1000wxyz - SPI config, w=HiZ/3.3v, x=CKP idle, y=CKE edge, z=SMP sample
+           printf(" Setting Clockedge/Polarity ......");
             i=0x80;
             if(param_clockedge)
                 i|=0x02;
             if(param_polarity)
                 i|=0x04;
 
-            BP_WriteToPirate(fd, &i);
+            if (BP_WriteToPirate(fd, &i)==1)
+                 printf("OK\n");
+            else
+                 printf("WARNING.. Not Good\n");
+
 
     //start the sniffer
              serial_write( fd, "\x0E", 1);
@@ -278,5 +288,7 @@ while ((opt = getopt(argc, argv, "ms:p:e:d:")) != -1) {
 
 	FREE(param_port);
 	FREE(param_speed);
+    FREE(param_polarity);
+    FREE(param_clockedge);
     return 0;
 }
