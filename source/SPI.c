@@ -133,7 +133,7 @@ unsigned int SPIwrite(unsigned int c)
 void SPIsettings(void)
 {	//bpWstring("SPI (spd ckp ske smp hiz)=( ");
 	BPMSG1191;
-	bpWdec(modeConfig.speed); bpSP;
+	bpWdec((modeConfig.speed+1)); bpSP;
 	bpWdec(spiSettings.ckp); bpSP;
 	bpWdec(spiSettings.cke); bpSP;
 	bpWdec(spiSettings.smp); bpSP;
@@ -281,6 +281,30 @@ void SPImacro(unsigned int macro)
 			spiSniffer(1,1);//configure for terminal mode
 			break;
 		case 3: //sniff CS high
+			break;
+		case 10:
+			spiSettings.ckp=0;
+			goto SPImacro_settings_cleanup;
+		case 11:
+			spiSettings.ckp=1;
+			goto SPImacro_settings_cleanup;
+		case 12:
+			spiSettings.cke=0;
+			goto SPImacro_settings_cleanup;
+		case 13:
+			spiSettings.cke=1;
+			goto SPImacro_settings_cleanup;
+		case 14:
+			spiSettings.smp=0;
+			goto SPImacro_settings_cleanup;
+		case 15:
+			spiSettings.smp=1;
+SPImacro_settings_cleanup:
+			SPI1CON1bits.CKP=spiSettings.ckp;
+			SPI1CON1bits.CKE=spiSettings.cke;		
+			SPI1CON1bits.SMP=spiSettings.smp;
+			SPIsettings();
+			break;
 		default:
 			//bpWmessage(MSG_ERROR_MACRO);
 			BPMSG1016;
@@ -382,7 +406,6 @@ spiSnifferStart:
 	while(1){
 
 		//detect when CS changes. works independently of the data interrupts
-		//if(IFS1bits.CNIF && (SPICS==1)){
 		if(lastCS==0 && SPICS ==1){
 			UARTbuf(']');//bpWBR; //cs disabled
 			lastCS=1;
@@ -415,22 +438,22 @@ spiSnifferStart:
 
 		}
 
-		if(SPI1STATbits.SPIROV==1 || SPI2STATbits.SPIROV==1 ){//we weren't fast enough, buffer overflow
+		if(SPI1STATbits.SPIROV==1 || SPI2STATbits.SPIROV==1 || bpConfig.overflow==1 ){//we weren't fast enough, buffer overflow
 
-			UARTbufFlush();
+			if(bpConfig.overflow==0) UARTbufFlush();
 			SPI1STAT=0; 
 			SPI2STAT=0;
 
 			if(termMode){
 				bpWline("Couldn't keep up");	
 				goto spiSnifferStart;
-			}else{
-				BP_LEDMODE=0;
-			}			
+			}
+			
+			BP_LEDMODE=0;			
 			break;
 		}
 
-		UARTbufService();
+		if(U1STAbits.UTXBF == 0) UARTbufService();
 		if(U1STAbits.URXDA == 1){//any key pressed, exit
 			c=U1RXREG;
 			if(termMode) bpBR; //fixed in 5.1: also sent br to binmode
@@ -578,17 +601,17 @@ void binSPI(void){
 						UART1TX(1);
 						break;
 					case 0b1101: //all traffic
-						spiSniffer(2, 0);
 						UART1TX(1);
+						spiSniffer(1, 0);
 						break;
 					case 0b1110://cs low
+						UART1TX(1);
 						spiSniffer(0, 0);
-						UART1TX(1);
 						break;
-					case 0b1111://cs high
-						spiSniffer(1, 0);
-						UART1TX(1);
-						break;
+					//case 0b1111://cs high
+					//	spiSniffer(1, 0);
+					//	UART1TX(1);
+					//	break;
                 case 0b0100: //write-then-read
                         //get the number of commands that will follow
                         while(U1STAbits.URXDA == 0);//wait for a byte

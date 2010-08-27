@@ -348,11 +348,13 @@ void UARTbufSetup(void){
 	//setup ring buffer pointers
 	readpointer=0;
 	writepointer=1;
+	bpConfig.overflow=0;
 }
 
 void UARTbuf(char c){
 	if(writepointer==readpointer){
 		BP_LEDMODE=0;//drop byte, buffer full LED off
+		bpConfig.overflow=1;
 	}else{
 		bpConfig.terminalInput[writepointer]=c;
 		writepointer++;

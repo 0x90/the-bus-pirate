@@ -58,6 +58,7 @@ struct _bpConfig {
 	unsigned char HWversion;				//holds hardware revision for v3a/v3b
 	unsigned char quiet:1;					// no output 
 	unsigned char basic:1;					// basic commandline
+	unsigned char overflow:1; 			//overflow error flag
 };
 
 
