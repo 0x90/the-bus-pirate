@@ -1173,6 +1173,8 @@ void basiccmdline(void)
 	int pos, end, len, string;
 	unsigned char line[35];
 
+	unsigned int lineno1, lineno2;
+
 
 	//convert to everyhting to uppercase
 	for(i=cmdstart; i!=cmdend; )
@@ -1272,7 +1274,9 @@ void basiccmdline(void)
 				//bpWstring("len=");
 				//bpWintdec(len); bpSP;
 
-				if((pgmspace[i+1]<=line[1])&&(pgmspace[i+2]<line[2]))
+				lineno1=(pgmspace[i+1]<<8)+pgmspace[i+2];
+				lineno2=(line[1]<<8)+line[2];
+				if(lineno1<lineno2)
 				{	pos=i+len+3;
 					//bpWstring("pos=");
 					//bpWintdec(pos); bpSP;
