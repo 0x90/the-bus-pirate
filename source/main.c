@@ -20,6 +20,8 @@
 #include "selftest.h"
 //#include "binIO.h"
 //#include "SUMP.h"
+#include "basic.h"
+
 
 //set custom configuration for PIC 24F (now always set in bootloader page, not needed here)
 //_CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
@@ -97,6 +99,10 @@ void Initialize(void){
 
 	bpConfig.quiet=0;		// turn output on (default)
 	modeConfig.numbits=8;
+#ifdef BP_USE_BASIC
+	initpgmspace();
+#endif
+
 
 	bpWBR; 	//send a line feed
 

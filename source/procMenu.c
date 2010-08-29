@@ -65,7 +65,7 @@ void serviceuser(void)
 {	int cmd, stop;
 	int newstart;
 	int oldstart;
-	unsigned int sendw;
+	unsigned int sendw,received;
 	int repeat;
 	unsigned char c;
 	int temp;
@@ -632,25 +632,29 @@ void serviceuser(void)
 							cmdstart&=CMDLENMSK;
 							repeat=getrepeat()+1;
 							numbits=getnumbits();
-							if(numbits) modeConfig.numbits=numbits;
+							if(numbits)
+							{	modeConfig.numbits=numbits;
+								if(numbits>8) modeConfig.int16=1;
+									else modeConfig.int16=0;
+							}
 							while(--repeat)
 							{	bpWbyte(sendw);
-								if(modeConfig.numbits!=8)
+								if(((modeConfig.int16==0)&&(modeConfig.numbits!=8))||((modeConfig.int16==1)&&(modeConfig.numbits!=16)))
 								{	UART1TX(';');
 									bpWdec(modeConfig.numbits);
 								}	
 								if(modeConfig.lsbEN==1){//adjust bitorder
 									sendw=bpRevByte(sendw);
 								}
-								temp=protos[bpConfig.busMode].protocol_send(sendw);
+								received=protos[bpConfig.busMode].protocol_send(sendw);
 								bpSP;
-								if(temp<0x100)
+								if(modeConfig.wwr)
 								{	//bpWmessage(MSG_READ);
 									BPMSG1102;
 									if(modeConfig.lsbEN==1){//adjust bitorder
-										temp=bpRevByte((unsigned char)temp);
+										received=bpRevByte(received);
 									}
-									bpWbyte(temp);
+									bpWbyte(received);
 									bpSP;
 								}
 							}
@@ -661,15 +665,19 @@ void serviceuser(void)
 							BPMSG1102;
 							repeat=getrepeat()+1;
 							numbits=getnumbits();
-							if(numbits) modeConfig.numbits=numbits;
+							if(numbits)
+							{	modeConfig.numbits=numbits;
+								if(numbits>8) modeConfig.int16=1;
+									else modeConfig.int16=0;
+							}
 							while(--repeat)
 							{	
-								c=protos[bpConfig.busMode].protocol_read();
+								received=protos[bpConfig.busMode].protocol_read();
 								if(modeConfig.lsbEN==1){//adjust bitorder
-									c=bpRevByte(c);
+									received=bpRevByte(received);
 								}
-								bpWbyte(c);
-								if(modeConfig.numbits!=8)
+								bpWbyte(received);
+								if(((modeConfig.int16==0)&&(modeConfig.numbits!=8))||((modeConfig.int16==1)&&(modeConfig.numbits!=16)))
 								{	UART1TX(';');
 									bpWdec(modeConfig.numbits);
 								}	

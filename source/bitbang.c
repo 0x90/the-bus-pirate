@@ -162,6 +162,7 @@ unsigned int bbReadWriteByte(unsigned int c){
 		dat=dat<<1;  //shift the data input byte bits
 		if(di)dat++; //if datapin in is high, set LBS
 	}
+
 	return dat;
 }
 
@@ -202,7 +203,6 @@ unsigned int bbReadByte(void){
 		dat=dat<<1;//shift the data input byte bits
 		if(di)dat++;//if datapin in is high, set LBS
 	}
-
 	return dat;
 }
 

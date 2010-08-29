@@ -44,7 +44,7 @@ extern int cmderror;
 
 
 struct _R3W{
-	unsigned char wwr:1;
+//	unsigned char wwr:1;
 	unsigned char csl:1;
 } r3wSettings;
 
@@ -55,15 +55,14 @@ unsigned int R3Wread(void)
 
 unsigned int R3Wwrite(unsigned int c)
 {	c=bbReadWriteByte(c);
-	if(r3wSettings.wwr==1)
+	if(modeConfig.wwr==1)
 	{	return c;
 	}
-	else
-	{	return 0x100;
-	}
+	return 0x00;
 }
+
 void R3Wstartr(void)
-{	r3wSettings.wwr=1;
+{	modeConfig.wwr=1;
 	if(r3wSettings.csl)
 	{	bbCS(0);
 	}
@@ -75,7 +74,7 @@ void R3Wstartr(void)
 	BPMSG1159;
 }
 void R3Wstart(void)
-{	r3wSettings.wwr=0;
+{	modeConfig.wwr=0;
 	if(r3wSettings.csl)
 	{	bbCS(0);
 	}
@@ -87,7 +86,7 @@ void R3Wstart(void)
 	BPMSG1159;
 }
 void R3Wstop(void)
-{	r3wSettings.wwr=0;
+{	modeConfig.wwr=0;
 	if(r3wSettings.csl)
 	{	bbCS(1);
 	}
@@ -178,7 +177,8 @@ void R3Wsetup(void)
 	}
 
 	//reset the write with read variable
-	r3wSettings.wwr=0;
+	modeConfig.wwr=0;
+	modeConfig.int16=0; //8 bit 
 	
 	bbSetup(3, modeConfig.speed); //setup the bitbang library, must be done before calling bbCS below
 	//setup pins (pins are input/low when we start)

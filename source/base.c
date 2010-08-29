@@ -144,7 +144,10 @@ void InitializeUART1(void)
 
 //print byte c to the user terminal in the format 
 //  specified by the bpConfig.displayMode setting
-void bpWbyte(unsigned int c){
+void bpWbyte(unsigned int c)
+{	if(modeConfig.numbits<16)
+	{	c&=(0x7FFF>>((16-modeConfig.numbits)-1));
+	}
 	switch(bpConfig.displayMode){
 		case HEX:
 			if(modeConfig.int16) bpWinthex(c); else bpWhex(c);
@@ -159,7 +162,9 @@ void bpWbyte(unsigned int c){
 			bpWbin(c);
 			break;
 		case RAW:
-			UART1TX(c>>8);
+			if(modeConfig.int16)
+			{	UART1TX(c>>8);
+			}
 			UART1TX(c&0x0FF);
 			break;
 	}
@@ -202,6 +207,8 @@ void bpDelayUS(int delay)
 	}
 }
 
+
+/*
 unsigned char bpRevByte(unsigned char c){
 	unsigned char r=0, i;
 
@@ -215,6 +222,20 @@ unsigned char bpRevByte(unsigned char c){
 	}
 	return r;
 }
+*/
 
+unsigned int bpRevByte(unsigned int c)
+{	unsigned int r=0, i;
+
+	for(i=0b1; i!=0; i=i<<1)
+	{	r=r<<1;	
+		if(c&i)r|=0b1;
+	}
+
+	if(modeConfig.numbits!=16)
+	{	r>>=(16-modeConfig.numbits);
+	}
+	return r;
+}
 
 

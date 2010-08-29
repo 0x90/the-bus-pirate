@@ -60,7 +60,7 @@ struct _SPI{
 	unsigned char ckp:1;
 	unsigned char cke:1;
 	unsigned char smp:1;
-	unsigned char wwr:1;
+//	unsigned char wwr:1;
 	unsigned char csl:1;		// to /CS or  not to CS
 } spiSettings;
 
@@ -76,7 +76,7 @@ extern int cmderror;
 */
 
 void SPIstartr(void)
-{	spiSettings.wwr=1;	
+{	modeConfig.wwr=1;	
 	if(spiSettings.csl)
 	{	SPICS=0; 
 	}
@@ -89,7 +89,7 @@ void SPIstartr(void)
 }
 
 void SPIstart(void)
-{	spiSettings.wwr=0;	
+{	modeConfig.wwr=0;	
 	if(spiSettings.csl)
 	{	SPICS=0; 
 	}
@@ -122,11 +122,8 @@ unsigned int SPIwrite(unsigned int c)
 {	unsigned char r;
 
 	r=spiWriteByte(c);
-	if(spiSettings.wwr==1){
+	if(modeConfig.wwr==1){
 		return r;
-	}
-	else
-	{	return 0x100;
 	}
 }
 
@@ -250,7 +247,7 @@ void SPIsetup(void)
 	else
 	{	SPIsettings();
 	}
-	spiSettings.wwr=0;
+	modeConfig.wwr=0;
 	//do SPI peripheral setup
 	spiSetup(SPIspeed[modeConfig.speed]);
 

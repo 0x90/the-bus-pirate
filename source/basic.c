@@ -1343,13 +1343,7 @@ void basiccmdline(void)
 			}
 		}
 		else if(compare("NEW"))
-		{	for(i=0; i<PGMSIZE ;i++)
-			{	pgmspace[i]=0;
-			}
-			pgmspace[0]=TOK_LEN+1;
-			pgmspace[1]=0xFF;
-			pgmspace[2]=0xFF;
-			pgmspace[3]=TOK_END;
+		{	void initpgmspace();
 		}
 		else
 		{	//bpWline("Syntax error");
@@ -1358,6 +1352,20 @@ void basiccmdline(void)
 	}
 //	cmdstart=cmdend;
 }
+
+void initpgmspace(void)
+{	int i;
+
+	for(i=0; i<PGMSIZE ;i++)
+	{	pgmspace[i]=0;
+	}
+	pgmspace[0]=TOK_LEN+1;
+	pgmspace[1]=0xFF;
+	pgmspace[2]=0xFF;
+	pgmspace[3]=TOK_END;
+}
+
+
 
 #ifdef BP_USE_BASICI2C
 

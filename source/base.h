@@ -21,7 +21,7 @@
 //#define BUSPIRATEV1A //http://hackaday.com/2009/01/22/how-to-bus-pirate-v1-improved-universal-serial-interface/
 #define BUSPIRATEV3 //also v2go
 
-#define BP_FIRMWARE_STRING "Firmware v5.8RC (r491) "
+#define BP_FIRMWARE_STRING "Firmware v5.8RC (r492) "
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
@@ -149,6 +149,7 @@ struct _modeConfig {
 	unsigned char lsbEN:1;
 	unsigned char HiZ:1;
 	unsigned char int16:1;			// 16 bits output?
+	unsigned char wwr:1;			// write with read
 };
 
 struct _command {
@@ -157,7 +158,7 @@ struct _command {
 	unsigned int repeat;	
 };
 
-unsigned char bpRevByte(unsigned char c);
+unsigned int bpRevByte(unsigned int c);
 
 //reset all peripherals before configuring a new bus protocol
 void bpInit(void); 

@@ -134,7 +134,7 @@ int evaluate(void);
 void interpreter(void);
 void printstat(char *s);
 void list(void);
-
+void initpgmspace(void);
 void basiccmdline(void);
 
 void directory(void);
