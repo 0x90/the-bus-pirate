@@ -45,7 +45,19 @@ uint32_t BP_WriteToPirate(int fd, char * val) {
 		          return -1;
 	          }
 	        }
-    printf(" BusPirate said: OK\n");
+    //printf(" BusPirate said: OK\n");
+	return 0;
+}
+
+uint32_t BP_WriteToPirateNoCheck(int fd, char * val) {
+	int res = -1;
+	char ret = 0;
+
+
+    serial_write(fd, val, 1);
+    Sleep(1);
+    res = serial_read(fd, &ret, 1);
+
 	return 0;
 }
 

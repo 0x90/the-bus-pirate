@@ -20,3 +20,4 @@
 uint32_t BP_WriteToPirate(int , char *);
 int BP_EnableBinary(int);
 int BP_EnableMode(int , char );
+uint32_t BP_WriteToPirateNoCheck(int fd, char * val);
