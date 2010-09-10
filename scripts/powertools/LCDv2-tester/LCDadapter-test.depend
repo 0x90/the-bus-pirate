@@ -36,7 +36,7 @@
 	<string.h>
 	"serial.h"
 
-1283176535 source:e:\work\bus-pirate\trunk\scripts\powertools\lcdv2-tester\main.c
+1283265306 source:e:\work\bus-pirate\trunk\scripts\powertools\lcdv2-tester\main.c
 	<stdio.h>
 	<stdlib.h>
 	<conio.h>

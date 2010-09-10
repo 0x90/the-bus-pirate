@@ -79,3 +79,50 @@
 	"serial.h"
 	"buspirate.h"
 
+1283176317 source:e:\work\bus-pirate\trunk\scripts\powertools\framework\buspirate.c
+	<stdlib.h>
+	<string.h>
+	<stdio.h>
+	<unistd.h>
+	"serial.h"
+	"buspirate.h"
+
+1282857232 e:\work\bus-pirate\trunk\scripts\powertools\framework\serial.h
+	<windows.h>
+	<time.h>
+	<unistd.h>
+	<termios.h>
+	<sys/select.h>
+	<sys/types.h>
+	<sys/time.h>
+	<IOKit/serial/ioss.h>
+	<sys/ioctl.h>
+	<stdint.h>
+	<windows.h>
+	<time.h>
+	<unistd.h>
+	<termios.h>
+	<sys/select.h>
+	<sys/types.h>
+	<sys/time.h>
+
+1283175648 e:\work\bus-pirate\trunk\scripts\powertools\framework\buspirate.h
+	<stdint.h>
+
+1282861516 source:e:\work\bus-pirate\trunk\scripts\powertools\framework\serial.c
+	<stdio.h>
+	<stdlib.h>
+	<fcntl.h>
+	<string.h>
+	"serial.h"
+
+1284133847 source:e:\work\bus-pirate\trunk\scripts\powertools\spisniffer\main.c
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<string.h>
+	<conio.h>
+	<windef.h>
+	"..\framework\buspirate.h"
+	"..\framework\serial.h"
+
