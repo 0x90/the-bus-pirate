@@ -16,6 +16,6 @@
 void UART2Setup(unsigned int brg, unsigned char ODCoutput, unsigned char rxp, unsigned char dbpl, unsigned char sb );
 void UART2Enable(void);
 void UART2Disable(void);
-void UART2TX(unsigned char c);
+void UART2TX(unsigned int c);
 unsigned char UART2RXRdy(void);
-unsigned char UART2RX(void);
+unsigned int UART2RX(void);

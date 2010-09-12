@@ -38,6 +38,7 @@ void UART2Setup(unsigned int brg, unsigned char ODCoutput, unsigned char rxp, un
     U2MODEbits.BRGH = 1;
 	U2MODEbits.RXINV=rxp; //rx polarity
 	U2MODEbits.PDSEL=dbp; //databits and parity
+
 	//U2MODEbits.PDSEL1=1;//dbp; //databits and parity
 	U2MODEbits.STSEL=sb; //stop bits
     U2STA = 0;
@@ -58,12 +59,12 @@ void UART2Disable(void){
 	UARTTX_ODC=0;
 }
 
-void UART2TX(unsigned char c){
+void UART2TX(unsigned int c){
 	while(U2STAbits.UTXBF == 1); //if buffer is full, wait
     U2TXREG = c;
 }
 
-unsigned char UART2RX(void){
+unsigned int UART2RX(void){
     while(U2STAbits.URXDA == 0);
 	return U2RXREG;
 }

@@ -46,7 +46,7 @@ struct _UART{
 static unsigned int UART2speed[]={13332,3332,1666,832,416,207,103,68,34,127};//BRG:300,1200,2400,4800,9600,19200,38400,57600,115200, 31250,
 
 unsigned int UARTread(void)
-{	unsigned char c;
+{	unsigned int c;
 	if(UART2RXRdy())
 	{	if(U2STAbits.PERR) BPMSG1194;	//bpWstring("-p "); //show any errors
 		if(U2STAbits.FERR) BPMSG1195;	//bpWstring("-f ");
@@ -68,7 +68,7 @@ unsigned int UARTread(void)
 
 unsigned int UARTwrite(unsigned int c)
 {	UART2TX(c);				//send byte
-	return 0x100;
+	return 0;
 }
 
 // todo: read from cmdline for now it is ok
@@ -183,6 +183,10 @@ void UARTsetup(void)
 	}
 	else
 	{	UART2Setup(UART2speed[modeConfig.speed],modeConfig.HiZ, uartSettings.rxp, uartSettings.dbp, uartSettings.sb );
+	}
+
+	if(uartSettings.dbp==3)		// 9 bits
+	{	modeConfig.numbits=9;
 	}
 
 	UART2Enable();
