@@ -176,14 +176,27 @@ void binBB(void){
 				BP_AUX_RPOUT = 0;	 //remove output from AUX pin
 				UART1TX(1);
 			//ADC only for v1, v2, v3
-			#ifndef BUSPIRATEV0
-				}else if(inByte == 0b10100){//ADC reading (x/1024)*6.6volts
-					AD1CON1bits.ADON = 1; // turn ADC ON
+			}else if(inByte == 0b10100){//ADC reading (x/1024)*6.6volts
+				AD1CON1bits.ADON = 1; // turn ADC ON
+				i=bpADC(12); //take measurement
+				AD1CON1bits.ADON = 0; // turn ADC OFF
+				UART1TX((i>>8)); //send upper 8 bits
+				UART1TX(i); //send lower 8 bits		
+			}else if(inByte == 0b10101){//ADC reading (x/1024)*6.6volts
+				AD1CON1bits.ADON = 1; // turn ADC ON
+				while(1){
 					i=bpADC(12); //take measurement
-					AD1CON1bits.ADON = 0; // turn ADC OFF
+					while(U1STAbits.TRMT==0);
 					UART1TX((i>>8)); //send upper 8 bits
-					UART1TX(i); //send lower 8 bits											
-			#endif
+					//while(U1STAbits.TRMT==0);
+					UART1TX(i); //send lower 8 bits	
+
+					if(U1STAbits.URXDA == 1){//any key pressed, exit
+						i=U1RXREG;
+						break;
+					}		
+				}
+				AD1CON1bits.ADON = 0; // turn ADC OFF							
 			}else if((inByte>>5)&0b010){//set pin direction, return read
 				UART1TX(binBBpindirectionset(inByte));
 			}else{//unknown command, error
