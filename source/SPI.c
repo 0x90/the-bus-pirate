@@ -641,7 +641,7 @@ void binSPI(void){
                         for(j=0; j<fw; j++){
                                 spiWriteByte(bpConfig.terminalInput[j]);
                         }
-
+						bpDelayUS(1);
                         for(j=0; j<fr; j++){ //read bulk bytes from SPI
                                 bpConfig.terminalInput[j]=spiWriteByte(0xff);
                         }
