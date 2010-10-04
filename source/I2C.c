@@ -728,7 +728,7 @@ void binI2CversionString(void){bpWstring("I2C1");}
 
 void binI2C(void){
 	static unsigned char inByte, rawCommand, i;
-	
+	unsigned int j, fw, fr;
 	//I2C setup
 	SDA_TRIS=1;
 	SCL_TRIS=1;
@@ -778,6 +778,66 @@ void binI2C(void){
 						bbI2Cnack();
 						UART1TX(1);
 						break;
+                	case 8: //write-then-read
+                        //get the number of commands that will follow
+                        while(U1STAbits.URXDA == 0);//wait for a byte
+                        fw=U1RXREG; //get byte
+                        fw=fw<<8;
+                        while(U1STAbits.URXDA == 0);//wait for a byte
+                        fw|=U1RXREG; //get byte
+
+                        //get the number of reads to do
+                        while(U1STAbits.URXDA == 0);//wait for a byte
+                        fr=U1RXREG; //get byte
+                        fr=fr<<8;
+                        while(U1STAbits.URXDA == 0);//wait for a byte
+                        fr|=U1RXREG; //get byte
+
+
+                        //check length and report error
+                        if(fw>=TERMINAL_BUFFER||fr>=TERMINAL_BUFFER){
+I2C_write_read_error:	//use this for the read error too
+                                UART1TX(0);
+                                break;
+                        }
+
+                        //get bytes
+                        for(j=0; j<fw; j++){
+                                while(U1STAbits.URXDA == 0);//wait for a byte
+                                bpConfig.terminalInput[j]=U1RXREG;
+                        }
+                       
+						//start
+						bbI2Cstart();
+
+                        for(j=0; j<fw; j++){
+								//get ACK
+								//if no ack, goto error
+								bbWriteByte(bpConfig.terminalInput[j]); //send byte
+								if(bbReadBit()==1) goto I2C_write_read_error;
+                        }
+
+                        for(j=0; j<fr; j++){ //read bulk bytes from SPI
+								//send ack
+								//i flast byte, send NACK
+								bpConfig.terminalInput[j]=bbReadByte();
+								
+								if(j<fr-1){
+									bbI2Cack();
+								}else{
+									bbI2Cnack();
+								}
+                        }
+						//I2C stop
+						bbI2Cstop();
+
+                        UART1TX(1);//send 1/OK
+
+                        for(j=0; j<fr; j++){ //send the read buffer contents over serial
+                                UART1TX(bpConfig.terminalInput[j]);
+                        }
+
+                        break;
 					case 0b1111:
 						I2C_Sniffer(0);//set for raw output
 						UART1TX(1);
