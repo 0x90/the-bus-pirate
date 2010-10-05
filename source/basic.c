@@ -1149,8 +1149,7 @@ int compare(char *p)
 		{	cmdstart=oldstart;
 			return 0;
 		}
-		cmdstart++;
-		cmdstart&=CMDLENMSK;
+		cmdstart=(cmdstart+1)&CMDLENMSK;
 
 		p++;
 	}
@@ -1240,8 +1239,7 @@ void basiccmdline(void)
 			else
 			{	if(cmdbuf[cmdstart]=='"') string^=0x01;
 				line[i]=cmdbuf[cmdstart];
-				cmdstart++;
-				cmdstart&=CMDLENMSK;
+				cmdstart=(cmdstart+1)&CMDLENMSK;
 			}
 			i++;
 			if(i>35) 

@@ -51,7 +51,6 @@ unsigned int cmdend;
 unsigned int cmdstart;
 int cmderror;
 
-
 //int currentproto;	// port to the other way :)
 
 #define USRMACROS	5
@@ -69,15 +68,20 @@ void serviceuser(void)
 	int repeat;
 	unsigned char c;
 	int temp;
+	int temp2;
 	int binmodecnt;
 	int numbits;
+	unsigned int tmpcmdend, histcnt, tmphistcnt;
 
 	// init
 	cmd=0;
 	cmdstart=0;
 	cmdend=0;
+	tmpcmdend = cmdend;
+	histcnt = 0;
+	tmphistcnt = 0;
 	bpConfig.busMode=0;
-	cmderror=0;							// we don;t want to start with error do we?
+	cmderror=0;							// we don't want to start with error do we?
 	binmodecnt=0;
 
 	for(repeat=0; repeat<USRMACROS;repeat++)
@@ -131,50 +135,327 @@ void serviceuser(void)
 			}
 
 			switch(c)
-			{	case 0x08:	if(cmdend!=cmdstart)				// backspace pressed, do we have already input??
-							{	cmdend--;
-								cmdend&=CMDLENMSK;
-								bpWstring("\x08 \x08");		// destructive backspace ian !! :P
-							}								// editing could be done with the cursor :P
-							break;
-				case 0x0A:
-				case 0x0D:	cmd=1;						// enter pressed, we got a command!!
-							if(((cmdend+1)&CMDLENMSK)!=cmdstart)			// no bufferoverflow?
-							{	cmdbuf[cmdend]=0x00;					// we can use this to find the typed history
-								cmdend++;
-								cmdend&=CMDLENMSK;
+			{	case 0x08:	// backspace(^H)
+					if( tmpcmdend != cmdstart )	// not at begining?
+					{							
+						if( tmpcmdend == cmdend )		// at the end?
+						{
+							cmdend = ( cmdend - 1 ) & CMDLENMSK;
+							tmpcmdend = cmdend;			// update temp
+							bpWstring("\x08 \x08");		// destructive backspace ian !! :P
+						} 
+						else	// not at end, left arrow used
+						{
+							repeat = 0;	// use as temp, not valid here anyway
+							tmpcmdend=(tmpcmdend-1)&CMDLENMSK;
+							bpWstring("\x1B[D");	// move left	
+							for( temp = tmpcmdend; temp != cmdend; temp = (temp+1) & CMDLENMSK )
+							{
+								cmdbuf[temp]=cmdbuf[temp+1];
+								if(cmdbuf[temp]) // not NULL
+									UART1TX(cmdbuf[temp]);	
+								else
+									UART1TX(0x20);	
+								repeat++;
 							}
+							cmdend = ( cmdend - 1 ) & CMDLENMSK;	// end pointer moves left one
+							bpWstring("\x1B[");	// move left
+							bpWdec(repeat);		// to original
+							bpWstring("D");		// cursor position
+						}
+					}
+					else
+					{
+						UART1TX(BELL);	// beep, at begining
+					}
+					break;
+				case 0x04:	// delete (^D)
+				case 0x7F:	// delete key
+					if( tmpcmdend != cmdend )		// not at the end
+					{
+						repeat = 0;	// use as temp, not valid here anyway
+						for( temp = tmpcmdend; temp != cmdend; temp = (temp+1) & CMDLENMSK )
+						{
+							cmdbuf[temp]=cmdbuf[temp+1];
+							if(cmdbuf[temp]) // not NULL
+								UART1TX(cmdbuf[temp]);	
 							else
-							{	UART1TX(BELL);			// echo beep (overflow)
-								cmdbuf[cmdend]=0x00;
-							}
-							bpWline("");
-							break;
-				case 0x00:	binmodecnt++;
-							if(binmodecnt==20)
-							{	binBB();
-								binmodecnt=0;			// do we get here or not?
-							}
-							break;
-				case 0x02:	if(binmodecnt>=5)
-							{	SUMP();
-								binmodecnt=0;
-							}
-							break;
-				default:	if(((cmdend+1)&CMDLENMSK)!=cmdstart)			// do we have room to store it?
-							{	if((c>=0x20)&&(c<=127))		// printable??
-								{	UART1TX(c);				// echo back and store it
-									cmdbuf[cmdend]=c;
-									cmdend++;
-									cmdend&=CMDLENMSK;
+								UART1TX(0x20);	
+							repeat++;
+						}
+						cmdend = ( cmdend - 1 ) & CMDLENMSK;	// end pointer moves left one
+						bpWstring("\x1B[");	// move left
+						bpWdec(repeat);		// to original
+						bpWstring("D");		// cursor position
+					}
+					else
+					{
+						UART1TX(BELL);	// beep, at end
+					}
+					break;
+				case 0x1B:	// escape
+					c=UART1RX();					// get next char
+					if(c=='[')						// got CSI
+					{
+						c = UART1RX();				// get next char
+						switch(c)
+						{
+							case 'D':	// left arrow
+								goto left;
+//										if(tmpcmdend != cmdstart)	// at the begining?
+//										{
+//											tmpcmdend--;
+//											tmpcmdend &= CMDLENMSK;
+//											bpWstring("\x1B[D");	// move left
+//										}
+//										else
+//										{
+//											UART1TX(BELL);	// beep, at begining
+//										}	
+								break;
+							case 'C':	// right arrow
+								goto right;
+//										if(tmpcmdend != cmdend)	// ensure not at end
+//										{ 
+//											tmpcmdend++;
+//											tmpcmdend &= CMDLENMSK;
+//											bpWstring("\x1B[C");	// move right
+//										}
+//										else
+//										{
+//											UART1TX(BELL);	// beep, at end
+//										}	
+								break;
+							case 'A':	// up arrow
+								tmphistcnt = 0;	// reset counter
+								for( temp = (cmdstart-1)&CMDLENMSK; temp != cmdend;  temp = (temp-1) & CMDLENMSK )
+								{
+									if(!cmdbuf[temp] && cmdbuf[(temp-1)&CMDLENMSK])
+									{	// found previous entry, temp is old cmdend
+										tmphistcnt++;
+										if( tmphistcnt > histcnt )
+										{
+											histcnt++;
+											if( cmdstart != cmdend )
+											{	// clear partially entered cmd line
+												while( cmdend != cmdstart)
+												{
+													cmdbuf[cmdend] = 0x00;
+													cmdend = ( cmdend - 1 ) & CMDLENMSK;
+												}
+												cmdbuf[cmdend] = 0x00;
+											}
+											repeat = ( temp - 1 ) & CMDLENMSK;
+											while( repeat != cmdend )
+											{
+												if( !cmdbuf[repeat] )
+												{
+													temp2 = ( repeat + 1 ) & CMDLENMSK;
+													/* start of old cmd */
+													break;
+												}
+												repeat = ( repeat - 1 ) & CMDLENMSK;
+											}
+											bpWstring("\x1B[2K\x0D");	// clear line, CR
+											bpWstring(protos[bpConfig.busMode].protocol_name);
+											if(bpConfig.basic) BPMSG1084;
+											bpWstring("> ");
+											for( repeat = temp2; repeat != temp; repeat = (repeat+1) & CMDLENMSK )
+											{
+												UART1TX(cmdbuf[repeat]);
+												cmdbuf[cmdend] = cmdbuf[repeat];
+												cmdend = ( cmdend + 1 ) & CMDLENMSK;
+											}
+											cmdbuf[cmdend] = 0x00;
+											tmpcmdend = cmdend;		// resync
+											break;
+										}	
+									}
 								}
+								if( temp == cmdend ) UART1TX(BELL);	// beep, top
+								break;
+							case 'B':	// down arrow
+								tmphistcnt = 0;	// reset counter
+								for( temp = (cmdstart-1)&CMDLENMSK; temp != cmdend;  temp = (temp-1) & CMDLENMSK )
+								{
+									if(!cmdbuf[temp] && cmdbuf[(temp-1)&CMDLENMSK])
+									{	// found previous entry, temp is old cmdend
+										tmphistcnt++;
+										if( tmphistcnt == ( histcnt - 1) )
+										{
+											histcnt--;
+											if( cmdstart != cmdend )
+											{	// clear partially entered cmd line
+												while( cmdend != cmdstart)
+												{
+													cmdbuf[cmdend] = 0x00;
+													cmdend = ( cmdend - 1 ) & CMDLENMSK;
+												}
+												cmdbuf[cmdend] = 0x00;
+											}
+											repeat = ( temp - 1 ) & CMDLENMSK;
+											while( repeat != cmdend )
+											{
+												if( !cmdbuf[repeat] )
+												{
+													temp2 = ( repeat + 1 ) & CMDLENMSK;
+													/* start of old cmd */
+													break;
+												}
+												repeat = ( repeat - 1 ) & CMDLENMSK;
+											}
+											bpWstring("\x1B[2K\x0D");	// clear line, CR
+											bpWstring(protos[bpConfig.busMode].protocol_name);
+											if(bpConfig.basic) BPMSG1084;
+											bpWstring("> ");
+											for( repeat = temp2; repeat != temp; repeat = (repeat+1) & CMDLENMSK )
+											{
+												UART1TX(cmdbuf[repeat]);
+												cmdbuf[cmdend] = cmdbuf[repeat];
+												cmdend = ( cmdend + 1 ) & CMDLENMSK;
+											}
+											cmdbuf[cmdend] = 0x00;
+											tmpcmdend = cmdend;		// resync
+											break;
+										}	
+									}
+								}
+								if( temp == cmdend )
+								{
+									if( histcnt == 1 )
+									{
+										bpWstring("\x1B[2K\x0D");	// clear line, CR
+										bpWstring(protos[bpConfig.busMode].protocol_name);
+										if(bpConfig.basic) BPMSG1084;
+										bpWstring("> ");
+										while( cmdend != cmdstart)
+										{
+											cmdbuf[cmdend] = 0x00;
+											cmdend = ( cmdend - 1 ) & CMDLENMSK;
+										}
+										cmdbuf[cmdend] = 0x00;
+										tmpcmdend = cmdend;		// resync
+										histcnt = 0;
+									}
+									else UART1TX(BELL);	// beep, top
+								}	
+								break;
+						} // switch(c)
+					} // if(c=='[') // got CSI
+					break;
+		left:	case 0x02:	// ^B (left arrow) or SUMP
+					if(binmodecnt>=5)
+					{	SUMP();
+						binmodecnt=0;			// do we get here or not?
+					} 
+					else 	// ^B (left arrow)
+					{			
+						if(tmpcmdend != cmdstart)	// at the begining?
+						{
+							tmpcmdend = ( tmpcmdend - 1 ) & CMDLENMSK;
+							bpWstring("\x1B[D");	// move left
+						} 
+						else 
+						{
+							UART1TX(BELL);	// beep, at begining
+						}	
+					}
+					break;
+		right:	case 0x06:	
+					if(tmpcmdend != cmdend)	// ^F (right arrow)
+					{ 						// ensure not at end
+						tmpcmdend = ( tmpcmdend + 1 ) & CMDLENMSK;
+						bpWstring("\x1B[C");	// move right
+					} 
+					else 
+					{
+						UART1TX(BELL);	// beep, at end
+					}	
+					break;
+				case 0x01:	
+					if( tmpcmdend != cmdstart )	// ^A, goto start of line
+					{
+						repeat = (tmpcmdend - cmdstart) & CMDLENMSK;
+						bpWstring("\x1B[");	// move left
+						bpWdec(repeat);		// to start
+						bpWstring("D");		// of command line
+						tmpcmdend = cmdstart;
+					} 
+					else 
+					{
+						UART1TX(BELL);	// beep, at start
+					}
+					break;
+				case 0x05:	
+					if( tmpcmdend != cmdend )	// ^E, goto end of line
+					{
+						repeat = (cmdend - tmpcmdend) & CMDLENMSK;
+						bpWstring("\x1B[");	// move right
+						bpWdec(repeat);		// to end
+						bpWstring("C");		// of command line
+						tmpcmdend = cmdend;
+					} 
+					else 
+					{
+						UART1TX(BELL);	// beep, at end
+					}
+					break;
+				case 0x0A:	// Does any terminal only send a CR?	
+				case 0x0D:	// Enter pressed (LF)
+					cmd = 1;	// command received
+					histcnt = 0;	// reset counter
+					cmdbuf[cmdend] = 0x00;	// use to find history
+					cmdend = ( cmdend + 1 ) & CMDLENMSK;
+					tmpcmdend = cmdend;		// resync
+					bpWline("");
+					break;
+				case 0x00:	
+					binmodecnt++;
+					if(binmodecnt==20)
+					{	binBB();
+						binmodecnt=0;			// do we get here or not?
+					}
+					break;
+				default:	
+					if((((cmdend+1)&CMDLENMSK)!=cmdstart)&&(c>=0x20)&&(c<0x7F))
+					{	 // no overflow and printable
+						if(cmdend == tmpcmdend)	// adding to the end
+						{	
+							UART1TX(c);				// echo back
+							cmdbuf[cmdend] = c;		// store char
+							cmdend = ( cmdend + 1 ) & CMDLENMSK;
+							cmdbuf[cmdend] = 0x00;	// add end marker
+							tmpcmdend = cmdend;		// update temp
+						} 
+						else	// not at end, left arrow used
+						{	
+							repeat = (cmdend - tmpcmdend) & CMDLENMSK;
+							bpWstring("\x1B[");	// move right
+							bpWdec( repeat );	// to end 
+							bpWstring("C");		// of line
+							temp = cmdend;
+							while( temp != ( (tmpcmdend-1) & CMDLENMSK ) )
+							{	
+								cmdbuf[temp+1] = cmdbuf[temp];
+								if(cmdbuf[temp]) // not NULL
+								{
+									UART1TX(cmdbuf[temp]);	
+									bpWstring("\x1B[2D");	// left 2
+								}
+								temp = ( temp - 1 ) & CMDLENMSK;
 							}
-							else
-							{	UART1TX(BELL);			// echo beep (buffer overflow)
-								cmdbuf[cmdend]=0x00;
-							}
-			}
-		}
+							UART1TX(c);				// echo back
+							cmdbuf[tmpcmdend]=c;	// store char
+							tmpcmdend = ( tmpcmdend + 1 ) & CMDLENMSK;
+							cmdend = ( cmdend + 1 ) & CMDLENMSK;
+						}
+					} 
+					else 
+					{
+						UART1TX(BELL);	// beep, overflow or non printable
+					} //default:
+			} //switch(c)
+		} //while(!cmd)
 
 		newstart=cmdend;
 		oldstart=cmdstart;
@@ -229,6 +510,7 @@ void serviceuser(void)
 							{	oldstart=cmdstart;
 								newstart=cmdend;
 							}
+							
 //							for(i=0; i<CMDBUFLEN; i++)						// print ringbuffer
 //							{	if(cmdbuf[i]) UART1TX(cmdbuf[i]);
 //									else UART1TX('.');
@@ -359,8 +641,7 @@ void serviceuser(void)
 #endif
 							break;
 				case '=':	//bpWline("-HEX/BIN/DEC convertor");
-							cmdstart++;
-							cmdstart&=CMDLENMSK;
+							cmdstart=(cmdstart+1)&CMDLENMSK;
 							consumewhitechars();
 							temp=getint();
 							bpWhex(temp);
@@ -371,8 +652,7 @@ void serviceuser(void)
 							bpBR;
 							break;
 				case '|':	//bpWline("-HEX/BIN/DEC convertor");
-							cmdstart++;
-							cmdstart&=CMDLENMSK;
+							cmdstart=(cmdstart+1)&CMDLENMSK;
 							consumewhitechars();
 							temp=getint();
 							temp=bpRevByte((unsigned char)temp);
@@ -515,13 +795,11 @@ void serviceuser(void)
 							}
 							if(temp>=(USRMACROLEN+3)) cmderror=1; // too long (avoid overflows)
 							if(!cmderror)
-							{	cmdstart++;
-								cmdstart&=CMDLENMSK;
+							{	cmdstart = ( cmdstart + 1 ) & CMDLENMSK;
 								temp=getint();
 								if(cmdbuf[((cmdstart)&CMDLENMSK)]=='=')	// assignment
 								{	if((temp>0)&&(temp<=USRMACROS))
-									{	cmdstart++;
-										cmdstart&=CMDLENMSK;
+									{	cmdstart = ( cmdstart + 1 ) & CMDLENMSK;
 										temp--;
 										for(repeat=0; repeat<USRMACROLEN; repeat++)
 										{	usrmacros[temp][repeat]=0;
@@ -530,8 +808,7 @@ void serviceuser(void)
 										while(cmdbuf[cmdstart]!='>')
 										{	usrmacros[temp][repeat]=cmdbuf[cmdstart];
 											repeat++;
-											cmdstart++;
-											cmdstart&=CMDLENMSK;
+											cmdstart = ( cmdstart + 1 ) & CMDLENMSK;
 										}
 									}
 									else
@@ -562,8 +839,7 @@ void serviceuser(void)
 							break;
 					// command for subsys (i2c, UART, etc)
 				case '(':	//bpWline("-macro");
-							cmdstart++;
-							cmdstart&=CMDLENMSK;
+							cmdstart = ( cmdstart + 1 ) & CMDLENMSK;
 							sendw=getint();
 							consumewhitechars();
 							if(cmdbuf[((cmdstart)&CMDLENMSK)]==')' )
@@ -756,9 +1032,8 @@ void serviceuser(void)
 				case ',':	break;
 					// no match so it is an error
 				default:	cmderror=1;
-			}
-			cmdstart++;
-			cmdstart&=CMDLENMSK;
+			} //switch(c)
+			cmdstart=(cmdstart+1)&CMDLENMSK;
 			
 //			bpWline("");
 //			bpWstring("cmdstart = ");
@@ -782,15 +1057,14 @@ void serviceuser(void)
 			}
 				
 			if(cmdstart==cmdend) stop=1;						// reached end of user input??
-		}
+		} //while(!stop)
 		
 
 		cmdstart=newstart;
 		cmdend=newstart;									// 'empty' cmdbuffer
 		cmd=0;
-	}
-	// you shouldn't come here :D
-}
+	} //while(1)
+} //serviceuser(void)
 
 int getint(void)							// get int from user (accept decimal, hex (0x) or binairy (0b)
 {	int i;
@@ -851,7 +1125,7 @@ int getint(void)							// get int from user (accept decimal, hex (0x) or binairy
 	cmdstart+=i;									// we used i chars
 	cmdstart&=CMDLENMSK;
 	return number;
-}
+} //getint(void)
 
 
 
@@ -867,28 +1141,25 @@ int getrepeat(void)
 		return temp;
 	}
 	return 1;								// no repeat count=1
-}
+} //
 
 int getnumbits(void)
 {	int temp;
 
 	if(cmdbuf[(cmdstart+1)&CMDLENMSK]==';')
-	{	cmdstart+=2;
-		cmdstart&=CMDLENMSK;
+	{	cmdstart = ( cmdstart + 2 ) & CMDLENMSK;
 		temp=getint();
-		cmdstart--;							// to allow [6:10] (start send 6 10 times stop) 
-		cmdstart&=CMDLENMSK;
+		cmdstart = (cmdstart - 1 ) & CMDLENMSK;	// to allow [6:10] (start send 6 10 times stop) 
 		return temp;
 	}
 	return 0;								// no numbits=0;
-}
+} //
 
 void consumewhitechars(void)
 {	while(cmdbuf[cmdstart]==0x20)
-	{	cmdstart++;		// remove spaces
-		cmdstart&=CMDLENMSK;
+	{	cmdstart = (cmdstart + 1 ) & CMDLENMSK;		// remove spaces
 	}
-}
+} //
 
 void changemode(void)
 {	int i, busmode;
@@ -897,8 +1168,7 @@ void changemode(void)
 
 //	bpWline("--changemode()");
 
-	cmdstart++;
-	cmdstart&=CMDLENMSK;
+	cmdstart = ( cmdstart + 1 ) & CMDLENMSK;
 
 	consumewhitechars();
 
@@ -953,7 +1223,7 @@ void changemode(void)
 		}
 	}
 	cmdstart=(cmdend-1)&CMDLENMSK;
-}
+} //changemode(void)
 
 int cmdhistory(void)
 {	int i,j,k;
@@ -964,8 +1234,7 @@ int cmdhistory(void)
 //	bpWline("--cmdhistory()");
 
 	i=1;
-	j=cmdstart-1;
-	j&=CMDLENMSK;
+	j = ( cmdstart - 1 ) & CMDLENMSK;
 
 	while(j!=cmdstart)										// scroll through the whole buffer
 	{	if((cmdbuf[j]==0x00)&&(cmdbuf[(j+1)&CMDLENMSK]!=0x00))		// did we find an end? is it not empty?
@@ -985,8 +1254,7 @@ int cmdhistory(void)
 		}
 //		bpWinthex(j);
 //		bpWline("");
-		j--;
-		j&=CMDLENMSK;
+		j = ( j - 1 ) & CMDLENMSK;
 	}
 	//bpWline("x. exit");
 	BPMSG1115;
@@ -998,8 +1266,10 @@ int cmdhistory(void)
 //	}
 
 
-	if (j==-1)
-	{	return 1;
+	if (j==-1 || !j) // x is -1, default is 0
+	{	
+		bpWline("");
+		return 1;
 	}
 	else
 	{	
@@ -1013,7 +1283,7 @@ int cmdhistory(void)
 		cmdbuf[(cmdend-1)&CMDLENMSK]=0x00;
 	}
 	return 0;
-}
+} //cmdhistory(void)
 
 
 // gets number from input
@@ -1114,7 +1384,7 @@ again:											// need to do it proper with whiles and ifs..
 		}
 	}
 	return temp;								// we dont get here, but keep compiler happy
-}
+} //getnumber(int def, int min, int max, int x)
 
 
 
@@ -1182,7 +1452,7 @@ void versionInfo(void){
 	bpWline(")");
 	//bpWline("http://dangerousprototypes.com");
 	BPMSG1118;
-}
+} //versionInfo(void)
 
 //display properties of the current bus mode (pullups, vreg, lsb, output type, etc)
 void statusInfo(void){
@@ -1235,7 +1505,7 @@ void statusInfo(void){
 
 	//bpWline("*----------*");
 	BPMSG1119;
-}
+} //statusInfo(void)
 
 void pinStates(void) 
 {	//bpWline("Pinstates:");
@@ -1279,7 +1549,7 @@ void pinStates(void)
 	pinState(CS);
 	pinState(MISO);
 	bpBR;
-}
+} //pinStates(void)
 
 void pinDirection(unsigned int pin){
 
@@ -1289,7 +1559,7 @@ void pinDirection(unsigned int pin){
 		bpWstring("O\t");
 	}
 
-}
+} //
 
 void pinState(unsigned int pin){
 
@@ -1299,14 +1569,13 @@ void pinState(unsigned int pin){
 		bpWstring("L\t");
 	}
 
-}
+} //
 
 //user terminal number display mode dialog (eg HEX, DEC, BIN, RAW)
 void setDisplayMode(void)
 {	int mode;
 
-	cmdstart++;
-	cmdstart&=CMDLENMSK;
+	cmdstart = ( cmdstart + 1 ) & CMDLENMSK;
 
 	consumewhitechars();
 	mode=getint();
@@ -1323,15 +1592,14 @@ void setDisplayMode(void)
 	}
 	//bpWmessage(MSG_OPT_DISPLAYMODESET);//show display mode update text
 	BPMSG1128;
-}
+} //
 
 //configure user terminal side UART baud rate
 void setBaudRate(void)
 {	unsigned char speed;
 	unsigned char brg;
 
-	cmdstart++;
-	cmdstart&=CMDLENMSK;
+	cmdstart = ( cmdstart + 1 ) & CMDLENMSK;
 	
 	consumewhitechars();
 	speed=getint();
@@ -1371,7 +1639,7 @@ void setBaudRate(void)
 		while(!UART1RXRdy());
 		if(UART1RX()==' ')break;
 	}
-}
+} //
 
 
 

@@ -114,8 +114,8 @@ void bpPWM(void){
 
 	done=0;
 
-	cmdstart++;
-	cmdstart&=CMDLENMSK;
+	cmdstart=(cmdstart+1)&CMDLENMSK;
+	//cmdstart&=CMDLENMSK;
 
 	//get any compound commandline variables
 	consumewhitechars();
@@ -356,8 +356,7 @@ void bpServo(void)
 			return; // return if no arguments to function
 	}
 
-	cmdstart++;
-	cmdstart &= CMDLENMSK;
+	cmdstart=(cmdstart+1)&CMDLENMSK;
 
 	// Get servo position from command line or prompt for value
 	consumewhitechars();

@@ -21,7 +21,7 @@
 //#define BUSPIRATEV1A //http://hackaday.com/2009/01/22/how-to-bus-pirate-v1-improved-universal-serial-interface/
 #define BUSPIRATEV3 //also v2go
 
-#define BP_FIRMWARE_STRING "Firmware v5.8 (r504) "
+#define BP_FIRMWARE_STRING "Firmware v5.9 (r506) "
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
@@ -44,11 +44,11 @@
 	#define BP_USE_HWSPI //hardware spi
 	#define BP_USE_RAW2WIRE
 	#define BP_USE_RAW3WIRE
-	#define BP_USE_PCATKB
+	//#define BP_USE_PCATKB
 	#define BP_USE_LCD // include HD44780 LCD library
 	//#define BP_USE_PIC
 	
-	#define MAXPROTO 9// need to set it manually for now (is there a smart way for this?)
+	#define MAXPROTO 8// need to set it manually for now (is there a smart way for this?)
 #elif defined(BP_FW1)
 // most used protos
 	#define BP_USE_1WIRE
