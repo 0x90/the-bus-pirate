@@ -324,7 +324,7 @@ proto protos[MAXPROTO+1] = {
 	nullfunc3, 				// periodic
 	LCDmacro,				// macro
 	LCDsetup,				// setup
-	SPIcleanup,				// cleanup
+	spiDisable,				// cleanup
 	LCDpins,
 	HiZsettings,
 	"LCD" 					// name

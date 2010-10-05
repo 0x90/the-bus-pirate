@@ -24,5 +24,11 @@ void LCDmacro(unsigned int c);
 void LCDpins(void);
 
 
+// to satisfy the compiler when split firmware
+#ifndef BP_MAIN
+void spiDisable(void);
+#endif
+
+
 
 

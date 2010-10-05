@@ -40,41 +40,42 @@ int gosubs;						// current gosubs
 int datapos;					// read pointer.
 
 
-char *tokens[]=
-{	STAT_LET,
-	STAT_IF,
-	STAT_THEN,
-	STAT_ELSE,
-	STAT_GOTO,
-	STAT_GOSUB,
-	STAT_RETURN,
-	STAT_REM,
-	STAT_PRINT,
-	STAT_INPUT,
-	STAT_FOR,
-	STAT_TO,
-	STAT_NEXT,
-	STAT_READ,
-	STAT_DATA,
-	STAT_START,
-	STAT_STARTR,
-	STAT_STOP,
-	STAT_STOPR,
-	STAT_SEND,
-	STAT_RECEIVE,
-	STAT_CLK,
-	STAT_DAT,
-	STAT_BITREAD,
-	STAT_ADC,
-	STAT_AUX,
-	STAT_PSU,
-	STAT_PULLUP,
-	STAT_AUXPIN,
-	STAT_FREQ,
-	STAT_DUTY,
-	STAT_DELAY,
-	STAT_MACRO,
-	STAT_END
+char *tokens[NUMTOKEN+1]=
+{	STAT_LET,		//0x80
+	STAT_IF,		//0x81
+	STAT_THEN,		//0x82
+	STAT_ELSE,		//0x83
+	STAT_GOTO,		//0x84
+	STAT_GOSUB,		//0x85
+	STAT_RETURN,	//0x86
+	STAT_REM,		//0x87
+	STAT_PRINT,		//0x88
+	STAT_INPUT,		//0x89
+	STAT_FOR,		//0x8A
+	STAT_TO,		//0x8b
+	STAT_NEXT,		//0x8c
+	STAT_READ,		//0x8d
+	STAT_DATA,		//0x8e
+	STAT_STARTR,	//0x8f
+	STAT_START,		//0x90
+	STAT_STOPR,		//0x91
+	STAT_STOP,		//0x92
+	STAT_SEND,		//0x93
+	STAT_RECEIVE,	//0x94
+	STAT_CLK,		//0x95
+	STAT_DAT,		//0x96
+	STAT_BITREAD,	//0x97
+	STAT_ADC,		//0x98
+	STAT_AUXPIN,	//0x99
+	STAT_PSU,		//0x9a
+	STAT_PULLUP,	//0x9b
+	STAT_DELAY,		//0x9c 
+	STAT_AUX,		//0x9d
+	STAT_FREQ,		//0x9e
+	STAT_DUTY,		//0x9f
+
+	STAT_MACRO,		//0xA0
+	STAT_END,		//0xa1
 };
 
 
@@ -402,7 +403,12 @@ int getnumvar(void)
 			case TOK_PULLUP:	temp=(~BP_PULLUP); //modeConfig.pullupEN;
 							break;
 #endif
-			case TOK_ADC:	temp=bpADC(12);
+			case TOK_ADC:	//temp=bpADC(12);
+							AD1CON1bits.ADON = 1; // turn ADC ON
+							temp=bpADC(12);
+							AD1CON1bits.ADON = 0; // turn ADC OFF
+
+//							temp=1234;
 							break;
 			default:		temp=0;
 		}
@@ -1232,6 +1238,9 @@ void basiccmdline(void)
 			else
 			{	temp=0;
 			}
+
+bpWhex(temp);
+
 			if(temp)
 			{	line[i]=temp;
 				if(temp==TOK_REM) string=1;			// allow spaces in rem statement
@@ -1341,7 +1350,7 @@ void basiccmdline(void)
 			}
 		}
 		else if(compare("NEW"))
-		{	void initpgmspace();
+		{	initpgmspace();
 		}
 		else
 		{	//bpWline("Syntax error");

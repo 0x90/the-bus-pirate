@@ -344,6 +344,13 @@ void HD44780_WriteNibble(unsigned char reg, unsigned char dat){
 
 }
 #ifndef BP_MAIN
+
+//open drain control registers for OUTPUT pins
+#define SPIMOSI_ODC 		BP_MISO_ODC	
+#define SPICLK_ODC 			BP_CLK_ODC	
+#define SPICS_ODC 			BP_CS_ODC	
+
+
 // copied from spi.c, but with thesplitfirmware it was gone..
 unsigned char spiWriteByte(unsigned char c){
 
@@ -353,6 +360,19 @@ unsigned char spiWriteByte(unsigned char c){
 	IFS0bits.SPI1IF = 0;
 	return c;
 }
+
+void spiDisable(void){
+	SPI1STATbits.SPIEN = 0;
+	RPINR20bits.SDI1R=0b11111;  //B7 MISO
+	RPOR4bits.RP9R=0; 			//B9 MOSI
+	RPOR4bits.RP8R=0; 			//B8 CLK
+	//disable all open drain control register bits
+	SPIMOSI_ODC=0;
+	SPICLK_ODC=0; 
+	SPICS_ODC=0;
+	//make all input maybe???
+}
+
 
 #endif
 

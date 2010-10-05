@@ -21,7 +21,7 @@
 //#define BUSPIRATEV1A //http://hackaday.com/2009/01/22/how-to-bus-pirate-v1-improved-universal-serial-interface/
 #define BUSPIRATEV3 //also v2go
 
-#define BP_FIRMWARE_STRING "Firmware v5.9 (r506) "
+#define BP_FIRMWARE_STRING "Firmware v5.9 (r515) "
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
@@ -33,8 +33,8 @@
 #define BP_USE_RAW2WIRE
 #define BP_USE_RAW3WIRE
 
-#define BP_MAIN
-//#define BP_FW1
+//#define BP_MAIN
+#define BP_ADDONS
 
 #if defined(BP_MAIN)
 	#define BP_USE_1WIRE
@@ -45,26 +45,26 @@
 	#define BP_USE_RAW2WIRE
 	#define BP_USE_RAW3WIRE
 	//#define BP_USE_PCATKB
-	#define BP_USE_LCD // include HD44780 LCD library
+	//#define BP_USE_LCD // include HD44780 LCD library
 	//#define BP_USE_PIC
-#define BP_USE_DIO //binary mode
+	//#define BP_USE_DIO //binary mode
 	
-	#define MAXPROTO 9// need to set it manually for now (is there a smart way for this?)
-#elif defined(BP_FW1)
+	#define MAXPROTO 7// need to set it manually for now (is there a smart way for this?)
+#elif defined(BP_ADDONS)
 // most used protos
-	#define BP_USE_1WIRE
-	#define BP_USE_HWUART //hardware uart (now also MIDI)
-	#define BP_USE_I2C
-//#define BP_USE_I2C_HW
-	#define BP_USE_HWSPI //hardware spi
-
-	#define MAXPROTO 7
-#elif defined(BP_FW2)
-// lesser used protos
+	//#define BP_USE_1WIRE
+	//#define BP_USE_HWUART //hardware uart (now also MIDI)
+	//#define BP_USE_I2C
+	//#define BP_USE_I2C_HW
+	//#define BP_USE_HWSPI //hardware spi
+	#define BP_USE_RAW2WIRE
+	#define BP_USE_RAW3WIRE
 	#define BP_USE_PCATKB
 	#define BP_USE_LCD // include HD44780 LCD library
-//#define BP_USE_PIC
-	#define MAXPROTO 5
+//	#define BP_USE_PIC
+	#define BP_USE_DIO //binary mode
+
+	#define MAXPROTO 6
 #else
 	#error "No Bus Pirate configuration defined."
 #endif

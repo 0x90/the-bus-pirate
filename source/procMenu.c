@@ -505,7 +505,7 @@ void serviceuser(void)
 		{	c=cmdbuf[cmdstart];
 			switch(c)
 			{		// generic commands (not bus specific)
-				case 'h':	//bpWline("-command history");
+/*				case 'h':	//bpWline("-command history");
 							if(!cmdhistory())
 							{	oldstart=cmdstart;
 								newstart=cmdend;
@@ -522,7 +522,7 @@ void serviceuser(void)
 //							bpWstring(" cmdend = ");
 //							bpWinthex(cmdend);
 //							bpWline("");
-
+*/
 							break;
 				case '?':	//bpWline("-HELP");
 							printHelp();
@@ -1225,6 +1225,7 @@ void changemode(void)
 	cmdstart=(cmdend-1)&CMDLENMSK;
 } //changemode(void)
 
+/*
 int cmdhistory(void)
 {	int i,j,k;
 
@@ -1285,6 +1286,8 @@ int cmdhistory(void)
 	return 0;
 } //cmdhistory(void)
 
+
+*/
 
 // gets number from input
 // -1 = abort (x)
@@ -1406,14 +1409,14 @@ void versionInfo(void){
 
 	bpWstring(BP_FIRMWARE_STRING);
 
-	#ifndef BP_MAIN
+#ifndef BP_MAIN
 	UART1TX('[');
 	for(i=0; i<MAXPROTO ; i++)
 	{	if(i) bpSP;
 		bpWstring(protos[i].protocol_name);
 	}
 	UART1TX(']');
-	#endif
+#endif
 
 
 	//bpWstring(" Bootloader v");
