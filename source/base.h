@@ -47,8 +47,9 @@
 	//#define BP_USE_PCATKB
 	#define BP_USE_LCD // include HD44780 LCD library
 	//#define BP_USE_PIC
+#define BP_USE_DIO //binary mode
 	
-	#define MAXPROTO 8// need to set it manually for now (is there a smart way for this?)
+	#define MAXPROTO 9// need to set it manually for now (is there a smart way for this?)
 #elif defined(BP_FW1)
 // most used protos
 	#define BP_USE_1WIRE

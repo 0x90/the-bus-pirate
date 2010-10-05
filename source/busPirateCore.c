@@ -63,6 +63,9 @@
 #ifdef BP_USE_PIC
 	#include "pic.h"
 #endif
+#ifdef BP_USE_DIO
+	#include "dio.h"
+#endif
 
 extern struct _bpConfig bpConfig;
 extern struct _modeConfig modeConfig;
@@ -349,6 +352,30 @@ proto protos[MAXPROTO+1] = {
 	picpins,
 	HiZsettings,
 	"PIC" 					// name
+}
+#endif
+#ifdef BP_USE_DIO
+,
+{	nullfunc1,				// start
+	nullfunc1,				// startR
+	nullfunc1,				// stop
+	nullfunc1,				// stopR
+	DIOwrite,				// send
+	DIOread,				// read
+	nullfunc1,				// clkh
+	nullfunc1,				// clkl
+	nullfunc1,				// dath
+	nullfunc1,				// datl
+	nullfunc3,				// dats
+	nullfunc1,				// clk
+	nullfunc3,				// bitr
+	nullfunc3,				// periodic
+	nullfunc4,				// macro
+	DIOsetup,				// setup
+	HiZcleanup,				// cleanup
+	HiZpins,
+	HiZsettings,
+	"DIO" 					// name
 }
 #endif
 
