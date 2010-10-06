@@ -33,8 +33,8 @@
 #define BP_USE_RAW2WIRE
 #define BP_USE_RAW3WIRE
 
-//#define BP_MAIN
-#define BP_ADDONS
+#define BP_MAIN
+//#define BP_ADDONS
 
 #if defined(BP_MAIN)
 	#define BP_USE_1WIRE
@@ -45,11 +45,11 @@
 	#define BP_USE_RAW2WIRE
 	#define BP_USE_RAW3WIRE
 	//#define BP_USE_PCATKB
-	//#define BP_USE_LCD // include HD44780 LCD library
+	#define BP_USE_LCD // include HD44780 LCD library
 	//#define BP_USE_PIC
 	//#define BP_USE_DIO //binary mode
 	
-	#define MAXPROTO 7// need to set it manually for now (is there a smart way for this?)
+	#define MAXPROTO 8// need to set it manually for now (is there a smart way for this?)
 #elif defined(BP_ADDONS)
 // most used protos
 	//#define BP_USE_1WIRE

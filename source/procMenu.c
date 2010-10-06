@@ -492,7 +492,7 @@ void serviceuser(void)
 		{	c=cmdbuf[cmdstart];
 			switch(c)
 			{		// generic commands (not bus specific)
-				case 'h':	//bpWline("-command history");
+/*				case 'h':	//bpWline("-command history");
 							if(!cmdhistory())
 							{	oldstart=cmdstart;
 								newstart=cmdend;
@@ -511,6 +511,7 @@ void serviceuser(void)
 //							bpWline("");
 
 							break;
+*/
 				case '?':	//bpWline("-HELP");
 							printHelp();
 							break;
