@@ -141,6 +141,7 @@ void serviceuser(void)
 						if( tmpcmdend == cmdend )		// at the end?
 						{
 							cmdend = ( cmdend - 1 ) & CMDLENMSK;
+							cmdbuf[cmdend] = 0x00;		// add end marker
 							tmpcmdend = cmdend;			// update temp
 							bpWstring("\x08 \x08");		// destructive backspace ian !! :P
 						} 
@@ -194,154 +195,26 @@ void serviceuser(void)
 					}
 					break;
 				case 0x1B:	// escape
-					c=UART1RX();					// get next char
-					if(c=='[')						// got CSI
+					c = UART1RX();					// get next char
+					if( c == '[' )					// got CSI
 					{
 						c = UART1RX();				// get next char
 						switch(c)
 						{
 							case 'D':	// left arrow
 								goto left;
-//										if(tmpcmdend != cmdstart)	// at the begining?
-//										{
-//											tmpcmdend--;
-//											tmpcmdend &= CMDLENMSK;
-//											bpWstring("\x1B[D");	// move left
-//										}
-//										else
-//										{
-//											UART1TX(BELL);	// beep, at begining
-//										}	
 								break;
 							case 'C':	// right arrow
 								goto right;
-//										if(tmpcmdend != cmdend)	// ensure not at end
-//										{ 
-//											tmpcmdend++;
-//											tmpcmdend &= CMDLENMSK;
-//											bpWstring("\x1B[C");	// move right
-//										}
-//										else
-//										{
-//											UART1TX(BELL);	// beep, at end
-//										}	
 								break;
 							case 'A':	// up arrow
-								tmphistcnt = 0;	// reset counter
-								for( temp = (cmdstart-1)&CMDLENMSK; temp != cmdend;  temp = (temp-1) & CMDLENMSK )
-								{
-									if(!cmdbuf[temp] && cmdbuf[(temp-1)&CMDLENMSK])
-									{	// found previous entry, temp is old cmdend
-										tmphistcnt++;
-										if( tmphistcnt > histcnt )
-										{
-											histcnt++;
-											if( cmdstart != cmdend )
-											{	// clear partially entered cmd line
-												while( cmdend != cmdstart)
-												{
-													cmdbuf[cmdend] = 0x00;
-													cmdend = ( cmdend - 1 ) & CMDLENMSK;
-												}
-												cmdbuf[cmdend] = 0x00;
-											}
-											repeat = ( temp - 1 ) & CMDLENMSK;
-											while( repeat != cmdend )
-											{
-												if( !cmdbuf[repeat] )
-												{
-													temp2 = ( repeat + 1 ) & CMDLENMSK;
-													/* start of old cmd */
-													break;
-												}
-												repeat = ( repeat - 1 ) & CMDLENMSK;
-											}
-											bpWstring("\x1B[2K\x0D");	// clear line, CR
-											bpWstring(protos[bpConfig.busMode].protocol_name);
-											if(bpConfig.basic) BPMSG1084;
-											bpWstring("> ");
-											for( repeat = temp2; repeat != temp; repeat = (repeat+1) & CMDLENMSK )
-											{
-												UART1TX(cmdbuf[repeat]);
-												cmdbuf[cmdend] = cmdbuf[repeat];
-												cmdend = ( cmdend + 1 ) & CMDLENMSK;
-											}
-											cmdbuf[cmdend] = 0x00;
-											tmpcmdend = cmdend;		// resync
-											break;
-										}	
-									}
-								}
-								if( temp == cmdend ) UART1TX(BELL);	// beep, top
+								goto up;
 								break;
 							case 'B':	// down arrow
-								tmphistcnt = 0;	// reset counter
-								for( temp = (cmdstart-1)&CMDLENMSK; temp != cmdend;  temp = (temp-1) & CMDLENMSK )
-								{
-									if(!cmdbuf[temp] && cmdbuf[(temp-1)&CMDLENMSK])
-									{	// found previous entry, temp is old cmdend
-										tmphistcnt++;
-										if( tmphistcnt == ( histcnt - 1) )
-										{
-											histcnt--;
-											if( cmdstart != cmdend )
-											{	// clear partially entered cmd line
-												while( cmdend != cmdstart)
-												{
-													cmdbuf[cmdend] = 0x00;
-													cmdend = ( cmdend - 1 ) & CMDLENMSK;
-												}
-												cmdbuf[cmdend] = 0x00;
-											}
-											repeat = ( temp - 1 ) & CMDLENMSK;
-											while( repeat != cmdend )
-											{
-												if( !cmdbuf[repeat] )
-												{
-													temp2 = ( repeat + 1 ) & CMDLENMSK;
-													/* start of old cmd */
-													break;
-												}
-												repeat = ( repeat - 1 ) & CMDLENMSK;
-											}
-											bpWstring("\x1B[2K\x0D");	// clear line, CR
-											bpWstring(protos[bpConfig.busMode].protocol_name);
-											if(bpConfig.basic) BPMSG1084;
-											bpWstring("> ");
-											for( repeat = temp2; repeat != temp; repeat = (repeat+1) & CMDLENMSK )
-											{
-												UART1TX(cmdbuf[repeat]);
-												cmdbuf[cmdend] = cmdbuf[repeat];
-												cmdend = ( cmdend + 1 ) & CMDLENMSK;
-											}
-											cmdbuf[cmdend] = 0x00;
-											tmpcmdend = cmdend;		// resync
-											break;
-										}	
-									}
-								}
-								if( temp == cmdend )
-								{
-									if( histcnt == 1 )
-									{
-										bpWstring("\x1B[2K\x0D");	// clear line, CR
-										bpWstring(protos[bpConfig.busMode].protocol_name);
-										if(bpConfig.basic) BPMSG1084;
-										bpWstring("> ");
-										while( cmdend != cmdstart)
-										{
-											cmdbuf[cmdend] = 0x00;
-											cmdend = ( cmdend - 1 ) & CMDLENMSK;
-										}
-										cmdbuf[cmdend] = 0x00;
-										tmpcmdend = cmdend;		// resync
-										histcnt = 0;
-									}
-									else UART1TX(BELL);	// beep, top
-								}	
+								goto down;
 								break;
-						} // switch(c)
-					} // if(c=='[') // got CSI
+						}
+					}
 					break;
 		left:	case 0x02:	// ^B (left arrow) or SUMP
 					if(binmodecnt>=5)
@@ -361,7 +234,7 @@ void serviceuser(void)
 						}	
 					}
 					break;
-		right:	case 0x06:	
+		right:	case 0x06:	// ^F (right arrow)
 					if(tmpcmdend != cmdend)	// ^F (right arrow)
 					{ 						// ensure not at end
 						tmpcmdend = ( tmpcmdend + 1 ) & CMDLENMSK;
@@ -372,8 +245,122 @@ void serviceuser(void)
 						UART1TX(BELL);	// beep, at end
 					}	
 					break;
-				case 0x01:	
-					if( tmpcmdend != cmdstart )	// ^A, goto start of line
+		up:		case 0x10:	// ^P (up arrow)
+					tmphistcnt = 0;	// reset counter
+					for( temp = (cmdstart-1)&CMDLENMSK; temp != cmdend;  temp = (temp-1) & CMDLENMSK )
+					{
+						if(!cmdbuf[temp] && cmdbuf[(temp-1)&CMDLENMSK])
+						{	// found previous entry, temp is old cmdend
+							tmphistcnt++;
+							if( tmphistcnt > histcnt )
+							{
+								histcnt++;
+								if( cmdstart != cmdend )
+								{	// clear partially entered cmd line
+									while( cmdend != cmdstart)
+									{
+										cmdbuf[cmdend] = 0x00;
+										cmdend = ( cmdend - 1 ) & CMDLENMSK;
+									}
+									cmdbuf[cmdend] = 0x00;
+								}
+								repeat = ( temp - 1 ) & CMDLENMSK;
+								while( repeat != cmdend )
+								{
+									if( !cmdbuf[repeat] )
+									{
+										temp2 = ( repeat + 1 ) & CMDLENMSK;
+										/* start of old cmd */
+										break;
+									}
+									repeat = ( repeat - 1 ) & CMDLENMSK;
+								}
+								bpWstring("\x1B[2K\x0D");	// clear line, CR
+								bpWstring(protos[bpConfig.busMode].protocol_name);
+								if(bpConfig.basic) BPMSG1084;
+								bpWstring("> ");
+								for( repeat = temp2; repeat != temp; repeat = (repeat+1) & CMDLENMSK )
+								{
+									UART1TX(cmdbuf[repeat]);
+									cmdbuf[cmdend] = cmdbuf[repeat];
+									cmdend = ( cmdend + 1 ) & CMDLENMSK;
+								}
+								cmdbuf[cmdend] = 0x00;
+								tmpcmdend = cmdend;		// resync
+								break;
+							}	
+						}
+					}
+					if( temp == cmdend ) UART1TX(BELL);	// beep, top
+					break;
+		down:	case 0x0E:	// ^N (down arrow)
+					tmphistcnt = 0;	// reset counter
+					for( temp = (cmdstart-1)&CMDLENMSK; temp != cmdend;  temp = (temp-1) & CMDLENMSK )
+					{
+						if(!cmdbuf[temp] && cmdbuf[(temp-1)&CMDLENMSK])
+						{	// found previous entry, temp is old cmdend
+							tmphistcnt++;
+							if( tmphistcnt == ( histcnt - 1) )
+							{
+								histcnt--;
+								if( cmdstart != cmdend )
+								{	// clear partially entered cmd line
+									while( cmdend != cmdstart)
+									{
+										cmdbuf[cmdend] = 0x00;
+										cmdend = ( cmdend - 1 ) & CMDLENMSK;
+									}
+									cmdbuf[cmdend] = 0x00;
+								}
+								repeat = ( temp - 1 ) & CMDLENMSK;
+								while( repeat != cmdend )
+								{
+									if( !cmdbuf[repeat] )
+									{
+										temp2 = ( repeat + 1 ) & CMDLENMSK;
+										/* start of old cmd */
+										break;
+									}
+									repeat = ( repeat - 1 ) & CMDLENMSK;
+								}
+								bpWstring("\x1B[2K\x0D");	// clear line, CR
+								bpWstring(protos[bpConfig.busMode].protocol_name);
+								if(bpConfig.basic) BPMSG1084;
+								bpWstring("> ");
+								for( repeat = temp2; repeat != temp; repeat = (repeat+1) & CMDLENMSK )
+								{
+									UART1TX(cmdbuf[repeat]);
+									cmdbuf[cmdend] = cmdbuf[repeat];
+									cmdend = ( cmdend + 1 ) & CMDLENMSK;
+								}
+								cmdbuf[cmdend] = 0x00;
+								tmpcmdend = cmdend;		// resync
+								break;
+							}	
+						}
+					}
+					if( temp == cmdend )
+					{
+						if( histcnt == 1 )
+						{
+							bpWstring("\x1B[2K\x0D");	// clear line, CR
+							bpWstring(protos[bpConfig.busMode].protocol_name);
+							if(bpConfig.basic) BPMSG1084;
+							bpWstring("> ");
+							while( cmdend != cmdstart)
+							{
+								cmdbuf[cmdend] = 0x00;
+								cmdend = ( cmdend - 1 ) & CMDLENMSK;
+							}
+							cmdbuf[cmdend] = 0x00;
+							tmpcmdend = cmdend;		// resync
+							histcnt = 0;
+						}
+						else UART1TX(BELL);	// beep, top
+					}	
+					break;
+				case 0x01:	// ^A (goto begining of line)
+					if( tmpcmdend != cmdstart )	
 					{
 						repeat = (tmpcmdend - cmdstart) & CMDLENMSK;
 						bpWstring("\x1B[");	// move left
@@ -386,8 +373,8 @@ void serviceuser(void)
 						UART1TX(BELL);	// beep, at start
 					}
 					break;
-				case 0x05:	
-					if( tmpcmdend != cmdend )	// ^E, goto end of line
+				case 0x05:	// ^E (goto end of line)
+					if( tmpcmdend != cmdend )	
 					{
 						repeat = (cmdend - tmpcmdend) & CMDLENMSK;
 						bpWstring("\x1B[");	// move right
@@ -505,7 +492,7 @@ void serviceuser(void)
 		{	c=cmdbuf[cmdstart];
 			switch(c)
 			{		// generic commands (not bus specific)
-/*				case 'h':	//bpWline("-command history");
+				case 'h':	//bpWline("-command history");
 							if(!cmdhistory())
 							{	oldstart=cmdstart;
 								newstart=cmdend;
@@ -522,7 +509,7 @@ void serviceuser(void)
 //							bpWstring(" cmdend = ");
 //							bpWinthex(cmdend);
 //							bpWline("");
-*/
+
 							break;
 				case '?':	//bpWline("-HELP");
 							printHelp();
@@ -1288,7 +1275,6 @@ int cmdhistory(void)
 
 
 */
-
 // gets number from input
 // -1 = abort (x)
 // -2 = input to much
@@ -1409,14 +1395,14 @@ void versionInfo(void){
 
 	bpWstring(BP_FIRMWARE_STRING);
 
-#ifndef BP_MAIN
+	#ifndef BP_MAIN
 	UART1TX('[');
 	for(i=0; i<MAXPROTO ; i++)
 	{	if(i) bpSP;
 		bpWstring(protos[i].protocol_name);
 	}
 	UART1TX(']');
-#endif
+	#endif
 
 
 	//bpWstring(" Bootloader v");
