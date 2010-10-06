@@ -626,7 +626,7 @@ void binSPI(void){
 
 
                         //check length and report error
-                        if(fw>=TERMINAL_BUFFER||fr>=TERMINAL_BUFFER){
+                        if(fw>TERMINAL_BUFFER||fr>TERMINAL_BUFFER){
                                 UART1TX(0);
                                 break;
                         }

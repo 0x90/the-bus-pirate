@@ -795,7 +795,7 @@ void binI2C(void){
 
 
                         //check length and report error
-                        if(fw>=TERMINAL_BUFFER||fr>=TERMINAL_BUFFER){
+                        if(fw>TERMINAL_BUFFER||fr>TERMINAL_BUFFER){
 I2C_write_read_error:	//use this for the read error too
                                 UART1TX(0);
                                 break;
@@ -816,13 +816,14 @@ I2C_write_read_error:	//use this for the read error too
 								bbWriteByte(bpConfig.terminalInput[j]); //send byte
 								if(bbReadBit()==1) goto I2C_write_read_error;
                         }
-
+						
+						fw=fr-1; //reuse fw
                         for(j=0; j<fr; j++){ //read bulk bytes from SPI
 								//send ack
 								//i flast byte, send NACK
 								bpConfig.terminalInput[j]=bbReadByte();
 								
-								if(j<fr-1){
+								if(j<fw){
 									bbI2Cack();
 								}else{
 									bbI2Cnack();
