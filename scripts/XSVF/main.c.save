@@ -12,12 +12,8 @@
 //#include <curses.h>
 #endif
 
-//#include "..\framework\serial.h"
-//#include "..\framework\buspirate.h"
-//include files same as above
-#include "serial.h"
-#include "buspirate.h"
-
+#include "..\framework\serial.h"
+#include "..\framework\buspirate.h"
 char *dumpfile;
 HANDLE dumphandle;
 int modem =FALSE;   // use by command line switch -m to set to true
@@ -193,13 +189,13 @@ int main(int argc, char** argv)
 		printf(" Sending some bytes \n");
 
 		while(!feof(XSVF)) {
-		   if ((res=fread(&buffer,sizeof(unsigned char),nparam_bytechunks,XSVF)) > 0) {
+		   if ((res=fread(&buffer,sizeof(unsigned char),nparam_bytechunk,XSVF)) > 0) {
 				//send to bp
 				printf(" sending.....");
 				for (c=0; c<res; c++)
 				   printf("%02X ", buffer[c]);
 				printf("\n");
-				serial_write( fd, buffer,res );
+				serial_write( fd, buffer,nparam_bytechunks );
 				//wait for reply before sending the next chunks
 				timeout_counter=0;
 				while(1) {

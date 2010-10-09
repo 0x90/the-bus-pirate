@@ -11,7 +11,6 @@
 				<Option object_output="obj\Debug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="-p com3 -f example.xsvf -s 115200 -x 16 -m" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
