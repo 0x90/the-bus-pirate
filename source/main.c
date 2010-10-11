@@ -72,7 +72,7 @@ int main(void){
      IEC0bits.T1IE = 1;
      IFS0bits.T1IF = 0;
      PR1 = 0xFFFF;
-     T1CON = 0x8010;
+     T1CON = 0x8000; //8010
 #endif
 
 	serviceuser();
