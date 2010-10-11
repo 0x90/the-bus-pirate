@@ -72,6 +72,13 @@
 #define BP_CS_ODC 		ODCBbits.ODB6
 #define BP_AUX_ODC 		ODCBbits.ODB10
 
+//Change notice assignment
+#define BP_MOSI_CN		CNEN2bits.CN21IE
+#define BP_CLK_CN		CNEN2bits.CN22IE
+
+//ADC assignment
+#define BP_ADC_PROBE 12
+
 //define the PPS input/output for the AUX pin
 #define BP_AUX_RPIN 10	
 #define BP_AUX_RPOUT RPOR5bits.RP10R

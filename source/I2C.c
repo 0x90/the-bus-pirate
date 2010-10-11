@@ -613,8 +613,8 @@ void I2C_Sniffer(unsigned char termMode)
 	SCL=0; // writes to the PORTs write to the LATCH
 	SDA=0;
 
-	CNEN2bits.CN21IE=1; // enable change notice on SCL and SDA
-	CNEN2bits.CN22IE=1;
+	BP_MOSI_CN=1; // enable change notice on SCL and SDA
+	BP_CLK_CN=1;
 
 	IFS1bits.CNIF=0; // clear the change interrupt flag
 
@@ -700,8 +700,8 @@ void I2C_Sniffer(unsigned char termMode)
 		SCLOld=SCLNew;
 	}
 	
-	CNEN2bits.CN21IE=0; // Clear Change Notice
-	CNEN2bits.CN22IE=0;
+	BP_MOSI_CN=0; // clear change notice
+	BP_CLK_CN=0;
 
 	if(termMode)
 	{

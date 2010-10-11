@@ -64,10 +64,7 @@ void bpInit(void){
 	BP_VREG_OFF();//disable the VREG
 
 	//setup voltage monitoring on ADC. Should be moved to hardwarevx.h!
-	AD1PCFGbits.PCFG9=0; //B15/AN9/ADC4/50V
-	AD1PCFGbits.PCFG10=0;//B14/AN10/ADC3/33V
-	AD1PCFGbits.PCFG11=0;//B13/AN11/ADC2/Vextpullup
-	AD1PCFGbits.PCFG12=0;//B12/AN12/ADC1/EXT
+	BP_ADC_PINSETUP();
 	//AD1PCFG&=(~0b11110);//analog pins
 
 	//configure the ADC
@@ -80,7 +77,6 @@ void bpInit(void){
 	AD1CON2 = 0;
 }
 
-#if defined( BUSPIRATEV1A) || defined (BUSPIRATEV2)
 //take an ADC measurement on the specified channel
 unsigned int bpADC(unsigned char c){
 	AD1CHS=c;//set channel
@@ -93,7 +89,7 @@ unsigned int bpADC(unsigned char c){
 //takes a measurement from the ADC probe and prints the result to the user terminal
 void bpADCprobe(void){
 	AD1CON1bits.ADON = 1; // turn ADC ON
-	bpWvolts(bpADC(12)); //print measurement
+	bpWvolts(bpADC(BP_ADC_PROBE)); //print measurement
 	AD1CON1bits.ADON = 0; // turn ADC OFF
 }
 
@@ -112,7 +108,7 @@ void bpADCCprobe(void)
 	BPMSG1045;
 	while(!UART1RXRdy())				// wait for keypress
 	{	AD1CON1bits.ADON = 1;			// turn ADC ON
-		temp=bpADC(12);
+		temp=bpADC(BP_ADC_PROBE);
 		AD1CON1bits.ADON = 0;			// turn ADC OFF
 		bpWstring("\x08\x08\x08\x08\x08");	// 5x backspace ( e.g. 5.00V )
 		//BPMSG1046;
@@ -125,8 +121,6 @@ void bpADCCprobe(void)
 	UART1RX();
 	bpWline("");							// need a linefeed :D
 }
-
-#endif
 
 //Initialize the terminal UART for the speed currently set in bpConfig.termSpeed
 static unsigned int UARTspeed[]={13332,3332,1666,832,416,207,103,68,34,};//BRG:300,1200,2400,4800,9600,19200,38400,57600,115200

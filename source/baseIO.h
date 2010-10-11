@@ -105,6 +105,9 @@ void UART1TX(char c);
 
 // sets the uart baudrate generator
 void UART1Speed(unsigned char brg);
+
+//flush the USB buffer on Bus Pirate v4
+void usbbufflush(void);
 //
 //
 // Ring buffer for UART

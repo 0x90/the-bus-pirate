@@ -42,7 +42,7 @@ void updatePWM(void)
 	//cleanup timers 
 	T2CON=0;		// clear settings
 	T4CON=0;
-	OC5CON =0;
+	OC5CON =0; //#BPV4 - should be OC5CON1/2
 
 	if(PWMfreq==0)
 	{	AUXPIN_RPOUT = 0;	 //remove output from AUX pin

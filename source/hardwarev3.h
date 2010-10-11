@@ -68,6 +68,21 @@
 #define BP_CS_ODC 		ODCBbits.ODB6
 #define BP_AUX_ODC 		ODCBbits.ODB10
 
+//Change notice assignment
+#define BP_MOSI_CN		CNEN2bits.CN21IE
+#define BP_CLK_CN		CNEN2bits.CN22IE
+
+//ADC assignment
+#define BP_ADC_PROBE 12
+
+//ADC pin configuration
+#define BP_ADC_PROBE_CFG AD1PCFGbits.PCFG12 //B12/AN12/ADC1/EXT 
+#define BP_ADC_3V3_CFG AD1PCFGbits.PCFG10 //B14/AN10/ADC3/33V 
+#define BP_ADC_5V0_CFG AD1PCFGbits.PCFG9 //B15/AN9/ADC4/50V
+#define BP_ADC_VPU_CFG AD1PCFGbits.PCFG11 //B13/AN11/ADC2/Vextpullup
+
+#define BP_ADC_PINSETUP() BP_ADC_PROBE_CFG=0;BP_ADC_3V3_CFG=0;BP_ADC_5V0_CFG=0;BP_ADC_VPU_CFG=0
+
 //flow control connections for FTDI chip
 //used in uart brige
 #define FTDI_RTS_DIR TRISAbits.TRISA4

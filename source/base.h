@@ -19,7 +19,8 @@
 
 //this sets the hardware version
 //#define BUSPIRATEV1A //http://hackaday.com/2009/01/22/how-to-bus-pirate-v1-improved-universal-serial-interface/
-#define BUSPIRATEV3 //also v2go
+//#define BUSPIRATEV3 //also v2go
+#define BUSPIRATEV4 
 
 #define BP_FIRMWARE_STRING "Firmware v5.9 (r515) "
 
@@ -114,6 +115,8 @@ asm (".equ BLJUMPADDRESS, 0xABF8");
 #elif defined(BUSPIRATEV3)
 	#define BUSPIRATEV2 //v25 (2go) and v3 are about the same, enable the same featue set for both
 	#include "hardwarev3.h"
+#elif defined(BUSPIRATEV4)
+	#include "hardwarev4.h"
 #else
 	#error "No hardware defined in base.h."
 #endif

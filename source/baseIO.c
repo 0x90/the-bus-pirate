@@ -19,16 +19,23 @@
 #include "busPirateCore.h"//need access to bpConfig
 extern struct _bpConfig bpConfig; //holds persistant bus pirate settings (see base.h) need hardware version info
 
-/*
-// just to keep the linker happy (for now) jtag and lcd only uses them
-unsigned int bpUserNumberPrompt(unsigned int maxBytes, unsigned int maxValue, unsigned int defValue)
-{	return 0;
-}
-unsigned int bpGetUserInput(unsigned int *currentByte, unsigned int maxBytes, unsigned char *terminalInput )
-{	return 0;
-}
+#if defined (BUSPIRATEV4)
+//this struct buffers the USB input because the stack doesn't like 1 byte reads
+#pragma udata
+static struct _usbbuffer{
+	unsigned char inbuf[64];
+	unsigned char cnt;
+	unsigned char rdptr;
+} ubuf;
 
-*/
+//USB output buffer
+#define USB_OUT_BUF 64
+unsigned char buf[USB_OUT_BUF];
+unsigned char uartincnt=0;
+
+void usbbufservice(void);
+unsigned char usbbufgetbyte(unsigned char* c);
+#endif
 
 //echo ASCII 0 or 1, given unsigned char c
 void bpEchoState(unsigned int c)
@@ -254,6 +261,8 @@ void bpWvolts(unsigned int a){
 
 }
 
+
+#if defined (BUSPIRATEV2) || defined (BUSPIRATEV1A)
 //
 //
 // Base user terminal UART functions
@@ -333,6 +342,70 @@ void __attribute__((interrupt, no_auto_psv)) _U1TXInterrupt(void) {
 
 	IFS0bits.U1TXIF = 0;
 }
+#endif
+
+#if defined (BUSPIRATEV4)
+//
+//
+// Replacement USB functions for initial testing
+//
+//
+
+void usbbufflush(void){
+	ubuf.cnt = 0;
+	ubuf.rdptr=0;
+}
+
+void usbbufservice(void){
+	if(ubuf.cnt==0){//if the buffer is empty, get more data
+		ubuf.cnt = getUnsignedCharArrayUsbUart(ubuf.inbuf,64);
+		ubuf.rdptr=0;
+	}
+}
+
+//is data available in RX buffer?
+//#define UART1RXRdy() U1STAbits.URXDA
+unsigned char UART1RXRdy(void){
+    USBDeviceTasks(); 
+    CDCTxService();
+	usbbufservice();
+
+	if(ubuf.cnt>0)return 1;
+	return 0;
+}
+
+//get a byte from UART
+unsigned char UART1RX(void){
+	unsigned char c=0;
+	if(ubuf.cnt>0){
+		c=ubuf.inbuf[ubuf.rdptr];
+		ubuf.cnt--;
+		ubuf.rdptr++;
+	}
+	return c;
+}
+
+//add byte to buffer, pause if full
+//uses PIC 4 byte UART FIFO buffer
+void UART1TX(char c)
+{
+	unsigned char a[2];
+
+	if(bpConfig.quiet) return;
+  	while(1){//it's always ready, but this could be done better
+		//service USB here
+        USBDeviceTasks(); 
+    	CDCTxService();
+		if(mUSBUSARTIsTxTrfReady())break; 
+	}
+	a[0]=c;
+	putUnsignedCharArrayUsbUsart(a,1);
+	
+}
+
+void UART1Speed(unsigned char brg) {
+}
+#endif
 
 
 //new UART ring buffer

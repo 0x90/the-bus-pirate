@@ -22,10 +22,14 @@
 //#include "SUMP.h"
 #include "basic.h"
 
-
+#if defined (BUSPIRATEV2) || defined (BUSPIRATEV1A)
 //set custom configuration for PIC 24F (now always set in bootloader page, not needed here)
 //_CONFIG2(FNOSC_FRCPLL & OSCIOFNC_ON &POSCMOD_NONE & I2C1SEL_PRI)		// Internal FRC OSC = 8MHz
 //_CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx1) //turn off junk we don't need
+#elif defined (BUSPIRATEV4)
+	_CONFIG1( JTAGEN_OFF & GCP_OFF & GWRP_OFF & COE_OFF & FWDTEN_OFF & ICS_PGx2) 
+	_CONFIG2( 0xF7FF & IESO_OFF & FCKSM_CSDCMD & POSCMOD_HS & FNOSC_PRIPLL & PLLDIV_DIV3 & IOL1WAY_ON & PLL_96MHZ_ON)
+#endif
 
 unsigned char irqFlag=0;
 void _T1Interrupt(void);
@@ -39,7 +43,6 @@ struct _command bpCommand; //holds the current active command so we don't ahve t
 void Initialize(void);
 
 unsigned char binmodecnt=0;//, terminalInput[TERMINAL_BUFFER];
-unsigned int currentByte;
 
 #pragma code
 //this loop services user input and passes it to be processed on <enter>
@@ -47,6 +50,15 @@ unsigned int currentByte;
 int main(void){
 
 	Initialize();//setup bus pirate
+
+//wait for the USB connection to enumerate
+#if defined (BUSPIRATEV4)
+    while(1){
+        USBDeviceTasks();
+    	if(((USBDeviceState < CONFIGURED_STATE)||(USBSuspendControl==1))) continue;
+		break;
+	}	
+#endif
 
 	serviceuser();
 
@@ -56,32 +68,45 @@ int main(void){
 //bus pirate initialization
 //setup clock, terminal UART, pins, LEDs, and display version info
 void Initialize(void){
-
+    
+#if defined (BUSPIRATEV2) || defined (BUSPIRATEV1A)
 	CLKDIVbits.RCDIV0=0; //clock divider to 0
+#elif defined (BUSPIRATEV4)
+    CLKDIV = 0x0000;    // Set PLL prescaler (1:1)
+#endif 
 	AD1PCFG = 0xFFFF;                 // Default all pins to digital
 	OSCCONbits.SOSCEN=0;	
 
 	//set pin configuration using peripheral pin select
+#if defined (BUSPIRATEV2) || defined (BUSPIRATEV1A)
 	BP_TERM_RX=BP_TERM_RX_RP;   //Inputs UART1 RX RPINR18bits.U1RXR=4;
 	BP_TERM_TX_RP=BP_TERM_TX; 		// Outputs UART1 TX RPOR1bits.RP3R=U1TX_IO;
- 
+#endif 
+
 	//put startup values in config (do first)
 	bpConfig.termSpeed=8;//default PC side port speed, startup in 115200, or saved state (later)....
 	bpConfig.displayMode=HEX;
 
 	bpInit();//put startup values in config (do first)clean up, exit in HI-Z
 		
+#if defined (BUSPIRATEV2) || defined (BUSPIRATEV1A)
 	InitializeUART1(); //init the PC side serial port
+#elif defined (BUSPIRATEV4)
+    USBDeviceInit();//setup usb
+	usbbufflush();	//setup the USB byte buffer
+#endif 
+
 
 	#if defined (BUSPIRATEV2)
 		//find the Bus Pirate revision
 		//pullup on, do it now so it can settle during the next operations
 		CNPU1bits.CN6PUE=1;
 	#endif
-
+#ifndef BUSPIRATEV4
 	// Get the chip type and revision
 	bpConfig.dev_type = bpReadFlash(DEV_ADDR_UPPER, DEV_ADDR_TYPE);
 	bpConfig.dev_rev = bpReadFlash(DEV_ADDR_UPPER, DEV_ADDR_REV);
+#endif
 
 	#if defined (BUSPIRATEV2)
 		//now check the revision
@@ -103,15 +128,12 @@ void Initialize(void){
 	initpgmspace();
 #endif
 
-
-	bpWBR; 	//send a line feed
-
 	TBLPAG=0; // we need to be in page 0 (somehow this isn't set)
 
+#ifndef BUSPIRATEV4
+	bpWBR; 	//send a line feed
 	versionInfo();//prints hardware and firmware version info (base.c)
-
-//	bpEchoCurrentBusMode(); //print the bus mode
-//	UART1TX('>');//prompt
+#endif
 
 }
 
@@ -153,3 +175,49 @@ void __attribute__ ((address(0x1000))) ISRTable(){
 	asm("goto %0"::"i"(&_T1Interrupt));  //T2Interrupt's address
 } 
 */
+
+//
+//
+//the stack calls these, if they aren't here we get errors. 
+//
+//
+void USBCBSuspend(void){}
+void USBCBWakeFromSuspend(void){}
+void USBCB_SOF_Handler(void){}
+void USBCBErrorHandler(void){}
+void USBCBCheckOtherReq(void){USBCheckCDCRequest();}//end
+void USBCBStdSetDscHandler(void){}//end
+void USBCBInitEP(void){CDCInitEP();}
+BOOL USER_USB_CALLBACK_EVENT_HANDLER(USB_EVENT event, void *pdata, WORD size){
+    switch(event){
+        case EVENT_CONFIGURED: 
+            USBCBInitEP();
+            break;
+        case EVENT_SET_DESCRIPTOR:
+            USBCBStdSetDscHandler();
+            break;
+        case EVENT_EP0_REQUEST:
+            USBCBCheckOtherReq();
+            break;
+        case EVENT_SOF:
+            USBCB_SOF_Handler();
+            break;
+        case EVENT_SUSPEND:
+            USBCBSuspend();
+            break;
+        case EVENT_RESUME:
+            USBCBWakeFromSuspend();
+            break;
+        case EVENT_BUS_ERROR:
+            USBCBErrorHandler();
+            break;
+        case EVENT_TRANSFER:
+            Nop();
+            break;
+        default:
+            break;
+    }      
+    return TRUE; 
+}
+
+

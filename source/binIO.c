@@ -24,7 +24,7 @@
 #include "UART.h"
 #include "1wire.h"
 #include "binwire.h"
-#include "OpenOCD.h"
+//#include "OpenOCD.h"
 #include "pic.h"
 
 extern struct _modeConfig modeConfig;
@@ -120,7 +120,7 @@ void binBB(void){
 				binBBversion(); //say name on return
 			}else if(inByte==6){//goto RAW WIRE mode
 				binReset();
-				binOpenOCD();
+				//binOpenOCD();
 				binReset();
 				binBBversion(); //say name on return
 			}else if(inByte==7){//goto pic mode
