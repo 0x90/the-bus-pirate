@@ -18,14 +18,14 @@
 #define BP_VERSION "v4"
 
 //this is a different type of pin identifier used by the bitbang library
-#define AUX		0b10000000000 //RB10 on v1, 2, 2go, 3 (not v0)
-#define MOSI 	0b1000000000  //RB9
-#define CLK 	0b100000000    //RB8
-#define MISO 	0b10000000 //RB7
-#define CS 		0b1000000 //RB6
-#define IOPOR 	PORTB
-#define IOLAT	LATB
-#define IODIR	TRISB
+#define AUX		0b1000000 //RB10 on v1, 2, 2go, 3 (not v0)
+#define MOSI 	0b1000  //RB9
+#define CLK 	0b100    //RB8
+#define MISO 	0b10 //RB7
+#define CS 		0b10000 //RB6
+#define IOPOR 	PORTD
+#define IOLAT	LATD
+#define IODIR	TRISD
 
 //these macros set the pin IO used in each module
 #define BP_MOSI 		PORTDbits.RD1
@@ -62,6 +62,23 @@
 
 //ADC assignment
 #define BP_ADC_PROBE 1
+#define BP_ADC_3V3 0
+#define BP_ADC_5V0 2
+#define BP_ADC_VPU 5
+#define BP_ADC_USB 15
+
+//calculate the acceptable range of voltages for the power supplies
+//these values will be compared to the ADC reading from the supply monitor
+#define V5BASE 0x307 //(((5/2)/3.3)*1024))
+#define V5H	V5BASE+0x50
+#define V5L V5BASE-0x50
+
+#define V33BASE 0x200 //(((3.3/2)/3.3)*1024))
+#define V33H	V33BASE+0x50
+#define V33L	V33BASE-0x50
+
+#define ADCON() AD1CON1bits.ADON = 1 // turn ADC ON 
+#define ADCOFF() AD1CON1bits.ADON = 0 // turn ADC OFF 
 
 //ADC pin configuration
 #define BP_ADC_PROBE_CFG AD1PCFGbits.PCFG1 //AN1/ADC1/EXT 

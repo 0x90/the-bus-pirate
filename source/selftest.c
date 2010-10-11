@@ -18,7 +18,7 @@
 #include "selftest.h"
 #include "busPirateCore.h"
 
-#if defined(BUSPIRATEV25) || defined (BUSPIRATEV3)
+#ifndef BUSPIRATEV1A
 void bpTest(unsigned char p, unsigned char d);
 void bpBusPinsTest(unsigned char d);
 void bpADCPinTest(unsigned char a, unsigned int lval, unsigned int hval);
@@ -87,25 +87,25 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 	//0x030F is 5volts
 	//bpPOSTWstring("5V");
 	BPMSG1171;
-	bpADCPinTest(V5ADC,V5L, V5H);
+	bpADCPinTest(BP_ADC_5V0,V5L, V5H);
 	
 	if(jumperTest){
 		//Vpullup is connected to 5volts
 		//bpPOSTWstring("VPU");
 		BPMSG1172;
-		bpADCPinTest(VPUADC,V5L, V5H);
+		bpADCPinTest(BP_ADC_VPU,V5L, V5H);
 	}
 
 	//0x0208 is 3.3volts
 	//bpPOSTWstring("3.3V");
 	BPMSG1173;
-	bpADCPinTest(V33ADC,V33L, V33H);
+	bpADCPinTest(BP_ADC_3V3,V33L, V33H);
 
 	if(jumperTest){
 		//ADC is connected to 3.3volts
 		//bpPOSTWstring("ADC");
 		BPMSG1174;
-		bpADCPinTest(PROBEADC,V33L, V33H);
+		bpADCPinTest(BP_ADC_PROBE,V33L, V33H);
 	}
 
 	ADCOFF(); // turn ADC OFF 

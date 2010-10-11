@@ -33,6 +33,7 @@ static struct _usbbuffer{
 unsigned char buf[USB_OUT_BUF];
 unsigned char uartincnt=0;
 
+void _T1Interrupt(void);
 void usbbufservice(void);
 unsigned char usbbufgetbyte(unsigned char* c);
 #endif
@@ -350,7 +351,6 @@ void __attribute__((interrupt, no_auto_psv)) _U1TXInterrupt(void) {
 // Replacement USB functions for initial testing
 //
 //
-
 void usbbufflush(void){
 	ubuf.cnt = 0;
 	ubuf.rdptr=0;
@@ -366,10 +366,11 @@ void usbbufservice(void){
 //is data available in RX buffer?
 //#define UART1RXRdy() U1STAbits.URXDA
 unsigned char UART1RXRdy(void){
+    #if defined(USB_POLLING)
     USBDeviceTasks(); 
-    CDCTxService();
-	usbbufservice();
+	#endif
 
+	usbbufservice();
 	if(ubuf.cnt>0)return 1;
 	return 0;
 }
@@ -377,30 +378,63 @@ unsigned char UART1RXRdy(void){
 //get a byte from UART
 unsigned char UART1RX(void){
 	unsigned char c=0;
-	if(ubuf.cnt>0){
-		c=ubuf.inbuf[ubuf.rdptr];
-		ubuf.cnt--;
-		ubuf.rdptr++;
-	}
+
+	while(ubuf.cnt==0){
+		usbbufservice();//if buffer is full, wait here
+	}	//wait for data to mimik the old function
+
+	c=ubuf.inbuf[ubuf.rdptr];
+	ubuf.cnt--;
+	ubuf.rdptr++;
 	return c;
 }
 
 //add byte to buffer, pause if full
 //uses PIC 4 byte UART FIFO buffer
-void UART1TX(char c)
-{
-	unsigned char a[2];
-
-	if(bpConfig.quiet) return;
-  	while(1){//it's always ready, but this could be done better
-		//service USB here
-        USBDeviceTasks(); 
-    	CDCTxService();
+static unsigned char a[64], acnt=0, lock=0, fcnt=0;
+void flushTXbuffer(void){
+	while(1){
 		if(mUSBUSARTIsTxTrfReady())break; 
 	}
-	a[0]=c;
-	putUnsignedCharArrayUsbUsart(a,1);
+	putUnsignedCharArrayUsbUsart(a,acnt);
+	acnt=0;
+}
+
+//Interrupt Remap method 1:  Using direct interrupt address
+void __attribute__ ((interrupt,address(0xF00), no_auto_psv)) _T1Interrupt(){
+	IFS0bits.T1IF = 0;
+	//if(((USBDeviceState < CONFIGURED_STATE)||(USBSuspendControl==1))) return;
+	if(acnt>0){
+		if(lock==0 && fcnt>5 && mUSBUSARTIsTxTrfReady()){
+			putUnsignedCharArrayUsbUsart(a,acnt);
+			acnt=0;
+			fcnt=0;
+		}else{
+			fcnt++;
+		}
+	}
+    CDCTxService();
+	//IEC0bits.T1IE = 0;
+	//PR1 = 0xFFFF;
+	//T1CON = 0;
+	//irqFlag=1;
 	
+}
+
+void UART1TX(char c)
+{
+	if(bpConfig.quiet) return;	
+	if(acnt==64){
+		fcnt=6;
+		while(acnt==64);//if buffer is full, wait here
+	}
+	lock=1;
+	a[acnt]=c;
+	acnt++;
+	lock=0;
+	//setup timer to throw data if the buffer doesn't fill
+	fcnt=0;
+
 }
 
 void UART1Speed(unsigned char brg) {

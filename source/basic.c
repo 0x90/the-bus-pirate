@@ -399,14 +399,14 @@ int getnumvar(void)
 							break;
 			case TOK_PSU:	temp=BP_VREGEN; //modeConfig.vregEN;
 							break;
-#if defined (BUSPIRATEV2)
+#ifndef BUSPIRATEV1A
 			case TOK_PULLUP:	temp=(~BP_PULLUP); //modeConfig.pullupEN;
 							break;
 #endif
-			case TOK_ADC:	//temp=bpADC(12);
-							AD1CON1bits.ADON = 1; // turn ADC ON
-							temp=bpADC(12);
-							AD1CON1bits.ADON = 0; // turn ADC OFF
+			case TOK_ADC:	//temp=bpADC(BP_ADC_PROBE);
+							ADCON(); // turn ADC ON
+							temp=bpADC(BP_ADC_PROBE);
+							ADCOFF(); // turn ADC OFF
 
 //							temp=1234;
 							break;
@@ -1042,7 +1042,7 @@ void interpreter(void)
 			case TOK_PULLUP:	pcupdated=1;
 							pc+=4;
 
-#if defined(BUSPIRATEV2)
+#ifndef BUSPIRATEV1A
 //#if(0)
 							if(assign())
 							{	//protopullupon();

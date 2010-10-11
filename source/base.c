@@ -57,7 +57,7 @@ void bpInit(void){
 
 	clearModeConfig(); //reset the mode settings structure
 	
-	#if defined( BUSPIRATEV2)
+	#ifndef BUSPIRATEV1A
 		BP_PULLUP_OFF();
 	#endif
 

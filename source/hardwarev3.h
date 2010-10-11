@@ -74,6 +74,22 @@
 
 //ADC assignment
 #define BP_ADC_PROBE 12
+#define BP_ADC_3V3 10
+#define BP_ADC_5V0 9
+#define BP_ADC_VPU 11
+
+//calculate the acceptable range of voltages for the power supplies
+//these values will be compared to the ADC reading from the supply monitor
+#define V5BASE 0x307 //(((5/2)/3.3)*1024))
+#define V5H	V5BASE+0x50
+#define V5L V5BASE-0x50
+
+#define V33BASE 0x200 //(((3.3/2)/3.3)*1024))
+#define V33H	V33BASE+0x50
+#define V33L	V33BASE-0x50
+
+#define ADCON() AD1CON1bits.ADON = 1 // turn ADC ON 
+#define ADCOFF() AD1CON1bits.ADON = 0 // turn ADC OFF 
 
 //ADC pin configuration
 #define BP_ADC_PROBE_CFG AD1PCFGbits.PCFG12 //B12/AN12/ADC1/EXT 

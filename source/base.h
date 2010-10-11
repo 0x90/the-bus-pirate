@@ -124,21 +124,6 @@ asm (".equ BLJUMPADDRESS, 0xABF8");
 #include "baseIO.h"
 #include "baseUI.h"
 
-//calculate the acceptable range of voltages for the power supplies
-//these values will be compared to the ADC reading from the supply monitor
-#define V5ADC 9
-#define V5BASE 0x307 //(((5/2)/3.3)*1024))
-#define V5H	V5BASE+0x50
-#define V5L V5BASE-0x50
-#define V33ADC 10
-#define V33BASE 0x200 //(((3.3/2)/3.3)*1024))
-#define V33H	V33BASE+0x50
-#define V33L	V33BASE-0x50
-#define VPUADC	11
-#define PROBEADC 12
-#define ADCON() AD1CON1bits.ADON = 1 // turn ADC ON 
-#define ADCOFF() AD1CON1bits.ADON = 0 // turn ADC OFF 
-
 //these settings are destroyed between modes.
 //this is used to pass stuff from protocol libraries to BP
 //for example, allowpullup determines if the P menu is available

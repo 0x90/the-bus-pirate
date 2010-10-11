@@ -9,7 +9,7 @@ void binIOperipheralset(unsigned char inByte){
 		BP_VREG_OFF();//power off
 	}
 	
-	#if defined( BUSPIRATEV2)
+	#ifndef BUSPIRATEV1A
 	if(inByte&0b100){
 		BP_PULLUP_ON();//pullups on
 	}else{

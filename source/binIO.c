@@ -136,7 +136,7 @@ void binBB(void){
 				while(U1STAbits.TRMT==0); //wait untill TX finishes
 				asm("RESET");
 			//self test is only for v2go and v3
-			#if defined(BUSPIRATEV25) || defined (BUSPIRATEV3)
+			#ifndef BUSPIRATEV1A 
 				}else if(inByte == 0b10000){//short self test
 					binSelfTest(0);
 				}else if(inByte == 0b10001){//full self test with jumpers
@@ -178,14 +178,14 @@ void binBB(void){
 			//ADC only for v1, v2, v3
 			}else if(inByte == 0b10100){//ADC reading (x/1024)*6.6volts
 				AD1CON1bits.ADON = 1; // turn ADC ON
-				i=bpADC(12); //take measurement
+				i=bpADC(BP_ADC_PROBE); //take measurement
 				AD1CON1bits.ADON = 0; // turn ADC OFF
 				UART1TX((i>>8)); //send upper 8 bits
 				UART1TX(i); //send lower 8 bits		
 			}else if(inByte == 0b10101){//ADC reading (x/1024)*6.6volts
 				AD1CON1bits.ADON = 1; // turn ADC ON
 				while(1){
-					i=bpADC(12); //take measurement
+					i=bpADC(BP_ADC_PROBE); //take measurement
 					while(U1STAbits.TRMT==0);
 					UART1TX((i>>8)); //send upper 8 bits
 					//while(U1STAbits.TRMT==0);
@@ -271,7 +271,7 @@ unsigned char binBBpinset(unsigned char inByte){
 		BP_VREG_OFF();//power off
 	}
 	
-	#if defined( BUSPIRATEV2)
+	#ifndef BUSPIRATEV1A 
 	if(inByte&0b100000){
 		BP_PULLUP_ON();//pullups on
 	}else{
@@ -317,7 +317,7 @@ unsigned char binBBpinset(unsigned char inByte){
 	return inByte;//return the read
 }
 
-#if defined(BUSPIRATEV25) || defined (BUSPIRATEV3)
+#ifndef BUSPIRATEV1A
 void binSelfTest(unsigned char jumperTest){
 	static volatile unsigned int tick=0;
 	unsigned char errors, inByte;

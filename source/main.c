@@ -32,7 +32,7 @@
 #endif
 
 unsigned char irqFlag=0;
-void _T1Interrupt(void);
+//void _T1Interrupt(void);
 void ISRTable(); //Pseudo function to hold ISR remap jump table
 
 static unsigned char  __attribute__ ((section (".bss.end"))) _buffer[TERMINAL_BUFFER];
@@ -53,11 +53,26 @@ int main(void){
 
 //wait for the USB connection to enumerate
 #if defined (BUSPIRATEV4)
+
+    #if defined(USB_INTERRUPT)
+        USBDeviceAttach();
+    #endif
+
     while(1){
+    	#if defined(USB_POLLING)
         USBDeviceTasks();
+		#endif
+
     	if(((USBDeviceState < CONFIGURED_STATE)||(USBSuspendControl==1))) continue;
 		break;
 	}	
+
+     //enable timer 1 with interrupts, 
+     //service with function in main.c.
+     IEC0bits.T1IE = 1;
+     IFS0bits.T1IF = 0;
+     PR1 = 0xFFFF;
+     T1CON = 0x8010;
 #endif
 
 	serviceuser();
@@ -137,16 +152,8 @@ void Initialize(void){
 
 }
 
-//Interrupt Remap method 1:  Using direct interrupt address
-/*void __attribute__ ((interrupt,address(0xF00), no_auto_psv)) _T1Interrupt(){
-	IFS0bits.T1IF = 0;
-	IEC0bits.T1IE = 0;
-	PR1 = 0xFFFF;
-	T1CON = 0;
-	irqFlag=1;
-	
-}
-*/
+
+
 
 //Interrupt Remap method 2:  Using Goto and jump table
 /*
@@ -160,22 +167,7 @@ void __attribute__ ((interrupt,no_auto_psv)) _T1Interrupt(){
 }
 */
 
-/*
- *	ISR JUMP TABLE
- *
- *	It is necessary to define jump table as a function because C30 will
- *	not store 24-bit wide values in program memory as variables.
- *
- *	This function should be stored at an address where the goto instructions 
- *	line up with the remapped vectors from the bootloader's linker script.
-*//*
-void __attribute__ ((address(0x1000))) ISRTable(){
-
-	asm("reset"); //reset instruction to prevent runaway code
-	asm("goto %0"::"i"(&_T1Interrupt));  //T2Interrupt's address
-} 
-*/
-
+#ifdef BUSPIRATEV4
 //
 //
 //the stack calls these, if they aren't here we get errors. 
@@ -219,5 +211,6 @@ BOOL USER_USB_CALLBACK_EVENT_HANDLER(USB_EVENT event, void *pdata, WORD size){
     }      
     return TRUE; 
 }
+#endif
 
 

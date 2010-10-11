@@ -17,7 +17,7 @@
 #include "AUXpin.h"
 #include "busPirateCore.h"
 #include "procMenu.h" //need our public versionInfo() function
-#if defined(BUSPIRATEV25) || defined (BUSPIRATEV3)
+#ifndef BUSPIRATEV1A
 	#include "selftest.h"
 #endif
 #include "binIO.h"
@@ -586,7 +586,7 @@ void serviceuser(void)
 								bpBR;
 							//}
 							break;
-#if defined( BUSPIRATEV2)
+#ifndef BUSPIRATEV1A
 				case 'p':	//bpWline("-pullup resistors off");
 
 
@@ -621,7 +621,7 @@ void serviceuser(void)
 								bpBR;
 								
 								ADCON();
-								if(bpADC(VPUADC)<0x50){ //no pullup voltage detected
+								if(bpADC(BP_ADC_VPU)<0x50){ //no pullup voltage detected
 									bpWline("Warning: no voltage on Vpullup pin");
 								}
 								ADCOFF();
@@ -651,7 +651,7 @@ void serviceuser(void)
 							bpWbin(temp);	
 							bpBR;
 							break;
-#if defined(BUSPIRATEV2)
+#ifndef BUSPIRATEV1A 
 				case '~':	//bpWline("-selftest");
 							if(bpConfig.busMode==HIZ){			
 								selfTest(1,1);//self test, showprogress in terminal
@@ -706,7 +706,7 @@ void serviceuser(void)
 								ADCON(); // turn ADC ON
 								bpDelayMS(2);//wait for VREG to come up
 							
-								if((bpADC(V33ADC)>V33L)&&(bpADC(V5ADC)>V5L)){ //voltages are correct
+								if((bpADC(BP_ADC_3V3)>V33L)&&(bpADC(BP_ADC_5V0)>V5L)){ //voltages are correct
 									//bpWmessage(MSG_VREG_ON);
 									BPMSG1096;
 									bpBR;
@@ -1464,7 +1464,7 @@ void statusInfo(void){
 	if(BP_VREGEN==1) BPMSG1096; else BPMSG1097;	//bpWmessage(MSG_VREG_ON); else bpWmessage(MSG_VREG_OFF);
 	UART1TX(','); bpSP;
 
-#if defined(BUSPIRATEV2)	
+#ifndef BUSPIRATEV1A
 	//pullups available, enabled?
 	//was modeConfig.pullupEN
 	if(BP_PULLUP==1) BPMSG1091; else BPMSG1089;	//bpWmessage(MSG_OPT_PULLUP_ON); else bpWmessage(MSG_OPT_PULLUP_OFF);
@@ -1519,20 +1519,20 @@ void pinStates(void)
 
 	//bpWstring("GND\t");
 	BPMSG1234;
-	AD1CON1bits.ADON = 1;
+	ADCON();
 #if defined(BUSPIRATEV25)
-	bpWvolts(bpADC(PROBEADC)); BPMSG1045; UART1TX('\t');
+	bpWvolts(bpADC(BP_ADC_PROBE)); BPMSG1045; UART1TX('\t');
 #else
-	bpWvolts(bpADC(V33ADC)); BPMSG1045; UART1TX('\t');
+	bpWvolts(bpADC(BP_ADC_3V3)); BPMSG1045; UART1TX('\t');
 #endif
-	bpWvolts(bpADC(V5ADC)); BPMSG1045; UART1TX('\t');
+	bpWvolts(bpADC(BP_ADC_5V0)); BPMSG1045; UART1TX('\t');
 #if defined(BUSPIRATEV25)
-	bpWvolts(bpADC(V33ADC)); BPMSG1045; UART1TX('\t');
+	bpWvolts(bpADC(BP_ADC_3V3)); BPMSG1045; UART1TX('\t');
 #else
-	bpWvolts(bpADC(PROBEADC)); BPMSG1045; UART1TX('\t');
+	bpWvolts(bpADC(BP_ADC_PROBE)); BPMSG1045; UART1TX('\t');
 #endif
-	bpWvolts(bpADC(VPUADC)); BPMSG1045; UART1TX('\t');
-	AD1CON1bits.ADON = 0;
+	bpWvolts(bpADC(BP_ADC_VPU)); BPMSG1045; UART1TX('\t');
+	ADCOFF();
 	pinState(AUX);
 	pinState(CLK);
 	pinState(MOSI);
