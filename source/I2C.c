@@ -312,7 +312,9 @@ void I2Ccleanup(void)
 {	ackPending=0;//clear any pending ACK from previous use
 	if(i2cmode==HARD){
 		I2C1CONbits.I2CEN = 0;//disable I2C module
+#ifdef BUSPIRATEV4
 		I2C3CONbits.I2CEN = 0;//disable I2C module
+#endif
 	}
 }
 

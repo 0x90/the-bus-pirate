@@ -79,6 +79,30 @@
 
 //ADC assignment
 #define BP_ADC_PROBE 12
+#define BP_ADC_3V3 10
+#define BP_ADC_5V0 9
+#define BP_ADC_VPU 11
+
+//calculate the acceptable range of voltages for the power supplies
+//these values will be compared to the ADC reading from the supply monitor
+#define V5BASE 0x307 //(((5/2)/3.3)*1024))
+#define V5H	V5BASE+0x50
+#define V5L V5BASE-0x50
+
+#define V33BASE 0x200 //(((3.3/2)/3.3)*1024))
+#define V33H	V33BASE+0x50
+#define V33L	V33BASE-0x50
+
+#define ADCON() AD1CON1bits.ADON = 1 // turn ADC ON 
+#define ADCOFF() AD1CON1bits.ADON = 0 // turn ADC OFF 
+
+//ADC pin configuration
+#define BP_ADC_PROBE_CFG AD1PCFGbits.PCFG12 //B12/AN12/ADC1/EXT 
+#define BP_ADC_3V3_CFG AD1PCFGbits.PCFG10 //B14/AN10/ADC3/33V 
+#define BP_ADC_5V0_CFG AD1PCFGbits.PCFG9 //B15/AN9/ADC4/50V
+#define BP_ADC_VPU_CFG AD1PCFGbits.PCFG11 //B13/AN11/ADC2/Vextpullup
+
+#define BP_ADC_PINSETUP() BP_ADC_PROBE_CFG=0;BP_ADC_3V3_CFG=0;BP_ADC_5V0_CFG=0;BP_ADC_VPU_CFG=0
 
 //define the PPS input/output for the AUX pin
 #define BP_AUX_RPIN 10	
@@ -123,3 +147,9 @@
 #define OC3_IO		20
 #define OC4_IO		21
 #define OC5_IO		22
+
+#define PIC_REV_A3	0x3003
+#define PIC_REV_B4	0x3042
+#define PIC_REV_B5	0x3043
+#define PIC_REV_B8	0x3046
+

@@ -178,10 +178,10 @@
 #define DEV_ADDR_UPPER	0x00FF
 #define DEV_ADDR_TYPE	0x0000
 #define DEV_ADDR_REV	0x0002
-#define CFG_ADDR_UPPER 0x0000
+#define CFG_ADDR_UPPER 0x0000 //should be 0x0001, but it crashes...
 #define BL_ADDR_VER		0xABFA //location of the bootloader version info
-#define CFG_ADDR_1     0xABFC
-#define CFG_ADDR_2     0xABFE
+#define CFG_ADDR_1     0x57FC
+#define CFG_ADDR_2     0x57FE
 
 //these are unneeded, but the stack complains if they're not defined
 //#define USE_SELF_POWER_SENSE_IO
@@ -224,3 +224,6 @@
 
 #define putUnsignedCharArrayUsbUsart(u8Array,Num) 	putUSBUSART((char*)(u8Array),(Num))
 #define getUnsignedCharArrayUsbUart(u8Array,Num)	getsUSBUSART((char*)(u8Array),(Num))
+
+#define PIC_REV_A3	0x0001
+#define PIC_REV_A5	0x0003

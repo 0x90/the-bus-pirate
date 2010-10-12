@@ -22,7 +22,7 @@
 //#define BUSPIRATEV3 //also v2go
 #define BUSPIRATEV4 
 
-#define BP_FIRMWARE_STRING "Firmware v5.9 (r515) "
+#define BP_FIRMWARE_STRING "Firmware v5.9 (r528) "
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT

@@ -182,7 +182,9 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 	BPMSG1176;
 	IOLAT&= ~(ALLIO); //low
 	if(jumperTest){
+		#if defined	(BUSPIRATEV4)	
 		BP_3V3PU_ON();
+		#endif
 		BP_PULLUP_ON();
 	}
 	bpDelayMS(100);
@@ -195,7 +197,9 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 		IODIR|=ALLIO;//output
 		bpDelayMS(100);
 		bpBusPinsTest(1);
+		#if defined	(BUSPIRATEV4)	
 		BP_3V3PU_OFF();
+		#endif
 	}
 
 //instructions (skip pause if no display output)

@@ -1445,13 +1445,14 @@ void versionInfo(void){
 	UART1TX(']');
 	#endif
 
-
+#ifndef BUSPIRATEV4
 	//bpWstring(" Bootloader v");
 	BPMSG1126;
-	i=bpReadFlash(CFG_ADDR_UPPER, BL_ADDR_VER);
+	i=bpReadFlash(0x0000, BL_ADDR_VER);
 	bpWdec(i>>8);
 	UART1TX('.');
 	bpWdec(i);
+#endif
 	bpWline("");
 
 	//bpWstring("DEVID:");
@@ -1461,7 +1462,21 @@ void versionInfo(void){
 	//bpWstring(" REVID:");
 	BPMSG1210;
 	bpWinthex(bpConfig.dev_rev);
-	bpWstring(" (");
+#ifdef BUSPIRATEV4
+	bpWstring(" (24FJ128GB106 ");
+	switch(bpConfig.dev_rev) {
+	case PIC_REV_A3:
+		bpWstring("A3"); 
+		break;
+	case PIC_REV_A5:
+		bpWstring("A5");
+		break;
+	default:
+		bpWstring("UNK");
+		break;	
+	}	
+#else
+	bpWstring(" (24FJ64GA002 ");
 	switch(bpConfig.dev_rev) {
 	case PIC_REV_A3:
 		bpWstring("A3"); //also A4, but that's not in the wild and makes it confusing to users
@@ -1479,6 +1494,8 @@ void versionInfo(void){
 		bpWstring("UNK");
 		break;	
 	}	
+#endif
+
 	bpWline(")");
 	//bpWline("http://dangerousprototypes.com");
 	BPMSG1118;

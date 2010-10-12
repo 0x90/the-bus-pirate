@@ -117,11 +117,11 @@ void Initialize(void){
 		//pullup on, do it now so it can settle during the next operations
 		CNPU1bits.CN6PUE=1;
 	#endif
-#ifndef BUSPIRATEV4
+//#ifndef BUSPIRATEV4
 	// Get the chip type and revision
 	bpConfig.dev_type = bpReadFlash(DEV_ADDR_UPPER, DEV_ADDR_TYPE);
 	bpConfig.dev_rev = bpReadFlash(DEV_ADDR_UPPER, DEV_ADDR_REV);
-#endif
+//#endif
 
 	#if defined (BUSPIRATEV2)
 		//now check the revision

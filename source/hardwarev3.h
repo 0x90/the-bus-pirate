@@ -122,6 +122,9 @@
 #define BP_VREG_ON() BP_VREGEN_DIR=0; BP_VREGEN=1
 #define BP_VREG_OFF() BP_VREGEN_DIR=0; BP_VREGEN=0
 
+#define BP_MODELED_ON() LATA|=0b10
+#define BP_MODELED_OFF()LATA&=(~0b10)
+
 //define device ID and revision memory location
 #define DEV_ADDR_UPPER	0x00FF
 #define DEV_ADDR_TYPE	0x0000
@@ -150,3 +153,9 @@
 #define OC3_IO		20
 #define OC4_IO		21
 #define OC5_IO		22
+
+#define PIC_REV_A3	0x3003
+#define PIC_REV_B4	0x3042
+#define PIC_REV_B5	0x3043
+#define PIC_REV_B8	0x3046
+
