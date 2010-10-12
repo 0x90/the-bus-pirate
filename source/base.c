@@ -45,6 +45,14 @@ void bpInit(void){
 	BP_AUX_DIR=1; 
 	BP_LEDMODE=0; //mode LED OFF
 	BP_LEDMODE_DIR=0;
+	#ifdef BUSPIRATEV4
+		BP_USBLED_OFF();
+		BPV4_HWI2CPINS_SETUP();
+		BP_BUTTON_SETUP();
+		BP_3V3PU_OFF();
+		BP_5VPU_OFF();
+		BP_EEPROM_SETUP();
+	#endif
 	#ifdef BUSPIRATEV1A
 		BP_PIN6_DIR=1; //AUX2... unused
 		BP_LEDPWR=1; //light power led
@@ -63,9 +71,8 @@ void bpInit(void){
 
 	BP_VREG_OFF();//disable the VREG
 
-	//setup voltage monitoring on ADC. Should be moved to hardwarevx.h!
+	//setup voltage monitoring on ADC. see hardwarevx.h!
 	BP_ADC_PINSETUP();
-	//AD1PCFG&=(~0b11110);//analog pins
 
 	//configure the ADC
 	AD1CON1bits.SSRC  = 0b111;// SSRC<3:0> = 111 implies internal

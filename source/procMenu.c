@@ -626,8 +626,20 @@ void serviceuser(void)
 								}
 								ADCOFF();
 							}
-#endif
 							break;
+#endif
+#ifdef BUSPIRATEV4
+				case 'j':
+						BP_3V3PU_OFF();
+						break;
+				case 'J':
+						BP_3V3PU_ON();
+						break;
+				case 'K':
+						BP_PUVSEL33=1; 
+						BP_PUVSEL33_DIR=0;
+						break;
+#endif
 				case '=':	//bpWline("-HEX/BIN/DEC convertor");
 							cmdstart=(cmdstart+1)&CMDLENMSK;
 							consumewhitechars();

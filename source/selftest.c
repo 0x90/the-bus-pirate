@@ -22,8 +22,6 @@
 void bpTest(unsigned char p, unsigned char d);
 void bpBusPinsTest(unsigned char d);
 void bpADCPinTest(unsigned char a, unsigned int lval, unsigned int hval);
-//void bpPOSTWline(char *s);
-//void bpPOSTWstring(char *s);
 
 static unsigned char errors;
 extern struct _bpConfig bpConfig;
@@ -39,9 +37,14 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 	
 //instructions (skip pause if no display output)
 	if(showProgress && jumperTest){
+#if defined (BUSPIRATEV3)
 		//bpPOSTWline("Disconnect any devices");
 		//bpPOSTWline("Connect (Vpu to +5V) and (ADC to +3.3V)");
 		BPMSG1163;
+#elif defined (BUSPIRATEV4)
+		bpWline("Disconnect any devices");
+		bpWline("Connect (ADC to +5V)");
+#endif
 		BPMSG1251; // //bpPOSTWline("Press a key to start");
 		while(!UART1RXRdy()); //wait for key
 		UART1RX();//discard byte
@@ -79,11 +82,59 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 	BPMSG1169;
 	bpTest(BP_VREGEN,1);
 
+#if defined (BUSPIRATEV4)
+	bpWline("EEPROM");
+	bpWstring("SCL");
+	bpTest(BP_EE_SCL, 1);
+	bpWstring("SDA");
+	bpTest(BP_EE_SDA, 1);
+	bpWstring("WP");
+	bpTest(BP_EE_WP, 1);
+	bpWstring("ACK");
+	bpTest(eetest(), 0);
+#endif
+
 	//ADC check
 	//bpPOSTWline("ADC and supply");
 	BPMSG1170;
 	ADCON(); // turn ADC ON
 
+#if defined (BUSPIRATEV4)
+	bpWstring("Vusb");
+	bpADCPinTest(BP_ADC_USB,V5L, V5H);
+
+	//bpPOSTWstring("5V");
+	BPMSG1171;
+	bpADCPinTest(BP_ADC_5V0,V5L, V5H);
+
+	//enable 5v0 pullup and test
+	BP_5VPU_ON();
+	bpWstring("5V0 VPU");
+	bpDelayMS(2);
+	bpADCPinTest(BP_ADC_VPU,V5L, V5H);
+	BP_5VPU_OFF();
+
+	//ADC test (5volts)
+	if(jumperTest){
+		//ADC is connected to 5volts
+		//bpPOSTWstring("ADC");
+		BPMSG1174;
+		bpADCPinTest(BP_ADC_PROBE,V5L, V5H);
+	}	
+
+	//bpPOSTWstring("3.3V");
+	BPMSG1173;
+	bpADCPinTest(BP_ADC_3V3,V33L, V33H);
+
+	//enable 3v3 pullup and test
+	BP_3V3PU_ON();
+	bpWstring("3V3 VPU");
+	bpDelayMS(2);
+	bpADCPinTest(BP_ADC_VPU,V33L, V33H);
+	BP_3V3PU_OFF();
+
+#elif defined (BUSPIRATEV3)
+	 //v3 test
 	//0x030F is 5volts
 	//bpPOSTWstring("5V");
 	BPMSG1171;
@@ -107,6 +158,7 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 		BPMSG1174;
 		bpADCPinTest(BP_ADC_PROBE,V33L, V33H);
 	}
+#endif
 
 	ADCOFF(); // turn ADC OFF 
 
@@ -120,16 +172,17 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 	//pullup off, pins=output & high, read input, high?
 	//bpPOSTWline("Bus high");
 	BPMSG1175;
-	TRISB&= ~(0b1111000000);//output
-	LATB|=0b1111000000; //high	
+	IODIR&= ~(ALLIO);//output
+	IOLAT|=ALLIO; //high	
 	bpDelayMS(100);
 	bpBusPinsTest(1);
 
 	//pullup on, pins=output & low, read input, low?
 	//bpPOSTWline("Bus Hi-Z 0");
 	BPMSG1176;
-	LATB&= ~(0b1111000000); //low
+	IOLAT&= ~(ALLIO); //low
 	if(jumperTest){
+		BP_3V3PU_ON();
 		BP_PULLUP_ON();
 	}
 	bpDelayMS(100);
@@ -139,22 +192,30 @@ unsigned char selfTest(unsigned char showProgress, unsigned char jumperTest){
 	//pullup on, pins=input & low, read input, high?
 		//bpPOSTWline("Bus Hi-Z 1");
 		BPMSG1177;
-		TRISB|= 0b1111000000;//output
+		IODIR|=ALLIO;//output
 		bpDelayMS(100);
 		bpBusPinsTest(1);
+		BP_3V3PU_OFF();
 	}
 
 //instructions (skip pause if no display output)
 	if(showProgress && jumperTest){
 		BP_VREG_ON();
-		BP_LEDMODE=1;
+		BP_MODELED_ON();
 		//bpPOSTWline("MODE and VREG LEDs should be on! Any key exits.");
-		BPMSG1178;
+		#if defined	(BUSPIRATEV3)	
+			BPMSG1178;
+		#elif defined (BUSPIRATEV4)
+			BP_USBLED_ON();
+			bpWline("MODE, VREG, and USB LEDs should be on!");
+		#endif
 		BPMSG1250;
 		while(!UART1RXRdy());
 		UART1RX();
-		BP_LEDMODE=0;
-		BP_LEDMODE_DIR=1;
+		#ifdef BUSPIRATEV4
+			BP_USBLED_OFF();
+		#endif
+		BP_MODELED_OFF();
 		BP_VREG_OFF();
 	}
 

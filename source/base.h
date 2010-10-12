@@ -123,6 +123,9 @@ asm (".equ BLJUMPADDRESS, 0xABF8");
 
 #include "baseIO.h"
 #include "baseUI.h"
+#ifdef BUSPIRATEV4
+	#include "onboardEEPROM.h"
+#endif
 
 //these settings are destroyed between modes.
 //this is used to pass stuff from protocol libraries to BP

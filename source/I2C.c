@@ -20,15 +20,18 @@
 
 #include "procmenu.h"		// for the userinteraction subs
 
+//software or hardware I2C mode defines
+#define SOFT 0
+#define HARD 1
+#if defined (BUSPIRATEV4)
+	#define BP_USE_I2C_HW
+	unsigned char i2cinternal=0;
+#endif
 
 #define SCL 		BP_CLK
 #define SCL_TRIS 	BP_CLK_DIR     //-- The SCL Direction Register Bit
 #define SDA 		BP_MOSI        //-- The SDA output pin
 #define SDA_TRIS 	BP_MOSI_DIR    //-- The SDA Direction Register Bit
-
-//software or hardware I2C mode defines
-#define SOFT 0
-#define HARD 1
 
 extern struct _bpConfig bpConfig; //holds persistant bus pirate settings (see base.h) need hardware version info
 extern struct _modeConfig modeConfig;
@@ -265,19 +268,23 @@ void I2Csetup(void)
 			BPMSG1065;
 			modeConfig.speed=(getnumber(1,1,4,0)-1); 
 		}else{
+#if defined (BUSPIRATEV1A)||defined (BUSPIRATEV2)
 			// There is a hardware incompatibility with <B4
 			// See http://forum.microchip.com/tm.aspx?m=271183&mpage=1
 			if(bpConfig.dev_rev<=PIC_REV_A3) BPMSG1066;	//bpWline(OUMSG_I2C_REV3_WARN);
+#endif
 			//bpWline(OUMSG_I2C_HWSPEED);
 			BPMSG1067;
 			modeConfig.speed=(getnumber(1,1,3,0)-1);
 		}
 	}
 	else
-	{	// There is a hardware incompatibility with <B4
+	{	
+#if defined (BUSPIRATEV1A)||defined (BUSPIRATEV2)
+		// There is a hardware incompatibility with <B4
 		// See http://forum.microchip.com/tm.aspx?m=271183&mpage=1
 		if(bpConfig.dev_rev<=PIC_REV_A3) BPMSG1066;	//bpWline(OUMSG_I2C_REV3_WARN);
-
+#endif
 		I2Csettings();
 
 		ackPending=0;
@@ -303,7 +310,10 @@ void I2Csetup(void)
 
 void I2Ccleanup(void)
 {	ackPending=0;//clear any pending ACK from previous use
-	if(i2cmode==HARD) I2C1CONbits.I2CEN = 0;//disable I2C module
+	if(i2cmode==HARD){
+		I2C1CONbits.I2CEN = 0;//disable I2C module
+		I2C3CONbits.I2CEN = 0;//disable I2C module
+	}
 }
 
 void I2Cmacro(unsigned int c)
@@ -319,7 +329,11 @@ void I2Cmacro(unsigned int c)
 			bbH(MOSI+CLK, 0); 
 			//bpWline(OUMSG_I2C_MACRO_SEARCH);
 			BPMSG1070;
+#ifdef BUSPIRATEV4
+			if(((i2cinternal==0)&&(BP_CLK==0 || BP_MOSI==0))||((i2cinternal==1)&&(BP_EE_SDA==0 && BP_EE_SCL==0))){
+#else
 			if(BP_CLK==0 || BP_MOSI==0){
+#endif
 				BPMSG1019; //warning
 				BPMSG1020; //short or no pullups
 				bpBR;
@@ -382,6 +396,35 @@ void I2Cmacro(unsigned int c)
 			if(i2cmode==HARD) hwi2cSetup(); //setup hardware I2C again
 #endif
 			break;	
+#if defined (BUSPIRATEV4)
+		case 3: //in hardware mode (or software, I guess) we can edit the on-board EEPROM
+			bpWline("Now using on-board EEPROM I2C interface");
+			i2cinternal=1;
+			I2C1CONbits.A10M=0;
+			I2C1CONbits.SCLREL=0;
+		
+			I2C1ADD=0;
+			I2C1MSK=0;
+		
+			// Enable SMBus 
+			I2C1CONbits.SMEN = 0; 
+		
+			// Baud rate setting
+			I2C1BRG = I2Cspeed[modeConfig.speed];
+			
+			// Enable I2C module
+			I2C1CONbits.I2CEN = 1;
+
+			// disable other I2C module
+			I2C3CONbits.I2CEN = 0;
+			break;
+		case 4:
+			if(i2cinternal==1){
+				bpWline("On-board EEPROM write protect disabled");
+				BP_EE_WP=0;
+			}
+		break;
+#endif
 		default:
 			//bpWmessage(MSG_ERROR_MACRO);
 			BPMSG1016;
@@ -396,36 +439,82 @@ void I2Cpins(void)
 //	HARDWARE I2C BASE FUNCTIONS
 //
 //
-#ifdef BP_USE_I2C_HW
+#if defined BP_USE_I2C_HW 
 
 void hwi2cstart(void){
+
+#if defined (BUSPIRATEV4)
+	if(i2cinternal==0){
+		// Enable a start condition
+		I2C3CONbits.SEN = 1;
+		while(I2C3CONbits.SEN==1);//wait
+		return;
+	}
+#endif
 	// Enable a start condition
 	I2C1CONbits.SEN = 1;
 	while(I2C1CONbits.SEN==1);//wait
 }
 
 void hwi2cstop(void){
+
+#if defined (BUSPIRATEV4)
+	if(i2cinternal==0){
+		I2C3CONbits.PEN = 1;
+		while(I2C3CONbits.PEN==1);//wait
+		return;
+	}
+#endif
 	I2C1CONbits.PEN = 1;
-	while(I2C1CONbits.PEN==1);//wait
+	while(I2C1CONbits.PEN==1);//wait	
 }
 
 unsigned char hwi2cgetack(void){
+
+#if defined (BUSPIRATEV4)
+	if(i2cinternal==0){
+		return I2C3STATbits.ACKSTAT;
+	}
+#endif
 	return I2C1STATbits.ACKSTAT;
 }
 
 void hwi2csendack(unsigned char ack){
+#if defined (BUSPIRATEV4)
+	if(i2cinternal==0){
+		I2C3CONbits.ACKDT=ack;//send ACK (0) or NACK(1)?
+		I2C3CONbits.ACKEN=1;
+		while(I2C3CONbits.ACKEN==1);
+		return;
+	}
+#endif
 	I2C1CONbits.ACKDT=ack;//send ACK (0) or NACK(1)?
 	I2C1CONbits.ACKEN=1;
 	while(I2C1CONbits.ACKEN==1);
 }
 
 void hwi2cwrite(unsigned char c){
+#if defined (BUSPIRATEV4)
+	if(i2cinternal==0){
+		I2C3TRN=c;
+		while(I2C3STATbits.TRSTAT==1);
+		return;
+	}
+#endif
 	I2C1TRN=c;
 	while(I2C1STATbits.TRSTAT==1);
 }
 
 unsigned char hwi2cread(void){
 	unsigned char c;
+#if defined (BUSPIRATEV4)
+	if(i2cinternal==0){
+		I2C3CONbits.RCEN=1;
+		while(I2C3CONbits.RCEN==1);
+		c=I2C3RCV;
+		return c;
+	}
+#endif
 	I2C1CONbits.RCEN=1;
 	while(I2C1CONbits.RCEN==1);
 	c=I2C1RCV;
@@ -433,21 +522,21 @@ unsigned char hwi2cread(void){
 }
 
 void hwi2cSetup(void){
+	I2C3CONbits.A10M=0;
+	I2C3CONbits.SCLREL=0;
 
-	I2C1CONbits.A10M=0;
-	I2C1CONbits.SCLREL=0;
-
-	I2C1ADD=0;
-	I2C1MSK=0;
+	I2C3ADD=0;
+	I2C3MSK=0;
 
 	// Enable SMBus 
-	I2C1CONbits.SMEN = 0; 
+	I2C3CONbits.SMEN = 0; 
+
 
 	// Baud rate setting
-	I2C1BRG = I2Cspeed[modeConfig.speed];
+	I2C3BRG = I2Cspeed[modeConfig.speed];
 	
 	// Enable I2C module
-	I2C1CONbits.I2CEN = 1;
+	I2C3CONbits.I2CEN = 1;
 	
 //
 // This work around didn't work for me...
