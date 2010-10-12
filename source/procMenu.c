@@ -629,15 +629,43 @@ void serviceuser(void)
 							break;
 #endif
 #ifdef BUSPIRATEV4
-				case 'j':
+				case 'e':
 						BP_3V3PU_OFF();
+						bpWline("On-board pullup voltage off");
 						break;
-				case 'J':
-						BP_3V3PU_ON();
-						break;
-				case 'K':
-						BP_PUVSEL33=1; 
-						BP_PUVSEL33_DIR=0;
+				case 'E':
+						//don't allow pullups on some modules. also: V0a limitation of 2 resistors
+						if(bpConfig.busMode==HIZ)
+						{	//bpWmessage(MSG_ERROR_MODE);
+							BPMSG1088;
+						}
+						else
+						{	
+							BP_3V3PU_OFF();//disable any existing pullup
+							if(modeConfig.HiZ==0)
+							{	//bpWmessage(MSG_ERROR_NOTHIZPIN);
+								BPMSG1209;
+							}
+							bpDelayMS(2);
+							ADCON();
+							if(bpADC(BP_ADC_VPU)>0x100){ //is there already an external voltage?
+								bpWline("Warning: already a voltage on Vpullup pin");
+							}
+							ADCOFF();
+
+							cmdstart=(cmdstart+1)&CMDLENMSK;
+							consumewhitechars();
+							temp=getint();
+							if(temp==3){
+								BP_3V3PU_ON();
+								bpWline("3.3volt on-board pullup votlage enabled");
+							}else if(temp==5){
+								BP_5VPU_ON();
+								bpWline("5.0volt on-board pullup voltage enabled");
+							}else{
+								bpWline("Unknown pull-up voltage option, try E3 (3.3volts) or E5 (5volts)");
+							}
+						}
 						break;
 #endif
 				case '=':	//bpWline("-HEX/BIN/DEC convertor");

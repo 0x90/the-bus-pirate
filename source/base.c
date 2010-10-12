@@ -50,7 +50,7 @@ void bpInit(void){
 		BPV4_HWI2CPINS_SETUP();
 		BP_BUTTON_SETUP();
 		BP_3V3PU_OFF();
-		BP_5VPU_OFF();
+		//BP_5VPU_OFF();
 		BP_EEPROM_SETUP();
 	#endif
 	#ifdef BUSPIRATEV1A
