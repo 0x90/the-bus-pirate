@@ -44,9 +44,9 @@ int print_usage(char * appname)
 	printf("-------------------------------------------------------------------------\n");
 	printf("\n");
 	printf(" Usage:              \n");
-	printf("   %s  -p device \n ",appname);
+	printf("   %s  -p device  -s speed \n ",appname);
 	printf("\n");
-	printf("   Example Usage:   %s COM1 -R \n",appname);
+	printf("   Example Usage:   %s COM1  \n",appname);
 	printf("\n");
 	printf("           Where: -p device is port e.g.  COM1  \n");
 	printf("                  -s Speed is port Speed  default is 115200 \n");
@@ -65,17 +65,17 @@ int print_usage(char * appname)
 int main(int argc, char** argv)
 {
 	int opt;
-	char buffer[256] = {0},  ADCraw[2]={0};
+	char  ADCraw[2]={0};
 	int fd;
 	int res,c,adc;
-	float voltage ;
+	float voltage,vout ;
 	int flag=0,firsttime=0;
 	char *param_port = NULL;
 	char *param_speed = NULL;
 
 	printf("-------------------------------------------------------\n");
 	printf("\n");
-	printf(" Bus Pirate HVP Adapter SELF TEST utility v0.1 (CC-0)\n");
+	printf(" Bus Pirate HVP Adapter SELF TEST utility v0.2 (CC-0)\n");
 	printf(" http://www.dangerousprototypes.com\n");
 	printf("\n");
 	printf("-------------------------------------------------------\n");
@@ -212,11 +212,11 @@ int main(int argc, char** argv)
             Sleep(1); //how long wait for a reply?
             res = serial_read(fd, ADCraw, 2);
         }
-        //for debugging without hardware using only modem
+        //for debugging without hardware using only modem, use -m to pass
 		if (modem==TRUE){
 		    res=2;
-            ADCraw[0]=0x4D;
-            ADCraw[1]=0x9C;
+            ADCraw[0]=0x02;
+            ADCraw[1]=0xA6;
 		}
         // comment the above if with hardware
         if (res!=2){
@@ -228,13 +228,17 @@ int main(int argc, char** argv)
            // Take a measurement from the Bus Pirate voltage probe.
            //  Returns a 2 byte ADC reading, high 8bits come first.
            //  To determine the actual voltage measurement:
-           //  (ADC/1024)*3.3volts/(49/10)
+           // Raw reading: 0x2A6 (678)
+           // Actual voltage: (678/1024)*3.3volts=2.18volts
+           // Scale for resistor divider: Vin = (Vout*(R1+R2))/R2 = (2.18volts*(49K+10K))/10K = 12.86volts (ideal is 13volts)
+
             adc = ADCraw[0] << 8;
             adc |= (ADCraw[1]&0x00ff);
-			voltage = ((adc/1024.0) * (3.3*(49.0/10.0)));
+			vout= ((float)adc/1024.0f)*3.3f;
+			voltage =(vout*(49.0f+10.0f))/10.0f;
 
 			printf(" ADC Reading: %2.1f Volts (%02X, %02X)\n",voltage, (char)ADCraw[0], ((char)ADCraw[1]&0xff));
-			if(voltage > 10.0 ){
+			if(voltage > 12.5 ){
                 printf(" Voltage Measurement: ****PASS**** \n");
             }else{
                 printf(" Voltage Measurement: !!!!FAIL!!!! \n");
