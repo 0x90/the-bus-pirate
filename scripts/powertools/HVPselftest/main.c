@@ -46,7 +46,7 @@ int print_usage(char * appname)
 	printf(" Usage:              \n");
 	printf("   %s  -p device  -s speed \n ",appname);
 	printf("\n");
-	printf("   Example Usage:   %s COM1  \n",appname);
+	printf("   Example Usage:   %s -p COM1 -s 115200 \n",appname);
 	printf("\n");
 	printf("           Where: -p device is port e.g.  COM1  \n");
 	printf("                  -s Speed is port Speed  default is 115200 \n");
