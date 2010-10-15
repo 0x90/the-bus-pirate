@@ -73,7 +73,7 @@
 	<string.h>
 	"serial.h"
 
-1286524462 source:e:\work\bus-pirate\trunk\scripts\powertools\hvpselftest\main.c
+1287127980 source:e:\work\bus-pirate\trunk\scripts\powertools\hvpselftest\main.c
 	<stdio.h>
 	<stdlib.h>
 	<conio.h>

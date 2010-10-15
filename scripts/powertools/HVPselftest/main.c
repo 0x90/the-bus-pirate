@@ -146,7 +146,6 @@ int main(int argc, char** argv)
         printf(" Buspirate cannot switch to binary bitbang mode :( \n");
         return -1;
     }
-    printf("ok\n");
 
 	//
 	// Loop and repeat test as needed for manufacturing
@@ -251,23 +250,9 @@ int main(int argc, char** argv)
            printf( " powering off.....\n");
 		   BP_WriteToPirateNoCheck(fd,"\x80");
 
-	//  pause after the result
-
-		if (firsttime==0){    // run here once and don't say again the next time
-			printf(" Press any key to continue...\n");
-			firsttime=1;
-			while(1){
-				Sleep(1);
-				if(kbhit()){
-				   c = getch();
-					break;
-				}
-			}
-		}
-
 
 		//TODO: Loop back to pause after this
-		printf("\n Connect another Bus Pirate HVP adapter and press any key to start the self-test again \n");
+		printf("\n Connect another HVP adapter and press any key to test again \n");
 		printf(" Or hit ESC key to stop and end the test.\n");
 
 		while(1){

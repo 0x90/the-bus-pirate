@@ -1,2 +1,2 @@
-HVPselftest -p com3 -s 115200
+HVPselftest -p com6 -s 115200
 pause
