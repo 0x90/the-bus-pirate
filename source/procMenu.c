@@ -44,6 +44,9 @@ void pinDirection(unsigned int pin);
 void pinState(unsigned int pin);
 void pinStates(void);
 
+#ifdef BUSPIRATEV4
+void setPullupVoltage(void);		// onboard Vpu selection
+#endif
 
 //global vars    move to bpconfig structure?
 char cmdbuf[CMDBUFLEN];
@@ -125,6 +128,14 @@ void serviceuser(void)
 						}
 					}
 				}
+#ifdef BUSPIRATEV4
+				if(!BP_BUTTON)
+				{	// button pressed
+				}
+				else
+				{	// button not pressed
+				}
+#endif
 			}
 
 			if(U1STAbits.OERR){//check for user terminal buffer overflow error
@@ -629,44 +640,8 @@ void serviceuser(void)
 							break;
 #endif
 #ifdef BUSPIRATEV4
-				case 'e':
-						BP_3V3PU_OFF();
-						bpWline("On-board pullup voltage off");
-						break;
-				case 'E':
-						//don't allow pullups on some modules. also: V0a limitation of 2 resistors
-						if(bpConfig.busMode==HIZ)
-						{	//bpWmessage(MSG_ERROR_MODE);
-							BPMSG1088;
-						}
-						else
-						{	
-							BP_3V3PU_OFF();//disable any existing pullup
-							if(modeConfig.HiZ==0)
-							{	//bpWmessage(MSG_ERROR_NOTHIZPIN);
-								BPMSG1209;
-							}
-							bpDelayMS(2);
-							ADCON();
-							if(bpADC(BP_ADC_VPU)>0x100){ //is there already an external voltage?
-								bpWline("Warning: already a voltage on Vpullup pin");
-							}
-							ADCOFF();
-
-							cmdstart=(cmdstart+1)&CMDLENMSK;
-							consumewhitechars();
-							temp=getint();
-							if(temp==3){
-								BP_3V3PU_ON();
-								bpWline("3.3volt on-board pullup votlage enabled");
-							}else if(temp==5){
-								BP_5VPU_ON();
-								bpWline("5.0volt on-board pullup voltage enabled");
-							}else{
-								bpWline("Unknown pull-up voltage option, try E3 (3.3volts) or E5 (5volts)");
-							}
-						}
-						break;
+				case 'e':	setPullupVoltage();
+							break;
 #endif
 				case '=':	//bpWline("-HEX/BIN/DEC convertor");
 							cmdstart=(cmdstart+1)&CMDLENMSK;
@@ -1423,27 +1398,30 @@ again:											// need to do it proper with whiles and ifs..
 
 
 //print version info (used in menu and at startup in main.c)
-void versionInfo(void){
-	unsigned int i;
+void versionInfo(void)
+{	
+#ifndef BP_MAIN
+unsigned int i;
+#endif
 
-	#if defined (BUSPIRATEV2) //we can tell if it's v3a or v3b, show it here
+#if defined (BUSPIRATEV2) //we can tell if it's v3a or v3b, show it here
 		bpWstring(BP_VERSION_STRING);
 		UART1TX(bpConfig.HWversion);
 		bpBR;	
-	#else
+#else
 		bpWline(BP_VERSION_STRING);
-	#endif
+#endif
 
 	bpWstring(BP_FIRMWARE_STRING);
 
-	#ifndef BP_MAIN
+#ifndef BP_MAIN
 	UART1TX('[');
 	for(i=0; i<MAXPROTO ; i++)
 	{	if(i) bpSP;
 		bpWstring(protos[i].protocol_name);
 	}
 	UART1TX(']');
-	#endif
+#endif
 
 #ifndef BUSPIRATEV4
 	//bpWstring(" Bootloader v");
@@ -1526,6 +1504,12 @@ void statusInfo(void){
 	//was modeConfig.pullupEN
 	if(BP_PULLUP==1) BPMSG1091; else BPMSG1089;	//bpWmessage(MSG_OPT_PULLUP_ON); else bpWmessage(MSG_OPT_PULLUP_OFF);
 	UART1TX(','); bpSP;
+#endif
+
+#ifdef BUSPIRATEV4
+	if(BP_PUVSEL50_DIR==0)	bpWstring("Vpu=5V, ");
+	if(BP_PUVSEL33_DIR==0)	bpWstring("Vpu=3V3, ");
+
 #endif
 
 	//open collector outputs?
@@ -1687,6 +1671,65 @@ void setBaudRate(void)
 		if(UART1RX()==' ')break;
 	}
 } //
+
+#ifdef BUSPIRATEV4
+
+void setPullupVoltage(void)
+{	int temp;
+
+
+	//don't allow pullups on some modules. also: V0a limitation of 2 resistors
+	if(bpConfig.busMode==HIZ)
+	{	//bpWmessage(MSG_ERROR_MODE);
+		BPMSG1088;
+		cmderror=1;		// raise error
+		return;
+	}
+	if(modeConfig.HiZ==0)
+	{	//bpWmessage(MSG_ERROR_NOTHIZPIN);
+		BPMSG1209;
+		cmderror=1;		// raise error 
+		return;
+	}
+
+	BP_3V3PU_OFF();//disable any existing pullup
+	bpDelayMS(2);
+	ADCON();
+	if(bpADC(BP_ADC_VPU)>0x100){ //is there already an external voltage?
+		bpWline("Warning: already a voltage on Vpullup pin");		// shouldn;t this be an error?
+	}
+	ADCOFF();
+
+	cmdstart=(cmdstart+1)&CMDLENMSK;
+	consumewhitechars();
+
+	temp=getint();
+	if(cmderror)			// I think the user wants a menu
+	{	cmderror=0;
+
+		bpWline("Select Vpu source");
+		bpWline(" 1) None or external");
+		bpWline(" 2) Onboard 3V3 Vreg");
+		bpWline(" 3) Onboard 5V Vreg");
+
+		temp=getnumber(1, 1, 3, 0);
+	}
+	switch(temp)
+	{	case 1:	BP_3V3PU_OFF();
+				bpWline("on-board pullup voltage disabled");
+				break;
+		case 2:	BP_3V3PU_ON();
+				bpWline("3V3 on-board pullup voltage enabled");
+				break;
+		case 3:	BP_5VPU_ON();
+				bpWline("5V on-board pullup voltage enabled");
+				break;
+		default:BP_3V3PU_OFF();
+				bpWline("on-board pullup voltage disabled");
+	}
+}
+
+#endif
 
 
 
