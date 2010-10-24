@@ -386,6 +386,7 @@ unsigned char UART1RX(void){
 	c=ubuf.inbuf[ubuf.rdptr];
 	ubuf.cnt--;
 	ubuf.rdptr++;
+
 	return c;
 }
 
@@ -435,6 +436,7 @@ void UART1TX(char c)
 	//setup timer to throw data if the buffer doesn't fill
 	fcnt=0;
 
+	
 }
 
 void UART1Speed(unsigned char brg) {
@@ -499,7 +501,14 @@ void UARTbufFlush(void){
 
 // Read the lower 16 bits from programming flash memory
 unsigned int bpReadFlash(unsigned int page, unsigned int addr)
-{
+{	unsigned int tblold;
+	unsigned flash;
+
+	tblold=TBLPAG;
 	TBLPAG = page;
-	return (__builtin_tblrdh(addr) << 8) | __builtin_tblrdl(addr);
+	flash= (__builtin_tblrdh(addr) << 8) | __builtin_tblrdl(addr);
+	TBLPAG=tblold;
+
+	return flash;
+
 }

@@ -573,6 +573,14 @@ void serviceuser(void)
 							//bpWmessage(MSG_OPT_AUXPIN_CS);
 							BPMSG1087;
 							break;
+#ifdef BUSPIRATEV4
+				case 'k':	modeConfig.altAUX=2;
+							bpWline("AUX1 selected");
+							break;
+				case 'K':	modeConfig.altAUX=3;
+							bpWline("AUX2 selected");
+							break;
+#endif
 				case 'L':	//bpWline("-bit order set (MSB)");
 							//if(bpConfig.busMode==HIZ)
 							//{	//bpWmessage(MSG_ERROR_MODE);
@@ -1482,6 +1490,12 @@ unsigned int i;
 //display properties of the current bus mode (pullups, vreg, lsb, output type, etc)
 void statusInfo(void){
 
+#ifdef BUSPIRATEV4
+	bpWstring("CFG0: ");
+	bpWinthex(bpReadFlash(CFG_ADDR_UPPER, CFG_ADDR_0));
+	bpSP;
+#endif
+
 	//bpWstring("CFG1:");
 	BPMSG1136;
 	bpWinthex(bpReadFlash(CFG_ADDR_UPPER, CFG_ADDR_1));
@@ -1530,7 +1544,21 @@ void statusInfo(void){
 	bpBR;
 
 	//AUX pin setting
+#ifndef BUSPIRATEV4
 	if(modeConfig.altAUX==1) BPMSG1087; else BPMSG1086;	//bpWmessage(MSG_OPT_AUXPIN_CS); else bpWmessage(MSG_OPT_AUXPIN_AUX);
+#endif
+#ifdef BUSPIRATEV4
+	switch(modeConfig.altAUX)
+	{	case 0:	BPMSG1087;
+				break;
+		case 1:	BPMSG1086;
+				break;
+		case 2:	bpWline("a/A/@ controls AUX1 pin");
+				break;
+		case 3:	bpWline("a/A/@ controls AUX2 pin");
+				break;
+	}
+#endif
 
 	protos[bpConfig.busMode].protocol_settings();
 

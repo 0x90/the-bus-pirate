@@ -282,12 +282,29 @@ unsigned long bpFreq_count(void){
 }
 
 //\leaves AUX in high impedance
-void bpAuxHiZ(void){
-	if(modeConfig.altAUX==0){
-		BP_AUX_DIR=1;//aux input
-	}else{
-		BP_CS_DIR=1;
+void bpAuxHiZ(void)
+{
+#ifndef BUSPIRATEV4
+
+	if(modeConfig.altAUX==0)
+	{	BP_AUX_DIR=1;//aux input
 	}
+	else
+	{	BP_CS_DIR=1;
+	}
+#endif
+#ifdef BUSPIRATEV4
+	switch(modeConfig.altAUX)
+	{	case 0: BP_AUX_DIR=1;
+				break;
+		case 1: BP_CS_DIR=1;
+				break;
+		case 2: BP_AUX1_DIR=1;
+				break;
+		case 3: BP_AUX2_DIR=1;
+				break;
+	}
+#endif
 	//bpWline(OUMSG_AUX_HIZ);
 	BPMSG1039;
 }
@@ -295,13 +312,33 @@ void bpAuxHiZ(void){
 // \leaves AUX to High 
 void bpAuxHigh(void){
 
-	if(modeConfig.altAUX==0){
-		BP_AUX_DIR=0;//aux output
+#ifndef BUSPIRATEV4
+	if(modeConfig.altAUX==0)
+	{	BP_AUX_DIR=0;//aux output
 		BP_AUX=1;//aux high
-	}else{
-		BP_CS_DIR=0;//aux input
+	}
+	else
+	{	BP_CS_DIR=0;//aux input
 		BP_CS=1;//aux high
 	}
+#endif
+#ifdef BUSPIRATEV4
+	switch(modeConfig.altAUX)
+	{	case 0:	BP_AUX_DIR=0;
+				BP_AUX=1;
+				break;
+		case 1:	BP_CS_DIR=0;
+				BP_CS=1;
+				break;
+		case 2:	BP_AUX1_DIR=0;
+				BP_AUX1=1;
+				break;
+		case 3:	BP_AUX2_DIR=0;
+				BP_AUX2=1;
+				break;
+	}
+#endif
+
 	//bpWline(OUMSG_AUX_HIGH);
 	BPMSG1040;
 }
@@ -309,13 +346,33 @@ void bpAuxHigh(void){
 // \leaves AUX to ground
 void bpAuxLow(void){
 	
-	if(modeConfig.altAUX==0){
-		BP_AUX_DIR=0;//aux output
-		BP_AUX=0;//aux low
-	}else{
-		BP_CS_DIR=0;//aux output
-		BP_CS=0;//aux low	
+#ifndef BUSPIRATEV4
+	if(modeConfig.altAUX==0)
+	{	BP_AUX_DIR=0;//aux output
+		BP_AUX=0;//aux high
 	}
+	else
+	{	BP_CS_DIR=0;//aux input
+		BP_CS=0;//aux high
+	}
+#endif
+#ifdef BUSPIRATEV4
+	switch(modeConfig.altAUX)
+	{	case 0:	BP_AUX_DIR=0;
+				BP_AUX=0;
+				break;
+		case 1:	BP_CS_DIR=0;
+				BP_CS=0;
+				break;
+		case 2:	BP_AUX1_DIR=0;
+				BP_AUX1=0;
+				break;
+		case 3:	BP_AUX2_DIR=0;
+				BP_AUX2=0;
+				break;
+	}
+#endif
+
 	//bpWline(OUMSG_AUX_LOW);
 	BPMSG1041;
 }
@@ -323,6 +380,8 @@ void bpAuxLow(void){
 // \leaves AUX in high impedence
 unsigned int bpAuxRead(void){
 	unsigned char c;
+
+#ifndef BUSPIRATEV4
 	if(modeConfig.altAUX==0){
 		BP_AUX_DIR=1;//aux input
 		asm( "nop" );//needs one TCY to get pin direction
@@ -334,6 +393,32 @@ unsigned int bpAuxRead(void){
 		asm( "nop" );//needs one TCY to get pin direction
 		c=BP_CS;
 	}
+#endif
+
+#ifdef BUSPIRATEV4
+	switch(modeConfig.altAUX)
+	{	case 0:	BP_AUX_DIR=1;
+				asm("nop");
+				asm("nop");
+				c=BP_AUX;
+				break;
+		case 1:	BP_AUX_DIR=1;
+				asm("nop");
+				asm("nop");
+				c=BP_CS;
+				break;
+		case 2:	BP_AUX_DIR=1;
+				asm("nop");
+				asm("nop");
+				c=BP_AUX1;
+				break;
+		case 3:	BP_AUX_DIR=1;
+				asm("nop");
+				asm("nop");
+				c=BP_AUX2;
+				break;
+	}
+#endif 
 	return c;
 }
 

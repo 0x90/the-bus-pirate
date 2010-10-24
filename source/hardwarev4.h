@@ -94,6 +94,7 @@
 #define BP_PUVSEL33_DIR	TRISBbits.TRISB3
 #define BP_PUVSEL50_DIR	TRISBbits.TRISB4
 
+
 //secondary MISO/CLK/MOSI connection setup (input, low)
 #define BPV4_HWI2CPINS_SETUP() TRISE|=0b11100000; LATE&=(~0b11100000)
 
@@ -171,6 +172,7 @@
 //pseudofunctions for USB, MODE LEDs
 #define BP_USBLED_ON() LATB&=(~0x400);TRISB&=(~0x400)
 #define BP_USBLED_OFF() LATB&=(~0x400);TRISB|=0x400
+#define BP_USBLED_T() LATB&=(~0x400);TRISB^=0x400
 #define BP_MODELED_ON() LATB|=0x100
 #define BP_MODELED_OFF()LATB&=(~0x100)
 
@@ -178,8 +180,9 @@
 #define DEV_ADDR_UPPER	0x00FF
 #define DEV_ADDR_TYPE	0x0000
 #define DEV_ADDR_REV	0x0002
-#define CFG_ADDR_UPPER 0x0000 //should be 0x0001, but it crashes...
+#define CFG_ADDR_UPPER 0x0001 //should be 0x0001, but it crashes...
 #define BL_ADDR_VER		0xABFA //location of the bootloader version info
+#define CFG_ADDR_0	0x57FA
 #define CFG_ADDR_1     0x57FC
 #define CFG_ADDR_2     0x57FE
 

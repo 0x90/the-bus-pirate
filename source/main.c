@@ -88,6 +88,7 @@ void Initialize(void){
 	CLKDIVbits.RCDIV0=0; //clock divider to 0
 #elif defined (BUSPIRATEV4)
     CLKDIV = 0x0000;    // Set PLL prescaler (1:1)
+//	BP_LEDUSB_DIR=0;	// output
 #endif 
 	AD1PCFG = 0xFFFF;                 // Default all pins to digital
 	OSCCONbits.SOSCEN=0;	

@@ -136,7 +136,7 @@ struct _modeConfig {
 	unsigned char speed; 
 	unsigned char numbits;
 	unsigned char buf[16];
-	unsigned char altAUX:1;
+	unsigned char altAUX:2;		// there are 4 AUX on BPv4
 	unsigned char periodicService:1;
 	unsigned char lsbEN:1;
 	unsigned char HiZ:1;
