@@ -26,11 +26,12 @@
 #include "binwire.h"
 //#include "OpenOCD.h"
 #include "pic.h"
+#include "binIO.h"
 
 extern struct _modeConfig modeConfig;
 
-unsigned char binBBpindirectionset(unsigned char inByte);
-unsigned char binBBpinset(unsigned char inByte);
+//unsigned char binBBpindirectionset(unsigned char inByte);
+//unsigned char binBBpinset(unsigned char inByte);
 void binBBversion(void);
 void binSelfTest(unsigned char jumperTest);
 void binReset(void);

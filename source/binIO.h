@@ -14,3 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 void binBB(void);
+unsigned char binBBpindirectionset(unsigned char inByte);
+unsigned char binBBpinset(unsigned char inByte);
+

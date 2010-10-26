@@ -34,8 +34,7 @@ unsigned int DIOread(void)
 }
 
 unsigned int DIOwrite(unsigned int c)
-{	unsigned char temp;
-
+{
 	if((c&0b10000000)==0){
 		return binBBpindirectionset(c);
 	}else{

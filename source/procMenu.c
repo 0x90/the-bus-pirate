@@ -685,12 +685,14 @@ void serviceuser(void)
 							break;
 #endif
 				case '#':	//bpWline("-reset BP");
-							if(agree())
-							{	//bpWline(OUMSG_PM_RESET);
+							//removed confirmation in v5.9
+							//ruined AVRdude compatibility
+							//if(agree())
+							//{	//bpWline(OUMSG_PM_RESET);
 								BPMSG1093;
 								while(U1STAbits.TRMT==0); //wait untill TX finishes
 								asm("RESET");
-							}
+							//}
 							break;
 				case '$':	//bpWline("-bootloader jump");
 							if(agree())
