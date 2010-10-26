@@ -22,7 +22,7 @@
 //#define BUSPIRATEV3 //also v2go
 #define BUSPIRATEV4 
 
-#define BP_FIRMWARE_STRING "Firmware v5.9 (r528) "
+#define BP_FIRMWARE_STRING "Firmware v5.9 (r529) "
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
@@ -116,7 +116,7 @@ asm (".equ BLJUMPADDRESS, 0xABF8");
 	#define BUSPIRATEV2 //v25 (2go) and v3 are about the same, enable the same featue set for both
 	#include "hardwarev3.h"
 #elif defined(BUSPIRATEV4)
-	#include "hardwarev4.h"
+	#include "hardwarev4a.h"
 #else
 	#error "No hardware defined in base.h."
 #endif

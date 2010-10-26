@@ -1449,7 +1449,7 @@ unsigned int i;
 	BPMSG1210;
 	bpWinthex(bpConfig.dev_rev);
 #ifdef BUSPIRATEV4
-	bpWstring(" (24FJ128GB106 ");
+	bpWstring(" (24FJ256GB106 ");
 	switch(bpConfig.dev_rev) {
 	case PIC_REV_A3:
 		bpWstring("A3"); 
