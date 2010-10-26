@@ -1,7 +1,7 @@
 [HEADER]
 magic_cookie={66E99B07-E706-4689-9E80-9B2582898A13}
 file_version=1.0
-device=PIC24FJ128GB106
+device=PIC24FJ256GB106
 [PATH_INFO]
 BuildDirPolicy=BuildDirIsProjectDir
 dir_src=
@@ -318,7 +318,7 @@ file_068=..\Microchip\Include\GenericTypeDefs.h
 file_069=..\Microchip\Include\Compiler.h
 file_070=usb_config.h
 file_071=onboardEEPROM.h
-file_072=C:\Program Files\Microchip\MPLAB C30\support\PIC24F\gld\p24FJ128GB106.gld
+file_072=C:\MC30\support\PIC24F\gld\p24FJ256GB106.gld
 [SUITE_INFO]
 suite_guid={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 suite_state=
