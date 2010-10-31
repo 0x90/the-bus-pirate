@@ -22,7 +22,7 @@
 #define BUSPIRATEV3 //also v2go
 //#define BUSPIRATEV4 
 
-#define BP_FIRMWARE_STRING "Firmware v5.9 (r529) "
+#define BP_FIRMWARE_STRING "Firmware v5.9RC2 (r542) "
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
@@ -30,11 +30,11 @@
 
 //include/exclude modules here
 // standard protocols
-#define BP_USE_RAW2WIRE
-#define BP_USE_RAW3WIRE
+//#define BP_USE_RAW2WIRE
+//#define BP_USE_RAW3WIRE
 
-#define BP_MAIN
-//#define BP_ADDONS
+//#define BP_MAIN
+#define BP_ADDONS
 
 #if defined(BP_MAIN)
 	#define BP_USE_1WIRE
@@ -61,10 +61,10 @@
 	#define BP_USE_RAW3WIRE
 	#define BP_USE_PCATKB
 	#define BP_USE_LCD // include HD44780 LCD library
-//	#define BP_USE_PIC
+	#define BP_USE_PIC
 	#define BP_USE_DIO //binary mode
 
-	#define MAXPROTO 6
+	#define MAXPROTO 7
 #else
 	#error "No Bus Pirate configuration defined."
 #endif

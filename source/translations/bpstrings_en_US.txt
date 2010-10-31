@@ -81,6 +81,18 @@ BPMSG1071;1;"Sniffer"
 //m_1wire213.c
 //main.c
 //pic.c
+BPMSG1072;1;"Commandmode?\r\n1. 6b/14b\r\n2. 4b/16b"
+BPMSG1073;1;"Delay?"
+BPMSG1074;0;"PIC(mod dly)=("
+BPMSG1075;0;"CMD"
+BPMSG1076;1;"DTA"
+BPMSG1077;1;"no read"
+BPMSG1078;1;"unknown mode"
+BPMSG1079;1;"(1) get devID"
+BPMSG1080;0;"DevID = "
+BPMSG1081;0;" Rev = "
+BPMSG1082;1;"Not implemented (yet)"
+BPMSG1083;1;"Please exit PIC programming mode"
 //procmenu.c
 BPMSG1084;0;"(BASIC)"
 BPMSG1085;1;"Ready"
