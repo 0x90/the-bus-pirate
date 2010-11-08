@@ -11,6 +11,7 @@
 #define SUMP_RESET 	0x00
 #define SUMP_RUN	0x01
 #define SUMP_ID		0x02
+#define SUMP_DESC	0x04
 #define SUMP_XON	0x11
 #define SUMP_XOFF 	0x13
 #define SUMP_DIV 	0x80
@@ -113,9 +114,33 @@ unsigned char SUMPlogicCommand(unsigned char inByte){
 
 					LAstate=LA_ARMED;
 					break;
+				case SUMP_DESC:
+					// device name string
+					UART1TX(0x01);
+					bpWstring("BPv3");
+					UART1TX(0x00);
+					//sample memory (4096)
+					UART1TX(0x21);
+					UART1TX(0x00);
+					UART1TX(0x00);
+					UART1TX(0x10);
+					UART1TX(0x00);
+					//sample rate (1MHz)
+					UART1TX(0x23);
+					UART1TX(0x00);
+					UART1TX(0x0F);
+					UART1TX(0x42);
+					UART1TX(0x40);
+					//number of probes (5)
+					UART1TX(0x40);
+					UART1TX(0x05);
+					//protocol version (2)
+					UART1TX(0x41);
+					UART1TX(0x02);
+					break;
 				case SUMP_XON://resume send data
 				//	xflow=1;
-					break;
+					//break;
 				case SUMP_XOFF://pause send data
 				//	xflow=0;
 					break;
