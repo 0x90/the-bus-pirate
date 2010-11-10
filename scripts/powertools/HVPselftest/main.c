@@ -75,7 +75,7 @@ int main(int argc, char** argv)
 
 	printf("-------------------------------------------------------\n");
 	printf("\n");
-	printf(" Bus Pirate HVP Adapter SELF TEST utility v0.2 (CC-0)\n");
+	printf(" Bus Pirate HVP Adapter SELF TEST utility v0.3 (CC-0)\n");
 	printf(" http://www.dangerousprototypes.com\n");
 	printf("\n");
 	printf("-------------------------------------------------------\n");
@@ -189,15 +189,16 @@ int main(int argc, char** argv)
         // 010xxxxx - Configure pins as input(1) or output(0): AUX|MOSI|CLK|MISO|CS
         // should configured as output 01000000 = 0x40
 
-        //printf(" configuring pins as output...\n");
+        printf(" Configuring pin direction: 01001100...\n");
         //printf(" sending 01000000...");
-        //BP_WriteToPirate(fd,"\x40");
+        BP_WriteToPirateNoCheck(fd,"\x4C");
         //printf("OK\n");
        //1xxxxxxx - Set on (1) or off (0): POWER|PULLUP|AUX|MOSI|CLK|MISO|CS
        //11000000 - on :  poweronly = 0xC0
-        printf(" Sending Command to power on : 11000000....");
-        BP_WriteToPirateNoCheck(fd,"\xC0");
+        printf(" Sending Command to power on : 11010000....");
+        BP_WriteToPirateNoCheck(fd,"\xD2");//c0
         printf("OK\n");
+        Sleep(100);
 
         //
         // Done with setup ,start with testing
@@ -237,13 +238,17 @@ int main(int argc, char** argv)
 			voltage =(vout*(49.0f+10.0f))/10.0f;
 
 			printf(" ADC Reading: %2.1f Volts (%02X, %02X)\n",voltage, (char)ADCraw[0], ((char)ADCraw[1]&0xff));
-			if(voltage > 12.5 ){
+			if(voltage > 10.5 ){
                 printf(" Voltage Measurement: ****PASS**** \n");
             }else{
                 printf(" Voltage Measurement: !!!!FAIL!!!! \n");
             }
 
         }
+
+        printf(" Pins to input: 01011111...\n");
+        //printf(" sending 01000000...");
+        BP_WriteToPirateNoCheck(fd,"\x5F");
     	//power off
 	    //1xxxxxxx - Set on (1) or off (0): POWER|PULLUP|AUX|MOSI|CLK|MISO|CS
 		   //10000000 - off :  power only = 0x80

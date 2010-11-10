@@ -36,7 +36,7 @@
 	<string.h>
 	"serial.h"
 
-1283176317 source:e:\work\bus-pirate\trunk\scripts\powertools\framework\buspirate.c
+1283172717 source:e:\work\bus-pirate\trunk\scripts\powertools\framework\buspirate.c
 	<stdlib.h>
 	<string.h>
 	<stdio.h>
@@ -44,7 +44,7 @@
 	"serial.h"
 	"buspirate.h"
 
-1282857232 e:\work\bus-pirate\trunk\scripts\powertools\framework\serial.h
+1282853632 e:\work\bus-pirate\trunk\scripts\powertools\framework\serial.h
 	<windows.h>
 	<time.h>
 	<unistd.h>
@@ -63,17 +63,17 @@
 	<sys/types.h>
 	<sys/time.h>
 
-1283175648 e:\work\bus-pirate\trunk\scripts\powertools\framework\buspirate.h
+1283172048 e:\work\bus-pirate\trunk\scripts\powertools\framework\buspirate.h
 	<stdint.h>
 
-1282861516 source:e:\work\bus-pirate\trunk\scripts\powertools\framework\serial.c
+1282857916 source:e:\work\bus-pirate\trunk\scripts\powertools\framework\serial.c
 	<stdio.h>
 	<stdlib.h>
 	<fcntl.h>
 	<string.h>
 	"serial.h"
 
-1287127980 source:e:\work\bus-pirate\trunk\scripts\powertools\hvpselftest\main.c
+1289395524 source:e:\work\bus-pirate\trunk\scripts\powertools\hvpselftest\main.c
 	<stdio.h>
 	<stdlib.h>
 	<conio.h>
