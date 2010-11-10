@@ -137,6 +137,7 @@ unsigned char SUMPlogicCommand(unsigned char inByte){
 					//protocol version (2)
 					UART1TX(0x41);
 					UART1TX(0x02);
+					UART1TX(0x00);
 					break;
 				case SUMP_XON://resume send data
 				//	xflow=1;
