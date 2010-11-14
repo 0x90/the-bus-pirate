@@ -18,7 +18,7 @@
 #include "bitbang.h"
 #include "AUXpin.h"
 
-#include "procmenu.h"		// for the userinteraction subs
+#include "procMenu.h"		// for the userinteraction subs
 
 
 #define R2WCLK_TRIS 	BP_CLK_DIR

@@ -15,12 +15,12 @@
  */
 #ifndef BASE 
 #define BASE
-#include <p24fxxxx.h>
+#include <p24Fxxxx.h>
 
 //this sets the hardware version
 //#define BUSPIRATEV1A //http://hackaday.com/2009/01/22/how-to-bus-pirate-v1-improved-universal-serial-interface/
-#define BUSPIRATEV3 //also v2go
-//#define BUSPIRATEV4 
+//#define BUSPIRATEV3 //also v2go
+#define BUSPIRATEV4 
 
 #define BP_FIRMWARE_STRING "Firmware v5.9RC2 (r542) "
 
@@ -96,7 +96,7 @@ asm (".equ BLJUMPADDRESS, 0xABF8");
 
 
 #if defined(LANGUAGE_EN_US)
-	#include "translations\en_US.h"
+	#include "translations/en_US.h"
 /*	my italian and spanish aint that good ;)
 #elif defined(LANGUAGE_IT_IT)
 	#include "translations\it-IT.h"

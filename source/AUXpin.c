@@ -15,7 +15,7 @@
  */
 #include "base.h"
 #include "baseIO.h"
-#include "procmenu.h"
+#include "procMenu.h"
 
 #define AUXPIN_DIR 		BP_AUX_DIR
 #define AUXPIN_RPIN 	BP_AUX_RPIN

@@ -57,7 +57,6 @@ void eei2cSetup(void){
 	// Enable SMBus 
 	I2C1CONbits.SMEN = 0; 
 
-
 	// Baud rate setting
 	I2C1BRG = 37;
 	

@@ -16,7 +16,7 @@
 #include "base.h"
 //#include "raw3wire.h"
 #include "bitbang.h"
-#include "procmenu.h"		// for the userinteraction subs
+#include "procMenu.h"		// for the userinteraction subs
 
 #define R3WMOSI_TRIS 	BP_MOSI_DIR
 #define R3WCLK_TRIS 	BP_CLK_DIR

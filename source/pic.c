@@ -30,8 +30,8 @@ pic10, pic12, pic14, pic16 and pic18
 #include "bitbang.h"
 #include "baseIO.h"
 #include "base.h"
-#include "buspiratecore.h"
-#include "procmenu.h"		// for the userinteraction subs
+#include "busPirateCore.h"
+#include "procMenu.h"		// for the userinteraction subs
 #include "AUXpin.h"
 
 extern struct _bpConfig bpConfig;

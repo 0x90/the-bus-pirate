@@ -1,7 +1,7 @@
 
 #include "base.h"
-#include "procmenu.h"
-#include "buspiratecore.h" 
+#include "procMenu.h"
+#include "busPirateCore.h" 
 
 extern struct _bpConfig bpConfig;
 extern struct _modeConfig modeConfig;

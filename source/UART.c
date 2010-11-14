@@ -20,7 +20,7 @@
 #include "uart2io.h"
 #include "binIOhelpers.h"
 
-#include "procmenu.h"		// for the userinteraction subs
+#include "procMenu.h"		// for the userinteraction subs
 
 
 extern struct _modeConfig modeConfig;

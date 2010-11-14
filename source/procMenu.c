@@ -100,7 +100,7 @@ void serviceuser(void)
 		{	//bpWstring("(BASIC)");
 			BPMSG1084;
 		}
-		bpWstring("> ");
+		bpWstring(">");
 		while(!cmd)
 		{	if(usrmacro)
 			{	usrmacro--;
@@ -119,7 +119,7 @@ void serviceuser(void)
 			{	if(modeConfig.periodicService==1)
 				{	if(protos[bpConfig.busMode].protocol_periodic())		// did we print something?
 					{	bpWstring(protos[bpConfig.busMode].protocol_name);
-						bpWstring("> ");
+						bpWstring(">");
 						if(cmdstart!=cmdend)
 						{	for(temp=cmdstart; temp!=cmdend; temp++)
 							{	UART1TX(cmdbuf[temp]);
@@ -289,7 +289,7 @@ void serviceuser(void)
 								bpWstring("\x1B[2K\x0D");	// clear line, CR
 								bpWstring(protos[bpConfig.busMode].protocol_name);
 								if(bpConfig.basic) BPMSG1084;
-								bpWstring("> ");
+								bpWstring(">");
 								for( repeat = temp2; repeat != temp; repeat = (repeat+1) & CMDLENMSK )
 								{
 									UART1TX(cmdbuf[repeat]);
@@ -337,7 +337,7 @@ void serviceuser(void)
 								bpWstring("\x1B[2K\x0D");	// clear line, CR
 								bpWstring(protos[bpConfig.busMode].protocol_name);
 								if(bpConfig.basic) BPMSG1084;
-								bpWstring("> ");
+								bpWstring(">");
 								for( repeat = temp2; repeat != temp; repeat = (repeat+1) & CMDLENMSK )
 								{
 									UART1TX(cmdbuf[repeat]);
@@ -357,7 +357,7 @@ void serviceuser(void)
 							bpWstring("\x1B[2K\x0D");	// clear line, CR
 							bpWstring(protos[bpConfig.busMode].protocol_name);
 							if(bpConfig.basic) BPMSG1084;
-							bpWstring("> ");
+							bpWstring(">");
 							while( cmdend != cmdstart)
 							{
 								cmdbuf[cmdend] = 0x00;
@@ -1321,7 +1321,7 @@ again:											// need to do it proper with whiles and ifs..
 
 	bpWstring("\r\n(");
 	bpWdec(def);
-	bpWstring(")> ");
+	bpWstring(")>");
 
 	while(!stop)
 	{	c=UART1RX();

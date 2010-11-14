@@ -16,7 +16,7 @@
 
 #include "SPI.h"
 #include "base.h"
-#include "procmenu.h"
+#include "procMenu.h"
 
 #ifdef BP_USE_LCD
 

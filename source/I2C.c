@@ -18,7 +18,7 @@
 #include "busPirateCore.h"//need access to bpConfig
 #include "binIOhelpers.h"
 
-#include "procmenu.h"		// for the userinteraction subs
+#include "procMenu.h"		// for the userinteraction subs
 
 //software or hardware I2C mode defines
 #define SOFT 0
