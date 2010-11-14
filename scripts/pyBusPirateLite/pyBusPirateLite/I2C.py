@@ -36,31 +36,31 @@ class I2CPins:
 	
 class I2C(BBIO):
 	bulk_read = None
-	def __init__(self, port, speed):
-		BBIO.__init__(self, port, speed)
+	def __init__(self, port, speed, timeout=1):
+		BBIO.__init__(self, port, speed, timeout)
 
 	def send_start_bit(self):
 		self.port.write("\x02")
-		self.timeout(0.1)
+		#self.timeout(0.1)
 		return self.response()
 	
 	def send_stop_bit(self):
 		self.port.write("\x03")
-		self.timeout(0.1)
+		#self.timeout(0.1)
 		return self.response()
 		
 	def read_byte(self):
 		self.port.write("\x04")
-		self.timeout(0.1)
+		#self.timeout(0.1)
 		return self.response(1, True)
 		
 	def send_ack(self):
 		self.port.write("\x06")
-		self.timeout(0.1)
+		#self.timeout(0.1)
 		return self.response()
 		
 	def send_nack(self):
 		self.port.write("\x07")
-		self.timeout(0.1)
+		#self.timeout(0.1)
 		return self.response()
 

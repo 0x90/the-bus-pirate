@@ -48,11 +48,11 @@ class BBIO:
 		self.port = serial.Serial(p, s, timeout=t)
 	
 	def BBmode(self):
-		self.resetBP()
-		self.port.write("\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00")
-		self.timeout(0.1)
-		self.port.flushInput();
-		self.reset()
+		self.port.flushInput();		
+		for i in range(20):
+			self.port.write("\x00");
+			r,w,e = select.select([self.port], [], [], 0.01);
+			if (r): break;
 		if self.response(5) == "BBIO1": return 1
 		else: return 0
 
@@ -95,8 +95,8 @@ class BBIO:
 		self.reset()
 		self.port.write("\x0F")
 		self.timeout(0.1)
-		self.port.read(2000)
-		self.port.flush()
+		#self.port.read(2000)
+		self.port.flushInput()
 		return 1
 
 	def raw_cfg_pins(self, config):
@@ -162,11 +162,11 @@ class BBIO:
 	def bulk_trans(self, byte_count=1, byte_string=None):
 		if byte_string == None: pass
 		self.port.write(chr(0x10 | (byte_count-1)))
-		self.timeout(0.1)
+		#self.timeout(0.1)
 		for i in range(byte_count):
 			self.port.write(chr(byte_string[i]))
-			self.timeout(0.1)
-		data = self.response(byte_count+2, True)
+			#self.timeout(0.1)
+		data = self.response(byte_count+1, True)
 		return data[1:]
 
 	def cfg_pins(self, pins=0):
