@@ -597,11 +597,11 @@ void binSPI(void){
 						IOLAT|=CS; //SPICS=1; //cs disable/high
 						UART1TX(1);
 						break;
-					case 0b1101: //all traffic
+					case 0b1101: //all traffic 13
 						UART1TX(1);
 						spiSniffer(1, 0);
 						break;
-					case 0b1110://cs low
+					case 0b1110://cs low 14
 						UART1TX(1);
 						spiSniffer(0, 0);
 						break;
@@ -609,7 +609,8 @@ void binSPI(void){
 					//	spiSniffer(1, 0);
 					//	UART1TX(1);
 					//	break;
-                case 0b0100: //write-then-read
+                case 4: //write-then-read, with !CS/CS
+				case 5: //write-then-read, NO CS!
                         //get the number of commands that will follow
                         while(U1STAbits.URXDA == 0);//wait for a byte
                         fw=U1RXREG; //get byte
@@ -637,7 +638,7 @@ void binSPI(void){
                                 bpConfig.terminalInput[j]=U1RXREG;
                         }
                        
-                        SPICS=0;
+                        if(inByte==4) SPICS=0;
                         for(j=0; j<fw; j++){
                                 spiWriteByte(bpConfig.terminalInput[j]);
                         }
@@ -645,7 +646,7 @@ void binSPI(void){
                         for(j=0; j<fr; j++){ //read bulk bytes from SPI
                                 bpConfig.terminalInput[j]=spiWriteByte(0xff);
                         }
-                        SPICS=1;
+                        if(inByte==4) SPICS=1;
 
                         UART1TX(1);//send 1/OK
 
