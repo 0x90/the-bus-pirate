@@ -4,6 +4,57 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <logicalFolder name="hardware profiles"
+                     displayName="hardware profiles"
+                     projectFiles="true">
+        <itemPath>../../hardwarev1a.h</itemPath>
+        <itemPath>../../hardwarev3.h</itemPath>
+        <itemPath>../../hardwarev4.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="translations"
+                     displayName="translations"
+                     projectFiles="true">
+        <itemPath>../../translations/en_US.h</itemPath>
+      </logicalFolder>
+      <itemPath>../../1wire.h</itemPath>
+      <itemPath>../../AUXpin.h</itemPath>
+      <itemPath>../../HD44780.h</itemPath>
+      <itemPath>../../I2C.h</itemPath>
+      <itemPath>../../OpenOCD.h</itemPath>
+      <itemPath>../../SPI.h</itemPath>
+      <itemPath>../../SUMP.h</itemPath>
+      <itemPath>../../UART.h</itemPath>
+      <itemPath>../../base.h</itemPath>
+      <itemPath>../../baseIO.h</itemPath>
+      <itemPath>../../baseUI.h</itemPath>
+      <itemPath>../../basic.h</itemPath>
+      <itemPath>../../binIO.h</itemPath>
+      <itemPath>../../binIOhelpers.h</itemPath>
+      <itemPath>../../binwire.h</itemPath>
+      <itemPath>../../bitbang.h</itemPath>
+      <itemPath>../../busPirateCore.h</itemPath>
+      <itemPath>../../dio.h</itemPath>
+      <itemPath>../../m_1wire_213.h</itemPath>
+      <itemPath>../../pc_at_keyboard.h</itemPath>
+      <itemPath>../../pic.h</itemPath>
+      <itemPath>../../procMenu.h</itemPath>
+      <itemPath>../../raw2wire.h</itemPath>
+      <itemPath>../../raw3wire.h</itemPath>
+      <itemPath>../../selftest.h</itemPath>
+      <itemPath>../../uart2io.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="Library Files"
+                   displayName="Library Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="Linker Script"
+                   displayName="Linker Script"
+                   projectFiles="true">
+      <itemPath>../../p24FJ64GA002.gld</itemPath>
+    </logicalFolder>
+    <logicalFolder name="Object Files"
+                   displayName="Object Files"
+                   projectFiles="true">
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -12,11 +63,48 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <logicalFolder name="translations"
+                     displayName="translations"
+                     projectFiles="true">
+        <itemPath>../../translations/en_US.s</itemPath>
+      </logicalFolder>
+      <itemPath>../../1wire.c</itemPath>
+      <itemPath>../../AUXpin.c</itemPath>
+      <itemPath>../../HD44780.c</itemPath>
+      <itemPath>../../I2C.c</itemPath>
+      <itemPath>../../OpenOCD.c</itemPath>
+      <itemPath>../../OpenOCD_asm.S</itemPath>
+      <itemPath>../../SPI.c</itemPath>
+      <itemPath>../../SUMP.c</itemPath>
+      <itemPath>../../UART.c</itemPath>
+      <itemPath>../../base.c</itemPath>
+      <itemPath>../../baseIO.c</itemPath>
+      <itemPath>../../baseUI.c</itemPath>
+      <itemPath>../../basic.c</itemPath>
+      <itemPath>../../binIO.c</itemPath>
+      <itemPath>../../binIOhelpers.c</itemPath>
+      <itemPath>../../binwire.c</itemPath>
+      <itemPath>../../bitbang.c</itemPath>
+      <itemPath>../../busPirateCore.c</itemPath>
+      <itemPath>../../dio.c</itemPath>
+      <itemPath>../../m_1wire_213.c</itemPath>
+      <itemPath>../../main.c</itemPath>
+      <itemPath>../../pc_at_keyboard.c</itemPath>
+      <itemPath>../../pic.c</itemPath>
+      <itemPath>../../procMenu.c</itemPath>
+      <itemPath>../../raw2wire.c</itemPath>
+      <itemPath>../../raw3wire.c</itemPath>
+      <itemPath>../../selftest.c</itemPath>
+      <itemPath>../../uart2io.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
                    projectFiles="false">
       <itemPath>Makefile</itemPath>
+    </logicalFolder>
+    <logicalFolder name="Other Files"
+                   displayName="Other Files"
+                   projectFiles="false">
     </logicalFolder>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
@@ -37,6 +125,77 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <C30>
+        <property key="scalar-model" value="default"/>
+        <property key="extra-include-directories"
+                  value="&quot;/home/phil/C:\Microchip Solutions\BPv4&quot;;../../../microchip/include;../..;../../translations;"/>
+        <property key="preprocessor-macros" value=""/>
+        <property key="data-model" value="large-data"/>
+        <property key="enable-all-warnings" value="true"/>
+        <property key="pre-instruction-scheduling" value="default"/>
+        <property key="enable-short-double" value="true"/>
+        <property key="enable-procedural-abstraction" value="false"/>
+        <property key="optimization-level" value="0"/>
+        <property key="enable-ansi-warnings" value="false"/>
+        <property key="enable-fatal-warnings" value="false"/>
+        <property key="post-instruction-scheduling" value="default"/>
+        <property key="enable-omit-frame-pointer" value="false"/>
+        <property key="enable-ansi-std" value="false"/>
+        <property key="enable-unroll-loops" value="false"/>
+        <property key="const-model" value="default"/>
+        <property key="code-model" value="large-code"/>
+      </C30>
+      <C30-AS>
+        <property key="omit-debug-dirs" value="false"/>
+        <property key="extra-include-directories-for-assembler" value=""/>
+        <property key="preprocessor-macros" value=""/>
+        <property key="list-file" value=""/>
+        <property key="list-assembly" value="false"/>
+        <property key="list-source" value="false"/>
+        <property key="relax" value="false"/>
+        <property key="extra-include-directories-for-preprocessor"
+                  value="&quot;/home/phil/C:\Microchip Solutions\BPv4&quot;;../../../microchip/include;../..;../../translations;"/>
+        <property key="warning-level" value="emit-warnings"/>
+        <property key="list-section-info" value="false"/>
+        <property key="omit-forms" value="false"/>
+        <property key="list-symbols" value="false"/>
+        <property key="keep-locals" value="false"/>
+        <property key="false-conditionals" value="false"/>
+        <property key="expand-macros" value="false"/>
+        <property key="assembler-symbols" value=""/>
+      </C30-AS>
+      <C30-LD>
+        <property key="preprocessor-macros" value=""/>
+        <property key="general-code-protect" value="no_code_protect"/>
+        <property key="secure-write-protect" value="no_write_protect"/>
+        <property key="warn-section-align" value="false"/>
+        <property key="heap-size" value=""/>
+        <property key="stack-size" value=""/>
+        <property key="linker-symbols" value=""/>
+        <property key="trace-symbols" value=""/>
+        <property key="map-file" value="&quot;$(BINDIR_)$(TARGETBASE).map&quot;"/>
+        <property key="enable-pack-data" value="true"/>
+        <property key="boot-eeprom" value="no_eeprom"/>
+        <property key="general-write-protect" value="no_write_protect"/>
+        <property key="enable-handles" value="true"/>
+        <property key="enable-data-init" value="true"/>
+        <property key="secure-flash" value="no_flash"/>
+        <property key="boot-write-protect" value="no_write_protect"/>
+        <property key="boot-flash" value="no_flash"/>
+        <property key="report-memory-usage" value="true"/>
+        <property key="generate-cross-reference-file" value="false"/>
+        <property key="input-libraries" value=""/>
+        <property key="secure-ram" value="no_ram"/>
+        <property key="enable-check-sections" value="true"/>
+        <property key="enable-default-isr" value="true"/>
+        <property key="symbol-stripping" value="keep-all"/>
+        <property key="boot-ram" value="no_ram"/>
+        <property key="secure-eeprom" value="no_eeprom"/>
+        <property key="extra-lib-directories"
+                  value="&quot;/home/phil/C:\Program Files\Microchip\MPLAB C30\lib&quot;;../..;"/>
+      </C30-LD>
+      <PICkit3PlatformTool>
+      </PICkit3PlatformTool>
     </conf>
   </confs>
 </configurationDescriptor>
