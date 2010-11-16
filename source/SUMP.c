@@ -20,14 +20,14 @@
 #define SUMP_TRIG	0xc0
 #define SUMP_TRIG_VALS 0xc1
 
-extern struct _bpConfig bpConfig; //holds persistant bus pirate settings (see buspiratecore.h)
+extern struct _bpConfig bpConfig; //holds persistant bus pirate settings (see busPirateCore.h)
 
 static enum _LAstate {
 	LA_IDLE = 0,
 	LA_ARMED,
 } LAstate = LA_IDLE;
 
-#define LA_SAMPLE_SIZE TERMINAL_BUFFER //(see BusPirateCore.h)
+#define LA_SAMPLE_SIZE TERMINAL_BUFFER //(see busPirateCore.h)
 //static unsigned char samples[LA_SAMPLE_SIZE];
 static unsigned char sumpPadBytes;
 static unsigned int sumpSamples;

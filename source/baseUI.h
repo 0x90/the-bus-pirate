@@ -15,11 +15,11 @@
  */
 
 //print text in UImessages[s] array (member s) to the user terminal
-//message text defined in \translations\*-*.h
+//message text defined in /translations/*-*.h
 void bpWmessage(unsigned char s);
 
 //print the help info in help[] to the user terminal
-//message text defined in \translations\*-*.h
+//message text defined in /translations/*-*.h
 void printHelp(void);
 
 void bpMsg(int offset, int length);

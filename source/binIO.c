@@ -58,7 +58,7 @@ Commands:
 00000011 //enter raw UART mode
 00000100 // enter raw 1-wire
 00000101 //enter raw wire mode
-00000110 // enter openocd
+00000110 // enter openOCD
 00000111 // pic programming mode
 00001111 //reset, return to user terminal
 00010000 //short self test

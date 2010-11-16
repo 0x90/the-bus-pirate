@@ -17,7 +17,7 @@
 void bbSetup(unsigned char pins, unsigned char speed);
 
 //byte functions 
-// bytes are overrated! migrating to unsigned int :D (read and write (procmenu) are already unsigned int)
+// bytes are overrated! migrating to unsigned int :D (read and write (procMenu) are already unsigned int)
 // the actual number of bits are stored in the bitbang struct, after each call this is set to 8
 //   should the default be configurable??
 unsigned int bbReadWriteByte(unsigned int c);

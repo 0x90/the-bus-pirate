@@ -36,7 +36,7 @@ unsigned char irqFlag=0;
 void ISRTable(); //Pseudo function to hold ISR remap jump table
 
 static unsigned char  __attribute__ ((section (".bss.end"))) _buffer[TERMINAL_BUFFER];
-struct _bpConfig bpConfig = { .terminalInput = _buffer }; //holds persistant bus pirate settings (see buspiratecore.h)
+struct _bpConfig bpConfig = { .terminalInput = _buffer }; //holds persistant bus pirate settings (see busPirateCore.h)
 struct _modeConfig modeConfig; //holds mode info, cleared between modes
 struct _command bpCommand; //holds the current active command so we don't ahve to put so many variables on the stack
 

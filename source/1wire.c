@@ -65,7 +65,7 @@ unsigned char LastFamilyDiscrepancy;
 unsigned char LastDeviceFlag;
 unsigned char crc8;
 
-// implementation new framework other part in buspiratecore.c
+// implementation new framework other part in busPirateCore.c
 unsigned int OWread(void)
 {	return (OWReadByte());
 }

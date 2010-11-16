@@ -6,7 +6,7 @@
 */
 #include "base.h"
 #include "types.h"
-#include "spi.h"
+#include "SPI.h"
 
 #define OSC_FREQ (32000000/2) //two clocks per instruction
 

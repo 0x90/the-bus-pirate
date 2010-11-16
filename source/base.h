@@ -99,10 +99,10 @@ asm (".equ BLJUMPADDRESS, 0xABF8");
 	#include "translations/en_US.h"
 /*	my italian and spanish aint that good ;)
 #elif defined(LANGUAGE_IT_IT)
-	#include "translations\it-IT.h"
-//	#include "translations\en-US.h"
+	#include "translations/it-IT.h"
+//	#include "translations/en-US.h"
 #elif defined(LANGUAGE_ES_ES)
-	#include "translations\es-ES.h"
+	#include "translations/es-ES.h"
 */
 #else
 	#error "No language defined in base.h."

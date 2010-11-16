@@ -26,7 +26,7 @@ BPMSG1024;1;"DS1822 Econ Dig Therm"
 BPMSG1025;1;"DS2404 Econram time Chip"
 BPMSG1026;1;"DS2431 1K EEPROM"
 BPMSG1027;0;"Unknown device"
-//auxpin
+//AUXpin
 BPMSG1028;1;"PWM disabled"
 BPMSG1029;1;"1KHz-4,000KHz PWM"
 BPMSG1030;0;"Frequency in KHz "
@@ -44,8 +44,8 @@ BPMSG1041;1;"AUX LOW"
 BPMSG1042;1;"VOLTMETER MODE"
 BPMSG1044;0;"VOLTAGE PROBE: "
 BPMSG1045;0;"V"
-//baseio
-//baseui
+//baseIO
+//baseUI
 //basic.c
 BPMSG1047;0;"Error("
 BPMSG1048;0;") @line:"
@@ -59,11 +59,11 @@ BPMSG1055;1;"done"
 BPMSG1056;0;"Saving to slot "
 BPMSG1057;1;"Invalid slot"
 BPMSG1058;0;"Loading from slot "
-//binio
-//biniohelpers
+//binIO
+//binIOhelpers
 //binwire
 //bitbang
-///buspiratecore
+///busPirateCore
 BPMSG1059;1;"ERROR: command has no effect here"
 //I2C
 BPMSG1060;0;"ACK"
@@ -93,7 +93,7 @@ BPMSG1080;0;"DevID = "
 BPMSG1081;0;" Rev = "
 BPMSG1082;1;"Not implemented (yet)"
 BPMSG1083;1;"Please exit PIC programming mode"
-//procmenu.c
+//procMenu.c
 BPMSG1084;0;"(BASIC)"
 BPMSG1085;1;"Ready"
 BPMSG1086;1;"a/A/@ controls AUX pin"
@@ -265,11 +265,11 @@ BPMSG1241;1;" *parity error"
 BPMSG1242;1;" *stopbit error"
 BPMSG1243;1;" NONE"
 BPMSG1244;1;" UNKNOWN ERROR"
-//auxpin
+//AUXpin
 BPMSG1245;0;" autorange "
 BPMSG1246;0;"+MHz)"
 BPMSG1247;0;"+kHz)"
-//procmenu.c
+//procMenu.c
 BPMSG1248;1;"Raw value for BRG (MIDI=127)"
 //uart.c
 BPMSG1249;1;"WARNING: Possible bufferoverflow"
@@ -277,11 +277,11 @@ BPMSG1249;1;"WARNING: Possible bufferoverflow"
 //standardized continue/exit statements
 BPMSG1250;1;"Any key to exit"
 BPMSG1251;1;"Space to continue"
-//procmenu.c
+//procMenu.c
 BPMSG1252;0;"Number of bits read/write: "
 //spi/r3w
 BPMSG1253;1;"CS:\r\n 1. CS\r\n 2. /CS *default"
-//auxpin
+//AUXpin
 BPMSG1254;1;"Position in degrees"
 BPMSG1255;1;"Servo active"
 

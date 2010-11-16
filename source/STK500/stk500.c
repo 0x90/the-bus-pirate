@@ -8,7 +8,7 @@
 
 #include "base.h"
 #include "types.h"
-#include "spi.h"
+#include "SPI.h"
 #include "stk500.h"
 #include "stk500_proto.h"
 
