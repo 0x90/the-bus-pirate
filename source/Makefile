@@ -1,7 +1,10 @@
 # Makefile for Linux/Unix by Stephan Walter <stephan@walter.name>
 
 # change this line for your MPLAB installation
-INCLUDES = -I/opt/microchip/mplabc30/v3.24/support/PIC24F/h
+C30_PATH = /opt/microchip/mplabc30/v3.24
+
+INCLUDES = -I$(C30_PATH)/support/PIC24F/h
+PATH := $(C30_PATH)/bin:$(PATH)
 
 DEFS = 
 OPTIMIZE = -Os
