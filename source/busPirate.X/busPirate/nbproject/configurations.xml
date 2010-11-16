@@ -127,15 +127,14 @@
       </compileType>
       <C30>
         <property key="scalar-model" value="default"/>
-        <property key="extra-include-directories"
-                  value="&quot;/home/phil/C:\Microchip Solutions\BPv4&quot;;../../../microchip/include;../..;../../translations;"/>
+        <property key="extra-include-directories" value="../../translations"/>
         <property key="preprocessor-macros" value=""/>
         <property key="data-model" value="large-data"/>
         <property key="enable-all-warnings" value="true"/>
         <property key="pre-instruction-scheduling" value="default"/>
         <property key="enable-short-double" value="true"/>
         <property key="enable-procedural-abstraction" value="false"/>
-        <property key="optimization-level" value="0"/>
+        <property key="optimization-level" value="s"/>
         <property key="enable-ansi-warnings" value="false"/>
         <property key="enable-fatal-warnings" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
@@ -150,12 +149,12 @@
         <property key="extra-include-directories-for-assembler" value=""/>
         <property key="preprocessor-macros" value=""/>
         <property key="list-file" value=""/>
-        <property key="list-assembly" value="false"/>
         <property key="list-source" value="false"/>
+        <property key="list-assembly" value="false"/>
         <property key="relax" value="false"/>
-        <property key="extra-include-directories-for-preprocessor"
-                  value="&quot;/home/phil/C:\Microchip Solutions\BPv4&quot;;../../../microchip/include;../..;../../translations;"/>
         <property key="warning-level" value="emit-warnings"/>
+        <property key="extra-include-directories-for-preprocessor"
+                  value="../../translations"/>
         <property key="list-section-info" value="false"/>
         <property key="omit-forms" value="false"/>
         <property key="list-symbols" value="false"/>
@@ -191,8 +190,7 @@
         <property key="symbol-stripping" value="keep-all"/>
         <property key="boot-ram" value="no_ram"/>
         <property key="secure-eeprom" value="no_eeprom"/>
-        <property key="extra-lib-directories"
-                  value="&quot;/home/phil/C:\Program Files\Microchip\MPLAB C30\lib&quot;;../..;"/>
+        <property key="extra-lib-directories" value="../.."/>
       </C30-LD>
       <PICkit3PlatformTool>
       </PICkit3PlatformTool>
