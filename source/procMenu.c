@@ -83,6 +83,7 @@ void serviceuser(void)
 	tmpcmdend = cmdend;
 	histcnt = 0;
 	tmphistcnt = 0;
+	temp2 = 0;
 	bpConfig.busMode=0;
 	cmderror=0;							// we don't want to start with error do we?
 	binmodecnt=0;
@@ -1658,7 +1659,7 @@ void setDisplayMode(void)
 //configure user terminal side UART baud rate
 void setBaudRate(void)
 {	unsigned char speed;
-	unsigned char brg;
+	unsigned char brg=0;
 
 	cmdstart = ( cmdstart + 1 ) & CMDLENMSK;
 	

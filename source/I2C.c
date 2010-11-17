@@ -79,7 +79,7 @@ extern int cmderror;
 */
 
 unsigned int I2Cread(void)
-{	unsigned char c;
+{	unsigned char c = 0;
 	if(ackPending)
 	{	bpSP;
 		//bpWmessage(MSG_ACK);

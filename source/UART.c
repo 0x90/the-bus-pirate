@@ -93,7 +93,7 @@ void UARTsettings(void)
 
 
 void UARTsetup(void)
-{	int speed, dbp, sb, rxp, output, brg;
+{	int speed, dbp, sb, rxp, output, brg=0;
 
 	consumewhitechars();
 	speed=getint();

@@ -250,6 +250,8 @@ unsigned char SUMPlogicService(void){
 			SUMPreset();
 			return 1;//done, exit SUMP
 			//break;
+		case LA_IDLE:
+			break;
 	}
 	
 	return 0; //not done, keep going

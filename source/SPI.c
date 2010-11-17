@@ -125,6 +125,7 @@ unsigned int SPIwrite(unsigned int c)
 	if(modeConfig.wwr==1){
 		return r;
 	}
+	//FIXME what to return if wwr=0? we need an uint here
 }
 
 void SPIsettings(void)
