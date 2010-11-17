@@ -49,6 +49,7 @@
 	//#define BP_USE_PIC
 	#define BP_USE_DIO //binary mode
 	
+	// MAXPROTO = # of protos defined above + 1 for HiZ
 	#define MAXPROTO 9// need to set it manually for now (is there a smart way for this?)
 #elif defined(BP_ADDONS)
 // most used protos
@@ -64,6 +65,7 @@
 	#define BP_USE_PIC
 	#define BP_USE_DIO //binary mode
 
+	// MAXPROTO = # of protos defined above + 1 for HiZ
 	#define MAXPROTO 7
 #else
 	#error "No Bus Pirate configuration defined."

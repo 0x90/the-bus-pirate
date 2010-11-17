@@ -116,7 +116,7 @@ void HiZsettings(void)
 {	bpBR;
 }
 
-proto protos[MAXPROTO+1] = {
+proto protos[MAXPROTO] = {
 {	nullfunc1,				// start
 	nullfunc1,				// startR
 	nullfunc1,				// stop
