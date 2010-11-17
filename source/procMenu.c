@@ -83,8 +83,8 @@ void serviceuser(void)
 	tmpcmdend = cmdend;
 	histcnt = 0;
 	tmphistcnt = 0;
+	bpConfig.busMode = HIZ;
 	temp2 = 0;
-	bpConfig.busMode=0;
 	cmderror=0;							// we don't want to start with error do we?
 	binmodecnt=0;
 

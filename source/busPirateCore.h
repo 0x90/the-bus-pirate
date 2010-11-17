@@ -14,6 +14,43 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 #define TERMINAL_BUFFER 4096
+
+typedef enum
+{
+	HIZ = 0,
+#ifdef BP_USE_1WIRE
+	DS1WIRE,
+#endif
+#ifdef BP_USE_HWUART
+	HWUART,
+#endif
+#ifdef BP_USE_I2C
+	I2C,
+#endif
+#ifdef BP_USE_HWSPI
+	HWSPI,
+#endif
+#ifdef BP_USE_RAW2WIRE
+	RAW2WIRE,
+#endif
+#ifdef BP_USE_RAW3WIRE
+	RAW3WIRE,
+#endif
+#ifdef BP_USE_PCATKB
+	PCATKB,
+#endif
+#ifdef BP_USE_LCD
+	LCD,
+#endif
+#ifdef BP_USE_PIC
+	PICPROG,
+#endif
+#ifdef BP_USE_DIO
+	DIO,
+#endif
+	MAXPROTO
+} protocol_t;
+
 //these settings persist between modes
 // such as terminal side baud rate, display mode, bus mode
 struct _bpConfig {
@@ -25,33 +62,7 @@ struct _bpConfig {
 		BIN,
 		RAW,
 	}displayMode;
-	enum { //needs to be same order as mode variable in .c
-		HIZ=0,
-		#ifdef BP_USE_1WIRE
-		   	DS1WIRE,
-		#endif
-		#ifdef BP_USE_HWUART
-			HWUART,
-		#endif
-		#ifdef BP_USE_I2C
-		   	I2C,
-		#endif
-		#ifdef BP_USE_HWSPI
-		   	HWSPI,
-		#endif
-		#ifdef BP_USE_RAW2WIRE
-		    RAW2WIRE,
-		#endif
-		#ifdef BP_USE_RAW3WIRE
-		    RAW3WIRE,
-		#endif
-		#ifdef BP_USE_PCATKB
-			PCATKB,	
-		#endif
-		#ifdef BP_USE_LCD
-			LCD,
-		#endif
- 	}busMode;
+	protocol_t busMode;
 	// Device IDs from the chip
 	unsigned int dev_type;
 	unsigned int dev_rev;
