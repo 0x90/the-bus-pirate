@@ -1,1 +1,0 @@
-The BPv3-Firmware-vX.X-extras.hex has a few modes and new stuff we couldn't fit in the main firmware.
