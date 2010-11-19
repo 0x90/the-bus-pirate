@@ -9,10 +9,24 @@ Firmware upgrades:
 
 http://dangerousprototypes.com/docs/Bus_Pirate#Firmware_upgrades
 
+1) Enter the bootloader:
+
+Connect PGC and PGD pins of the ICSP header and plug in the USB cable
+
+--+OR+--
+
+Type $ in the Bus Pirate terminal.
+
+With both methods the MODE LED should light.
+
+2) Load the new firmware:
+
 * ds30Loader: just use the GUI (.net/Mono required)
 * Pirate-loader (console app for Windows, Linux, Mac) firmware upgrades:
 
 C:\pl>pirate-loader --dev=COM10 --hex=BPv3-Firmware-v1.0.hex
+
+3) re-plug the USB cable to reset the Bus Pirate. The upgrade is complete.
 
 ------------------------------------------------------------------
 BPv3-Bootloader-v4.4.hex is the same as v4.3 installed with the updater. This file is only for programming the bootlaoder to a new PIC. Use the upgrade package to upgrade:
