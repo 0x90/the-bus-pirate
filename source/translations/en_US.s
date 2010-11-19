@@ -68,18 +68,6 @@ _bpmessages:
 	.pascii	" 0.Macro menu\r\n 1.7bit address search\r\n 2.I2C sniffer"
 	.pascii	"Searching I2C address space. Found devices at:"
 	.pascii	"Sniffer"
-	.pascii	"Commandmode?\r\n1. 6b/14b\r\n2. 4b/16b"
-	.pascii	"Delay?"
-	.pascii	"PIC(mod dly)=("
-	.pascii	"CMD"
-	.pascii	"DTA"
-	.pascii	"no read"
-	.pascii	"unknown mode"
-	.pascii	"(1) get devID"
-	.pascii	"DevID = "
-	.pascii	" Rev = "
-	.pascii	"Not implemented (yet)"
-	.pascii	"Please exit PIC programming mode"
 	.pascii	"(BASIC)"
 	.pascii	"Ready"
 	.pascii	"a/A/@ controls AUX pin"
@@ -225,14 +213,6 @@ _bpmessages:
 	.pascii	"GND\t"
 	.pascii	"GND\tADC\t5.0V\t3.3V\tVPU\tAUX\t"
 	.pascii	"execute : "
-	.pascii	" TIMEOUT"
-	.pascii	" 0. Macro menu\r\n 1. Live input monitor"
-	.pascii	"Input monitor"
-	.pascii	" *startbit error"
-	.pascii	" *parity error"
-	.pascii	" *stopbit error"
-	.pascii	" NONE"
-	.pascii	" UNKNOWN ERROR"
 	.pascii	" autorange "
 	.pascii	"+MHz)"
 	.pascii	"+kHz)"
@@ -265,8 +245,8 @@ _bpmessages:
 	.pascii	"o\tSet output type\t\t\t.\tDAT read"
 	.pascii	"p/P\tPullup resistors (off/ON)\t!\tBit read"
 	.pascii	"s\tScript engine\t\t\t:\tRepeat e.g. r:10"
-	.pascii	"v\tShow volts/states\t\t;\tBits to read/write e.g. 0x55;2"
+	.pascii	"v\tShow volts/states\t\t.\tBits to read/write e.g. 0x55.2"
 	.pascii	"w/W\tPSU (off/ON)\t\t<x>/<x= >/<0>\tUsermacro x/assign x/list all"
-
-
-#endif
+
+
+#endif

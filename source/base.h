@@ -18,23 +18,24 @@
 #include <p24Fxxxx.h>
 
 //this sets the hardware version
-//#define BUSPIRATEV1A //http://hackaday.com/2009/01/22/how-to-bus-pirate-v1-improved-universal-serial-interface/
-#define BUSPIRATEV3 //also v2go
+#define BUSPIRATEV1A //http://hackaday.com/2009/01/22/how-to-bus-pirate-v1-improved-universal-serial-interface/
+//#define BUSPIRATEV3 //also v2go
 //#define BUSPIRATEV4 
 
-#define BP_FIRMWARE_STRING "Firmware v5.9RC2 (r542) "
+#define BP_FIRMWARE_STRING "Firmware v5.10 (r559) "
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT
 //#define LANGUAGE_ES_ES
+//#define LANGUAGE_DE_DE
 
 //include/exclude modules here
 // standard protocols
 //#define BP_USE_RAW2WIRE
 //#define BP_USE_RAW3WIRE
 
-//#define BP_MAIN
-#define BP_ADDONS
+#define BP_MAIN
+//#define BP_ADDONS
 
 #if defined(BP_MAIN)
 	#define BP_USE_1WIRE
@@ -100,6 +101,8 @@ asm (".equ BLJUMPADDRESS, 0xABF8");
 #elif defined(LANGUAGE_ES_ES)
 	#include "translations/es-ES.h"
 */
+#elif defined(LANGUAGE_DE_DE)
+	#include "translations/de_DE.h"
 #else
 	#error "No language defined in base.h."
 #endif
