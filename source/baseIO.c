@@ -230,36 +230,28 @@ void bpWinthex(unsigned int c) {
 }
 
 
-//convert a float number to a x.1 decimal (max 255.9 because of char type...)
-//extra attention is needed for leading 0s with more than one trailing decimal place
-//we just use one and ignore....
-void bpWvolts(unsigned int a){
-	float v;
+//print an ADC measurement in decimal form
+void bpWvolts(const unsigned int adc)
+{
 	unsigned char c;
 
-	v=(float)((int)a/155.1515);//precalculated value for equal value resistor (/2)
-								// adc/1024 *3.3 *2 = adc/155.1515
+	// input voltage is divided by two and compared to 3.3V
+	// volt      = adc / 1024 * 3.3V * 2
+	// centivolt = adc / 1024 * 3.3 * 2 * 100 = adc * 165 / 256
+	// This is approximately (adc * 29 / 45), making the calculation
+	// fit in an unsigned int. The error is less than 1mV.
+	const unsigned int centivolt = (adc * 29) / 45;
 
-	c = (char) v;			//convert double to long	- ltemp=123
+	bpWdec(centivolt / 100);
 
-	bpWdec(c);
-											
 	UART1TX('.');
+	
+	c = centivolt % 100;
 
-			// the precision of 1 bit is 0.006V ( 6.6 V / 1024) so we could display two digits!! Whoot
-			// too bad we depend on some cheapy 3.3v regulator ;)
-			// first digit :)
-	v = (v - (int) v);				//Remove integer part... fval=0.456789
- 	v *= 10;
-	c = (char) v;					//convert to long integer - ltemp=45678
- 	bpWdec(c);
+	if (c < 10)  // need extra zero?
+		UART1TX('0');
 
-			// second digit :) whoot!!
-	v=(v-(int)v);
-	v*=10;
-	c=(char) v;
-	bpWdec(c);
-
+	bpWdec(centivolt % 100);
 }
 
 

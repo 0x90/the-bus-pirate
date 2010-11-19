@@ -61,9 +61,8 @@ void bpWlongdec(unsigned long l);
 //friendly version
 void bpWlongdecf(unsigned long l);
 
-//print a float number to the user terminal 
-// (special to show volts to a single digit for ADC measurements)
-void bpWvolts(unsigned int a);
+//print an ADC measurement in decimal form
+void bpWvolts(unsigned int adc);
 
 //pseudofuncion break sequences
 //#define bpBR UART1TX('\x0D');UART1TX('\x0A') //macro for line break
