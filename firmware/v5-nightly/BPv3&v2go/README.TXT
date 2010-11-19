@@ -1,3 +1,25 @@
+------------------------------------------------------------------
+STOP! If you are upgrading from v2 you must install the v4 bootloader first:
+http://dangerousprototypes.com/2010/01/18/how-to-bus-pirate-bootloader-v4-upgrade/
+v4 BOOTLOADER ONLY!!!
+DO NOT TRY TO LOAD THE BOOTLOADER FROM THIS ARCHIVE!!!! 
+DO NOT TRY TO LOAD THE V4 FIRMWARE WITH p24QP!!!
+------------------------------------------------------------------
+Firmware upgrades:
+
+http://dangerousprototypes.com/docs/Bus_Pirate#Firmware_upgrades
+
+* ds30Loader: just use the GUI (.net/Mono required)
+* Pirate-loader (console app for Windows, Linux, Mac) firmware upgrades:
+
+C:\pl>pirate-loader --dev=COM10 --hex=BPv3-Firmware-v1.0.hex
+
+------------------------------------------------------------------
+BPv3-Bootloader-v4.4.hex is the same as v4.3 installed with the updater. This file is only for programming the bootlaoder to a new PIC. Use the upgrade package to upgrade:
+
+http://dangerousprototypes.com/docs/Bus_Pirate#Bootloader_upgrades
+
+------------------------------------------------------------------
 vX-Firmware-vY(.z_Z).hex
 
 Normal Bus Pirate firmware.
@@ -17,3 +39,7 @@ vX-PIC Bootloader-vY.hex
 Bootloader to program in a new PIC microcontroller. This is usually only programmed once.
 vX - Bus Pirate hardware version.
 vY - The Bus Pirate bootloader version.
+
+BPvX-Firmware-vX.X-extras.hex
+
+The BPv3-Firmware-vX.X-extras.hex has a few modes and new stuff we couldn't fit in the main firmware.
