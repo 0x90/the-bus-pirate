@@ -18,11 +18,11 @@
 #include <p24Fxxxx.h>
 
 //this sets the hardware version
-#define BUSPIRATEV1A //http://hackaday.com/2009/01/22/how-to-bus-pirate-v1-improved-universal-serial-interface/
-//#define BUSPIRATEV3 //also v2go
+//#define BUSPIRATEV1A //http://hackaday.com/2009/01/22/how-to-bus-pirate-v1-improved-universal-serial-interface/
+#define BUSPIRATEV3 //also v2go
 //#define BUSPIRATEV4 
 
-#define BP_FIRMWARE_STRING "Firmware v5.10 (r559) "
+#define BP_FIRMWARE_STRING "Firmware v6.0RC (r572) "
 
 #define LANGUAGE_EN_US
 //#define LANGUAGE_IT_IT

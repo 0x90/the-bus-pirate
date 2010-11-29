@@ -369,7 +369,8 @@ int getnumvar(void)
 	if((pgmspace[pc]=='('))
     {
 		pc++;
-        temp=evaluate();
+		temp=assign();
+//        temp=evaluate();
 		if((pgmspace[pc]==')'))
 		{	pc++;
 		}
@@ -430,7 +431,7 @@ int getmultdiv(void)
 {	int temp;
 	temp=getnumvar();
     while (1) {
-		if((pgmspace[pc]!='*')&&(pgmspace[pc]!='/'))
+		if((pgmspace[pc]!='*')&&(pgmspace[pc]!='/')&&(pgmspace[pc]!='&')&&(pgmspace[pc]!='|'))
 		{	return temp;
 		}
 		else									// assume operand
@@ -443,6 +444,12 @@ int getmultdiv(void)
 							break;
 				case '/':	//UART1TX('/');
 							temp/=getnumvar();
+							break;
+				case '&':	//UART1TX('/');
+							temp&=getnumvar();
+							break;
+				case '|':	//UART1TX('/');
+							temp|=getnumvar();
 							break;
 				default:	break;
 			}
@@ -459,7 +466,7 @@ int assign(void)
 	temp=getmultdiv();
 
     while (1) {
-		if((pgmspace[pc]!='-')&&(pgmspace[pc]!='+'))
+		if((pgmspace[pc]!='-')&&(pgmspace[pc]!='+')&&(pgmspace[pc]!='<')&&(pgmspace[pc]!='>')&&(pgmspace[pc]!='='))
 		{	return temp;
 		}
 		else									// assume operand
@@ -473,12 +480,37 @@ int assign(void)
 				case '+':	//UART1TX('+');
 							temp+=getmultdiv();
 							break;
+				case '>':	//UART1TX('+');
+							if(pgmspace[pc+1]=='=')
+							{	temp=(temp>=getmultdiv()?1:0);
+								pc++;
+							}
+							else
+							{	temp=(temp>getmultdiv()?1:0);
+							}
+							break;
+				case '<':	//UART1TX('+');
+							if(pgmspace[pc+1]=='>')
+							{	temp=(temp!=getmultdiv()?1:0);
+								pc++;
+							}
+							else if(pgmspace[pc+1]=='=')
+							{	temp=(temp<=getmultdiv()?1:0);
+								pc++;
+							}
+							else
+							{	temp=(temp<getmultdiv()?1:0);
+							}
+							break;
+				case '=':	//UART1TX('+');
+							temp=(temp==getmultdiv()?1:0);
 				default:	break;
 			}
 		}
 	}
 }
 
+/*
 int evaluate(void)
 {	int left;
 	int right;
@@ -525,6 +557,7 @@ int evaluate(void)
 	}
 	return 0;
 }
+*/
 
 void interpreter(void)
 {	int len;
@@ -617,7 +650,8 @@ void interpreter(void)
 		
 							//temp=pc;
 		
-							if(evaluate())
+							//if(evaluate())
+							if(assign())
 							{	//bpWline("TRUE");	// execute statement then
 								if(pgmspace[pc++]==TOK_THEN)
 								{	//bpWstring ("THEN");
@@ -1238,8 +1272,6 @@ void basiccmdline(void)
 			else
 			{	temp=0;
 			}
-
-bpWhex(temp);
 
 			if(temp)
 			{	line[i]=temp;
