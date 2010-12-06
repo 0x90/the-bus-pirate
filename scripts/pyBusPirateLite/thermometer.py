@@ -43,14 +43,20 @@ class DS1631:
         self.soft_por();
 
     def get_temp_reg(self, reg):
-        temp = i2c.get_word(self.address, reg);
+        temp = self.i2c.get_word(self.address, reg);
         if (temp & 0x0f):
             raise ValueError, 'Invalid value received!';
-        return temp/256.0;
+        if temp < 32768:
+            return temp/256.0;
+        else:
+            return (temp-65536)/256.0;
 
     def set_temp_reg(self, reg, value):
-        rawval = int(round(256*value)) & 0xfff0;
-        i2c.set_word(self.address, reg, rawval);
+        if value >= 0:
+            rawval = int(round(256*value)) & 0xfff0;
+        else:
+            rawval = (65536 + int(round(256*value))) & 0xfff0;
+        self.i2c.set_word(self.address, reg, rawval);
 
     def get_temp(self):
         return self.get_temp_reg(0xAA);
@@ -68,19 +74,19 @@ class DS1631:
         self.set_temp_reg(0xA2, value);
 
     def get_config(self):
-        return i2c.get_byte(self.address, 0xAC);
+        return self.i2c.get_byte(self.address, 0xAC);
 
     def set_config(self, config):
-        i2c.set_byte(self.address, 0xAC, config);
+        self.i2c.set_byte(self.address, 0xAC, config);
 
     def start_convert(self):
-        i2c.command(self.address, 0x51);
+        self.i2c.command(self.address, 0x51);
 
     def stop_convert(self):
-        i2c.command(self.address, 0x22);
+        self.i2c.command(self.address, 0x22);
 
     def soft_por(self):
-        i2c.command(self.address, 0x54);
+        self.i2c.command(self.address, 0x54);
 
     def is_done(self):
         return self.get_config() & DS_Config.DONE;
