@@ -1,0 +1,22 @@
+Number of devices is 1
+Dev 0:
+ Flags=0x0
+ Type=FT_DEVICE_232R
+ ID=0x4036001
+ LocId=0x19
+ SerialNumber=A6005koq
+ Description=FT232R USB UART
+ ftHandle=0x0
+Successfully open  FT232R USB UART device! 
+ Current assigned COM Port: 8 
+ EEPROM READ OK
+ Cbus0 Value: 0x03
+ Cbus1 Value: 0x02
+ Cbus2 Value: 0x00
+ Cbus3 Value: 0x01
+ Current Bit Mode: 0X02
+ Setting to Asynchroous Bit-Bang mode... 
+ 0XFF was written to device
+Resetting Device......Ok
+Device closed 
+Press any key to exit.... 
