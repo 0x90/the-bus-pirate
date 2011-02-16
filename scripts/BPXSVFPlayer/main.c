@@ -38,7 +38,7 @@ int modem =FALSE;
 #ifndef WIN32
 #define usleep(x) Sleep(x);
 #endif
-#define MAX_BUFFER 26  //255 bytes
+#define MAX_BUFFER 32  //255 bytes
 
 int print_usage(char * appname)
 {
@@ -183,9 +183,7 @@ int main(int argc, char** argv)
 	// Enter XSVF Player Mode
 	//Open the port and send 0x03 to enter XSVF player mode
     //try resetting
-    temp[0]=0x01;
-    serial_write( fd, temp, 1 );
-    Sleep(1);
+
 	fprintf(stderr, " Configuring Bus Pirate to use XSVF Player Mode\n");
 	temp[0]=0x03;
 	serial_write( fd, temp, 1 );
@@ -224,7 +222,7 @@ int main(int argc, char** argv)
 	printf(" Sending File Content.. \n");
 
 	while(!feof(XSVF)) {
-		if ((res=fread(&buffer,sizeof(unsigned char),sizeof(buffer),XSVF)) > 0) {
+		if ((res=fread(&buffer,sizeof(unsigned char),nparam_bytechunks,XSVF)) > 0) {
 			//send to bp
 
 			temp[0]=res;
@@ -239,19 +237,53 @@ int main(int argc, char** argv)
 			while(1) {
 				res= serial_read(fd, buffer, sizeof(buffer));
 				if(res>0){
-				  // wait for 0x03 then send again
-					if (buffer[0]==XSVF_READY_FOR_DATA) {
 
-						// Mode ok
-						printf("Sending next batch of data..\n");
-					  break;
-				   }
-				   printf(" receiving...");
+
+                    switch (buffer[0]) {
+
+                            case  XSVF_ERROR_NONE :
+                                printf("  XSVF_ERROR_NONE \n");
+                                break;
+                            case XSVF_ERROR_UNKNOWN:
+                             printf("  XSVF_ERROR_UNKNOWN \n");
+                                break;
+                            case XSVF_ERROR_TDOMISMATCH:
+                             printf("  XSVF_ERROR_TDOMISMATCH \n");
+                                break;
+                            case XSVF_ERROR_MAXRETRIES:
+                             printf("  XSVF_ERROR_MAXRETRIES \n");
+                                break;
+                            case XSVF_ERROR_ILLEGALCMD :
+                             printf("  XSVF_ERROR_ILLEGALCMD \n");
+                                break;
+                            case XSVF_ERROR_ILLEGALSTATE:
+                             printf("  XSVF_ERROR_ILLEGALSTATE \n");
+                                break;
+                            case XSVF_ERROR_DATAOVERFLOW :
+                             printf("  XSVF_ERROR_DATAOVERFLOW \n");
+                                break;
+                            case XSVF_ERROR_LAST:
+                             printf("  XSVF_ERROR_LAST \n");
+                                break;
+                            case XSVF_READY_FOR_DATA:
+                             printf("  XSVF_READY_FOR_DATA \n");
+                                break;
+                            default:
+                             printf("Unkown error\n ");
+
+
+                    }
+                    if (buffer[0]==XSVF_READY_FOR_DATA){
+                       break;
+                    }
+
+				   printf(" Exiting with Error:  ...");
 				   for(c=0; c<res; c++){
 					  printf("%02X ", buffer[c]);
 				   }
 				   printf("\n\n");
-				   break;
+				   exit(1);
+				   //break;
 				}
 				else {
 					printf(" waiting for reply...\n");
@@ -268,10 +300,7 @@ int main(int argc, char** argv)
 		}
 	}
     printf(" Thank you for Playing! :-)\n\n");
-  // send reset
-    temp[0]=0x01;
-    serial_write( fd, temp, 1 );
-    Sleep(1);
+
     close(xsvf);
     fclose(XSVF);
 	FREE(param_port);
