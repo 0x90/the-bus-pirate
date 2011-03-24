@@ -134,11 +134,11 @@ class BBIO:
 	""" PWM """
 	def setup_PWM(self, prescaler, dutycycle, period):
 		self.port.write("\x12")
-		self.port.write(prescaler)
-		self.port.write((dutycycle>>8)&0xFF)
-		self.port.write(dutycycle&0xFF)
-		self.port.write((period>>8)&0xFF)
-		self.port.write(period&0xFF)
+		self.port.write(chr(prescaler))
+		self.port.write(chr((dutycycle>>8)&0xFF))
+		self.port.write(chr(dutycycle&0xFF))
+		self.port.write(chr((period>>8)&0xFF))
+		self.port.write(chr(period&0xFF))
 		self.timeout(0.1)
 		return self.response()
 
