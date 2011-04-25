@@ -31,17 +31,23 @@
 #define XSVF_ERROR_LAST            0x07
 #define XSVF_READY_FOR_DATA        0xFF
 
+#ifndef WIN32
+//#define usleep(x) Sleep(x);
+#define Sleep(x) usleep(x);
+#define TRUE 1
+#define FALSE 0
+#endif
 
 char *dumpfile;
+#ifdef WIN32
 HANDLE dumphandle;
+#endif
+
 int modem =FALSE;
 int cnt=0;
 uint8_t *bin_buf;
 uint32_t bin_buf_size;
 #define FREE(x) if(x) free(x);
-#ifndef WIN32
-#define usleep(x) Sleep(x);
-#endif
 #define MAX_BUFFER 4096  //255 bytes
 
 //http://www.whereisian.com/files/j-xsvf_002.swf
@@ -353,11 +359,13 @@ int main(int argc, char** argv)
 	}
 
     printf(" Thank you for playing! :-)\n\n");
+#ifdef WIN32
     fclose(XSVF);
 	FREE(param_port);
  	FREE(param_speed);
     FREE(param_bytechunks);
     FREE(param_XSVF);
     FREE( bin_buf);
+#endif
     return 0;
  }  //end main()

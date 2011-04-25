@@ -30,7 +30,13 @@
 #include "serial.h"
 extern int disable_comport;
 extern char *dumpfile;
+#ifdef WIN32
 extern HANDLE dumphandle;
+#endif
+#ifndef WIN32
+//#define usleep(x) Sleep(x);
+#define Sleep(x) usleep(x);
+#endif
 /*
 #ifdef WIN32
 	int write(int fd, const void* buf, int len)

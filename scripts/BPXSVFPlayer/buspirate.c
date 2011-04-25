@@ -5,6 +5,11 @@
 #include "serial.h"
 #include "buspirate.h"
 
+#ifndef WIN32
+#define TRUE 1
+#define FALSE 0
+#define Sleep(x) usleep(x);
+#endif
 
 const char *modes[]={
     "BBIO",
