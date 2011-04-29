@@ -22,6 +22,8 @@ along with pyBusPirate.  If not, see <http://www.gnu.org/licenses/>.
 
 import select
 import serial
+import sys
+import time
 
 """
 PICSPEED = 24MHZ / 16MIPS
@@ -48,11 +50,27 @@ class BBIO:
 		self.port = serial.Serial(p, s, timeout=t)
 	
 	def BBmode(self):
-		self.port.flushInput();		
-		for i in range(20):
-			self.port.write("\x00");
-			r,w,e = select.select([self.port], [], [], 0.01);
-			if (r): break;
+		if sys.platform == 'win32':
+			# I haven't seen this problem on Windows, which is good,
+			# because it doesn't appear to support select.select() 
+			# for serial ports.  This seems to work instead:
+			self.resetBP()
+			self.port.write("\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00")
+			self.timeout(0.1)
+			self.port.flushInput();
+			self.reset()
+		else:
+			# Sometimes sending 20 zeroes in a row to a BP already in binary mode
+			# leads to BP getting stuck in BitBang mode
+			# (see forum: http://dangerousprototypes.com/forum/viewtopic.php?t=1440#msg13179 )
+			# so if we detect a response (indicating we're in BitBang mode before the 20 zeroes)
+			# stop sending zeroes and go on.
+			self.port.flushInput();		
+			for i in range(20):
+				self.port.write("\x00");
+				r,w,e = select.select([self.port], [], [], 0.01);
+				if (r): break;
+
 		if self.response(5) == "BBIO1": return 1
 		else: return 0
 
@@ -110,7 +128,12 @@ class BBIO:
 		return self.response(1)
 
 	def timeout(self, timeout=0.1):
-		select.select([], [], [], timeout)
+		# Windows doesn't seem to support select,
+		# but this timeout seems necessary.
+		if sys.platform == 'win32':
+			time.sleep(timeout);
+		else:
+			select.select([], [], [], timeout)
 
 	def response(self, byte_count=1, return_data=False):
 		data = self.port.read(byte_count)
@@ -186,6 +209,11 @@ class BBIO:
 
 	def read_speed(self):
 		self.port.write("\x70")
-		select.select(None, None, None, 0.1)
+		# Windows doesn't seem to support select.select(),
+		# but this timeout seems necessary.
+		if sys.platform == 'win32':
+			self.timeout(0.1);
+		else:
+			select.select(None, None, None, 0.1)
 		return self.response(1, True)
 
