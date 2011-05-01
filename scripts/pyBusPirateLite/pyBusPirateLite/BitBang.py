@@ -128,12 +128,7 @@ class BBIO:
 		return self.response(1)
 
 	def timeout(self, timeout=0.1):
-		# Windows doesn't seem to support select,
-		# but this timeout seems necessary.
-		if sys.platform == 'win32':
-			time.sleep(timeout);
-		else:
-			select.select([], [], [], timeout)
+		time.sleep(timeout);
 
 	def response(self, byte_count=1, return_data=False):
 		data = self.port.read(byte_count)
@@ -209,11 +204,6 @@ class BBIO:
 
 	def read_speed(self):
 		self.port.write("\x70")
-		# Windows doesn't seem to support select.select(),
-		# but this timeout seems necessary.
-		if sys.platform == 'win32':
-			self.timeout(0.1);
-		else:
-			select.select(None, None, None, 0.1)
+		self.timeout(0.1);
 		return self.response(1, True)
 
