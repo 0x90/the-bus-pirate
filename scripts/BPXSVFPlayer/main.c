@@ -183,7 +183,7 @@ int main(int argc, char** argv)
 	}
 
 	//setup port and speed
-	serial_setup(fd,(speed_t) param_speed);
+	serial_setup(fd,(speed_t) atoi(param_speed)); 
 
 	if (jtag_reset==TRUE){
         printf(" Performing Reset..\n");
