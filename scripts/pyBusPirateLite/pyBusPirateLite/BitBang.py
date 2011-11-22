@@ -160,6 +160,79 @@ class BBIO:
 		self.timeout(0.1)
 		return self.response()
 
+	# Sets the pwm frequency in 1khz multiples as the BusPirate shell/firmware does
+	def set_1khz_pwm_frequency(self, kiloherzt, duty_cycle = .5):
+		if kiloherzt < 4:
+			pwm_div = 62
+			prescaler = 3
+			
+		elif kiloherzt < 31:
+			pwm_div = 250
+			prescaler = 2
+		elif kiloherzt < 245:
+			pwm_div = 2000
+			prescaler = 1
+		else:
+			pwm_div = 16000
+			prescaler = 0
+
+		period = ( pwm_div / kiloherzt ) - 1
+		
+		duty = int(period * duty_cycle)
+		
+		#print "prescaler ", prescaler, "duty ", duty, "period ", period		
+
+		return self.setup_PWM(prescaler, duty, period)
+        
+	# Sets the pwm aux pin at an specific frequency and duty cycle
+	#
+	# The code follows the PIC24FJ64 datasheet specification an the
+	# PIC24F family reference manual.
+	#
+	# Basically it finds the highest period register value for the timer
+	# based on our target frequency or target period.
+	#
+	# The timer input clock is rated at Fosc/2 and it's called on the
+	# datasheets as Tcy, the BusPirate uses the internal 8Mhz clock with
+	# the PLL module enabled, so finally it uses a 32Mhz clock, Tcy
+	# is 16Mhz or a 62.5ns period. 
+	  
+	def set_pwm_frequency(self, frequency, duty_cycle = 0.5):
+        
+        	prescalers = [1.0,1.0/8,1.0/64,1.0/256]
+        
+        	# Timer input frequency = Fosc/2 --> 16000000Hz
+        	# Timer period with 1:1 prescaler = 1/16000000 --> 0.0000000625s --> 0.0625us --> 62.5ns
+        
+        	tcy = 0.0000000625
+        
+        	target_period = 1.0/frequency
+ 		
+		# precalc some part of the period register formula       
+        	dummy = target_period / tcy
+        
+        	prescaler = -1
+        	
+        	for I in range(4):
+            		period = dummy * prescalers[I] - 1
+            
+			# It's a valid 16 bits period register value?
+            		if period < 65536:
+				# If so we have found the greatest one
+                		prescaler = I
+                		break
+
+		# If we have found a valid prescaler, calc the duty cycle value
+		# and call the BusPirate function for stablishing the PWM configuration
+
+		if prescaler != -1:
+            		duty = int(period * duty_cycle)
+            		#print "prescaler ", prescaler, " period ", period, "duty", duty
+        		return self.setup_PWM(prescaler, duty, int(period))
+        	else:
+            		print "Can't setup ", frequency, "Hz."
+        
+
 	def clear_PWM(self):
 		self.port.write("\x13")
 		self.timeout(0.1)
