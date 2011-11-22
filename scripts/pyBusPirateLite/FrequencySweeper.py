@@ -25,9 +25,10 @@ along with pyBusPirate.  If not, see <http://www.gnu.org/licenses/>.
 #
 #	Frequency Sweeper
 #
-#	This script sweeps a range of frequencies, from a top frequency to a bottom one
+#	This script sweeps a range of frequencies, from a top frequency to a bottom one,
+#	using the PWM output of the BusPirate (AUX pin)
 #
-#	The sweep could be adapted via a few parameters, execute ./Sweeper --help to see them
+#	The sweep could be modified via a few parameters, execute ./Sweeper --help to see them
 #
 #	It's based on the set_pwm_frequency from the pyBusPirate.BitBang library
 #
