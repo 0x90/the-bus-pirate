@@ -18,7 +18,7 @@
 #include "base.h"
 #include "busPirateCore.h"
 #include "binIOhelpers.h"
-
+#include "AUXpin.h"
 #include "procMenu.h"		// for the userinteraction subs
 
 //#define USE_SPICS //the CS hardware pin on silicone REV 3 doesn't work, optionally enable it here
@@ -675,6 +675,8 @@ void binSPI(void){
 			case 0b0100: //configure peripherals w=power, x=pullups, y=AUX, z=CS
 				binIOperipheralset(inByte);	
 				UART1TX(1);//send 1/OK		
+			case 0b0101://AUX to hi-z, input, read
+				UART1TX(bpAuxRead());
 				break;
 			case 0b0110://set speed 
 				inByte&=(~0b11111000);//clear command portion
