@@ -1,2 +1,0 @@
-#define UADDR  U1ADDR#define USTAT  U1STAT
-#define UIE U1IE#define UEIE  U1EIE  #define UIR   U1IR#define UEIR  U1EIR#define UCFG  U1CFG#define UCON  U1CON  #define UCONbits  U1CONbits #define UIRbits  U1IRbits  #define UEP0  U1EP0 #define UEP1  U1EP1  #define UEP2  U1EP2#define UEP3  U1EP3 #define UEP4  U1EP4 #define UEP5  U1EP5 #define UEP6  U1EP6 #define UEP7  U1EP7#define UEP8  U1EP8 #define UEP9  U1EP9  #define UEP10 U1EP10  #define UEP11 U1EP11  #define UEP12 U1EP12  #define UEP13  U1EP13 #define UEP14  U1EP14#define UEP15  U1EP15  
