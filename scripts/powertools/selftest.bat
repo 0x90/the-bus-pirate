@@ -1,2 +1,2 @@
-selftest -d COM3 
+selftest -d COM5 
 pause
