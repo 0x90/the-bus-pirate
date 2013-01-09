@@ -1,0 +1,5 @@
+The latest SVN is now located at:
+http://code.google.com/p/dangerous-prototypes-open-hardware/source/browse/#svn%2Ftrunk%2FBus_Pirate
+
+Or see the latest here:
+http://dangerousprototypes.com/docs/Bus_Pirate
