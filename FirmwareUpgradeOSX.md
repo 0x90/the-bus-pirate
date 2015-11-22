@@ -1,0 +1,4 @@
+<h1>Bus Pirate: firmware updates on OSX</h1>
+
+<p><img src='http://wherelabs.files.wordpress.com/2009/10/osxup.png?w=450&#038;h=209' alt='osxup' height='209' width='450' title='osxup' /></p>
+<p>Ninja Bong wrote a <a href='http://s9y.ereet.st/archives/185-Updating-Bus-Pirate-firmware-in-OS-X.html'>detailed Bus Pirate firmware update guide for OSX users</a>. The guide covers Fundamental Logic's v1a kit and v2go, but it should also apply to any other Bus Pirate hardware. You may also find the <a href='http://dangerousprototypes.com/2009/08/06/bus-pirate-firmware-upgrades-on-linux-osx/'>Python update tutorial</a> handy.</p>

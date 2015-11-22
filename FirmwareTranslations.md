@@ -1,0 +1,6 @@
+<h1>Bus Pirate: Firmware Translations</h1>
+
+<p><img src='http://wherelabs.files.wordpress.com/2009/08/bp-es.png?w=375&#038;h=205' alt='bp-es' height='205' width='375' title='bp-es' /></p>
+<p>Project contributor <a href='http://code.google.com/u/pastus/'>pastus</a> submitted <a href='http://code.google.com/p/the-bus-pirate/'>Bus Pirate</a> translations in Spanish and Italian. You can download the localized builds for most hardware versions from the <a href='http://code.google.com/p/the-bus-pirate/source/browse/#svn/trunk/firmware/'>project SVN nightly compiles</a> folder. If you don&#8217;t see a build for your language and hardware combination, please request it in the comments.</p>
+
+<p>Most of the Bus Pirate interface text is defined in a <a href='http://code.google.com/p/the-bus-pirate/source/browse/#svn/trunk/source/translations'>single translation file</a>. If you&#8217;d like to prepare a translation, or request a specific language, check out the <a href='http://whereisian.com/forum/index.php?topic=70.0'>translation/localization thread</a>.</p>
